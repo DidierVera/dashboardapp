@@ -9,6 +9,8 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    kotlin("kapt")
+
 }
 
 kotlin {
@@ -40,10 +42,15 @@ kotlin {
     }
     
     sourceSets {
+        wasmJsMain.dependencies {
+            //implementation("io.insert-koin:koin-core:3.2.0")
+        }
         
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.koin.android)
+            implementation(libs.koin.androidx.compose)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -54,6 +61,20 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
+            api(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.composeVM)
+
+// Retrofit for network requests
+            implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+            implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+            implementation ("com.squareup.okhttp3:logging-interceptor:3.12.1")
+
+            //nano http server hub
+            implementation ("org.nanohttpd:nanohttpd:2.3.1")
+
+            //Koin
+            //implementation("io.insert-koin:koin-core:3.2.0")
         }
     }
 }
@@ -82,6 +103,14 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+    dependencies {
+        // Room database
+        val roomVersion = "2.5.2"
+        implementation("androidx.room:room-runtime:$roomVersion")
+        implementation("androidx.room:room-ktx:$roomVersion")
+        kapt { "androidx.room:room-compiler:$roomVersion" }
+
     }
 }
 
