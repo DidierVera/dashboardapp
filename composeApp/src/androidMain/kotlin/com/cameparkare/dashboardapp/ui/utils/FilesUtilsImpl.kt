@@ -5,10 +5,9 @@ import android.os.Environment
 import android.util.Log
 import com.cameparkare.dashboardapp.ui.interfaces.FilesUtils
 import java.io.File
-import javax.inject.Inject
 
 
-class FilesUtilsImpl @Inject constructor(private val context: Context): FilesUtils {
+class FilesUtilsImpl(private val context: Context): FilesUtils {
     override fun getImageFromDirectory(folder: String, filename: String): String? {
         val directory = Environment.getExternalStoragePublicDirectory(folder)
         val extensions = listOf(".jpg", ".png", ".svg", ".jpeg")
@@ -28,11 +27,11 @@ class FilesUtilsImpl @Inject constructor(private val context: Context): FilesUti
         return result
     }
 
-    override fun getConfigFile(filename: String): File? {
+    override fun getConfigFile(filename: String): String? {
         TODO("Not yet implemented")
     }
 
-    override fun getVideosFiles(path: String?): List<File> {
+    override fun getVideosFiles(path: String?): List<String> {
         val files = Environment.getExternalStoragePublicDirectory(path)?.listFiles()
         val filesToReturn: MutableList<File> = mutableListOf()
 
@@ -47,6 +46,6 @@ class FilesUtilsImpl @Inject constructor(private val context: Context): FilesUti
             }
         }
 
-        return filesToReturn.sorted()
+        return filesToReturn.map { it.absolutePath }.sorted()
     }
 }

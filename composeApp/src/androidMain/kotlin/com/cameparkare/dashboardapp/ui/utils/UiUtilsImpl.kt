@@ -11,7 +11,7 @@ import com.cameparkare.dashboardapp.ui.models.UiElementModel
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 
-class UiUtils @Inject constructor(
+class UiUtils constructor(
     private val getCardClassTranslations: GetCardClassTranslations,
     private val appLogger: AppLogger,
     private val filesUtils: FilesUtils

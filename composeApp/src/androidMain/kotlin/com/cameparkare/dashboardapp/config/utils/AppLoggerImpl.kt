@@ -7,10 +7,9 @@ import java.io.FileWriter
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
-import javax.inject.Inject
 
 
-class AppLoggerImpl @Inject constructor(private val context: Context): AppLogger {
+class AppLoggerImpl constructor(private val context: Context): AppLogger {
 
     // Directorio donde se guardarán los logs
     private val logDirectory: File = File(

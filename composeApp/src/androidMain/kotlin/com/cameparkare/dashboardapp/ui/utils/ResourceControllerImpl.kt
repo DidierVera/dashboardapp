@@ -3,9 +3,8 @@ package com.cameparkare.dashboardapp.ui.utils
 import android.content.Context
 import android.net.wifi.WifiManager
 import com.cameparkare.dashboardapp.ui.interfaces.ResourceController
-import javax.inject.Inject
 
-class ResourceControllerImpl @Inject constructor(private val context: Context
+class ResourceControllerImpl(private val context: Context
 ) : ResourceController {
     override fun getString(resourceId: Int): String {
         return context.applicationContext.getString(resourceId)

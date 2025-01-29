@@ -8,9 +8,8 @@ import com.cameparkare.dashboardapp.domain.repositories.local.CardClassDataRepos
 import com.cameparkare.dashboardapp.infrastructure.source.local.entities.toModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class GetCardClassTranslations @Inject constructor(
+class GetCardClassTranslations(
     private val cardClassDataRepository: CardClassDataRepository,
     private val appLogger: AppLogger
 ) {
