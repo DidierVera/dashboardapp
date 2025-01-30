@@ -65,6 +65,11 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.koin.composeVM)
 
+            //serialization
+            implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+//signalR
+            implementation("com.microsoft.signalr:signalr:7.0.0")
+
 // Retrofit for network requests
             implementation ("com.squareup.retrofit2:retrofit:2.9.0")
             implementation ("com.squareup.retrofit2:converter-gson:2.9.0")

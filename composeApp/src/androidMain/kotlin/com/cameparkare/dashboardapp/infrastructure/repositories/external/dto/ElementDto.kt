@@ -1,12 +1,12 @@
-package com.cameparkare.dashboardapp.ui.models
+package com.cameparkare.dashboardapp.infrastructure.repositories.external.dto
 
-sealed class UiElementModel{
-    data class BoxDto(val data: BoxDataDto) : UiElementModel()
-    data class SpacerDto(val data: SpacerDataDto) : UiElementModel()
-    data class ColumnDto(val data: ColumnDataDto) : UiElementModel()
-    data class TextDto(val data: TextDataDto) : UiElementModel()
-    data class RowDto(val data: RowDataDto) : UiElementModel()
-    data class ImageDto(val data: ImageDataDto) : UiElementModel()
+sealed class ElementDto{
+    data class BoxDto(val data: BoxDataDto) : ElementDto()
+    data class SpacerDto(val data: SpacerDataDto) : ElementDto()
+    data class ColumnDto(val data: ColumnDataDto) : ElementDto()
+    data class TextDto(val data: TextDataDto) : ElementDto()
+    data class RowDto(val data: RowDataDto) : ElementDto()
+    data class ImageDto(val data: ImageDataDto) : ElementDto()
 }
 
 
@@ -18,7 +18,7 @@ data class BoxDataDto(
     val width: Int? = null,
     val height: Int? = null,
     val padding: Int,
-    val content: List<UiElementModel>
+    val content: List<ElementDto>
 )
 
 data class SpacerDataDto(
@@ -32,7 +32,7 @@ data class ColumnDataDto(
     val hasShadow: Boolean,
     val spacing: Int,
     val padding: Int,
-    val content: List<UiElementModel>
+    val content: List<ElementDto>
 )
 
 data class TextDataDto(
@@ -62,5 +62,5 @@ data class RowDataDto(
     val hasShadow: Boolean,
     val spacing: Int,
     val padding: Int,
-    val content: List<UiElementModel>
+    val content: List<ElementDto>
 )
