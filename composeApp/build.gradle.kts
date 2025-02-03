@@ -9,7 +9,6 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
-    kotlin("kapt")
 
 }
 
@@ -43,14 +42,35 @@ kotlin {
     
     sourceSets {
         wasmJsMain.dependencies {
-            //implementation("io.insert-koin:koin-core:3.2.0")
+            implementation(libs.koin.core)
         }
         
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+
+            //dependency injection
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.compose)
+
+            //database client
+            implementation(libs.room.runtime)
+            implementation(libs.room.ktx)
+            implementation(libs.room.compiler)
+
+            //signal R
+            implementation(libs.signalr)
+
+
+            // Retrofit for network requests
+            implementation(libs.retrofit)
+            implementation(libs.converter.gson)
+            implementation(libs.logging.interceptor)
+
+            //nano http server hub
+            implementation (libs.nanohttpd)
+
+
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -61,25 +81,14 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
-            api(libs.koin.core)
+
+            //dependency injection
+            implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.composeVM)
 
-            //serialization
-            implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
-//signalR
-            implementation("com.microsoft.signalr:signalr:7.0.0")
-
-// Retrofit for network requests
-            implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-            implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-            implementation ("com.squareup.okhttp3:logging-interceptor:3.12.1")
-
-            //nano http server hub
-            implementation ("org.nanohttpd:nanohttpd:2.3.1")
-
-            //Koin
-            //implementation("io.insert-koin:koin-core:3.2.0")
+            //Serialization
+            implementation(libs.serialization.json)
         }
     }
 }
@@ -108,14 +117,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
-    }
-    dependencies {
-        // Room database
-        val roomVersion = "2.5.2"
-        implementation("androidx.room:room-runtime:$roomVersion")
-        implementation("androidx.room:room-ktx:$roomVersion")
-        kapt { "androidx.room:room-compiler:$roomVersion" }
-
     }
 }
 

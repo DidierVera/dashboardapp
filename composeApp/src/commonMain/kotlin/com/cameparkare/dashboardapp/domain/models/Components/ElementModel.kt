@@ -7,4 +7,5 @@ sealed class ElementModel{
     data class TextModel(val data: TextDataModel) : ElementModel()
     data class RowModel(val data: RowDataModel) : ElementModel()
     data class ImageModel(val data: ImageDataModel) : ElementModel()
+    data class VideoModel(val data: VideoDataModel) : ElementModel()
 }

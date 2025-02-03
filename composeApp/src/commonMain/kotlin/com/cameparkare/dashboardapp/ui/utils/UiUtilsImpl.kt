@@ -1,38 +1,39 @@
 package com.cameparkare.dashboardapp.ui.utils
 
-import android.os.Environment
-import com.cameparkare.dashboardapp.R
 import com.cameparkare.dashboardapp.config.dataclasses.ServiceResult
 import com.cameparkare.dashboardapp.config.utils.AppLogger
+import com.cameparkare.dashboardapp.domain.models.Components.ElementModel
 import com.cameparkare.dashboardapp.domain.usecases.GetCardClassTranslations
 import com.cameparkare.dashboardapp.ui.interfaces.FilesUtils
-import com.cameparkare.dashboardapp.ui.interfaces.UiUtils
-import com.cameparkare.dashboardapp.ui.models.UiElementModel
-import com.google.gson.Gson
-import com.google.gson.JsonArray
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.jsonNull
+import kotlinx.serialization.json.jsonObject
 
-class UiUtils constructor(
+
+class UiUtilsImpl constructor(
     private val getCardClassTranslations: GetCardClassTranslations,
     private val appLogger: AppLogger,
     private val filesUtils: FilesUtils
 ): UiUtils {
     override suspend fun buildDashboardItem(
-        items: List<UiElementModel>,
+        items: List<ElementModel>,
         dits: JsonArray?,
         lang: String
-    ): List<UiElementModel> {
-        val resultList: MutableList<UiElementModel> = mutableListOf()
+    ): List<ElementModel> {
+        val resultList: MutableList<ElementModel> = mutableListOf()
         for (item in items){
             when(item){
-                is UiElementModel.TextDto -> resultList.add(processTextElement(item, lang, dits))
-                is UiElementModel.ImageDto -> resultList.add(processImageElement(item, dits))
-                is UiElementModel.BoxDto -> {
+                is ElementModel.TextModel -> resultList.add(processTextElement(item, lang, dits))
+                is ElementModel.ImageModel -> resultList.add(processImageElement(item, dits))
+                is ElementModel.BoxModel -> {
                     resultList.add(item.copy(data = item.data.copy(content = buildDashboardItem(item.data.content, dits, lang))))
                 }
-                is UiElementModel.ColumnDto -> {
+                is ElementModel.ColumnModel -> {
                     resultList.add(item.copy(data = item.data.copy(content = buildDashboardItem(item.data.content, dits, lang))))
                 }
-                is UiElementModel.RowDto -> {
+                is ElementModel.RowModel -> {
                     resultList.add(item.copy(data = item.data.copy(content = buildDashboardItem(item.data.content, dits, lang))))
                 }
                 else -> resultList.add(item)
@@ -40,57 +41,55 @@ class UiUtils constructor(
         }
         return resultList
     }
-    private suspend fun processTextElement(textDto: UiElementModel.TextDto, lang: String, dits: JsonArray?): UiElementModel {
-        val dataKey = textDto.data.dataKey
-        val defaultText = textDto.data.defaultText
+    private suspend fun processTextElement(textModel: ElementModel.TextModel, lang: String, dits: JsonArray?): ElementModel {
+        val dataKey = textModel.data.dataKey
+        val defaultText = textModel.data.defaultText
 
         return if (!dataKey.isNullOrEmpty()) {
             val ditValue = getValueFromDit(dataKey, dits, defaultText)
-            val newText = validateEspecialItems(textDto.data.dashboardItemId, ditValue, lang)
-            textDto.copy(data = textDto.data.copy(defaultText = newText ?: defaultText)
+            val newText = validateEspecialItems(textModel.data.dashboardItemId, ditValue, lang)
+            textModel.copy(data = textModel.data.copy(defaultText = newText ?: defaultText)
             )
         } else {
-            val translations = textDto.data.translations?.get(lang)
-            textDto.copy(data = textDto.data.copy(defaultText = translations ?: defaultText))
+            val translations = textModel.data.translations?.get(lang)
+            textModel.copy(data = textModel.data.copy(defaultText = translations ?: defaultText))
         }
     }
 
-    private fun processImageElement(imageDto: UiElementModel.ImageDto, dits: JsonArray?): UiElementModel {
-        val dataKey = imageDto.data.dataKey
-        val defaultFile = if(imageDto.data.fileName.isNullOrEmpty()) null else {
-            filesUtils.getImageFromDirectory("${Environment.DIRECTORY_PICTURES}/Dashboard",
-                imageDto.data.fileName)
+    private fun processImageElement(imageModel: ElementModel.ImageModel, dits: JsonArray?): ElementModel {
+        val dataKey = imageModel.data.dataKey
+        val defaultFile = if(imageModel.data.fileName.isNullOrEmpty()) null else {
+            filesUtils.getImageFromDirectory("/Dashboard",
+                imageModel.data.fileName)
         }
 
         return if (!dataKey.isNullOrEmpty()) {
             val ditValue = getValueFromDit(dataKey, dits, defaultFile.orEmpty())
-            imageDto.copy(data = imageDto.data.copy(
-                localFilePath = validateViaTItem(ditValue = ditValue, defaultIcon = defaultFile)))
+            imageModel.copy(data = imageModel.data.copy(
+                folderPath = validateViaTItem(ditValue = ditValue, defaultIcon = defaultFile)))
         } else {
             if (!defaultFile.isNullOrEmpty())
-                imageDto.copy(data = imageDto.data.copy(localFilePath = defaultFile))
+                imageModel.copy(data = imageModel.data.copy(folderPath = defaultFile))
             else
-                imageDto
+                imageModel
         }
     }
     private fun getValueFromDit(dataKey: String, dits: JsonArray?, defaultValue: String): String {
         var dataResult = defaultValue
         dits?.forEach { dit ->
-            val ditObj = dit.asJsonObject
+            val ditObj = dit.jsonObject
 
-            if (ditObj != null){
-                if (ditObj.get(dataKey) != null && !ditObj.get(dataKey).isJsonNull){
-                    dataResult = ditObj.get(dataKey).asString
-                }
+            if (ditObj[dataKey] != null && ditObj[dataKey]?.jsonNull != null){
+                dataResult = ditObj[dataKey].toString()
             }
         }
         return dataResult
     }
 
     private fun validateViaTItem(ditValue: String, defaultIcon: String?): String?{
-        appLogger.trackLog("VIAT-LOGO ITEM", Gson().toJson(ditValue))
+        appLogger.trackLog("VIAT-LOGO ITEM", Json.encodeToString(ditValue))
         return if(ditValue == "4"){
-            defaultIcon ?: "${R.drawable.viat_logo_retina}"
+            defaultIcon ?: "0" //Validate to show the respective default icon in each platform
         } else null
     }
 

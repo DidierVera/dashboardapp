@@ -9,11 +9,11 @@ import com.cameparkare.dashboardapp.infrastructure.source.local.entities.toModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class GetCardClassTranslations(
+class GetCardClassTranslationsImpl(
     private val cardClassDataRepository: CardClassDataRepository,
     private val appLogger: AppLogger
-) {
-    suspend fun invoke(code: Int, lang: String): ServiceResult<CardClassModel?> {
+): GetCardClassTranslations {
+    override suspend fun invoke(code: Int, lang: String): ServiceResult<CardClassModel?> {
         return try {
             val result = withContext(Dispatchers.IO) {
                 cardClassDataRepository.selectByElementCode(

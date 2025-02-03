@@ -5,12 +5,12 @@ import com.cameparkare.dashboardapp.config.utils.AppLogger
 import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.DialogResponseDto
 import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.TerminalResponseDto
 import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.TypeResponseDto
+import com.google.gson.Gson
+import com.google.gson.JsonArray
+import com.google.gson.JsonParser
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonElement
 
 
 class MockService constructor(
@@ -37,7 +37,7 @@ class MockService constructor(
                                 dtoType = 0,
                                 dtoName = "DtoDialog"
                             ),
-                            ditsTUI =  JsonArray(emptyList())
+                            ditsTUI =  JsonArray()
                         )
                         onSocketResult.invoke(ServiceResult.Success(result))
                         Thread.sleep(7000)
@@ -53,7 +53,7 @@ class MockService constructor(
                                 dtoType = 0,
                                 dtoName = "DtoDialog"
                             ),
-                            ditsTUI = JsonArray(emptyList())
+                            ditsTUI = JsonArray()
                         )
                         onSocketResult.invoke(ServiceResult.Success(result))
                         Thread.sleep(3500)
@@ -87,7 +87,7 @@ class MockService constructor(
                                 dtoType = 0,
                                 dtoName = "DtoDialog"
                             ),
-                            ditsTUI = JsonArray(emptyList())
+                            ditsTUI = JsonArray()
                         )
                         onSocketResult.invoke(ServiceResult.Success(result))
                         Thread.sleep(3500)
@@ -103,7 +103,7 @@ class MockService constructor(
                                 dtoType = 0,
                                 dtoName = "DtoDialog"
                             ),
-                            ditsTUI = JsonArray(emptyList())
+                            ditsTUI = JsonArray()
                         )
                         onSocketResult.invoke(ServiceResult.Success(result))
                         Thread.sleep(3500)
@@ -165,12 +165,8 @@ class MockService constructor(
                             }]
                         """.trimIndent()
 
-        // Parse the JSON string into a JsonElement
-        val jsonElement: JsonElement = Json.parseToJsonElement(jsonString)
 
-        // Cast the JsonElement to JsonArray
-        val jsonArray: JsonArray = jsonElement as JsonArray
-        return jsonArray
+        return JsonParser.parseString(jsonString).asJsonArray
     }
 
     private fun getRandomString(length: Int, type: Int) : String {
