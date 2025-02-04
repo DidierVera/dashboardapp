@@ -2,17 +2,15 @@ package com.cameparkare.dashboardapp.ui.utils
 
 import com.cameparkare.dashboardapp.config.dataclasses.ServiceResult
 import com.cameparkare.dashboardapp.config.utils.AppLogger
-import com.cameparkare.dashboardapp.domain.models.Components.ElementModel
+import com.cameparkare.dashboardapp.domain.models.components.ElementModel
 import com.cameparkare.dashboardapp.domain.usecases.GetCardClassTranslations
-import com.cameparkare.dashboardapp.ui.interfaces.FilesUtils
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.jsonNull
 import kotlinx.serialization.json.jsonObject
 
 
-class UiUtilsImpl constructor(
+class UiUtilsImpl(
     private val getCardClassTranslations: GetCardClassTranslations,
     private val appLogger: AppLogger,
     private val filesUtils: FilesUtils
@@ -27,6 +25,7 @@ class UiUtilsImpl constructor(
             when(item){
                 is ElementModel.TextModel -> resultList.add(processTextElement(item, lang, dits))
                 is ElementModel.ImageModel -> resultList.add(processImageElement(item, dits))
+                is ElementModel.VideoModel -> resultList.add(processVideoElement(item, dits))
                 is ElementModel.BoxModel -> {
                     resultList.add(item.copy(data = item.data.copy(content = buildDashboardItem(item.data.content, dits, lang))))
                 }
@@ -41,6 +40,26 @@ class UiUtilsImpl constructor(
         }
         return resultList
     }
+
+    private fun processVideoElement(videoModel: ElementModel.VideoModel, dits: JsonArray?): ElementModel {
+        val dataKey = videoModel.data.dataKey
+        val defaultFile = if(videoModel.data.fileName.isNullOrEmpty()) null else {
+            filesUtils.getVideoFromDirectory("/Dashboard",
+                videoModel.data.fileName)
+        }
+
+        return if (!dataKey.isNullOrEmpty()) {
+            val ditValue = getValueFromDit(dataKey, dits, defaultFile.orEmpty())
+            videoModel.copy(data = videoModel.data.copy(
+                folderPath = validateViaTItem(ditValue = ditValue, defaultIcon = defaultFile)))
+        } else {
+            if (!defaultFile.isNullOrEmpty())
+                videoModel.copy(data = videoModel.data.copy(folderPath = defaultFile))
+            else
+                videoModel
+        }
+    }
+
     private suspend fun processTextElement(textModel: ElementModel.TextModel, lang: String, dits: JsonArray?): ElementModel {
         val dataKey = textModel.data.dataKey
         val defaultText = textModel.data.defaultText

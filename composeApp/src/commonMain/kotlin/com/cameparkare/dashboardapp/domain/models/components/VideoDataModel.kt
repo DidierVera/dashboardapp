@@ -1,4 +1,4 @@
-package com.cameparkare.dashboardapp.domain.models.Components
+package com.cameparkare.dashboardapp.domain.models.components
 
 data class VideoDataModel(
     val dashboardItemId: String,

@@ -10,7 +10,7 @@ import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.TerminalRes
 import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.toModel
 import com.cameparkare.dashboardapp.infrastructure.source.remote.services.SignalRService
 import com.cameparkare.dashboardapp.infrastructure.source.remote.services.SocketService
-import com.google.gson.Gson
+import kotlinx.serialization.json.Json
 
 
 class TerminalConnectionImpl(
@@ -39,7 +39,7 @@ class TerminalConnectionImpl(
         when(result){
             is ServiceResult.Error -> onResult.invoke(ServiceResult.Error(result.error))
             is ServiceResult.Success -> {
-                appLogger.trackLog("DESERIALIZE DATA: ", Gson().toJson(result.data))
+                appLogger.trackLog("DESERIALIZE DATA: ", Json.encodeToString(result.data))
                 onResult.invoke(ServiceResult.Success(result.data?.toModel()))
             }
         }

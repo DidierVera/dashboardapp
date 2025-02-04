@@ -1,18 +1,19 @@
 package com.cameparkare.dashboardapp.infrastructure.source.remote.dto
 import com.cameparkare.dashboardapp.domain.models.TerminalResponseModel
-import com.google.gson.JsonArray
-import com.google.gson.annotations.SerializedName
+//import com.google.gson.JsonArray
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.json.JsonArray
 
 data class TerminalResponseDto(
-    @SerializedName("Dialog")
+    @SerialName("Dialog")
     val dialog: DialogResponseDto,
-    @SerializedName("Dits")
+    @SerialName("Dits")
     val ditsTUI: JsonArray,
-    @SerializedName("DtoType")
+    @SerialName("DtoType")
     val dtoType: TypeResponseDto,
-    @SerializedName("DtoVersion")
+    @SerialName("DtoVersion")
     val dtoVersion: Int,
-    @SerializedName("TerminalNr")
+    @SerialName("TerminalNr")
     val terminalNr: Int
 )
 
@@ -20,6 +21,6 @@ data class TerminalResponseDto(
 fun TerminalResponseDto.toModel(): TerminalResponseModel {
     return TerminalResponseModel(
         dispatcherCode = dialog.dialogNumber,
-        ditsTUI = ditsTUI
+        ditsTUI =  ditsTUI
     )
 }

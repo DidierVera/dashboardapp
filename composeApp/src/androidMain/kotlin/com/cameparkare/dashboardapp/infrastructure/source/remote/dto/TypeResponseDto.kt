@@ -1,11 +1,11 @@
 package com.cameparkare.dashboardapp.infrastructure.source.remote.dto
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
 
 
 data class TypeResponseDto(
-    @SerializedName("DtoName")
+    @SerialName("DtoName")
     val dtoName: String,
-    @SerializedName("DtoType")
+    @SerialName("DtoType")
     val dtoType: Int
 )

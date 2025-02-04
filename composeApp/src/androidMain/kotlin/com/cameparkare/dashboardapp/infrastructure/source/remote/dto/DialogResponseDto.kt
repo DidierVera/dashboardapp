@@ -1,11 +1,11 @@
 package com.cameparkare.dashboardapp.infrastructure.source.remote.dto
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
 
 
 data class DialogResponseDto(
-    @SerializedName("DialogName")
+    @SerialName("DialogName")
     val dialogName: String,
-    @SerializedName("DialogNr")
+    @SerialName("DialogNr")
     val dialogNumber: Int
 )

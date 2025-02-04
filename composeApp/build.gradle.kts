@@ -1,4 +1,3 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -16,7 +15,7 @@ kotlin {
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget.set(JvmTarget.JVM_17)
         }
     }
     
@@ -42,9 +41,8 @@ kotlin {
     
     sourceSets {
         wasmJsMain.dependencies {
-            implementation(libs.koin.core)
         }
-        
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -64,7 +62,6 @@ kotlin {
 
             // Retrofit for network requests
             implementation(libs.retrofit)
-            implementation(libs.converter.gson)
             implementation(libs.logging.interceptor)
 
             //nano http server hub
@@ -73,6 +70,7 @@ kotlin {
 
         }
         commonMain.dependencies {
+            implementation(libs.jetbrains.annotations23)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
@@ -83,9 +81,9 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtime.compose)
 
             //dependency injection
-            implementation(libs.koin.core)
-            implementation(libs.koin.compose)
-            implementation(libs.koin.composeVM)
+//            implementation(libs.koin.core)
+//            implementation(libs.koin.compose)
+//            implementation(libs.koin.composeVM)
 
             //Serialization
             implementation(libs.serialization.json)
@@ -115,8 +113,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 

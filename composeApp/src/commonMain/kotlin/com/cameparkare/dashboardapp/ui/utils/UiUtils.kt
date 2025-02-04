@@ -1,6 +1,6 @@
 package com.cameparkare.dashboardapp.ui.utils
 
-import com.cameparkare.dashboardapp.domain.models.Components.ElementModel
+import com.cameparkare.dashboardapp.domain.models.components.ElementModel
 import kotlinx.serialization.json.JsonArray
 
 interface UiUtils {

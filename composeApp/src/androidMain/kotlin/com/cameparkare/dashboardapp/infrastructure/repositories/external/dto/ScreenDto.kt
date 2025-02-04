@@ -1,11 +1,12 @@
 package com.cameparkare.dashboardapp.infrastructure.repositories.external.dto
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+
 
 data class ScreenDto (
-    @SerializedName("dispatch-code")
+    @SerialName("dispatch-code")
     val dispatchCode: Int,
     val data: List<ElementDto>,
-    @SerializedName("screen-id")
+    @SerialName("screen-id")
     val screenId: String
 )

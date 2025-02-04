@@ -9,10 +9,10 @@ import com.cameparkare.dashboardapp.config.utils.AppLogger
 import com.cameparkare.dashboardapp.config.utils.IServerConnection
 import com.cameparkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.TerminalResponseDto
-import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.Socket
@@ -48,7 +48,7 @@ class SocketService(
                             val serverMessage = String(buffer, 0, st);
                             Log.d("Socket", "Start message ${serverMessage}")
                             try {
-                                val data = Gson().fromJson(serverMessage, TerminalResponseDto::class.java)
+                                val data = Json.decodeFromString<TerminalResponseDto>(serverMessage)
                                 onSocketResult.invoke(ServiceResult.Success(data))
                             }catch (e: Exception){
                                 appLogger.trackError(e)

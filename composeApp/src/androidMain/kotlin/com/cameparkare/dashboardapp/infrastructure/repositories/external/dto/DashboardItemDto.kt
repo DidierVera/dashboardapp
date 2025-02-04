@@ -1,27 +1,28 @@
 package com.cameparkare.dashboardapp.infrastructure.repositories.external.dto
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+
 
 data class DashboardItemDto(
     val screens: List<ScreenDto>,
-    @SerializedName("socket-ip")
+    @SerialName("socket-ip")
     val socketIp: String?,
-    @SerializedName("socket-port")
+    @SerialName("socket-port")
     val socketPort: String?,
-    @SerializedName("signalR-url")
+    @SerialName("signalR-url")
     val signalRUrl: String?,
-    @SerializedName("time-delay")
+    @SerialName("time-delay")
     val timeDelay: Int?,
-    @SerializedName("video-frame")
+    @SerialName("video-frame")
     val videoFrame: Boolean?,
-    @SerializedName("text-size-scale")
+    @SerialName("text-size-scale")
     val textSizeScale: Int?,
-    @SerializedName("margin-top")
+    @SerialName("margin-top")
     val marginTop: Int?,
-    @SerializedName("margin-bottom")
+    @SerialName("margin-bottom")
     val marginBottom: Int?,
-    @SerializedName("margin-left")
+    @SerialName("margin-left")
     val marginLeft: Int?,
-    @SerializedName("margin-right")
+    @SerialName("margin-right")
     val marginRight: Int?
 )

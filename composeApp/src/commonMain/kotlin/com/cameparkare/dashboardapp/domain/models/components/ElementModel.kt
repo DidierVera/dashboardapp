@@ -1,4 +1,4 @@
-package com.cameparkare.dashboardapp.domain.models.Components
+package com.cameparkare.dashboardapp.domain.models.components
 
 sealed class ElementModel{
     data class BoxModel(val data: BoxDataModel) : ElementModel()

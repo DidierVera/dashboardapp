@@ -8,7 +8,6 @@ import com.cameparkare.dashboardapp.config.utils.AppLogger
 import com.cameparkare.dashboardapp.config.utils.IServerConnection
 import com.cameparkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.TerminalResponseDto
-import com.google.gson.Gson
 import com.microsoft.signalr.HubConnection
 import com.microsoft.signalr.HubConnectionBuilder
 import com.microsoft.signalr.HubConnectionState
@@ -17,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 
 
 class SignalRService(
@@ -41,7 +41,7 @@ class SignalRService(
 
                 hubConnection.on("SendDto", { result ->
 
-                    appLogger.trackLog("connection DATA-Response: ", Gson().toJson(result))
+                    appLogger.trackLog("connection DATA-Response: ", Json.encodeToString(result))
                     onSignalRResult.invoke(ServiceResult.Success(result))
                 }, TerminalResponseDto::class.java)
 
