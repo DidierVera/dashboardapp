@@ -40,16 +40,13 @@ kotlin {
     }
     
     sourceSets {
-        wasmJsMain.dependencies {
-        }
-
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
 
             //dependency injection
-            implementation(libs.koin.android)
-            implementation(libs.koin.androidx.compose)
+//            implementation(libs.koin.android)
+//            implementation(libs.koin.androidx.compose)
 
             //database client
             implementation(libs.room.runtime)
@@ -61,16 +58,15 @@ kotlin {
 
 
             // Retrofit for network requests
-            implementation(libs.retrofit)
-            implementation(libs.logging.interceptor)
+//            implementation(libs.retrofit)
+//            implementation(libs.logging.interceptor)
 
             //nano http server hub
-            implementation (libs.nanohttpd)
+//            implementation (libs.nanohttpd)
 
 
         }
         commonMain.dependencies {
-            implementation(libs.jetbrains.annotations23)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
@@ -80,6 +76,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
 
+//            implementation(libs.jetbrains.annotations23)
             //dependency injection
 //            implementation(libs.koin.core)
 //            implementation(libs.koin.compose)
@@ -93,12 +90,12 @@ kotlin {
 
 android {
     namespace = "com.cameparkare.dashboardapp"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.cameparkare.dashboardapp"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
+        minSdk = 21
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
     }
