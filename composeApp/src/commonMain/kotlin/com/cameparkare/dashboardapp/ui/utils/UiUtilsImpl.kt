@@ -4,25 +4,24 @@ import com.cameparkare.dashboardapp.config.dataclasses.ServiceResult
 import com.cameparkare.dashboardapp.config.utils.AppLogger
 import com.cameparkare.dashboardapp.domain.models.components.ElementModel
 import com.cameparkare.dashboardapp.domain.usecases.GetCardClassTranslations
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.jsonNull
-import kotlinx.serialization.json.jsonObject
-
+//import kotlinx.serialization.core.Json
+//import kotlinx.serialization.json.JsonArray
+//import kotlinx.serialization.json.jsonNull
+//import kotlinx.serialization.json.jsonObject
 
 class UiUtilsImpl(
     private val getCardClassTranslations: GetCardClassTranslations,
     private val appLogger: AppLogger,
     private val filesUtils: FilesUtils
-): UiUtils {
+) : UiUtils {
     override suspend fun buildDashboardItem(
         items: List<ElementModel>,
-        dits: JsonArray?,
+        dits: Map<String, String>?,
         lang: String
     ): List<ElementModel> {
         val resultList: MutableList<ElementModel> = mutableListOf()
-        for (item in items){
-            when(item){
+        for (item in items) {
+            when (item) {
                 is ElementModel.TextModel -> resultList.add(processTextElement(item, lang, dits))
                 is ElementModel.ImageModel -> resultList.add(processImageElement(item, dits))
                 is ElementModel.VideoModel -> resultList.add(processVideoElement(item, dits))
@@ -41,88 +40,65 @@ class UiUtilsImpl(
         return resultList
     }
 
-    private fun processVideoElement(videoModel: ElementModel.VideoModel, dits: JsonArray?): ElementModel {
+    private fun processVideoElement(videoModel: ElementModel.VideoModel, dits: Map<String, String>?): ElementModel {
         val dataKey = videoModel.data.dataKey
-        val defaultFile = if(videoModel.data.fileName.isNullOrEmpty()) null else {
-            filesUtils.getVideoFromDirectory("/Dashboard",
-                videoModel.data.fileName)
+        val defaultFile = videoModel.data.fileName?.takeIf { it.isNotEmpty() }?.let {
+            filesUtils.getVideoFromDirectory("/Dashboard", it)
         }
 
         return if (!dataKey.isNullOrEmpty()) {
             val ditValue = getValueFromDit(dataKey, dits, defaultFile.orEmpty())
-            videoModel.copy(data = videoModel.data.copy(
-                folderPath = validateViaTItem(ditValue = ditValue, defaultIcon = defaultFile)))
+            videoModel.copy(data = videoModel.data.copy(folderPath = validateViaTItem(ditValue, defaultFile)))
         } else {
-            if (!defaultFile.isNullOrEmpty())
-                videoModel.copy(data = videoModel.data.copy(folderPath = defaultFile))
-            else
-                videoModel
+            defaultFile?.let { videoModel.copy(data = videoModel.data.copy(folderPath = it)) } ?: videoModel
         }
     }
 
-    private suspend fun processTextElement(textModel: ElementModel.TextModel, lang: String, dits: JsonArray?): ElementModel {
+    private suspend fun processTextElement(textModel: ElementModel.TextModel, lang: String, dits: Map<String, String>?): ElementModel {
         val dataKey = textModel.data.dataKey
         val defaultText = textModel.data.defaultText
 
         return if (!dataKey.isNullOrEmpty()) {
             val ditValue = getValueFromDit(dataKey, dits, defaultText)
             val newText = validateEspecialItems(textModel.data.dashboardItemId, ditValue, lang)
-            textModel.copy(data = textModel.data.copy(defaultText = newText ?: defaultText)
-            )
+            textModel.copy(data = textModel.data.copy(defaultText = newText ?: defaultText))
         } else {
             val translations = textModel.data.translations?.get(lang)
             textModel.copy(data = textModel.data.copy(defaultText = translations ?: defaultText))
         }
     }
 
-    private fun processImageElement(imageModel: ElementModel.ImageModel, dits: JsonArray?): ElementModel {
+    private fun processImageElement(imageModel: ElementModel.ImageModel, dits: Map<String, String>?): ElementModel {
         val dataKey = imageModel.data.dataKey
-        val defaultFile = if(imageModel.data.fileName.isNullOrEmpty()) null else {
-            filesUtils.getImageFromDirectory("/Dashboard",
-                imageModel.data.fileName)
+        val defaultFile = imageModel.data.fileName?.takeIf { it.isNotEmpty() }?.let {
+            filesUtils.getImageFromDirectory("/Dashboard", it)
         }
 
         return if (!dataKey.isNullOrEmpty()) {
             val ditValue = getValueFromDit(dataKey, dits, defaultFile.orEmpty())
-            imageModel.copy(data = imageModel.data.copy(
-                folderPath = validateViaTItem(ditValue = ditValue, defaultIcon = defaultFile)))
+            imageModel.copy(data = imageModel.data.copy(folderPath = validateViaTItem(ditValue, defaultFile)))
         } else {
-            if (!defaultFile.isNullOrEmpty())
-                imageModel.copy(data = imageModel.data.copy(folderPath = defaultFile))
-            else
-                imageModel
+            defaultFile?.let { imageModel.copy(data = imageModel.data.copy(folderPath = it)) } ?: imageModel
         }
     }
-    private fun getValueFromDit(dataKey: String, dits: JsonArray?, defaultValue: String): String {
-        var dataResult = defaultValue
-        dits?.forEach { dit ->
-            val ditObj = dit.jsonObject
 
-            if (ditObj[dataKey] != null && ditObj[dataKey]?.jsonNull != null){
-                dataResult = ditObj[dataKey].toString()
-            }
-        }
-        return dataResult
+    private fun getValueFromDit(dataKey: String, dits: Map<String, String>?, defaultValue: String): String {
+        return dits?.get(dataKey) ?: defaultValue
     }
 
-    private fun validateViaTItem(ditValue: String, defaultIcon: String?): String?{
-        appLogger.trackLog("VIAT-LOGO ITEM", Json.encodeToString(ditValue))
-        return if(ditValue == "4"){
-            defaultIcon ?: "0" //Validate to show the respective default icon in each platform
+    private fun validateViaTItem(ditValue: String, defaultIcon: String?): String? {
+        appLogger.trackLog("VIAT-LOGO ITEM", ditValue)
+        return if (ditValue == "4") {
+            defaultIcon ?: "0" // Mostrar icono por defecto en cada plataforma
         } else null
     }
 
     private suspend fun validateEspecialItems(lineId: String, text: String?, lang: String): String? {
-        return when(lineId){
+        return when (lineId) {
             "entry-type-value" -> {
                 appLogger.trackLog("CARD_CLASS ITEM", "$lineId: $text")
-                val code = try {
-                    text?.toInt() ?: 0
-                }catch (e: Exception){
-                    appLogger.trackError(e)
-                    return null
-                }
-                when(val cardClassText = getCardClassTranslations.invoke(code, lang)){
+                val code = text?.toIntOrNull() ?: return null
+                when (val cardClassText = getCardClassTranslations.invoke(code, lang)) {
                     is ServiceResult.Error -> text
                     is ServiceResult.Success -> cardClassText.data?.translation
                 }
@@ -131,15 +107,14 @@ class UiUtilsImpl(
                 appLogger.trackLog("LICENSE-PLATE", "$lineId: $text")
                 insertSpaces(text)
             }
-            else -> {
-                text
-            }
+            else -> text
         }
     }
+
     private fun insertSpaces(input: String?): String? {
         val result = StringBuilder()
 
-        if(input.isNullOrBlank())return input
+        if (input.isNullOrBlank()) return input
 
         for (i in input.indices) {
             result.append(input[i])
@@ -147,7 +122,6 @@ class UiUtilsImpl(
                 val currentChar = input[i]
                 val nextChar = input[i + 1]
 
-                // Check if the current char is a digit and the next is a letter, or vice versa
                 if (currentChar.isDigit() && nextChar.isLetter() || currentChar.isLetter() && nextChar.isDigit()) {
                     result.append(' ')
                 }
