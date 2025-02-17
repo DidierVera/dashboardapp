@@ -4,4 +4,6 @@ object RoomTableNames {
     const val CARD_CLASS_TABLE_NAME = "tbl_cardClass"
     const val SCREEN_TABLE_NAME = "tbl_screen"
     const val LANGUAGE_TABLE_NAME = "tbl_language"
+    const val ELEMENTS_TABLE_NAME = "tbl_elements"
+    const val TRANSLATION_TABLE_NAME = "tbl_translations"
 }

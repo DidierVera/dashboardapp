@@ -7,7 +7,7 @@ import com.cameparkare.dashboardapp.infrastructure.source.local.entities.config.
 @Entity(tableName = SCREEN_TABLE_NAME)
 data class ScreenEntity(
     @PrimaryKey(autoGenerate = true)
-    override val localId: Long = 0,
+    val localId: Long = 0,
     val dispatchCode: Int,
     val screenId: String
-) : BaseEntity()
+)
