@@ -18,7 +18,7 @@ import java.io.InputStreamReader
 import java.net.Socket
 
 
-class SocketService(
+class TerminalSocketService(
     private val preferences: SharedPreferencesProvider,
     private val serverConnection: IServerConnection,
     private val appLogger: AppLogger

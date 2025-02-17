@@ -10,13 +10,13 @@ import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.TerminalRes
 import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.toModel
 import com.cameparkare.dashboardapp.infrastructure.source.remote.services.MockService
 import com.cameparkare.dashboardapp.infrastructure.source.remote.services.SignalRService
-import com.cameparkare.dashboardapp.infrastructure.source.remote.services.SocketService
+import com.cameparkare.dashboardapp.infrastructure.source.remote.services.TerminalSocketService
 import kotlinx.serialization.json.Json
 
 
 class TerminalConnectionImpl(
     private val appLogger: AppLogger,
-    private val socketService: SocketService,
+    private val socketService: TerminalSocketService,
     private val mockService: MockService,
     private val signalRService: SignalRService,
     private val serverConnection: IServerConnection

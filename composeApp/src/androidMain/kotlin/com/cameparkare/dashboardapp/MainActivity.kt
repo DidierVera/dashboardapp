@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
                 e.printStackTrace()
             }
         }.start()
-        val ipAddress = ConfigUI.getEthernetIpAddress() // Utiliza una función para obtener la IP del dispositivo
+        val ipAddress = ConfigUI.getEthernetIpAddress()
         println("Servidor web disponible en: http://$ipAddress:8080")
     }
 }
