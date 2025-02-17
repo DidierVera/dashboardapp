@@ -66,6 +66,8 @@ kotlin {
             implementation(libs.serialization.json)
             //nano http server hub
             implementation ("org.nanohttpd:nanohttpd:2.3.1")
+
+            implementation ("androidx.compose.material3:material3")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -125,6 +127,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.material3.android)
     debugImplementation(compose.uiTooling)
 }
 
