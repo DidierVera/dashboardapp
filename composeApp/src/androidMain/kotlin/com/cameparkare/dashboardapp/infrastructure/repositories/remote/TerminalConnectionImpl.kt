@@ -8,6 +8,7 @@ import com.cameparkare.dashboardapp.domain.models.TerminalResponseModel
 import com.cameparkare.dashboardapp.domain.repositories.remote.TerminalConnectionRepository
 import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.TerminalResponseDto
 import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.toModel
+import com.cameparkare.dashboardapp.infrastructure.source.remote.services.MockService
 import com.cameparkare.dashboardapp.infrastructure.source.remote.services.SignalRService
 import com.cameparkare.dashboardapp.infrastructure.source.remote.services.SocketService
 import kotlinx.serialization.json.Json
@@ -16,6 +17,7 @@ import kotlinx.serialization.json.Json
 class TerminalConnectionImpl(
     private val appLogger: AppLogger,
     private val socketService: SocketService,
+    private val mockService: MockService,
     private val signalRService: SignalRService,
     private val serverConnection: IServerConnection
 ): TerminalConnectionRepository {
@@ -23,14 +25,7 @@ class TerminalConnectionImpl(
         when(serverConnection.typeConnection.value){
             TypeConnectionEnum.SOCKET -> socketService.startConnection { validateResult(it, onResult) }// socket connection
             TypeConnectionEnum.SIGNAL_R -> signalRService.startConnection { validateResult(it, onResult) } // signalR connection
-            TypeConnectionEnum.MOCK -> {
-//                    mockService.startConnection {
-//                        validateResult(
-//                            it,
-//                            onResult
-//                        )
-//                    }
-                }
+            TypeConnectionEnum.MOCK -> mockService.startConnection { validateResult(it, onResult) } //mock service connection
         }
     }
 

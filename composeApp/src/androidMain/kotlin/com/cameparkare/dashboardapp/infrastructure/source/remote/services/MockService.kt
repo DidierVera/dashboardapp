@@ -13,7 +13,7 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 
 
-class MockService constructor(
+class MockService (
     private val logger: AppLogger
 ) {
     fun startConnection(onSocketResult: (ServiceResult<TerminalResponseDto>) -> Unit) {
