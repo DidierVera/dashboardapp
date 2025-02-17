@@ -67,7 +67,6 @@ kotlin {
             //nano http server hub
             implementation ("org.nanohttpd:nanohttpd:2.3.1")
 
-            implementation ("androidx.compose.material3:material3")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -78,7 +77,6 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
-            api(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.composeVM)
 
@@ -86,7 +84,7 @@ kotlin {
             implementation(libs.serialization.core)
 
             //Koin
-            //implementation("io.insert-koin:koin-core:3.2.0")
+            implementation(libs.koin.core)
         }
     }
 }
@@ -121,7 +119,7 @@ android {
         val roomVersion = "2.5.2"
         implementation("androidx.room:room-runtime:$roomVersion")
         implementation("androidx.room:room-ktx:$roomVersion")
-        kapt { "androidx.room:room-compiler:$roomVersion" }
+        //kapt { "androidx.room:room-compiler:$roomVersion" }
 
     }
 }

@@ -4,10 +4,6 @@ import com.cameparkare.dashboardapp.config.dataclasses.ServiceResult
 import com.cameparkare.dashboardapp.config.utils.AppLogger
 import com.cameparkare.dashboardapp.domain.models.components.ElementModel
 import com.cameparkare.dashboardapp.domain.usecases.GetCardClassTranslations
-//import kotlinx.serialization.core.Json
-//import kotlinx.serialization.json.JsonArray
-//import kotlinx.serialization.json.jsonNull
-//import kotlinx.serialization.json.jsonObject
 
 class UiUtilsImpl(
     private val getCardClassTranslations: GetCardClassTranslations,

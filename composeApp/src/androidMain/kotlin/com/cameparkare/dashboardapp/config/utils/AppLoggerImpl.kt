@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 
-class AppLoggerImpl constructor(private val context: Context): AppLogger {
+class AppLoggerImpl (private val context: Context): AppLogger {
 
     // Directorio donde se guardarán los logs
     private val logDirectory: File = File(
