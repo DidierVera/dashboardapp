@@ -58,14 +58,18 @@ kotlin {
             //signal R
             implementation(libs.signalr)
 // Retrofit for network requests
-            implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+            implementation (libs.retrofit)
             //implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-            implementation ("com.squareup.okhttp3:logging-interceptor:3.12.1")
+            implementation (libs.logging.interceptor)
 
             //Serialization
             implementation(libs.serialization.json)
             //nano http server hub
-            implementation ("org.nanohttpd:nanohttpd:2.3.1")
+            implementation (libs.nanohttpd)
+
+            //image
+            implementation (libs.coil)
+            implementation (libs.coil.compose)
 
         }
         commonMain.dependencies {
@@ -126,6 +130,9 @@ android {
 
 dependencies {
     implementation(libs.androidx.material3.android)
+    implementation(libs.androidx.media3.common.ktx)
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.ui)
     debugImplementation(compose.uiTooling)
 }
 

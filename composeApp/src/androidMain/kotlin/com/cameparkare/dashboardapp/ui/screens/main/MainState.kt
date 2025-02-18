@@ -9,7 +9,7 @@ import kotlinx.serialization.json.JsonArray
 data class MainState (
     val currentLang: String = "",
     val newItems: List<ElementModel> = emptyList(),
-    val ditsUI: JsonArray? = null,
+    val ditsUI: Map<String, String>? = null,
     val translations: List<String> = emptyList(),
     val statusConnection: Boolean = false,
     val textSizeScale: Int = 10,

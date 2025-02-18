@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.cameparkare.dashboardapp.infrastructure.source.remote.services.WebAppServer
+import com.cameparkare.dashboardapp.ui.screens.main.MainScreen
 import com.cameparkare.dashboardapp.ui.theme.DashboardAppTheme
 import com.cameparkare.dashboardapp.ui.utils.ConfigUI
 import java.io.File
@@ -32,7 +33,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    //MainScreen()
+                    MainScreen()
                 }
             }
         }
@@ -76,5 +77,5 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun AppAndroidPreview() {
-    App()
+    MainScreen()
 }
