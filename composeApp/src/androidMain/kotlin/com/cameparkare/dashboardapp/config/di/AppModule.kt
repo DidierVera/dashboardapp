@@ -24,15 +24,14 @@ val appModule = module {
     singleOf(::FilesUtilsImpl) { bind<FilesUtils>() }
     singleOf(::SharedPreferencesWrapper) { bind<SharedPreferencesProvider>() }
     singleOf(::AppLoggerImpl) { bind<AppLogger>() }
-
+    singleOf(::GetCardClassTranslationsImpl) { bind< GetCardClassTranslations>() }
     viewModelOf(::MainViewModel)
     factory { getPlatform() }
 }
 
 val useCasesModule = module {
-    singleOf(::GetCardClassTranslationsImpl) { bind< GetCardClassTranslations>() }
+    //singleOf(::GetCardClassTranslationsImpl) { bind< GetCardClassTranslations>() } //single<GetCardClassTranslations> { GetCardClassTranslationsImpl(get(), get()) }
 }
-
 val repositoryModule = module {
     singleOf(::TerminalConnectionImpl) { bind<TerminalConnectionRepository>() }
 }

@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 
 class MainViewModel (
 //    private val initConfiguration: InitConfiguration,
-    private val cardClassConfiguration: GetCardClassTranslations,
+    //private val cardClassConfiguration: GetCardClassTranslations,
 //    private val startParkingConnection: StartSocketConnection,
 //    private val getLanguagesByDispatcher: GetLanguagesByDispatcher,
 //    private val getScreenIdByDispatcher: GetScreenIdByDispatcher,
