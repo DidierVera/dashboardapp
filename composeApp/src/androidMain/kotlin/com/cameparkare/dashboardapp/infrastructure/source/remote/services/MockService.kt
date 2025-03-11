@@ -2,6 +2,7 @@ package com.cameparkare.dashboardapp.infrastructure.source.remote.services
 
 import com.cameparkare.dashboardapp.config.dataclasses.ServiceResult
 import com.cameparkare.dashboardapp.config.utils.AppLogger
+import com.cameparkare.dashboardapp.config.utils.IServerConnection
 import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.common.DialogResponseDto
 import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.TerminalResponseDto
 import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.common.TypeResponseDto
@@ -14,6 +15,7 @@ import kotlinx.serialization.json.JsonElement
 
 
 class MockService (
+    private val serverConnection: IServerConnection,
     private val logger: AppLogger
 ) {
     fun startConnection(onSocketResult: (ServiceResult<TerminalResponseDto>) -> Unit) {
@@ -24,9 +26,26 @@ class MockService (
                 try {
                     logger.trackLog("com.came.parkare.dashboardapp.Mock", "Inicio de aplicación conexión MOCK")
                     while (true){
+                        serverConnection.setStatusConnection(true)
+                        Thread.sleep((1000L..8000).random())
                         //IDLE (rest screen)
-                        Thread.sleep(1250)
                         var result = TerminalResponseDto(
+                            dialog = DialogResponseDto(
+                                dialogNumber = 0,
+                                dialogName = "DLG_BOOT"
+                            ),
+                            dtoVersion = 0,
+                            terminalNr = 2,
+                            dtoType = TypeResponseDto(
+                                dtoType = 0,
+                                dtoName = "DtoDialog"
+                            ),
+                            ditsTUI = null
+                        )
+                        onSocketResult.invoke(ServiceResult.Success(result))
+                        Thread.sleep((1000L..8000).random())
+                        //IDLE (rest screen)
+                        result = TerminalResponseDto(
                             dialog = DialogResponseDto(
                                 dialogNumber = 5,
                                 dialogName = "IDLE"
@@ -37,10 +56,47 @@ class MockService (
                                 dtoType = 0,
                                 dtoName = "DtoDialog"
                             ),
-                            ditsTUI =  JsonArray(emptyList())
+                            ditsTUI = getIdleJsonDit()
                         )
                         onSocketResult.invoke(ServiceResult.Success(result))
-                        Thread.sleep(7000)
+                        Thread.sleep((1000L..8000).random())
+                        //MOCK DISCONNECTED(rest screen)
+                        serverConnection.setStatusConnection(false)
+                        Thread.sleep((1000L..8000).random())
+                        serverConnection.setStatusConnection(true)
+                        //DLG_OUT_SERVICE
+                        result = TerminalResponseDto(
+                            dialog = DialogResponseDto(
+                                dialogNumber = 6,
+                                dialogName = "DLG_OUT_SERVICE"
+                            ),
+                            dtoVersion = 0,
+                            terminalNr = 2,
+                            dtoType = TypeResponseDto(
+                                dtoType = 0,
+                                dtoName = "DtoDialog"
+                            ),
+                            ditsTUI = null
+                        )
+                        onSocketResult.invoke(ServiceResult.Success(result))
+                        Thread.sleep((1000L..8000).random())
+                        //DLG_PARKING_COMPLETED
+                        result = TerminalResponseDto(
+                            dialog = DialogResponseDto(
+                                dialogNumber = 7,
+                                dialogName = "DLG_PARKING_COMPLETED"
+                            ),
+                            dtoVersion = 0,
+                            terminalNr = 2,
+                            dtoType = TypeResponseDto(
+                                dtoType = 0,
+                                dtoName = "DtoDialog"
+                            ),
+                            ditsTUI = null
+                        )
+                        onSocketResult.invoke(ServiceResult.Success(result))
+                        Thread.sleep((1000L..8000).random())
+
                         //READING_PLATE
                         result = TerminalResponseDto(
                             dialog = DialogResponseDto(
@@ -53,13 +109,13 @@ class MockService (
                                 dtoType = 0,
                                 dtoName = "DtoDialog"
                             ),
-                            ditsTUI = JsonArray(emptyList())
+                            ditsTUI = null
                         )
                         onSocketResult.invoke(ServiceResult.Success(result))
-                        Thread.sleep(3500)
+                        Thread.sleep((1000L..8000).random())
 
                         //PLEASE PROCEDURE
-                        val jsonArray = getJsonDit()
+                        val jsonArray = getPleaseProceedJsonDit()
                         result = TerminalResponseDto(
                             dialog = DialogResponseDto(
                                 dialogNumber = 12,
@@ -74,7 +130,7 @@ class MockService (
                             ditsTUI = jsonArray
                         )
                         onSocketResult.invoke(ServiceResult.Success(result))
-                        Thread.sleep(7000)
+                        Thread.sleep((4000L..8000).random())
                         //USER (rest screen)
                         result = TerminalResponseDto(
                             dialog = DialogResponseDto(
@@ -87,11 +143,11 @@ class MockService (
                                 dtoType = 0,
                                 dtoName = "DtoDialog"
                             ),
-                            ditsTUI = JsonArray(emptyList())
+                            ditsTUI = jsonArray
                         )
                         onSocketResult.invoke(ServiceResult.Success(result))
-                        Thread.sleep(3500)
-                        //USER (rest screen)
+                        Thread.sleep((1000L..8000).random())
+                        //DLG_CARD_ERROR (rest screen)
                         result = TerminalResponseDto(
                             dialog = DialogResponseDto(
                                 dialogNumber = 18,
@@ -103,10 +159,58 @@ class MockService (
                                 dtoType = 0,
                                 dtoName = "DtoDialog"
                             ),
-                            ditsTUI = JsonArray(emptyList())
+                            ditsTUI = null
                         )
                         onSocketResult.invoke(ServiceResult.Success(result))
-                        Thread.sleep(3500)
+                        Thread.sleep((4000L..10000).random())
+                        //DLG_PAYMENT_REQUIRED (pendiente de pago)
+                        result = TerminalResponseDto(
+                            dialog = DialogResponseDto(
+                                dialogNumber = 36,
+                                dialogName = "DLG_PAYMENT_REQUIRED"
+                            ),
+                            dtoVersion = 0,
+                            terminalNr = 2,
+                            dtoType = TypeResponseDto(
+                                dtoType = 0,
+                                dtoName = "DtoDialog"
+                            ),
+                            ditsTUI = null
+                        )
+                        onSocketResult.invoke(ServiceResult.Success(result))
+                        Thread.sleep((1000L..8000).random())
+                        //DLG_InicioCobroActual (pendiente de pago)
+                        result = TerminalResponseDto(
+                            dialog = DialogResponseDto(
+                                dialogNumber = 89,
+                                dialogName = "DLG_InicioCobroActual"
+                            ),
+                            dtoVersion = 0,
+                            terminalNr = 2,
+                            dtoType = TypeResponseDto(
+                                dtoType = 0,
+                                dtoName = "DtoDialog"
+                            ),
+                            ditsTUI = null
+                        )
+                        onSocketResult.invoke(ServiceResult.Success(result))
+                        Thread.sleep((1000L..8000).random())
+                        //DLG_LOCKED
+                        result = TerminalResponseDto(
+                            dialog = DialogResponseDto(
+                                dialogNumber = 96,
+                                dialogName = "DLG_LOCKED"
+                            ),
+                            dtoVersion = 0,
+                            terminalNr = 2,
+                            dtoType = TypeResponseDto(
+                                dtoType = 0,
+                                dtoName = "DtoDialog"
+                            ),
+                            ditsTUI = null
+                        )
+                        onSocketResult.invoke(ServiceResult.Success(result))
+                        Thread.sleep((1000L..8000).random())
                     }
 
                 }catch (e: Exception){
@@ -117,7 +221,31 @@ class MockService (
         }
     }
 
-    private fun getJsonDit(): JsonArray {
+    private fun getIdleJsonDit(): JsonArray {
+        val jsonString = """
+            [
+                {
+                    "DitType": {
+                        "DitType": 18,
+                        "DitName": "dit_IssuerStatus"
+                    },
+                    "Version": 0,
+                    "Status": ${(0..1).random()}
+                },
+                {
+                    "DitType": {
+                        "DitType": 19,
+                        "DitName": "dit_ReaderStatus"
+                    },
+                    "Version": 0,
+                    "Status": ${(0..1).random()}
+                }
+            ]
+        """.trimIndent()
+        return Json.decodeFromString(jsonString)
+    }
+
+    private fun getPleaseProceedJsonDit(): JsonArray {
         val jsonString = """
                             [{
                                 "DitType":
@@ -164,10 +292,7 @@ class MockService (
                                     }
                             }]
                         """.trimIndent()
-
-        val jsonElement: JsonElement = Json.parseToJsonElement(jsonString)
-        return jsonElement as JsonArray
-        //return JsonParser.parseString(jsonString).asJsonArray
+        return Json.decodeFromString(jsonString)
     }
 
     private fun getRandomString(length: Int, type: Int) : String {
