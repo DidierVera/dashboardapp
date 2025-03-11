@@ -1,7 +1,9 @@
 package com.cameparkare.dashboardapp.infrastructure.source.external.dto
 
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class FtpServerConnectionDto(
     @SerialName("device-root")
     val deviceRoot: FtpConnectionDto,
@@ -9,6 +11,7 @@ data class FtpServerConnectionDto(
     val appRoot: FtpConnectionDto
 )
 
+@Serializable
 data class FtpConnectionDto (
     val password: String,
     val port: Int,

@@ -10,6 +10,7 @@ import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.ele
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.elements.TextDataDto
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.elements.VideoDataDto
 import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonClassDiscriminator
@@ -18,14 +19,18 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
+@OptIn(ExperimentalSerializationApi::class)
 @Serializable
 @JsonClassDiscriminator("element-type")
 sealed class ElementDto {
+    @Serializable
+    @SerialName("element-type")
     abstract val elementType: String
 
     @Serializable
     @SerialName("box")
     data class BoxDto(
+        @SerialName("element-type")
         override val elementType: String,
         val data: BoxDataDto
     ) : ElementDto()
@@ -33,6 +38,7 @@ sealed class ElementDto {
     @Serializable
     @SerialName("spacer")
     data class SpacerDto(
+        @SerialName("element-type")
         override val elementType: String,
         val data: SpacerDataDto
     ) : ElementDto()
@@ -40,6 +46,7 @@ sealed class ElementDto {
     @Serializable
     @SerialName("column")
     data class ColumnDto(
+        @SerialName("element-type")
         override val elementType: String,
         val data: ColumnDataDto
     ) : ElementDto()
@@ -47,6 +54,7 @@ sealed class ElementDto {
     @Serializable
     @SerialName("text")
     data class TextDto(
+        @SerialName("element-type")
         override val elementType: String,
         val data: TextDataDto
     ) : ElementDto()
@@ -54,6 +62,7 @@ sealed class ElementDto {
     @Serializable
     @SerialName("row")
     data class RowDto(
+        @SerialName("element-type")
         override val elementType: String,
         val data: RowDataDto
     ) : ElementDto()
@@ -61,6 +70,7 @@ sealed class ElementDto {
     @Serializable
     @SerialName("image")
     data class ImageDto(
+        @SerialName("element-type")
         override val elementType: String,
         val data: ImageDataDto
     ) : ElementDto()
@@ -68,13 +78,17 @@ sealed class ElementDto {
     @Serializable
     @SerialName("video")
     data class VideoDto(
+        @SerialName("element-type")
         override val elementType: String,
         val data: VideoDataDto
     ) : ElementDto()
 }
 object ElementSerializer : JsonContentPolymorphicSerializer<ElementDto>(ElementDto::class) {
     override fun selectDeserializer(element: JsonElement): DeserializationStrategy<out ElementDto> {
-        return when (val type = element.jsonObject["element-type"]?.jsonPrimitive?.content) {
+        val type = element.jsonObject["element-type"]?.jsonPrimitive?.content
+        val data = element.jsonObject["data"]
+        println(data)
+        return when (type) {
             "box" -> ElementDto.BoxDto.serializer()
             "spacer" -> ElementDto.SpacerDto.serializer()
             "column" -> ElementDto.ColumnDto.serializer()
