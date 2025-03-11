@@ -3,7 +3,7 @@ package com.cameparkare.dashboardapp.config.utils
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import com.cameparkare.dashboardapp.config.Constants.BASE_SP
+import com.cameparkare.dashboardapp.config.constants.Constants.BASE_SP
 
 
 class SharedPreferencesWrapper (context: Context) : SharedPreferencesProvider {

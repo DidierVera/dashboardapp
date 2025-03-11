@@ -1,7 +1,6 @@
-package com.cameparkare.dashboardapp.infrastructure.source.remote.dto
+package com.cameparkare.dashboardapp.infrastructure.source.remote.dto.common
 
 import kotlinx.serialization.SerialName
-
 
 data class TypeResponseDto(
     @SerialName("DtoName")

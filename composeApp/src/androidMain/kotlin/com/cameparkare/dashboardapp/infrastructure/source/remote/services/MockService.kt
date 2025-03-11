@@ -2,9 +2,9 @@ package com.cameparkare.dashboardapp.infrastructure.source.remote.services
 
 import com.cameparkare.dashboardapp.config.dataclasses.ServiceResult
 import com.cameparkare.dashboardapp.config.utils.AppLogger
-import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.DialogResponseDto
+import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.common.DialogResponseDto
 import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.TerminalResponseDto
-import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.TypeResponseDto
+import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.common.TypeResponseDto
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

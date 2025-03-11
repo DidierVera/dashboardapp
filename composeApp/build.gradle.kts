@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    kotlin("plugin.serialization") version "1.9.0" // Add this line
     kotlin("kapt")
 
 }
@@ -86,6 +87,7 @@ kotlin {
 
             //Serialization
             implementation(libs.serialization.core)
+            implementation(libs.serialization.json)
 
             //Koin
             implementation(libs.koin.core)

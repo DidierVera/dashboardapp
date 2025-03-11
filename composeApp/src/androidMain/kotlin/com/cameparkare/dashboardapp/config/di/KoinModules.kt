@@ -8,7 +8,11 @@ fun initKoin(config : KoinAppDeclaration? = null){
     startKoin {
         printLogger()
         includes(config)
-        modules(appModule, useCasesModule, repositoryModule)
+        modules(appModule,
+            useCasesModule,
+            daoModule,
+            servicesModule,
+            repositoryModule)
 
     }
 }

@@ -8,5 +8,7 @@ data class TextDataModel(
     val style: CommonStyleModel,
     val fontWeight: String,
     val dataKey: String? = null,
+    val ditTypeCode: Int? = null,
+    val validValue: Int? = null,
     val translations: Map<String, String>? = null
 )

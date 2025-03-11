@@ -1,8 +1,8 @@
 package com.cameparkare.dashboardapp.infrastructure.source.remote.services
 
 import android.util.Log
-import com.cameparkare.dashboardapp.config.Constants.SOCKET_URL
-import com.cameparkare.dashboardapp.config.Constants.TERMINAL_PORT
+import com.cameparkare.dashboardapp.config.constants.Constants.SOCKET_URL
+import com.cameparkare.dashboardapp.config.constants.Constants.TERMINAL_PORT
 import com.cameparkare.dashboardapp.config.dataclasses.ErrorTypeClass
 import com.cameparkare.dashboardapp.config.dataclasses.ServiceResult
 import com.cameparkare.dashboardapp.config.utils.AppLogger
