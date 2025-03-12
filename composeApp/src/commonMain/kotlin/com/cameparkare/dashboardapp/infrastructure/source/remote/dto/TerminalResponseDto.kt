@@ -5,6 +5,7 @@ import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.common.DitR
 import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.common.DitTypeResponseDto
 import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.common.TypeResponseDto
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonNull
@@ -14,6 +15,7 @@ import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.jsonPrimitive
 
+@Serializable
 data class TerminalResponseDto(
     @SerialName("Dialog")
     val dialog: DialogResponseDto,

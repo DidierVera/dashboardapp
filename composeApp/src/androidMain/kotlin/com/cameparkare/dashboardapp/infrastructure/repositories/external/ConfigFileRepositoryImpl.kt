@@ -18,6 +18,7 @@ import com.cameparkare.dashboardapp.config.utils.IServerConnection
 import com.cameparkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.cameparkare.dashboardapp.domain.models.ScreenModel
 import com.cameparkare.dashboardapp.domain.repositories.external.ConfigFileRepository
+import com.cameparkare.dashboardapp.domain.repositories.local.DashboardElementRepository
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.DashboardItemDto
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.ScreenDto
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.toModel
@@ -29,6 +30,7 @@ import kotlinx.coroutines.withContext
 class ConfigFileRepositoryImpl(
     private val configFileDao: ConfigFileDao,
     private val preferences: SharedPreferencesProvider,
+    private val dashboardElementRepository: DashboardElementRepository,
     private val serverConnection: IServerConnection,
     private val appLogger: AppLogger
 ): ConfigFileRepository {
@@ -89,9 +91,17 @@ class ConfigFileRepositoryImpl(
                 data.textSizeScale?.let {
                     preferences.put(TEXT_SIZE_SCALE, it)
                 }
+
+                //storage screens and elements
+                storageScreensAndElements(data.screens)
+                val screens = dashboardElementRepository.getAllScreens()
                 appLogger.trackLog("getFileConfiguration: ", "Success")
-                return ServiceResult.Success(data.screens.map { it.toModel() })
+                return ServiceResult.Success(screens)
             }
         }
+    }
+
+    private suspend fun storageScreensAndElements(screens: List<ScreenDto>) {
+        dashboardElementRepository.saveScreens(screens.map { it.toModel() })
     }
 }

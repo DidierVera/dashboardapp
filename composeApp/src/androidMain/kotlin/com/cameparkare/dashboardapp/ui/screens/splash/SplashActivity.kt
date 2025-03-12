@@ -34,7 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.cameparkare.dashboardapp.MainActivity
+import com.cameparkare.dashboardapp.ui.screens.activity.MainActivity
 import com.cameparkare.dashboardapp.R
 import com.cameparkare.dashboardapp.ui.theme.BlackColor
 import com.cameparkare.dashboardapp.ui.theme.CameBlueColor

@@ -8,9 +8,8 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
-    kotlin("plugin.serialization") version "1.9.0" // Add this line
-    kotlin("kapt")
-
+    alias(libs.plugins.ksp)
+    kotlin("plugin.serialization") version "1.8.0"
 }
 
 kotlin {
@@ -20,7 +19,7 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         moduleName = "composeApp"
@@ -40,7 +39,7 @@ kotlin {
         }
         binaries.executable()
     }
-    
+
     sourceSets {
         configurations.all {
             resolutionStrategy.force("org.jetbrains.kotlin:kotlin-stdlib:2.0.21")
@@ -58,9 +57,8 @@ kotlin {
             implementation(libs.koin.androidx.compose)
             //signal R
             implementation(libs.signalr)
-// Retrofit for network requests
+            // Retrofit for network requests
             implementation (libs.retrofit)
-            //implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
             implementation (libs.logging.interceptor)
 
             //Serialization
@@ -71,7 +69,11 @@ kotlin {
             //image
             implementation (libs.coil)
             implementation (libs.coil.compose)
-
+            implementation (libs.ftpserver.core)
+            implementation (libs.mina.core)
+            //Room database
+            implementation (libs.room.ktx)
+            implementation (libs.room.runtime)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -104,10 +106,11 @@ android {
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.5.1"
     }
     packaging {
         resources {
+            excludes += "/META-INF/DEPENDENCIES"
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
@@ -116,25 +119,30 @@ android {
             isMinifyEnabled = false
         }
     }
+    ksp {
+        arg("room.schemaLocation", "$projectDir/schemas")
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
     dependencies {
-        // Room database
-        val roomVersion = "2.5.2"
-        implementation("androidx.room:room-runtime:$roomVersion")
-        implementation("androidx.room:room-ktx:$roomVersion")
-        //kapt { "androidx.room:room-compiler:$roomVersion" }
+        // Room dependencies for Android
+        //implementation("androidx.room:room-runtime:2.5.2")
+        //implementation("androidx.room:room-ktx:2.5.2")
 
+        // KSP dependency for Room
+        ksp("androidx.room:room-compiler:2.5.2")
     }
 }
 
 dependencies {
+    add("kspAndroid", "com.google.devtools.ksp:symbol-processing-api:1.9.0-1.0.13")
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.media3.common.ktx)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)
     debugImplementation(compose.uiTooling)
+
 }
 

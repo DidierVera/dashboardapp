@@ -84,7 +84,7 @@ sealed class ElementDto {
     ) : ElementDto()
 }
 object ElementSerializer : JsonContentPolymorphicSerializer<ElementDto>(ElementDto::class) {
-    override fun selectDeserializer(element: JsonElement): DeserializationStrategy<out ElementDto> {
+    override fun selectDeserializer(element: JsonElement): DeserializationStrategy<ElementDto> {
         val type = element.jsonObject["element-type"]?.jsonPrimitive?.content
         val data = element.jsonObject["data"]
         println(data)

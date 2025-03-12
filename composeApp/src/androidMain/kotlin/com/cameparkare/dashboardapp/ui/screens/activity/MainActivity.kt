@@ -1,8 +1,11 @@
-package com.cameparkare.dashboardapp
+package com.cameparkare.dashboardapp.ui.screens.activity
 
 import android.os.Bundle
+import android.os.Environment
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -13,25 +16,44 @@ import com.cameparkare.dashboardapp.infrastructure.source.remote.services.WebApp
 import com.cameparkare.dashboardapp.ui.screens.main.MainScreen
 import com.cameparkare.dashboardapp.ui.theme.DashboardAppTheme
 import com.cameparkare.dashboardapp.ui.utils.ConfigUI
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
 
 class MainActivity : ComponentActivity() {
+
+    private val viewModel: MainActivityViewModel by viewModels()
     private var webAppServer:  WebAppServer? = null
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     override fun onStart() {
         super.onStart()
         ConfigUI.hideSystemUI(this)
+        startFTPServer()
         setContent()
+    }
+
+    private fun startFTPServer() {
+        coroutineScope.launch {
+            // Start the first FTP server (port 8888, app data directory)
+            val appDataDir = getExternalFilesDir(null)!!.absolutePath
+            //viewModel.startAppFtpServer(appDataDir)
+
+            // Start the second FTP server (port 2121, root directory)
+            val rootDir = Environment.getExternalStorageDirectory().absolutePath
+            //viewModel.startDeviceFtpServer(rootDir)
+        }
     }
 
     private fun setContent() {
         setContent {
             DashboardAppTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(
+                androidx.compose.material3.Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.background
                 ) {
                     MainScreen()
                 }
@@ -69,8 +91,8 @@ class MainActivity : ComponentActivity() {
                 e.printStackTrace()
             }
         }.start()
-        val ipAddress = ConfigUI.getEthernetIpAddress()
-        println("Servidor web disponible en: http://$ipAddress:8080")
+        val ipAddress = ConfigUI.getEthernetIpAddress() // Utiliza una función para obtener la IP del dispositivo
+        Toast.makeText(this, "Servidor web: http://$ipAddress:8080", Toast.LENGTH_SHORT).show()
     }
 }
 
