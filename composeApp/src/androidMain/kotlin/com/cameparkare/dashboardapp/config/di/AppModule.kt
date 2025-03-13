@@ -83,11 +83,11 @@ val databaseModules = module {
             .fallbackToDestructiveMigration()
             .build()
     }
-
-    single {
-        val database = get<AppDatabase>()
-        database.elementDao()
-    }
+//
+//    single {
+//        val database = get<AppDatabase>()
+//        database.elementDao()
+//    }
 
     single {
         val database = get<AppDatabase>()
