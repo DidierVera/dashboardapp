@@ -3,17 +3,15 @@ package com.cameparkare.dashboardapp.ui.utils
 import com.cameparkare.dashboardapp.config.utils.AppLogger
 import com.cameparkare.dashboardapp.domain.models.components.ElementModel
 import com.cameparkare.dashboardapp.domain.models.terminal.DitResponseModel
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonPrimitive
 
 class UiUtilsImpl(
     private val appLogger: AppLogger,
     private val filesUtils: FilesUtils
 ) : UiUtils {
-    override suspend fun buildDashboardItem(
-        items: List<ElementModel>,
-        dits: List<DitResponseModel>?,
-        lang: String
-    ): List<ElementModel> {
+    override suspend fun buildDashboardItem(items: List<ElementModel>, dits: List<DitResponseModel>?, lang: String): List<ElementModel> {
         val resultList: MutableList<ElementModel> = mutableListOf()
         for (item in items) {
             when (item) {
@@ -94,7 +92,7 @@ class UiUtilsImpl(
         }
     }
 
-    private suspend fun processTextElement(textModel: ElementModel.TextModel, lang: String, dits: List<DitResponseModel>?): ElementModel {
+    private fun processTextElement(textModel: ElementModel.TextModel, lang: String, dits: List<DitResponseModel>?): ElementModel {
         val dataKey = textModel.data.dataKey
         val defaultText = textModel.data.defaultText
         val ditTypeCode = textModel.data.ditTypeCode
@@ -119,22 +117,27 @@ class UiUtilsImpl(
             else -> validateEspecialItems(textModel.data.dashboardItemId, ditValue)
         }
 
-        // Return the updated TextDto
+        // Return the updated TextModel
         return textModel.copy(data = textModel.data.copy(defaultText = newText ?: defaultText))
     }
 
     private fun processImageElement(imageModel: ElementModel.ImageModel, dits: List<DitResponseModel>?): ElementModel {
         val dataKey = imageModel.data.dataKey
         val ditTypeCode = imageModel.data.ditTypeCode
-        val defaultFile = imageModel.data.fileName?.takeIf { it.isNotEmpty() }?.let {
-            filesUtils.getImageFromDirectory("/Dashboard", it)
+        val defaultFile = if(imageModel.data.fileName.isNullOrEmpty()) null else {
+            filesUtils.getImageFromDirectory("/Dashboard",
+                imageModel.data.fileName)
         }
 
         return if (!dataKey.isNullOrEmpty()) {
             val ditValue = getValueFromDit(dataKey, ditTypeCode, dits, defaultFile.orEmpty())
-            imageModel.copy(data = imageModel.data.copy(folderPath = validateViaTItem(ditValue, defaultFile)))
+            imageModel.copy(data = imageModel.data.copy(
+                folderPath = validateViaTItem(ditValue = ditValue, defaultIcon = defaultFile)))
         } else {
-            defaultFile?.let { imageModel.copy(data = imageModel.data.copy(folderPath = it)) } ?: imageModel
+            if (!defaultFile.isNullOrEmpty())
+                imageModel.copy(data = imageModel.data.copy(folderPath = defaultFile))
+            else
+                imageModel
         }
     }
 
@@ -147,9 +150,15 @@ class UiUtilsImpl(
             if(ditTypeCode == dit.ditType.ditTypeCode){
                 val ditObj = dit.additionalProperties
 
-                if (ditObj != null){
-                    if (ditObj.get(dataKey) != null && (ditObj.get(dataKey) is JsonNull)){
-                        dataResult = ditObj.get(dataKey).toString()
+                if (ditObj != null) {
+                    val value = ditObj[dataKey]
+                    if (value != null && value !is JsonNull) {
+                        // Decode the JSON value to a raw string
+                        dataResult = when (value) {
+                            is JsonPrimitive -> value.content // Extract the raw content
+                            else -> Json.encodeToString(value) // Fallback for other JSON types
+                        }
+                        println("Result dits obj === $dataResult")
                     }
                 }
             }
@@ -157,10 +166,9 @@ class UiUtilsImpl(
         return dataResult
     }
 
-    private fun validateViaTItem(ditValue: String, defaultIcon: String?): String? {
-        appLogger.trackLog("VIAT-LOGO ITEM", ditValue)
-        return if (ditValue == "4") {
-            defaultIcon ?: "0" // Mostrar icono por defecto en cada plataforma
+    private fun validateViaTItem(ditValue: String, defaultIcon: String?): String?{
+        return if(ditValue == "4"){
+            defaultIcon ?: "default_via-t_icon"
         } else null
     }
 
@@ -178,7 +186,7 @@ class UiUtilsImpl(
     private fun insertSpaces(input: String?): String? {
         val result = StringBuilder()
 
-        if (input.isNullOrBlank()) return input
+        if(input.isNullOrBlank())return input
 
         for (i in input.indices) {
             result.append(input[i])
@@ -186,6 +194,7 @@ class UiUtilsImpl(
                 val currentChar = input[i]
                 val nextChar = input[i + 1]
 
+                // Check if the current char is a digit and the next is a letter, or vice versa
                 if (currentChar.isDigit() && nextChar.isLetter() || currentChar.isLetter() && nextChar.isDigit()) {
                     result.append(' ')
                 }

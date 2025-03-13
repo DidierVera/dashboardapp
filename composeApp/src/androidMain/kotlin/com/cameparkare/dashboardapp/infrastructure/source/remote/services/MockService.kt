@@ -27,7 +27,7 @@ class MockService (
                     logger.trackLog("com.came.parkare.dashboardapp.Mock", "Inicio de aplicación conexión MOCK")
                     while (true){
                         serverConnection.setStatusConnection(true)
-                        Thread.sleep((1000L..8000).random())
+                        //Thread.sleep((1000L..8000).random())
                         //IDLE (rest screen)
                         var result = TerminalResponseDto(
                             dialog = DialogResponseDto(
@@ -42,8 +42,8 @@ class MockService (
                             ),
                             ditsTUI = null
                         )
-                        onSocketResult.invoke(ServiceResult.Success(result))
-                        Thread.sleep((1000L..8000).random())
+                        //onSocketResult.invoke(ServiceResult.Success(result))
+                        //Thread.sleep((1000L..8000).random())
                         //IDLE (rest screen)
                         result = TerminalResponseDto(
                             dialog = DialogResponseDto(
@@ -58,11 +58,11 @@ class MockService (
                             ),
                             ditsTUI = getIdleJsonDit()
                         )
-                        onSocketResult.invoke(ServiceResult.Success(result))
-                        Thread.sleep((1000L..8000).random())
+                        //onSocketResult.invoke(ServiceResult.Success(result))
+                        //Thread.sleep((1000L..8000).random())
                         //MOCK DISCONNECTED(rest screen)
                         serverConnection.setStatusConnection(false)
-                        Thread.sleep((1000L..8000).random())
+                        //Thread.sleep((1000L..8000).random())
                         serverConnection.setStatusConnection(true)
                         //DLG_OUT_SERVICE
                         result = TerminalResponseDto(
@@ -78,8 +78,8 @@ class MockService (
                             ),
                             ditsTUI = null
                         )
-                        onSocketResult.invoke(ServiceResult.Success(result))
-                        Thread.sleep((1000L..8000).random())
+                        //onSocketResult.invoke(ServiceResult.Success(result))
+                        //Thread.sleep((1000L..8000).random())
                         //DLG_PARKING_COMPLETED
                         result = TerminalResponseDto(
                             dialog = DialogResponseDto(
@@ -94,8 +94,8 @@ class MockService (
                             ),
                             ditsTUI = null
                         )
-                        onSocketResult.invoke(ServiceResult.Success(result))
-                        Thread.sleep((1000L..8000).random())
+                        //onSocketResult.invoke(ServiceResult.Success(result))
+                        //Thread.sleep((1000L..8000).random())
 
                         //READING_PLATE
                         result = TerminalResponseDto(
@@ -111,8 +111,8 @@ class MockService (
                             ),
                             ditsTUI = null
                         )
-                        onSocketResult.invoke(ServiceResult.Success(result))
-                        Thread.sleep((1000L..8000).random())
+                        //onSocketResult.invoke(ServiceResult.Success(result))
+                        //Thread.sleep((1000L..8000).random())
 
                         //PLEASE PROCEDURE
                         val jsonArray = getPleaseProceedJsonDit()
@@ -145,7 +145,7 @@ class MockService (
                             ),
                             ditsTUI = jsonArray
                         )
-                        onSocketResult.invoke(ServiceResult.Success(result))
+                        //onSocketResult.invoke(ServiceResult.Success(result))
                         Thread.sleep((1000L..8000).random())
                         //DLG_CARD_ERROR (rest screen)
                         result = TerminalResponseDto(
@@ -161,8 +161,8 @@ class MockService (
                             ),
                             ditsTUI = null
                         )
-                        onSocketResult.invoke(ServiceResult.Success(result))
-                        Thread.sleep((4000L..10000).random())
+                        //onSocketResult.invoke(ServiceResult.Success(result))
+                        //Thread.sleep((4000L..10000).random())
                         //DLG_PAYMENT_REQUIRED (pendiente de pago)
                         result = TerminalResponseDto(
                             dialog = DialogResponseDto(
@@ -177,8 +177,8 @@ class MockService (
                             ),
                             ditsTUI = null
                         )
-                        onSocketResult.invoke(ServiceResult.Success(result))
-                        Thread.sleep((1000L..8000).random())
+                        //onSocketResult.invoke(ServiceResult.Success(result))
+                        //Thread.sleep((1000L..8000).random())
                         //DLG_InicioCobroActual (pendiente de pago)
                         result = TerminalResponseDto(
                             dialog = DialogResponseDto(
@@ -193,8 +193,8 @@ class MockService (
                             ),
                             ditsTUI = null
                         )
-                        onSocketResult.invoke(ServiceResult.Success(result))
-                        Thread.sleep((1000L..8000).random())
+                        //onSocketResult.invoke(ServiceResult.Success(result))
+                        //Thread.sleep((1000L..8000).random())
                         //DLG_LOCKED
                         result = TerminalResponseDto(
                             dialog = DialogResponseDto(
@@ -209,8 +209,8 @@ class MockService (
                             ),
                             ditsTUI = null
                         )
-                        onSocketResult.invoke(ServiceResult.Success(result))
-                        Thread.sleep((1000L..8000).random())
+                        //onSocketResult.invoke(ServiceResult.Success(result))
+                        //Thread.sleep((1000L..8000).random())
                     }
 
                 }catch (e: Exception){

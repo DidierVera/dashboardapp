@@ -30,7 +30,7 @@ import org.koin.androidx.compose.koinViewModel
 fun MainScreen() {
     Box(Modifier.fillMaxSize()) {
         LoadBackground()
-            NetworkIndicatorView(Modifier.padding(4.dp))
+        NetworkIndicatorView(Modifier.padding(4.dp))
         UpdateDataByLang()
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.Bottom),
@@ -51,6 +51,7 @@ private fun UpdateDataByLang(
         viewModel.getTranslationText(state.currentLang)
     }
 }
+
 @Composable
 private fun LoadBackground(
     viewModel: MainViewModel = koinViewModel()

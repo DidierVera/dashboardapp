@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cameparkare.dashboardapp.domain.models.components.ElementModel
@@ -62,23 +63,25 @@ fun BuildComposable(elementModel: ElementModel, textSizeScale: Int): Unit {
                                 .copy(alpha = (elementModel.data.style.density / 100f))
                         )
                         .fillMaxWidth()
-                        .padding((elementModel.data.style.padding ?: 0).dp), contentAlignment = Alignment.Center
+                        .padding(((elementModel.data.style.padding ?: 1).toFloat() * scaleFactor).dp), contentAlignment = Alignment.Center
                 ) {
                     // Recursively build content Composable
                     Box(modifier = Modifier.align(Alignment.Center)) {
-                        elementModel.data.content.forEach { contentModel ->
-                            BuildComposable(contentModel, textSizeScale)
+                        elementModel.data.content.forEach { contentDto ->
+                            BuildComposable(contentDto, textSizeScale)
                         }
                     }
                 }
             }
             is ElementModel.SpacerModel -> {
-                Spacer(modifier = Modifier.size(elementModel.data.value.dp))
+                Spacer(modifier = Modifier.size((elementModel.data.value.toFloat() * scaleFactor).dp))
             }
             is ElementModel.ColumnModel -> {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(elementModel.data.spacing.dp),
+                    verticalArrangement = Arrangement.spacedBy(
+                        (elementModel.data.spacing.toFloat() * scaleFactor).dp,
+                        alignment = Alignment.CenterVertically),
                     modifier = Modifier
                         .shadow(
                             elevation = if (elementModel.data.style.hasShadow) 1.5.dp else 0.dp,
@@ -89,10 +92,10 @@ fun BuildComposable(elementModel: ElementModel, textSizeScale: Int): Unit {
                                 .copy(alpha = (elementModel.data.style.density / 100f))
                         )
                         .fillMaxWidth()
-                        .padding((elementModel.data.style.padding ?: 0).dp)
+                        .padding(((elementModel.data.style.padding ?: 1).toFloat() * scaleFactor).dp)
                 ) {
-                    elementModel.data.content.forEach { contentModel ->
-                        BuildComposable(contentModel, textSizeScale)
+                    elementModel.data.content.forEach { contentDto ->
+                        BuildComposable(contentDto, textSizeScale)
                     }
                 }
             }
@@ -105,17 +108,21 @@ fun BuildComposable(elementModel: ElementModel, textSizeScale: Int): Unit {
                 val textSize = (elementModel.data.textSize.toFloat() * scaleFactor)
                     .coerceAtLeast((elementModel.data.textSize - 8).toFloat())
                 if (elementModel.data.dashboardItemId.contains("license-plate-value")) {
-                    LicensePlateItemStyle {
+                    println("license-plate-value==== ${elementModel.data.defaultText}")
+                    LicensePlateItemStyle { modifier ->
                         Text(
                             text = elementModel.data.defaultText,
                             fontSize = textSize.sp,
                             fontFamily = LicensePlateFont,
                             letterSpacing = 2.sp,
                             fontWeight = weight,
+                            textAlign = TextAlign.Center,
                             color = Color(android.graphics.Color.parseColor(elementModel.data.textColor)),
-                            modifier = Modifier.padding((elementModel.data.style.padding ?: 0).dp)
+                            modifier = modifier.padding(0.dp, 30.dp, 0.dp, 0.dp)
+                                .padding(((elementModel.data.style.padding ?: 1).toFloat() * scaleFactor).dp)
                         )
                     }
+
                 } else {
                     val animatedText = animateFloatAsState(targetValue = scaleFactor)
                     Text(
@@ -123,8 +130,9 @@ fun BuildComposable(elementModel: ElementModel, textSizeScale: Int): Unit {
                         fontSize = textSize.sp * animatedText.value,
                         fontFamily = Rubik,
                         fontWeight = weight,
+                        textAlign = TextAlign.Center,
                         color = Color(android.graphics.Color.parseColor(elementModel.data.textColor)),
-                        modifier = Modifier.padding((elementModel.data.style.padding ?: 0).dp)
+                        modifier = Modifier.padding(((elementModel.data.style.padding ?: 1).toFloat() * scaleFactor).dp)
                     )
                 }
             }
@@ -133,7 +141,7 @@ fun BuildComposable(elementModel: ElementModel, textSizeScale: Int): Unit {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(
-                        elementModel.data.spacing.dp,
+                        (elementModel.data.spacing.toFloat() * scaleFactor).dp,
                         alignment = Alignment.CenterHorizontally
                     ),
                     modifier = Modifier
@@ -146,10 +154,10 @@ fun BuildComposable(elementModel: ElementModel, textSizeScale: Int): Unit {
                                 .copy(alpha = (elementModel.data.style.density / 100f))
                         )
                         .fillMaxWidth()
-                        .padding((elementModel.data.style.padding ?: 0).dp)
+                        .padding(((elementModel.data.style.padding ?: 1).toFloat() * scaleFactor).dp)
                 ) {
-                    elementModel.data.content.forEach { contentModel ->
-                        BuildComposable(contentModel, textSizeScale)
+                    elementModel.data.content.forEach { contentDto ->
+                        BuildComposable(contentDto, textSizeScale)
                     }
                 }
             }
@@ -161,7 +169,8 @@ fun BuildComposable(elementModel: ElementModel, textSizeScale: Int): Unit {
                         contentDescription = null,
                         contentScale = ContentScale.FillHeight,
                         modifier = Modifier
-                            .size((elementModel.data.style.width ?: 0).dp, (elementModel.data.style.height ?: 0).dp)
+                            .size(((elementModel.data.style.width ?: 1).toFloat() * scaleFactor).dp,
+                                ((elementModel.data.style.height ?: 1).toFloat() * scaleFactor).dp)
                     )
                 } else Unit
             }

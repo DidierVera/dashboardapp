@@ -4,13 +4,13 @@ import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.TerminalRes
 import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.mapDitsJsonToModel
 
 data class TerminalResponseModel(
-    val dispatcherCode: Int,
+    val dispatcherCode: Long,
     val ditsTUI: List<DitResponseModel>?,
 )
 
 fun TerminalResponseDto.toModel(): TerminalResponseModel {
     return TerminalResponseModel(
-        dispatcherCode = dialog.dialogNumber,
+        dispatcherCode = dialog.dialogNumber.toLong(),
         ditsTUI = mapDitsJsonToModel(ditsTUI).map { it.toModel() }
     )
 }

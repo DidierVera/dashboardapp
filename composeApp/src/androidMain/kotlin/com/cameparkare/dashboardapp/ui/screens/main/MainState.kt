@@ -7,7 +7,6 @@ import com.cameparkare.dashboardapp.domain.models.components.ElementModel
 import com.cameparkare.dashboardapp.domain.models.terminal.DitResponseModel
 import kotlinx.serialization.json.JsonArray
 
-
 data class MainState (
     val currentLang: String = "",
     val newItems: List<ElementModel> = emptyList(),

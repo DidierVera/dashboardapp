@@ -19,11 +19,10 @@ import com.cameparkare.dashboardapp.config.utils.AppLogger
 import com.cameparkare.dashboardapp.config.utils.IServerConnection
 import com.cameparkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.cameparkare.dashboardapp.domain.models.ScreenModel
-import com.cameparkare.dashboardapp.domain.models.components.CommonStyleModel
 import com.cameparkare.dashboardapp.domain.models.components.ElementModel
-import com.cameparkare.dashboardapp.domain.models.components.TextDataModel
 import com.cameparkare.dashboardapp.domain.models.terminal.TerminalResponseModel
 import com.cameparkare.dashboardapp.domain.usecases.FtpServerConfiguration
+import com.cameparkare.dashboardapp.domain.usecases.GetScreenByDispatcher
 import com.cameparkare.dashboardapp.domain.usecases.InitConfiguration
 import com.cameparkare.dashboardapp.domain.usecases.StartSocketConnection
 import com.cameparkare.dashboardapp.ui.utils.FilesUtils
@@ -47,10 +46,8 @@ import kotlin.coroutines.cancellation.CancellationException
 class MainViewModel (
     private val initConfiguration: InitConfiguration,
     private val ftpServerConfiguration: FtpServerConfiguration,
-//    private val cardClassConfiguration: GetCardClassTranslations,
     private val startParkingConnection: StartSocketConnection,
-//    private val getLanguagesByDispatcher: GetLanguagesByDispatcher,
-//    private val getScreenIdByDispatcher: GetScreenIdByDispatcher,
+    private val getScreenByDispatcher: GetScreenByDispatcher,
     private val ditsUtils: UiUtils,
     private val preferences: SharedPreferencesProvider,
     private val appLogger: AppLogger,
@@ -81,18 +78,8 @@ class MainViewModel (
         }catch (e: Exception) {
             appLogger.trackError(e)
             val dashboardItems = listOf(
-                ElementModel.TextModel(
-                data = TextDataModel(
-                    defaultText = e.message.toString(),
-                    dashboardItemId = "",
-                    fontWeight = "Bold",
-                    textColor = "#000000",
-                    translations = mapOf(Pair("es",e.message.toString())),
-                    textSize = 24,
-                    style = CommonStyleModel(
-                        padding = 0
-                    ))
-            ))
+                DefaultDits.getElementText(text = e.message.toString(),fontWeight = "Bold")
+            )
 
             _itemsState.update { it.copy(newItems = dashboardItems) }
         }
@@ -101,8 +88,9 @@ class MainViewModel (
 
     private fun checkBackgroundImage() {
         val backgroundImage = filesUtils.getImageFromDirectory(
-            "${Environment.DIRECTORY_PICTURES}/Dashboard",
+            "/Dashboard",
             "background-image")
+        println("check the background image: $backgroundImage")
         if (!backgroundImage.isNullOrBlank()){
             appLogger.trackLog("BACKGROUND_IMAGE", backgroundImage)
             _backgroundState.update { backgroundImage }
@@ -123,10 +111,10 @@ class MainViewModel (
                     if(initConfigResult.data?.any { it.dispatcherCode == 5L } != null){
                         _itemsState.update { it.copy(screenList = initConfigResult.data) }
                         loadScreenInformation(
-                            data = TerminalResponseModel(5, DefaultDits.idleConnected()),
-                            initConfigResult.data
+                            data = TerminalResponseModel(5, DefaultDits.idleConnected())
                         )
-                        //loadLanguages(5)
+
+                        loadLanguages()
                     }
                     loopJob = customLoop() // Start the initial loop
 
@@ -134,11 +122,27 @@ class MainViewModel (
                         when(result){
                             is ServiceResult.Error -> validateError(result.error)
                             is ServiceResult.Success -> {
-                                loadScreenInformation(result.data!!, initConfigResult.data, _itemsState.value.translations.first())
+                                loadScreenInformation(result.data!!, _itemsState.value.translations.first())
                             }
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun loadLanguages(){
+        viewModelScope.launch {
+            val languages = _itemsState.value.screenList.firstOrNull {
+                it.dispatcherCode == 5L
+            }?.elements?.filterIsInstance<ElementModel.TextModel>()
+                ?.firstOrNull()?.data?.translations
+
+            _itemsState.update { state ->
+                state.copy(
+                    currentLang = languages?.keys?.first().orEmpty(),
+                    translations = languages?.keys?.toList().orEmpty()
+                )
             }
         }
     }
@@ -184,18 +188,14 @@ class MainViewModel (
     }
     private fun loadScreenInformation(
         data: TerminalResponseModel,
-        screens: List<ScreenModel>?,
-        lang: String = "es"
+        lang: String = "lang1"
     ) {
         viewModelScope.launch {
-            val screenId = "5"
-            if (screenId.isNotBlank()){
+            val screen = getScreenByDispatcher.invoke(data.dispatcherCode)
+            if (screen != null){
                 _itemsState.update { it.copy(ditsUI = data.ditsTUI) }
-                val dataToShow = screens?.find { it.dispatcherCode == data.dispatcherCode.toLong() }
-                if (dataToShow != null){
-                    val buildElements = ditsUtils.buildDashboardItem(dataToShow.elements, data.ditsTUI, lang)
-                    _itemsState.update { it.copy(newItems = buildElements) }
-                }
+                val buildElements = ditsUtils.buildDashboardItem(screen.elements, data.ditsTUI, lang)
+                _itemsState.update { it.copy(newItems = buildElements) }
 
                 // Cancel the existing loop job and wait for it to finish
                 loopJob?.cancel()
@@ -214,8 +214,7 @@ class MainViewModel (
             }
             if (!status){
                 loadScreenInformation(
-                    data = TerminalResponseModel(1005, null),
-                    _itemsState.value.screenList
+                    data = TerminalResponseModel(1005, null)
                 )
             }
         }.launchIn(viewModelScope)
@@ -251,26 +250,8 @@ class MainViewModel (
 
     private fun validateError(error: ErrorTypeClass) {
         val dashboardItems = listOf(
-            ElementModel.TextModel(
-                data = TextDataModel(
-                    defaultText = "An Error Occurred",
-                    dashboardItemId = "",
-                    fontWeight = "Bold",
-                    textColor = "#000000",
-                    translations = mapOf(Pair("es","An Error Occurred")),
-                    textSize = 24,
-                    style = CommonStyleModel(padding = 0))
-            ),
-            ElementModel.TextModel(
-                data = TextDataModel(
-                    defaultText = error.javaClass.simpleName,
-                    dashboardItemId = "",
-                    fontWeight = "Regular",
-                    textColor = "#FF5800",
-                    translations = mapOf(Pair("es",error.javaClass.simpleName)),
-                    textSize = 24,
-                    style = CommonStyleModel(padding = 0))
-            )
+            DefaultDits.getElementText(text = "An Error Occurred", fontWeight = "Bold"),
+            DefaultDits.getElementText(text = error.javaClass.simpleName, fontWeight = "Regular",textColor = "#FF5800"),
         )
         _itemsState.update { it.copy(newItems = dashboardItems) }
     }

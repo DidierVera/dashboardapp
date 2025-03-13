@@ -12,6 +12,7 @@ import com.cameparkare.dashboardapp.domain.repositories.external.FtpServerFileRe
 import com.cameparkare.dashboardapp.domain.repositories.local.DashboardElementRepository
 import com.cameparkare.dashboardapp.domain.repositories.remote.TerminalConnectionRepository
 import com.cameparkare.dashboardapp.domain.usecases.FtpServerConfiguration
+import com.cameparkare.dashboardapp.domain.usecases.GetScreenByDispatcher
 import com.cameparkare.dashboardapp.domain.usecases.InitConfiguration
 import com.cameparkare.dashboardapp.domain.usecases.StartSocketConnection
 import com.cameparkare.dashboardapp.getPlatform
@@ -56,6 +57,7 @@ val useCasesModule = module {
     factory { InitConfiguration(get(), get()) }
     factory { StartSocketConnection(get(), get()) }
     factory { FtpServerConfiguration(get(), get()) }
+    factory { GetScreenByDispatcher(get(), get()) }
 }
 val repositoryModule = module {
     singleOf(::TerminalConnectionImpl) { bind<TerminalConnectionRepository>() }

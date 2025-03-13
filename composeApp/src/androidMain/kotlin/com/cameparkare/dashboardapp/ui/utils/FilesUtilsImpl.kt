@@ -8,7 +8,8 @@ import java.io.File
 
 class FilesUtilsImpl(private val context: Context): FilesUtils {
     override fun getImageFromDirectory(folder: String, filename: String): String? {
-        val directory = Environment.getExternalStoragePublicDirectory("${Environment.DIRECTORY_PICTURES}$folder")
+        val directory = Environment.getExternalStoragePublicDirectory(
+            "${Environment.DIRECTORY_PICTURES}$folder")
         val extensions = listOf(".jpg", ".png", ".svg", ".jpeg")
         var result : String? = null
         for(ext in extensions){
