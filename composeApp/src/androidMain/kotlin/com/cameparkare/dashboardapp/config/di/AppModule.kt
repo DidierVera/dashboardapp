@@ -33,6 +33,7 @@ import com.cameparkare.dashboardapp.ui.utils.UiUtils
 import com.cameparkare.dashboardapp.ui.utils.UiUtilsImpl
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -83,12 +84,6 @@ val databaseModules = module {
             .fallbackToDestructiveMigration()
             .build()
     }
-//
-//    single {
-//        val database = get<AppDatabase>()
-//        database.elementDao()
-//    }
-
     single {
         val database = get<AppDatabase>()
         database.screenDao()

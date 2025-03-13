@@ -19,12 +19,13 @@ import com.cameparkare.dashboardapp.ui.utils.ConfigUI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.IOException
 
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: MainActivityViewModel by viewModels()
+    private val mainViewModel: MainActivityViewModel by viewModel()
     private var webAppServer:  WebAppServer? = null
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
@@ -39,11 +40,10 @@ class MainActivity : ComponentActivity() {
         coroutineScope.launch {
             // Start the first FTP server (port 8888, app data directory)
             val appDataDir = getExternalFilesDir(null)!!.absolutePath
-            //viewModel.startAppFtpServer(appDataDir)
-
+            mainViewModel.startAppFtpServer(appDataDir)
             // Start the second FTP server (port 2121, root directory)
             val rootDir = Environment.getExternalStorageDirectory().absolutePath
-            //viewModel.startDeviceFtpServer(rootDir)
+            mainViewModel.startDeviceFtpServer(rootDir)
         }
     }
 
