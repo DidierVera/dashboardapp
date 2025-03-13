@@ -9,6 +9,8 @@ import com.cameparkare.dashboardapp.infrastructure.source.local.entities.ScreenE
 interface ScreenDao {
     @Insert
     suspend fun insertScreen(screen: ScreenEntity)
+    @Insert
+    suspend fun insertAll(screens: List<ScreenEntity>): LongArray
 
     @Query("SELECT * FROM tbl_screen")
     suspend fun getAll(): List<ScreenEntity>

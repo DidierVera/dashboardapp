@@ -5,7 +5,9 @@ import com.cameparkare.dashboardapp.domain.models.components.ElementModel
 import com.cameparkare.dashboardapp.domain.models.components.TextDataModel
 import com.cameparkare.dashboardapp.infrastructure.source.local.entities.ElementEntity
 import com.cameparkare.dashboardapp.infrastructure.source.local.entities.config.MapConverter
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class TextDataEntity(
     val dashboardItemId: String,
     val defaultText: String,

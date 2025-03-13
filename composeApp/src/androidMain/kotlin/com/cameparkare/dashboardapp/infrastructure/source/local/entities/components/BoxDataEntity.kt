@@ -7,7 +7,9 @@ import com.cameparkare.dashboardapp.infrastructure.source.local.entities.Element
 import com.cameparkare.dashboardapp.infrastructure.source.local.entities.config.ElementListConverter
 import com.cameparkare.dashboardapp.infrastructure.source.local.entities.mapElementsModelToEntity
 import com.cameparkare.dashboardapp.infrastructure.source.local.entities.mapElementsEntityToModel
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class BoxDataEntity(
     val style: CommonStyleEntity,
     val dataKey: String? = null,

@@ -21,5 +21,4 @@ import com.cameparkare.dashboardapp.infrastructure.source.local.entities.config.
 @TypeConverters(ElementListConverter::class, MapConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun screenDao(): ScreenDao
-    //abstract fun elementDao(): ElementDao
 }

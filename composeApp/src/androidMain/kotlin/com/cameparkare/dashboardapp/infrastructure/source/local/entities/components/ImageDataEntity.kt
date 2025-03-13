@@ -4,7 +4,9 @@ import com.cameparkare.dashboardapp.domain.models.components.ElementModel
 import com.cameparkare.dashboardapp.domain.models.components.ImageDataModel
 import com.cameparkare.dashboardapp.infrastructure.source.local.entities.ElementEntity
 import com.cameparkare.dashboardapp.infrastructure.source.local.entities.mapElementsModelToEntity
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class ImageDataEntity(
     val dashboardItemId: String,
     val dataKey: String? = null,

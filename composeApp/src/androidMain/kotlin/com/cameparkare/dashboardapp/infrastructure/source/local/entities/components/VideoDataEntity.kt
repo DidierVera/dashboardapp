@@ -3,7 +3,9 @@ package com.cameparkare.dashboardapp.infrastructure.source.local.entities.compon
 import com.cameparkare.dashboardapp.domain.models.components.ElementModel
 import com.cameparkare.dashboardapp.domain.models.components.VideoDataModel
 import com.cameparkare.dashboardapp.infrastructure.source.local.entities.ElementEntity
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class VideoDataEntity(
     val dashboardItemId: String,
     val dataKey: String? = null,

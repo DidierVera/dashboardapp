@@ -3,8 +3,10 @@ package com.cameparkare.dashboardapp.infrastructure.source.local.entities.compon
 import com.cameparkare.dashboardapp.domain.models.components.ElementModel
 import com.cameparkare.dashboardapp.domain.models.components.SpacerDataModel
 import com.cameparkare.dashboardapp.infrastructure.source.local.entities.ElementEntity
+import kotlinx.serialization.Serializable
 
 
+@Serializable
 data class SpacerDataEntity(
     val style: CommonStyleEntity,
     val value: Int

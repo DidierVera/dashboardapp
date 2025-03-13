@@ -8,41 +8,42 @@ import com.cameparkare.dashboardapp.domain.models.components.ElementModel
 import com.cameparkare.dashboardapp.infrastructure.source.local.entities.components.*
 import com.cameparkare.dashboardapp.infrastructure.source.local.entities.config.ElementListConverter
 import com.cameparkare.dashboardapp.infrastructure.source.local.entities.config.RoomTableNames.ELEMENTS_TABLE_NAME
+import kotlinx.serialization.Serializable
 
+@Serializable
 sealed class ElementEntity {
-    abstract val type: String
+    @Serializable
     data class BoxEntity(
         val data: BoxDataEntity,
-        override val type: String = "Box"
     ) : ElementEntity()
 
+    @Serializable
     data class SpacerEntity(
         val data: SpacerDataEntity,
-        override val type: String = "Spacer"
     ) : ElementEntity()
 
+    @Serializable
     data class ColumnEntity(
         val data: ColumnDataEntity,
-        override val type: String = "Column"
     ) : ElementEntity()
 
+    @Serializable
     data class TextEntity(
         val data: TextDataEntity,
-        override val type: String = "Text"
     ) : ElementEntity()
 
+    @Serializable
     data class RowEntity(
         val data: RowDataEntity,
-        override val type: String = "Row"
     ) : ElementEntity()
 
+    @Serializable
     data class ImageEntity(
         val data: ImageDataEntity,
-        override val type: String = "Image"
     ) : ElementEntity()
 
+    @Serializable
     data class VideoEntity(
         val data: VideoDataEntity,
-        override val type: String = "Video"
     ) : ElementEntity()
 }

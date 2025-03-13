@@ -7,8 +7,10 @@ import com.cameparkare.dashboardapp.infrastructure.source.local.entities.Element
 import com.cameparkare.dashboardapp.infrastructure.source.local.entities.config.ElementListConverter
 import com.cameparkare.dashboardapp.infrastructure.source.local.entities.mapElementsEntityToModel
 import com.cameparkare.dashboardapp.infrastructure.source.local.entities.mapElementsModelToEntity
+import kotlinx.serialization.Serializable
 
 
+@Serializable
 data class ColumnDataEntity(
     val style: CommonStyleEntity,
     val spacing: Int,

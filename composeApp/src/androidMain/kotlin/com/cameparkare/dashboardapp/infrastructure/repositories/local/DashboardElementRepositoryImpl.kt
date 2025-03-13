@@ -14,9 +14,7 @@ class DashboardElementRepositoryImpl(
 ): DashboardElementRepository {
     override suspend fun saveScreens(items: List<ScreenModel>) {
         try {
-            for (screen in items){
-                screenDao.insertScreen(screen.toEntity())
-            }
+            screenDao.insertAll(items.map{it.toEntity()})
         }catch (e: Exception){
             appLogger.trackError(e)
         }
