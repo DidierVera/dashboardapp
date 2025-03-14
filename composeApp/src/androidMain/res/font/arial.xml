@@ -17,7 +17,4 @@
     <font
         android:fontStyle="normal"
         android:font="@font/mespreg" />
-    <font
-        android:fontStyle="normal"
-        android:font="@font/matricula_espanola" />
 </font-family>
