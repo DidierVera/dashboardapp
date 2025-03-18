@@ -20,6 +20,14 @@ class DashboardElementRepositoryImpl(
         }
     }
 
+    override suspend fun deleteAll() {
+        try {
+            screenDao.deleteAllScreens()
+        }catch (e: Exception) {
+            appLogger.trackError(e)
+        }
+    }
+
     override suspend fun getScreenByDispatcher(dispatcherCode: Long): ScreenModel? {
         return try {
             val entity = screenDao.getScreenByDispatcher(dispatcherCode)

@@ -11,7 +11,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonElement
 
 
 class MockService (
@@ -27,190 +26,26 @@ class MockService (
                     logger.trackLog("com.came.parkare.dashboardapp.Mock", "Inicio de aplicación conexión MOCK")
                     while (true){
                         serverConnection.setStatusConnection(true)
-                        //Thread.sleep((1000L..8000).random())
-                        //IDLE (rest screen)
-                        var result = TerminalResponseDto(
-                            dialog = DialogResponseDto(
-                                dialogNumber = 0,
-                                dialogName = "DLG_BOOT"
-                            ),
-                            dtoVersion = 0,
-                            terminalNr = 2,
-                            dtoType = TypeResponseDto(
-                                dtoType = 0,
-                                dtoName = "DtoDialog"
-                            ),
-                            ditsTUI = null
-                        )
-                        //onSocketResult.invoke(ServiceResult.Success(result))
-                        //Thread.sleep((1000L..8000).random())
-                        //IDLE (rest screen)
-                        result = TerminalResponseDto(
-                            dialog = DialogResponseDto(
-                                dialogNumber = 5,
-                                dialogName = "IDLE"
-                            ),
-                            dtoVersion = 0,
-                            terminalNr = 2,
-                            dtoType = TypeResponseDto(
-                                dtoType = 0,
-                                dtoName = "DtoDialog"
-                            ),
-                            ditsTUI = getIdleJsonDit()
-                        )
-                        //onSocketResult.invoke(ServiceResult.Success(result))
-                        //Thread.sleep((1000L..8000).random())
-                        //MOCK DISCONNECTED(rest screen)
-                        serverConnection.setStatusConnection(false)
-                        //Thread.sleep((1000L..8000).random())
-                        serverConnection.setStatusConnection(true)
-                        //DLG_OUT_SERVICE
-                        result = TerminalResponseDto(
-                            dialog = DialogResponseDto(
-                                dialogNumber = 6,
-                                dialogName = "DLG_OUT_SERVICE"
-                            ),
-                            dtoVersion = 0,
-                            terminalNr = 2,
-                            dtoType = TypeResponseDto(
-                                dtoType = 0,
-                                dtoName = "DtoDialog"
-                            ),
-                            ditsTUI = null
-                        )
-                        //onSocketResult.invoke(ServiceResult.Success(result))
-                        //Thread.sleep((1000L..8000).random())
-                        //DLG_PARKING_COMPLETED
-                        result = TerminalResponseDto(
-                            dialog = DialogResponseDto(
-                                dialogNumber = 7,
-                                dialogName = "DLG_PARKING_COMPLETED"
-                            ),
-                            dtoVersion = 0,
-                            terminalNr = 2,
-                            dtoType = TypeResponseDto(
-                                dtoType = 0,
-                                dtoName = "DtoDialog"
-                            ),
-                            ditsTUI = null
-                        )
-                        //onSocketResult.invoke(ServiceResult.Success(result))
-                        //Thread.sleep((1000L..8000).random())
-
-                        //READING_PLATE
-                        result = TerminalResponseDto(
-                            dialog = DialogResponseDto(
-                                dialogNumber = 9,
-                                dialogName = "DLG_READING_PLATE"
-                            ),
-                            dtoVersion = 0,
-                            terminalNr = 2,
-                            dtoType = TypeResponseDto(
-                                dtoType = 0,
-                                dtoName = "DtoDialog"
-                            ),
-                            ditsTUI = null
-                        )
-                        //onSocketResult.invoke(ServiceResult.Success(result))
-                        //Thread.sleep((1000L..8000).random())
-
-                        //PLEASE PROCEDURE
-                        val jsonArray = getPleaseProceedJsonDit()
-                        result = TerminalResponseDto(
-                            dialog = DialogResponseDto(
-                                dialogNumber = 12,
-                                dialogName = "DLG_PLEASE_PROCEED"
-                            ),
-                            dtoVersion = 0,
-                            terminalNr = 2,
-                            dtoType = TypeResponseDto(
-                                dtoType = 0,
-                                dtoName = "DtoDialog"
-                            ),
-                            ditsTUI = jsonArray
-                        )
+                        Thread.sleep((2000L..8000).random())
+                        val screenToShow = (1..11).random()
+                        println("Code Screen to show: $screenToShow")
+                        var result = getBootDit()
+                        when(screenToShow){
+                            1 -> result = getBootDit()//DLG_BOOT (restart screen)
+                            2 -> result = getIdleDit()//DLG_IDLE (rest screen)
+                            3 -> setOfflineMode()//MOCK DISCONNECTED(rest screen)
+                            4 -> getOutServiceDit()//DLG_OUT_SERVICE
+                            5 -> result = getParkingCompleteDit()//DLG_PARKING_COMPLETED
+                            6 -> result = getReadingPlateDit()//DLG_READING_PLATE
+                            7 -> result = getPleaseProceedDit()//DLG_PLEASE_PROCEED
+                            8 -> result = getUserDit()//USER (rest screen)
+                            9 -> result = getCardErrorDit()//DLG_CARD_ERROR (rest screen)
+                            10 -> result = getPaymentRequiredDit()//DLG_PAYMENT_REQUIRED (pendiente de pago)
+                            11 -> result = getStartCurrentBillDit()//DLG_InicioCobroActual (pendiente de pago)
+                            else -> result = getTerminalLockedDit()//DLG_LOCKED
+                        }
                         onSocketResult.invoke(ServiceResult.Success(result))
                         Thread.sleep((4000L..8000).random())
-                        //USER (rest screen)
-                        result = TerminalResponseDto(
-                            dialog = DialogResponseDto(
-                                dialogNumber = 8,
-                                dialogName = "USER"
-                            ),
-                            dtoVersion = 0,
-                            terminalNr = 2,
-                            dtoType = TypeResponseDto(
-                                dtoType = 0,
-                                dtoName = "DtoDialog"
-                            ),
-                            ditsTUI = jsonArray
-                        )
-                        //onSocketResult.invoke(ServiceResult.Success(result))
-                        Thread.sleep((1000L..8000).random())
-                        //DLG_CARD_ERROR (rest screen)
-                        result = TerminalResponseDto(
-                            dialog = DialogResponseDto(
-                                dialogNumber = 18,
-                                dialogName = "DLG_CARD_ERROR"
-                            ),
-                            dtoVersion = 0,
-                            terminalNr = 2,
-                            dtoType = TypeResponseDto(
-                                dtoType = 0,
-                                dtoName = "DtoDialog"
-                            ),
-                            ditsTUI = null
-                        )
-                        //onSocketResult.invoke(ServiceResult.Success(result))
-                        //Thread.sleep((4000L..10000).random())
-                        //DLG_PAYMENT_REQUIRED (pendiente de pago)
-                        result = TerminalResponseDto(
-                            dialog = DialogResponseDto(
-                                dialogNumber = 36,
-                                dialogName = "DLG_PAYMENT_REQUIRED"
-                            ),
-                            dtoVersion = 0,
-                            terminalNr = 2,
-                            dtoType = TypeResponseDto(
-                                dtoType = 0,
-                                dtoName = "DtoDialog"
-                            ),
-                            ditsTUI = null
-                        )
-                        //onSocketResult.invoke(ServiceResult.Success(result))
-                        //Thread.sleep((1000L..8000).random())
-                        //DLG_InicioCobroActual (pendiente de pago)
-                        result = TerminalResponseDto(
-                            dialog = DialogResponseDto(
-                                dialogNumber = 89,
-                                dialogName = "DLG_InicioCobroActual"
-                            ),
-                            dtoVersion = 0,
-                            terminalNr = 2,
-                            dtoType = TypeResponseDto(
-                                dtoType = 0,
-                                dtoName = "DtoDialog"
-                            ),
-                            ditsTUI = null
-                        )
-                        //onSocketResult.invoke(ServiceResult.Success(result))
-                        //Thread.sleep((1000L..8000).random())
-                        //DLG_LOCKED
-                        result = TerminalResponseDto(
-                            dialog = DialogResponseDto(
-                                dialogNumber = 96,
-                                dialogName = "DLG_LOCKED"
-                            ),
-                            dtoVersion = 0,
-                            terminalNr = 2,
-                            dtoType = TypeResponseDto(
-                                dtoType = 0,
-                                dtoName = "DtoDialog"
-                            ),
-                            ditsTUI = null
-                        )
-                        //onSocketResult.invoke(ServiceResult.Success(result))
-                        //Thread.sleep((1000L..8000).random())
                     }
 
                 }catch (e: Exception){
@@ -219,6 +54,188 @@ class MockService (
                 }
             }.start()
         }
+    }
+
+    private fun getTerminalLockedDit(): TerminalResponseDto {
+        return TerminalResponseDto(
+                dialog = DialogResponseDto(
+                    dialogNumber = 96,
+                    dialogName = "DLG_LOCKED"
+                ),
+        dtoVersion = 0,
+        terminalNr = 2,
+        dtoType = TypeResponseDto(
+            dtoType = 0,
+            dtoName = "DtoDialog"
+        ),
+        ditsTUI = null
+        )
+    }
+
+    private fun getStartCurrentBillDit(): TerminalResponseDto {
+        return TerminalResponseDto(
+            dialog = DialogResponseDto(
+                dialogNumber = 89,
+                dialogName = "DLG_InicioCobroActual"
+            ),
+            dtoVersion = 0,
+            terminalNr = 2,
+            dtoType = TypeResponseDto(
+                dtoType = 0,
+                dtoName = "DtoDialog"
+            ),
+            ditsTUI = null
+        )
+    }
+
+    private fun getPaymentRequiredDit(): TerminalResponseDto {
+        return TerminalResponseDto(
+            dialog = DialogResponseDto(
+                dialogNumber = 36,
+                dialogName = "DLG_PAYMENT_REQUIRED"
+            ),
+            dtoVersion = 0,
+            terminalNr = 2,
+            dtoType = TypeResponseDto(
+                dtoType = 0,
+                dtoName = "DtoDialog"
+            ),
+            ditsTUI = null
+        )
+    }
+
+    private fun getCardErrorDit(): TerminalResponseDto {
+        return TerminalResponseDto(
+            dialog = DialogResponseDto(
+                dialogNumber = 18,
+                dialogName = "DLG_CARD_ERROR"
+            ),
+            dtoVersion = 0,
+            terminalNr = 2,
+            dtoType = TypeResponseDto(
+                dtoType = 0,
+                dtoName = "DtoDialog"
+            ),
+            ditsTUI = null
+        )
+    }
+
+    private fun getUserDit(): TerminalResponseDto {
+        return TerminalResponseDto(
+            dialog = DialogResponseDto(
+                dialogNumber = 8,
+                dialogName = "USER"
+            ),
+            dtoVersion = 0,
+            terminalNr = 2,
+            dtoType = TypeResponseDto(
+                dtoType = 0,
+                dtoName = "DtoDialog"
+            ),
+            ditsTUI = getPleaseProceedJsonDit()
+        )
+    }
+
+    private fun getPleaseProceedDit(): TerminalResponseDto {
+        return TerminalResponseDto(
+            dialog = DialogResponseDto(
+                dialogNumber = 12,
+                dialogName = "DLG_PLEASE_PROCEED"
+            ),
+            dtoVersion = 0,
+            terminalNr = 2,
+            dtoType = TypeResponseDto(
+                dtoType = 0,
+                dtoName = "DtoDialog"
+            ),
+            ditsTUI = getPleaseProceedJsonDit()
+        )
+    }
+
+    private fun getReadingPlateDit(): TerminalResponseDto {
+        return TerminalResponseDto(
+            dialog = DialogResponseDto(
+                dialogNumber = 9,
+                dialogName = "DLG_READING_PLATE"
+            ),
+            dtoVersion = 0,
+            terminalNr = 2,
+            dtoType = TypeResponseDto(
+                dtoType = 0,
+                dtoName = "DtoDialog"
+            ),
+            ditsTUI = null
+        )
+    }
+
+    private fun getParkingCompleteDit(): TerminalResponseDto {
+        return TerminalResponseDto(
+            dialog = DialogResponseDto(
+                dialogNumber = 7,
+                dialogName = "DLG_PARKING_COMPLETED"
+            ),
+            dtoVersion = 0,
+            terminalNr = 2,
+            dtoType = TypeResponseDto(
+                dtoType = 0,
+                dtoName = "DtoDialog"
+            ),
+            ditsTUI = null
+        )
+    }
+
+    private fun getOutServiceDit(): TerminalResponseDto {
+        return TerminalResponseDto(
+            dialog = DialogResponseDto(
+                dialogNumber = 6,
+                dialogName = "DLG_OUT_SERVICE"
+            ),
+            dtoVersion = 0,
+            terminalNr = 2,
+            dtoType = TypeResponseDto(
+                dtoType = 0,
+                dtoName = "DtoDialog"
+            ),
+            ditsTUI = null
+        )
+    }
+
+    private fun setOfflineMode() {
+        serverConnection.setStatusConnection(false)
+        Thread.sleep((2000L..8000).random())
+        serverConnection.setStatusConnection(true)
+    }
+
+    private fun getIdleDit(): TerminalResponseDto {
+        return TerminalResponseDto(
+            dialog = DialogResponseDto(
+                dialogNumber = 5,
+                dialogName = "IDLE"
+            ),
+            dtoVersion = 0,
+            terminalNr = 2,
+            dtoType = TypeResponseDto(
+                dtoType = 0,
+                dtoName = "DtoDialog"
+            ),
+            ditsTUI = getIdleJsonDit()
+        )
+    }
+
+    private fun getBootDit(): TerminalResponseDto {
+        return TerminalResponseDto(
+            dialog = DialogResponseDto(
+                dialogNumber = 0,
+                dialogName = "DLG_BOOT"
+            ),
+            dtoVersion = 0,
+            terminalNr = 2,
+            dtoType = TypeResponseDto(
+                dtoType = 0,
+                dtoName = "DtoDialog"
+            ),
+            ditsTUI = null
+        )
     }
 
     private fun getIdleJsonDit(): JsonArray {

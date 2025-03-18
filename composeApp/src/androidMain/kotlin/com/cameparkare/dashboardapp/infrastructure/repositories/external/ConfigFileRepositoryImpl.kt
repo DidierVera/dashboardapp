@@ -92,7 +92,7 @@ class ConfigFileRepositoryImpl(
                     preferences.put(TEXT_SIZE_SCALE, it)
                 }
 
-                //storage screens and elements
+                //delete and storage screens and elements
                 storageScreensAndElements(data.screens)
                 val screens = dashboardElementRepository.getAllScreens()
                 appLogger.trackLog("getFileConfiguration: ", "Success")
@@ -102,6 +102,7 @@ class ConfigFileRepositoryImpl(
     }
 
     private suspend fun storageScreensAndElements(screens: List<ScreenDto>) {
+        dashboardElementRepository.deleteAll()
         dashboardElementRepository.saveScreens(screens.map { it.toModel() })
     }
 }
