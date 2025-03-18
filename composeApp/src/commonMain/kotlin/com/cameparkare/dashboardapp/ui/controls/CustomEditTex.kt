@@ -3,7 +3,7 @@ package com.cameparkare.dashboardapp.ui.controls
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.*
@@ -34,10 +34,9 @@ fun CustomEditText(
             singleLine = true,
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = { focusRequester.freeFocus() }),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = MaterialTheme.colors.primary,
-                unfocusedBorderColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.disabled),
-                focusedLabelColor = MaterialTheme.colors.primary,
+            colors = TextFieldDefaults.colors(
+
+                focusedLabelColor = MaterialTheme.colorScheme.primary,
             )
         )
     }

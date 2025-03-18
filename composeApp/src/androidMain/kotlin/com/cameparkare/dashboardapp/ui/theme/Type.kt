@@ -9,24 +9,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.cameparkare.dashboardapp.R
 
-
-val LicensePlateFont = FontFamily(
-    Font(resId = R.font.din_condensed_bold)
-)
-val ArialNarrowFont = FontFamily(
-    Font(resId = R.font.arial_narrow_bold, FontWeight.Bold)
-)
-val ArialRoundedFont = FontFamily(
-    Font(resId = R.font.arial_rounded_bold, FontWeight.Bold)
-)
-val Rubik = FontFamily(
-    Font(resId = R.font.rubik_regular, FontWeight.Normal, FontStyle.Normal),
-    Font(resId = R.font.rubik_medium, FontWeight.Medium, FontStyle.Normal),
-    Font(resId = R.font.rubik_bold, FontWeight.Bold, FontStyle.Normal)
+actual val LicensePlateFont: FontFamily = FontFamily(
+    Font(R.font.mespreg)
 )
 
-// Set of Material typography styles to start with
-val Typography = Typography(
+actual val ArialNarrowFont: FontFamily = FontFamily(
+    Font(R.font.arial_narrow_bold, FontWeight.Bold)
+)
+
+actual val ArialRoundedFont: FontFamily = FontFamily(
+    Font(R.font.arial_rounded_bold, FontWeight.Bold)
+)
+
+actual val Rubik: FontFamily = FontFamily(
+    Font(R.font.rubik_regular, FontWeight.Normal ),
+    Font(R.font.rubik_medium, FontWeight.Medium),
+    Font(R.font.rubik_bold, FontWeight.Bold)
+)
+
+actual val Typography: Typography = Typography(
     titleMedium = TextStyle(
         fontFamily = ArialRoundedFont,
         fontWeight = FontWeight.Bold,

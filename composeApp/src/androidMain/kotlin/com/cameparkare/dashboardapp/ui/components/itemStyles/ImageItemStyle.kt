@@ -6,7 +6,7 @@ import androidx.compose.ui.res.painterResource
 import coil.compose.rememberAsyncImagePainter
 
 @Composable
-fun imageItemStyle(route: String): Painter {
+actual fun imageItemStyle(route: String): Painter {
     return when(route.toIntOrNull() != null){
         true -> painterResource(id = route.toInt())
         else -> rememberAsyncImagePainter(model = route)

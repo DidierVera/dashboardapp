@@ -77,7 +77,8 @@ kotlin {
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.material)
+            implementation(compose.material3)
+            implementation(compose.components.resources)
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
@@ -126,10 +127,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
     dependencies {
-        // Room dependencies for Android
-        //implementation("androidx.room:room-runtime:2.5.2")
-        //implementation("androidx.room:room-ktx:2.5.2")
-
         // KSP dependency for Room
         ksp("androidx.room:room-compiler:2.5.2")
     }

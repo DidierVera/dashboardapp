@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Switch
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,7 +33,7 @@ fun MainConfigurationForm(){
         items(1){
 
                // Terminal Connection Title
-        Text(text = "Terminal Connection", style = MaterialTheme.typography.h6)
+        Text(text = "Terminal Connection", style = MaterialTheme.typography.displaySmall)
 
         // IP Field
         FormField(label = "Ip", placeholder = "example http://192.168.20.36")
@@ -45,7 +45,7 @@ fun MainConfigurationForm(){
         FormField(label = "Api", placeholder = "signalr")
 
         // Main Layout Properties Title
-        Text(text = "Main Layout Properties", style = MaterialTheme.typography.h6)
+        Text(text = "Main Layout Properties", style = MaterialTheme.typography.displaySmall)
 
         // Text Size Scale Field
         FormField(label = "Text size Scale", placeholder = "10", keyboardType = KeyboardType.Number)
@@ -68,7 +68,7 @@ fun MainConfigurationForm(){
         FormField(label = "Delay time", placeholder = "3", keyboardType = KeyboardType.Number)
 
         // Margins Fields
-        Text(text = "Margins", style = MaterialTheme.typography.subtitle1)
+        Text(text = "Margins", style = MaterialTheme.typography.displayMedium)
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             FormField(label = "Top", placeholder = "0", keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))
             FormField(label = "Bottom", placeholder = "0", keyboardType = KeyboardType.Number, modifier = Modifier.weight(1f))

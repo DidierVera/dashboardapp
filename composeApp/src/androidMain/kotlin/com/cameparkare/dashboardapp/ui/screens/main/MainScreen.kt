@@ -20,10 +20,11 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.cameparkare.dashboardapp.R
 import com.cameparkare.dashboardapp.domain.models.components.ElementModel
+import com.cameparkare.dashboardapp.ui.components.BuildComposable
 import com.cameparkare.dashboardapp.ui.components.NetworkIndicatorView
 import com.cameparkare.dashboardapp.ui.components.videos.VideoExoPlayer
 import com.cameparkare.dashboardapp.ui.theme.BlackColor
-import com.cameparkare.dashboardapp.ui.utils.BuildComposable
+
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
