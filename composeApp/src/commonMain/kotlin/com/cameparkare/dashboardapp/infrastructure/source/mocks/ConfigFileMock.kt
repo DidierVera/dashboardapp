@@ -1029,7 +1029,7 @@ object ConfigFileMock {
                 }
             ]
         }
-    ]
+        ]
 }
         """.trimIndent()
     }
