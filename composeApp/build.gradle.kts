@@ -46,7 +46,7 @@ kotlin {
             implementation(libs.kotlin.stdlib.wasm.js)
             //Serialization
             implementation(libs.serialization.json)
-            //implementation("io.insert-koin:koin-core:3.2.0")
+            implementation(libs.koin.core)
         }
 
         androidMain.dependencies {
@@ -84,14 +84,14 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
-            implementation(libs.koin.compose)
-            implementation(libs.koin.composeVM)
 
             //Serialization
             implementation(libs.serialization.core)
             implementation(libs.serialization.json)
 
             //Koin
+            implementation(libs.koin.compose)
+            implementation(libs.koin.composeVM)
             implementation(libs.koin.core)
         }
     }

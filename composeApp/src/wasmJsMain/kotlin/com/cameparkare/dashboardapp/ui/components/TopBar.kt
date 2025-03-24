@@ -1,0 +1,84 @@
+package com.cameparkare.dashboardapp.ui.components
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.cameparkare.dashboardapp.ui.navigation.Navigator
+import com.cameparkare.dashboardapp.ui.navigation.WasmScreen
+import com.cameparkare.dashboardapp.ui.screens.main.MainWasmJsViewModel
+import com.cameparkare.dashboardapp.ui.theme.BlackColor
+import com.cameparkare.dashboardapp.ui.theme.CameBlueColor
+import com.cameparkare.dashboardapp.ui.theme.HeaderColor
+import com.cameparkare.dashboardapp.ui.theme.WhiteColor
+import org.koin.mp.KoinPlatform.getKoin
+
+@Composable
+fun TopBar() {
+    val navigator: Navigator = remember { getKoin().get() }
+
+    Row(
+        modifier = Modifier.fillMaxWidth().background(HeaderColor).padding(4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        val devices = listOf("Device 1", "Device 2", "Device 3")
+        var selectedDevice by remember { mutableStateOf(devices[0]) }
+
+        Row {
+            CustomDropdownSelector(
+                items = devices,
+                selectedItem = selectedDevice,
+                onItemSelected = { selectedDevice = it },
+                itemContent = { device ->
+                    Row {
+                        Icon(Icons.Default.Add, contentDescription = "Device")
+                        Spacer(Modifier.width(8.dp))
+                        Text(device)
+                    }
+                },
+                selectedItemContent = { device ->
+                    Text("Selected: $device", fontWeight = FontWeight.Bold)
+                }
+            )
+            CustomDropdownSelector(
+                items = devices,
+                selectedItem = selectedDevice,
+                onItemSelected = { selectedDevice = it },
+                itemContent = { device ->
+                    Row {
+                        Icon(Icons.Default.Add, contentDescription = "Device")
+                        Spacer(Modifier.width(8.dp))
+                        Text(device)
+                    }
+                },
+                selectedItemContent = { device ->
+                    Text("Selected: $device", fontWeight = FontWeight.Bold)
+                }
+            )
+        }
+
+
+        // Settings button
+        AppButton(text = "Settings", onClick = { navigator.resetTo(WasmScreen.MainScreen) },
+            buttonColors = ButtonDefaults.buttonColors(
+                containerColor = CameBlueColor,
+                contentColor = WhiteColor
+            ) )
+    }
+}

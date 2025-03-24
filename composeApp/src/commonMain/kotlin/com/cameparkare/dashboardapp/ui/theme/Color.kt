@@ -19,6 +19,7 @@ val YellowColor = Color(0xFFF2F208)
 val WarningColor = Color(0xFFF08200)
 val WhiteColor = Color(0xFFFFFFFF)
 val LicenseBlueColor = Color(0xFF033F9D)
+val HeaderColor = Color(0xFF2E294E)
 
 fun hexToColor(hex: String?): Color {
     if (hex.isNullOrEmpty()) throw IllegalArgumentException("Invalid hex color format")

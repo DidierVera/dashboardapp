@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,7 +49,7 @@ fun BodyContent() {
             TabsContainer(modifier = Modifier.weight(0.35f), tabItems)
 
             // Divider for a visual split
-            Divider(color = Color.Gray, modifier = Modifier.width(1.dp))
+            HorizontalDivider(modifier = Modifier.width(1.dp), color = Color.Gray)
 
             // Right panel as an empty container
             RightPanel(modifier = Modifier.weight(0.65f))
