@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.cameparkare.dashboardapp.ui.screens.settings.states.SettingOptionsState
 import org.jetbrains.compose.resources.painterResource
@@ -32,7 +33,7 @@ fun LeftOptionsPanel(options : List<SettingOptionsState>, onSelectClick: (Settin
     Column(modifier = Modifier.width(220.dp).fillMaxHeight().padding(8.dp).shadow(elevation = 4.dp)
         .background(
             color = MaterialTheme.colorScheme.surface
-        ).padding(8.dp, 2.dp)) {
+        ).padding(0.dp, 2.dp, 8.dp, 2.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             // List of available screens
             LazyColumn(modifier = Modifier.weight(1f)) {
@@ -56,7 +57,7 @@ fun LeftOptionsPanel(options : List<SettingOptionsState>, onSelectClick: (Settin
                     ) {
                         Icon(painter = painterResource(option.iconRes),
                             contentDescription = null, modifier = Modifier.size(40.dp))
-                        Text(text = stringResource(option.nameRes))
+                        Text(text = stringResource(option.nameRes), fontWeight = if(option.isSelected) FontWeight.Bold else FontWeight.Normal)
                     }
                 }
             }

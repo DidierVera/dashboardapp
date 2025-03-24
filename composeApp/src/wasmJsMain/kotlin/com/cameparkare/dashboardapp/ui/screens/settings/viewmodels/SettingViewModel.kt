@@ -7,6 +7,10 @@ import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.compose_multiplatform
 import dashboardapp.composeapp.generated.resources.connection_option
 import dashboardapp.composeapp.generated.resources.dashboard_list_option
+import dashboardapp.composeapp.generated.resources.ic_connection
+import dashboardapp.composeapp.generated.resources.ic_import_export
+import dashboardapp.composeapp.generated.resources.ic_monitor
+import dashboardapp.composeapp.generated.resources.ic_testing
 import dashboardapp.composeapp.generated.resources.import_export_option
 import dashboardapp.composeapp.generated.resources.testing_option
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,22 +31,22 @@ class SettingViewModel: ViewModel() {
         _optionsState.update {
             listOf(
                 SettingOptionsState(
-                    iconRes = Res.drawable.compose_multiplatform,
+                    iconRes = Res.drawable.ic_connection,
                     nameRes = Res.string.connection_option,
                     isSelected = false
                 ),
                 SettingOptionsState(
-                    iconRes = Res.drawable.compose_multiplatform,
+                    iconRes = Res.drawable.ic_monitor,
                     nameRes = Res.string.dashboard_list_option,
                     isSelected = false
                 ),
                 SettingOptionsState(
-                    iconRes = Res.drawable.compose_multiplatform,
+                    iconRes = Res.drawable.ic_import_export,
                     nameRes = Res.string.import_export_option,
                     isSelected = false
                 ),
                 SettingOptionsState(
-                    iconRes = Res.drawable.compose_multiplatform,
+                    iconRes = Res.drawable.ic_testing,
                     nameRes = Res.string.testing_option,
                     isSelected = false
                 )
@@ -55,10 +59,9 @@ class SettingViewModel: ViewModel() {
             _optionsState.update { currentList ->
                 currentList.map { item ->
                     if (item.nameRes == option.nameRes) {
-                        item.copy(isSelected = true) // mark only the selected item as true
+                        item.copy(isSelected = true)
                     } else {
-                        item.copy(isSelected = false) // ensure all others are false (single selection)
-                        // OR item // if you want to keep their current state (for multi-selection)
+                        item.copy(isSelected = false)
                     }
                 }
             }
