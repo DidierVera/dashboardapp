@@ -19,18 +19,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.cameparkare.dashboardapp.ui.navigation.Navigator
-import com.cameparkare.dashboardapp.ui.navigation.WasmScreen
-import com.cameparkare.dashboardapp.ui.screens.main.MainWasmJsViewModel
-import com.cameparkare.dashboardapp.ui.theme.BlackColor
 import com.cameparkare.dashboardapp.ui.theme.CameBlueColor
 import com.cameparkare.dashboardapp.ui.theme.HeaderColor
 import com.cameparkare.dashboardapp.ui.theme.WhiteColor
+import dashboardapp.composeapp.generated.resources.Res
+import dashboardapp.composeapp.generated.resources.settings_button
+import org.jetbrains.compose.resources.stringResource
 import org.koin.mp.KoinPlatform.getKoin
 
 @Composable
-fun TopBar() {
-    val navigator: Navigator = remember { getKoin().get() }
+fun MainTopBar(navigateToSettings: () -> Unit) {
 
     Row(
         modifier = Modifier.fillMaxWidth().background(HeaderColor).padding(4.dp),
@@ -75,7 +73,7 @@ fun TopBar() {
 
 
         // Settings button
-        AppButton(text = "Settings", onClick = { navigator.resetTo(WasmScreen.MainScreen) },
+        AppButton(text = stringResource(Res.string.settings_button), onClick = navigateToSettings,
             buttonColors = ButtonDefaults.buttonColors(
                 containerColor = CameBlueColor,
                 contentColor = WhiteColor

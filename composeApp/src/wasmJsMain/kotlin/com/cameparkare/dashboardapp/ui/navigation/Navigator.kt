@@ -11,9 +11,7 @@ class Navigator {
     }
 
     fun goBack() {
-        if (_screens.size > 1) {
-            _screens.removeLast()
-        }
+        _screens.removeLast()
     }
 
     fun resetTo(screen: WasmScreen) {

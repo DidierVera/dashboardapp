@@ -1,0 +1,50 @@
+<resources>
+    <string name="app_name">Dashboard app</string>
+
+    <!--General menu options-->
+    <string name="options_title">Options</string>
+    <string name="connection_option">Connection</string>
+    <string name="testing_option">Testing</string>
+    <string name="dashboard_list_option">Dashboard list</string>
+    <string name="import_export_option">Import/Export</string>
+
+    <!--Buttons general-->
+    <string name="general_configuration_title">GENERAL CONFIGURATION</string>
+    <string name="discard_button">DISCARD CHANGES</string>
+    <string name="save_button">SAVE</string>
+    <string name="back_button_alt">Back button</string>
+    <string name="settings_button">SETTINGS</string>
+
+    <!--Testing screen-->
+    <string name="connection_way_label">Connection way</string>
+    <string name="dashboard_ip_label">Dashboard IP</string>
+    <string name="dialog_message_label">Dialog message</string>
+    <string name="dialog_label">Dialog</string>
+    <string name="send_button">SEND</string>
+
+    <!--Import/export screen-->
+    <string name="import_export_title">Import / Export files</string>
+    <string name="file_content_label">File content</string>
+    <string name="upload_file_button">UPLOAD FILE</string>
+    <string name="download_file_button">DOWNLOAD FILE</string>
+    <string name="share_file_button">SHARE TO</string>
+
+    <!--Dashboards list screen-->
+    <string name="custom_name_label">Custom name</string>
+    <string name="create_new_button">CREATE NEW</string>
+
+    <!--Connection screen-->
+    <string name="connection_title">Connection settings</string>
+    <string name="terminal_ip_label">Terminal IP</string>
+    <string name="port_label">Port</string>
+    <string name="api_label">API</string>
+    <string name="delay_time_label">Delay time(s)</string>
+    <string name="show_video_frame_label">Show video frame</string>
+    <string name="image_resources_label">Images resources</string>
+
+    <!--canvas screen-->
+    <string name="screens_label">Screens</string>
+    <string name="components_label">Components</string>
+    <string name="properties_label">Properties</string>
+
+</resources>

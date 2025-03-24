@@ -44,7 +44,7 @@ fun <T> CustomDropdownSelector(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    Column(modifier = modifier.padding(4.dp)) {
+    Column(modifier = modifier.padding(4.dp, 0.dp)) {
         if (label != null) {
             Text(
                 text = label,
