@@ -27,25 +27,26 @@ class MockService (
                     while (true){
                         serverConnection.setStatusConnection(true)
                         Thread.sleep((2000L..8000).random())
-                        val screenToShow = (1..11).random()
-                        println("Code Screen to show: $screenToShow")
-                        var result = getBootDit()
-                        when(screenToShow){
-                            1 -> result = getBootDit()//DLG_BOOT (restart screen)
-                            2 -> result = getIdleDit()//DLG_IDLE (rest screen)
-                            3 -> setOfflineMode()//MOCK DISCONNECTED(rest screen)
-                            4 -> getOutServiceDit()//DLG_OUT_SERVICE
-                            5 -> result = getParkingCompleteDit()//DLG_PARKING_COMPLETED
-                            6 -> result = getReadingPlateDit()//DLG_READING_PLATE
-                            7 -> result = getPleaseProceedDit()//DLG_PLEASE_PROCEED
-                            8 -> result = getUserDit()//USER (rest screen)
-                            9 -> result = getCardErrorDit()//DLG_CARD_ERROR (rest screen)
-                            10 -> result = getPaymentRequiredDit()//DLG_PAYMENT_REQUIRED (pendiente de pago)
-                            11 -> result = getStartCurrentBillDit()//DLG_InicioCobroActual (pendiente de pago)
-                            else -> result = getTerminalLockedDit()//DLG_LOCKED
+                        for(screenToShow in 1 until 13){
+                            println("Code Screen to show: $screenToShow")
+                            var result = getBootDit()
+                            when(screenToShow){
+                                1 -> result = getBootDit()//DLG_BOOT (restart screen)
+                                2 -> result = getIdleDit()//DLG_IDLE (rest screen)
+                                3 -> setOfflineMode()//MOCK DISCONNECTED(rest screen)
+                                4 -> result = getOutServiceDit()//DLG_OUT_SERVICE
+                                5 -> result = getParkingCompleteDit()//DLG_PARKING_COMPLETED
+                                6 -> result = getReadingPlateDit()//DLG_READING_PLATE
+                                7 -> result = getPleaseProceedDit()//DLG_PLEASE_PROCEED
+                                8 -> result = getUserDit()//USER (rest screen)
+                                9 -> result = getCardErrorDit()//DLG_CARD_ERROR (rest screen)
+                                10 -> result = getPaymentRequiredDit()//DLG_PAYMENT_REQUIRED (pendiente de pago)
+                                11 -> result = getStartCurrentBillDit()//DLG_InicioCobroActual (pendiente de pago)
+                                else -> result = getTerminalLockedDit()//DLG_LOCKED
+                            }
+                            onSocketResult.invoke(ServiceResult.Success(result))
+                            Thread.sleep((4000L..8000).random())
                         }
-                        onSocketResult.invoke(ServiceResult.Success(result))
-                        Thread.sleep((4000L..8000).random())
                     }
 
                 }catch (e: Exception){
@@ -272,6 +273,22 @@ class MockService (
                                 },
                                 "Version": 0,
                                 "CardReader": ${(2..4).random()}
+                            },
+                            {
+                                "DitType": {
+                                    "DitType": 18,
+                                    "DitName": "dit_IssuerStatus"
+                                },
+                                "Version": 0,
+                                "Status": ${(0..1).random()}
+                            },
+                            {
+                                "DitType": {
+                                    "DitType": 19,
+                                    "DitName": "dit_ReaderStatus"
+                                },
+                                "Version": 0,
+                                "Status": ${(0..1).random()}
                             },
                             {
                                 "DitType":

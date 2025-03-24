@@ -52,23 +52,22 @@ class ConfigFileDao (
 
         if (success) {
             // directory exists or already created
-            file.setReadable(true, false)
-            file.setWritable(true, false)
             file.setExecutable(true, false)
             val jsonContent = if (!fileExist) {
                 file.writeText(defaultValues)
                 defaultValues
             } else {
-                file.takeIf { it.canRead() }?.readText(Charsets.UTF_8) ?: run {
-                    return ServiceResult.Error(ErrorTypeClass.CanNoAccessToConfigFile)
-                }
+                val fileContent = file.readText(Charsets.UTF_8).trimStart('\uFEFF')
+                appLogger.trackLog("The $filename content is:", fileContent)
+                fileContent
             }
 
             // Read data from a JSON string
             return try {
-                ServiceResult.Success(json.decodeFromString<T>(jsonContent))
+                val result = json.decodeFromString<T>(jsonContent)
+                ServiceResult.Success(result)
             } catch (ex: Exception) {
-                appLogger.trackLog("READ CONFIG FILE: ", message = "See the exception file")
+                appLogger.trackLog("READ CONFIG FILE: ", message = "ERROR: See the exception file")
                 appLogger.trackError(ex)
                 ServiceResult.Error(ErrorTypeClass.WrongConfigFile)
             }
