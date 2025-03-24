@@ -1,4 +1,4 @@
-package com.cameparkare.dashboardapp.ui.screens.settings
+package com.cameparkare.dashboardapp.ui.screens.settings.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
