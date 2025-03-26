@@ -27,6 +27,10 @@ class SettingViewModel: ViewModel() {
     val optionsState: StateFlow<List<SettingOptionsState>>
         get() = _optionsState.asStateFlow()
 
+    private val _selectedOption = MutableStateFlow(SettingOptionsState())
+    val selectedOption: StateFlow<SettingOptionsState>
+        get() = _selectedOption.asStateFlow()
+
     init {
         _optionsState.update {
             listOf(
@@ -56,6 +60,7 @@ class SettingViewModel: ViewModel() {
 
     fun selectItem(option: SettingOptionsState) {
         viewModelScope.launch {
+            _selectedOption.update { option }
             _optionsState.update { currentList ->
                 currentList.map { item ->
                     if (item.nameRes == option.nameRes) {
