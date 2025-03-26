@@ -36,9 +36,9 @@ fun SettingsScreen(onBackClick: () -> Unit, onSaveClick: () -> Unit){
             //content
             when(selectedOption.value.nameRes){
                 Res.string.connection_option -> ConnectionTab()
-                Res.string.testing_option -> TestingTab()
-                Res.string.import_export_option -> ImportExportTab()
                 Res.string.dashboard_list_option -> DashboardListTab()
+                Res.string.import_export_option -> ImportExportTab()
+                Res.string.testing_option -> TestingTab()
                 else -> {}
             }
         }

@@ -35,7 +35,7 @@ fun SettingTopBar(onBackClick: () -> Unit, onSaveClick: () -> Unit){
                 contentDescription = stringResource(Res.string.back_button_alt))
         }
 
-        Text(text = stringResource(Res.string.app_name), color = WhiteColor)
+        Text(text = stringResource(Res.string.general_configuration_title), color = WhiteColor)
 
 
         // Save button
