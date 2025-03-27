@@ -38,4 +38,26 @@ object ConfigUI {
         }
         return null
     }
+
+    fun getWifiIpAddress(): String? {
+        try {
+            val interfaces: Enumeration<NetworkInterface> = NetworkInterface.getNetworkInterfaces()
+            for (networkInterface in interfaces) {
+                if (networkInterface.isUp && !networkInterface.isLoopback) {
+                    val addresses: Enumeration<InetAddress> = networkInterface.inetAddresses
+                    for (address in addresses) {
+                        if (!address.isLoopbackAddress && address is java.net.Inet4Address) {
+                            println("Network connection interfaces ${networkInterface.name}")
+                            if (networkInterface.name.contains("wlan0")) { // Typically for wifi
+                                return address.hostAddress
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
+    }
 }

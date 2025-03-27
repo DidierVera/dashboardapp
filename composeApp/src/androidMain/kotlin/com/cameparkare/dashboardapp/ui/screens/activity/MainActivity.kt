@@ -64,8 +64,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        copyWebAppFiles()
         initWebServer()
+        copyWebAppFiles()
     }
 
     private fun copyWebAppFiles() {
@@ -73,11 +73,13 @@ class MainActivity : ComponentActivity() {
         val outputDir = filesDir
 
         assetManager.list("webapp")?.forEach { fileName ->
-            val inputStream = assetManager.open("webapp/$fileName")
-            val outputFile = File(outputDir, fileName)
-            inputStream.use { input ->
-                outputFile.outputStream().use { output ->
-                    input.copyTo(output)
+            if(File("webapp/$fileName").isFile){
+                val inputStream = assetManager.open("webapp/$fileName")
+                val outputFile = File(outputDir, fileName)
+                inputStream.use { input ->
+                    outputFile.outputStream().use { output ->
+                        input.copyTo(output)
+                    }
                 }
             }
         }
@@ -93,7 +95,13 @@ class MainActivity : ComponentActivity() {
             }
         }.start()
         val ipAddress = ConfigUI.getEthernetIpAddress() // Utiliza una función para obtener la IP del dispositivo
-        Toast.makeText(this, "Servidor web: http://$ipAddress:8080", Toast.LENGTH_SHORT).show()
+        val ipByWifi = ConfigUI.getWifiIpAddress()
+        ipAddress?.let {
+            Toast.makeText(this, "Servidor web: http://$it:8080", Toast.LENGTH_LONG).show()
+        }
+        ipByWifi?.let {
+            Toast.makeText(this, "Servidor web: http://$it:8080", Toast.LENGTH_LONG).show()
+        }
     }
 }
 

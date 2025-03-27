@@ -68,33 +68,4 @@ class SignalRService(
             }
         }
     }
-
-    suspend fun sendData(methodName: String, vararg args: Any) {
-        try {
-            if (hubConnection.connectionState == HubConnectionState.CONNECTED) {
-                hubConnection.send(methodName, *args)
-                appLogger.trackLog("SignalR-Send", "Método: $methodName, Args: ${args.joinToString()}")
-            } else {
-                appLogger.trackError(Exception("Intento de enviar datos sin conexión"))
-            }
-        } catch (e: Exception) {
-            appLogger.trackError(e)
-        }
-    }
-
-    suspend fun sendDataInvokeWithResult(methodName: String, resultType: Class<*>, vararg args: Any): Any? {
-        return try {
-            if (hubConnection.connectionState == HubConnectionState.CONNECTED) {
-                val result = hubConnection.invoke(resultType, methodName, *args).wait()
-                appLogger.trackLog("SignalR-Invoke", "Método: $methodName, Result: $result")
-                result
-            } else {
-                appLogger.trackError(Exception("Intento de invocar método sin conexión"))
-                null
-            }
-        } catch (e: Exception) {
-            appLogger.trackError(e)
-            null
-        }
-    }
 }

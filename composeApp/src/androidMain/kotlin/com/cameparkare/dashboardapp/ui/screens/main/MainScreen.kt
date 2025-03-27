@@ -80,7 +80,6 @@ private fun LoadDashboardItems(
     modifier: Modifier = Modifier,
     viewModel: MainViewModel = koinViewModel()
 ){
-    Log.i("DASHBOARD_LOG", "Entra en LoadDashboardItems")
     val state by viewModel.itemsState.collectAsState()
     val items: List<ElementModel> = state.newItems
     if (items.isEmpty()) return

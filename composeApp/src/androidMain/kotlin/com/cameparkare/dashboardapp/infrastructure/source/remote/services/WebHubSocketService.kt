@@ -1,60 +1,105 @@
 package com.cameparkare.dashboardapp.infrastructure.source.remote.services
 
+import com.cameparkare.dashboardapp.config.constants.Constants.SIGNAL_R_URI
+import com.cameparkare.dashboardapp.config.constants.Constants.TERMINAL_API
+import com.cameparkare.dashboardapp.config.constants.Constants.TERMINAL_PORT
+import com.cameparkare.dashboardapp.config.dataclasses.ServiceResult
+import com.cameparkare.dashboardapp.config.utils.AppLogger
+import com.cameparkare.dashboardapp.config.utils.IServerConnection
+import com.cameparkare.dashboardapp.config.utils.SharedPreferencesProvider
+import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.TerminalResponseDto
+import com.microsoft.signalr.HubConnection
+import com.microsoft.signalr.HubConnectionBuilder
+import com.microsoft.signalr.HubConnectionState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import okhttp3.internal.wait
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.io.PrintWriter
 import java.net.ServerSocket
 import java.net.Socket
 
-class WebHubSocketService(private val port: Int = 9022) {
-    private var isRunning = true
-    private val serverScope = CoroutineScope(Dispatchers.IO)
+class WebHubSocketService(
+    private val preferences: SharedPreferencesProvider,
+    private val serverConnection: IServerConnection,
+    private val appLogger: AppLogger
+) {
+    private lateinit var hubConnection: HubConnection
+    fun startConnection(onSignalRResult: (ServiceResult<TerminalResponseDto>) -> Unit){
+        println("SIGNALR == Inicio de aplicación conexión SIGNAL R")
 
-    fun start() {
-        serverScope.launch {
+        val signalRIp = preferences.get(SIGNAL_R_URI, "192.168.209.14")
+        val terminalPort = preferences.get(TERMINAL_PORT, "9011")
+        val terminalApi = preferences.get(TERMINAL_API, "signalr")
+        val signalRUri = "http://$signalRIp:$terminalPort/$terminalApi"
+
+        CoroutineScope(Dispatchers.IO).launch {
+
             try {
-                val serverSocket = ServerSocket(port)
-                println("Server started on port $port")
+                hubConnection =
+                    HubConnectionBuilder.create(signalRUri).build();
 
-                while (isRunning) {
-                    val clientSocket = serverSocket.accept()
-                    println("Client connected: ${clientSocket.inetAddress}")
+                hubConnection.on("SendDto", { result ->
 
-                    handleClient(clientSocket)
+                    appLogger.trackLog("connection DATA-Response: ", Json.encodeToString(result))
+                    onSignalRResult.invoke(ServiceResult.Success(result))
+                }, TerminalResponseDto::class.java)
+
+                appLogger.trackLog("dashboardapp.signalR-STATUS", hubConnection.connectionState.name)
+                while (isActive){
+                    if (hubConnection.connectionState != HubConnectionState.CONNECTED) {
+                        appLogger.trackLog("signalR-STATUS", hubConnection.connectionState.name)
+                        serverConnection.setStatusConnection(false)
+                        hubConnection.start()
+                    }else{
+                        serverConnection.setStatusConnection(true)
+                    }
+                    delay(500)
                 }
 
-                serverSocket.close()
+                hubConnection.onClosed {
+                    appLogger.trackError(it)
+                }
+
             } catch (e: Exception) {
-                e.printStackTrace()
+                appLogger.trackError(e)
+                appLogger.trackLog("error-com.came.parkare.dashboardapp.signalR", e.message.toString())
             }
         }
     }
 
-    private fun handleClient(clientSocket: Socket) {
-        serverScope.launch {
-            try {
-                val reader = BufferedReader(InputStreamReader(clientSocket.getInputStream()))
-                val writer = PrintWriter(clientSocket.getOutputStream(), true)
-
-                var message: String?
-                while (reader.readLine().also { message = it } != null) {
-                    println("Received: $message")
-                    writer.println("Echo: $message")
-                }
-
-                clientSocket.close()
-            } catch (e: Exception) {
-                e.printStackTrace()
+    suspend fun sendData(methodName: String, vararg args: Any) {
+        try {
+            if (hubConnection.connectionState == HubConnectionState.CONNECTED) {
+                hubConnection.send(methodName, *args)
+                appLogger.trackLog("SignalR-Send", "Método: $methodName, Args: ${args.joinToString()}")
+            } else {
+                appLogger.trackError(Exception("Intento de enviar datos sin conexión"))
             }
+        } catch (e: Exception) {
+            appLogger.trackError(e)
         }
     }
 
-    fun stop() {
-        isRunning = false
-        serverScope.cancel()
+    suspend fun sendDataInvokeWithResult(methodName: String, resultType: Class<*>, vararg args: Any): Any? {
+        return try {
+            if (hubConnection.connectionState == HubConnectionState.CONNECTED) {
+                val result = hubConnection.invoke(resultType, methodName, *args).wait()
+                appLogger.trackLog("SignalR-Invoke", "Método: $methodName, Result: $result")
+                result
+            } else {
+                appLogger.trackError(Exception("Intento de invocar método sin conexión"))
+                null
+            }
+        } catch (e: Exception) {
+            appLogger.trackError(e)
+            null
+        }
     }
 }
