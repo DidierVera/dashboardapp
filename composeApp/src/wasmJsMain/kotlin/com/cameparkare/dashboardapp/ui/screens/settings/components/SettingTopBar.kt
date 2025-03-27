@@ -3,6 +3,7 @@ package com.cameparkare.dashboardapp.ui.screens.settings.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,28 +23,20 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun SettingTopBar(onBackClick: () -> Unit, onSaveClick: () -> Unit){
-    Row(
+    Box(
         modifier = Modifier.fillMaxWidth().background(HeaderColor).padding(4.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        contentAlignment = Alignment.Center
     ) {
         IconButton(
             onClick = onBackClick,
-            enabled = true
+            enabled = true,
+            modifier = Modifier.align(Alignment.CenterStart)
         ) {
             Image(painter = painterResource(Res.drawable.ic_back_arrow),
                 contentDescription = stringResource(Res.string.back_button_alt))
         }
 
-        Text(text = stringResource(Res.string.general_configuration_title), color = WhiteColor)
-
-
-        // Save button
-        AppButton(text = stringResource(Res.string.save_button), onClick = onSaveClick,
-            buttonColors = ButtonDefaults.buttonColors(
-                containerColor = CameBlueColor,
-                contentColor = WhiteColor
-            )
-        )
+        Text(text = stringResource(Res.string.general_configuration_title), color = WhiteColor,
+            modifier = Modifier.align(Alignment.Center))
     }
 }

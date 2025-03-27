@@ -21,4 +21,20 @@ class ImportExportViewModel(): ViewModel(){
             _state.update { it.copy(fileName = fileName, contentFile = fileContent) }
         }
     }
+
+    fun saveChanges() {
+
+    }
+
+    fun getCurrentConfiguration(){
+
+    }
+
+    fun sendConfigurationTo(){
+
+    }
+
+    private fun getDashboardIP(){
+
+    }
 }
