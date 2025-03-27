@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -31,7 +30,7 @@ import org.koin.compose.koinInject
 fun DialogPickerDialog(
     buttonText: StringResource = Res.string.upload_file_button,
     buttonIcon: DrawableResource = Res.drawable.ic_import_export,
-    onFileSelected: (FilePickerDialogState) -> Unit
+    onFileSelected: (String, String) -> Unit
 ){
 
     val filePickerViewModel: FilePickerDialogViewModel = koinInject()
@@ -48,14 +47,9 @@ fun DialogPickerDialog(
                 Icon(painter = painterResource(buttonIcon), contentDescription = null)
             }
         }
-        Column {
-            for (fileName in filePickerState.value.fileNames) {
-                Text(text = fileName)
-            }
-        }
+
+        Text(text = filePickerState.value.fileNames)
     }
-
-
 
     FilePicker(
         show = filePickerState.value.pickerVisible,
@@ -73,5 +67,9 @@ fun DialogPickerDialog(
             filePickerViewModel.setIsFileSelected(false)
             filePickerViewModel.setPickerVisible(false)
         }
+    }
+
+    if (filePickerState.value.fileContents.isNotBlank()){
+        onFileSelected.invoke(filePickerState.value.fileNames, filePickerState.value.fileContents)
     }
 }

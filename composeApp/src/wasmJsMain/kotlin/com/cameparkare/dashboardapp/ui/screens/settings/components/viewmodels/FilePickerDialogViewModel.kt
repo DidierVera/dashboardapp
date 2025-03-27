@@ -22,9 +22,9 @@ class FilePickerDialogViewModel(
     suspend fun addFile(file: PlatformFile) {
         val content = readFileAsByteArray(file.file)
 
-        _state.update { it.copy(fileNames = listOf(file.file.name)) }
-        _state.update { it.copy(fileContents = listOf(content.decodeToString())) }
-        _state.update { it.copy(fileContentsRaw = listOf(Base64.encode(content))) }
+        _state.update { it.copy(fileNames = file.file.name) }
+        _state.update { it.copy(fileContents = content.decodeToString()) }
+        _state.update { it.copy(fileContentsRaw = Base64.encode(content)) }
     }
 
     fun setPickerVisible(isVisible: Boolean){
@@ -32,8 +32,8 @@ class FilePickerDialogViewModel(
     }
 
     fun clearPickedValues(){
-        _state.update { it.copy(fileNames = emptyList()) }
-        _state.update { it.copy(fileContents = emptyList()) }
+        _state.update { it.copy(fileNames = "") }
+        _state.update { it.copy(fileContents = "") }
     }
 
     fun setIsFileSelected(isSelected: Boolean){
