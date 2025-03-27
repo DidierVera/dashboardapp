@@ -1,6 +1,22 @@
 package com.cameparkare.dashboardapp.infrastructure.source.mocks
 
 object ConfigFileMock {
+
+    fun getConnectionConfiguration(): String {
+        return """
+            {
+                "connection-way": 1,
+                "terminal-ip": "192.168.209.21",
+                "port": 9011,
+                "api": "signalr",
+                "time-delay": 5,
+                "video-frame": false,
+                "text-size-scale": 10,
+                "files": []
+            }
+        """.trimIndent()
+    }
+
     fun getConfigFile(): String {
         return """
             {

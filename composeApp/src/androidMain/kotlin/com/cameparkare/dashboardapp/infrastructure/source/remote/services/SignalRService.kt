@@ -17,6 +17,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
+import okhttp3.internal.wait
 
 
 class SignalRService(
@@ -65,6 +66,35 @@ class SignalRService(
                 appLogger.trackError(e)
                 appLogger.trackLog("error-com.came.parkare.dashboardapp.signalR", e.message.toString())
             }
+        }
+    }
+
+    suspend fun sendData(methodName: String, vararg args: Any) {
+        try {
+            if (hubConnection.connectionState == HubConnectionState.CONNECTED) {
+                hubConnection.send(methodName, *args)
+                appLogger.trackLog("SignalR-Send", "Método: $methodName, Args: ${args.joinToString()}")
+            } else {
+                appLogger.trackError(Exception("Intento de enviar datos sin conexión"))
+            }
+        } catch (e: Exception) {
+            appLogger.trackError(e)
+        }
+    }
+
+    suspend fun sendDataInvokeWithResult(methodName: String, resultType: Class<*>, vararg args: Any): Any? {
+        return try {
+            if (hubConnection.connectionState == HubConnectionState.CONNECTED) {
+                val result = hubConnection.invoke(resultType, methodName, *args).wait()
+                appLogger.trackLog("SignalR-Invoke", "Método: $methodName, Result: $result")
+                result
+            } else {
+                appLogger.trackError(Exception("Intento de invocar método sin conexión"))
+                null
+            }
+        } catch (e: Exception) {
+            appLogger.trackError(e)
+            null
         }
     }
 }

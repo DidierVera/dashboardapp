@@ -24,8 +24,6 @@ import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.Scr
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.toModel
 import com.cameparkare.dashboardapp.infrastructure.source.external.ConfigFileDao
 import com.cameparkare.dashboardapp.infrastructure.source.mocks.ConfigFileMock
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class ConfigFileRepositoryImpl(
     private val configFileDao: ConfigFileDao,
@@ -34,6 +32,23 @@ class ConfigFileRepositoryImpl(
     private val serverConnection: IServerConnection,
     private val appLogger: AppLogger
 ): ConfigFileRepository {
+    override suspend fun getConnectionConfig(): ServiceResult<Boolean> {
+        appLogger.trackLog("getConnectionConfig: ", "_________")
+        return when (val dataFromFile = configFileDao.readJsonFromFile<String?>(
+            filename = "connection_config.json",
+            defaultValues = ConfigFileMock.getConnectionConfiguration()
+        )){
+
+//            is ServiceResult.Error -> return ServiceResult.Error(dataFromFile.error)
+//            is ServiceResult.Success -> {
+//                val data = dataFromFile.data ?: return ServiceResult.Error(ErrorTypeClass.WrongConfigFile)
+//
+//            }
+            is ServiceResult.Error -> TODO()
+            is ServiceResult.Success -> TODO()
+        }
+
+    }
 
     override suspend fun getFileConfiguration(): ServiceResult<List<ScreenModel>> {
         appLogger.trackLog("getFileConfiguration: ", "_________")
