@@ -12,7 +12,7 @@ object ConfigFileMock {
                 "time-delay": 5,
                 "video-frame": false,
                 "text-size-scale": 10,
-                "files": []
+                "files": {}
             }
         """.trimIndent()
     }

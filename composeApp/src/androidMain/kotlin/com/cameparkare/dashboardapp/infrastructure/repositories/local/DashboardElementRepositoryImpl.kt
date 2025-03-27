@@ -55,7 +55,7 @@ class DashboardElementRepositoryImpl(
         try {
             val ids = imagesDao.insertAll(images.map{it.toEntity()})
             if (ids.isEmpty())
-                appLogger.trackError(Exception(message = "Was no saved the images"))
+                throw Exception("Was no saved the images")
         }catch (e: Exception){
             appLogger.trackError(e)
         }

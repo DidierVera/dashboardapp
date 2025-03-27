@@ -21,6 +21,7 @@ import com.cameparkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.cameparkare.dashboardapp.domain.models.ScreenModel
 import com.cameparkare.dashboardapp.domain.models.components.ElementModel
 import com.cameparkare.dashboardapp.domain.models.terminal.TerminalResponseModel
+import com.cameparkare.dashboardapp.domain.usecases.ConnectionConfig
 import com.cameparkare.dashboardapp.domain.usecases.FtpServerConfiguration
 import com.cameparkare.dashboardapp.domain.usecases.GetScreenByDispatcher
 import com.cameparkare.dashboardapp.domain.usecases.InitConfiguration
@@ -45,6 +46,7 @@ import kotlin.coroutines.cancellation.CancellationException
 
 class MainViewModel (
     private val initConfiguration: InitConfiguration,
+    private val connectionConfig: ConnectionConfig,
     private val ftpServerConfiguration: FtpServerConfiguration,
     private val startParkingConnection: StartSocketConnection,
     private val getScreenByDispatcher: GetScreenByDispatcher,
@@ -72,7 +74,6 @@ class MainViewModel (
             appLogger.trackLog("INIT", "Inicio de aplicación")
             checkBackgroundImage()
             initAppConfig()
-            checkContentMargin()
             checkTextSizeScale()
             checkVideos()
         }catch (e: Exception) {
@@ -101,13 +102,21 @@ class MainViewModel (
     private fun initAppConfig() {
         viewModelScope.launch {
             showIsConnectingSignal()
+            //connection config initialization
+            when (val connectionResult = connectionConfig.invoke()){
+                is ServiceResult.Error -> validateError(connectionResult.error)
+                is ServiceResult.Success -> {}
+            }
+            //ftp server config initialization
+            when(val ftpServerConfigResult = ftpServerConfiguration.invoke()){
+                is ServiceResult.Error -> validateError(ftpServerConfigResult.error)
+                else -> { }
+            }
+            //screens config initialization
             when (val initConfigResult = initConfiguration.invoke()){
                 is ServiceResult.Error -> validateError(initConfigResult.error)
                 is ServiceResult.Success -> {
-                    when(val ftpServerConfigResult = ftpServerConfiguration.invoke()){
-                        is ServiceResult.Error -> validateError(ftpServerConfigResult.error)
-                        else -> { }
-                    }
+
                     if(initConfigResult.data?.any { it.dispatcherCode == 5L } != null){
                         _itemsState.update { it.copy(screenList = initConfigResult.data) }
                         loadScreenInformation(
@@ -193,6 +202,7 @@ class MainViewModel (
         viewModelScope.launch {
             val screen = getScreenByDispatcher.invoke(data.dispatcherCode)
             if (screen != null){
+                checkContentMargin(screen.marginLeft, screen.marginTop, screen.marginRight, screen.marginBottom)
                 _itemsState.update { it.copy(ditsUI = data.ditsTUI) }
                 val buildElements = ditsUtils.buildDashboardItem(screen.elements, data.ditsTUI, lang)
                 _itemsState.update { it.copy(newItems = buildElements) }
@@ -231,11 +241,7 @@ class MainViewModel (
         }
     }
 
-    private fun checkContentMargin() {
-        val marginTop = preferences.get(MARGIN_TOP, 10)
-        val marginBottom = preferences.get(MARGIN_BOTTOM, 10)
-        val marginRight = preferences.get(MARGIN_RIGHT, 10)
-        val marginLeft = preferences.get(MARGIN_LEFT, 10)
+    private fun checkContentMargin(marginLeft: Int, marginTop: Int, marginRight: Int, marginBottom: Int) {
         _itemsState.update { it.copy(contentPadding = PaddingValues(
             marginLeft.dp, marginTop.dp,
             marginRight.dp, marginBottom.dp)

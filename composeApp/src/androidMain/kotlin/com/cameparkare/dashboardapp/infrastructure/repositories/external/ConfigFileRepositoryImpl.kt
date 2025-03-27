@@ -74,7 +74,7 @@ class ConfigFileRepositoryImpl(
         appLogger.trackLog("getFileConfiguration: ", "_________")
         when (val dataFromFile =
             configFileDao.readJsonFromFile<DashboardItemDto>(
-                filename = "config_dashboard.json",
+                filename = "dashboard_screens.json",
                 defaultValues = ConfigFileMock.getConfigFile())
         ){
             is ServiceResult.Error -> return ServiceResult.Error(dataFromFile.error)

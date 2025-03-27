@@ -2,6 +2,7 @@ package com.cameparkare.dashboardapp.config.di
 
 import androidx.room.Room
 import com.cameparkare.dashboardapp.config.database.AppDatabase
+import com.cameparkare.dashboardapp.config.database.migrations.Migration_2_3
 import com.cameparkare.dashboardapp.config.utils.AppLogger
 import com.cameparkare.dashboardapp.config.utils.AppLoggerImpl
 import com.cameparkare.dashboardapp.config.utils.IServerConnection
@@ -11,6 +12,7 @@ import com.cameparkare.dashboardapp.domain.repositories.external.ConfigFileRepos
 import com.cameparkare.dashboardapp.domain.repositories.external.FtpServerFileRepository
 import com.cameparkare.dashboardapp.domain.repositories.local.DashboardElementRepository
 import com.cameparkare.dashboardapp.domain.repositories.remote.TerminalConnectionRepository
+import com.cameparkare.dashboardapp.domain.usecases.ConnectionConfig
 import com.cameparkare.dashboardapp.domain.usecases.FtpServerConfiguration
 import com.cameparkare.dashboardapp.domain.usecases.GetScreenByDispatcher
 import com.cameparkare.dashboardapp.domain.usecases.InitConfiguration
@@ -34,7 +36,6 @@ import com.cameparkare.dashboardapp.ui.utils.UiUtils
 import com.cameparkare.dashboardapp.ui.utils.UiUtilsImpl
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
-import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -54,6 +55,7 @@ val viewModelModule = module {
 }
 
 val useCasesModule = module {
+    factory { ConnectionConfig(get(), get()) }
     factory { InitConfiguration(get(), get()) }
     factory { StartSocketConnection(get(), get()) }
     factory { FtpServerConfiguration(get(), get()) }
@@ -84,6 +86,7 @@ val databaseModules = module {
             "dashboard_db"
         )
             .fallbackToDestructiveMigration()
+            .addMigrations(Migration_2_3)
             .build()
     }
     single {
