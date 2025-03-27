@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver.AndroidApiServer
 import com.cameparkare.dashboardapp.infrastructure.source.remote.services.WebAppServer
 import com.cameparkare.dashboardapp.ui.screens.main.MainScreen
 import com.cameparkare.dashboardapp.ui.theme.DashboardAppTheme
@@ -28,6 +29,7 @@ class MainActivity : ComponentActivity() {
 
     private val mainViewModel: MainActivityViewModel by viewModel()
     private var webAppServer:  WebAppServer? = null
+    private var androidServer: AndroidApiServer? = null
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     override fun onStart() {
@@ -65,6 +67,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initWebServer()
+        initAndroidServer()
         copyWebAppFiles()
     }
 
@@ -82,6 +85,23 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+        }
+    }
+
+    private fun initAndroidServer(){
+        androidServer = AndroidApiServer()
+        try {
+            androidServer?.start()
+            val ipAddress = ConfigUI.getEthernetIpAddress() // Utiliza una función para obtener la IP del dispositivo
+            val ipByWifi = ConfigUI.getWifiIpAddress()
+            ipAddress?.let {
+                Toast.makeText(this, "API iniciado en: http://$it:2023", Toast.LENGTH_LONG).show()
+            }
+            ipByWifi?.let {
+                Toast.makeText(this, "API iniciado en: http://$it:2023", Toast.LENGTH_LONG).show()
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error al iniciar el servidor: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
 

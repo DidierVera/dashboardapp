@@ -1,4 +1,4 @@
-package com.cameparkare.dashboardapp.infrastructure.source.remote.services
+package com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver
 
 import com.cameparkare.dashboardapp.config.constants.Constants.SIGNAL_R_URI
 import com.cameparkare.dashboardapp.config.constants.Constants.TERMINAL_API
@@ -13,17 +13,11 @@ import com.microsoft.signalr.HubConnectionBuilder
 import com.microsoft.signalr.HubConnectionState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import okhttp3.internal.wait
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.io.PrintWriter
-import java.net.ServerSocket
-import java.net.Socket
 
 class WebHubSocketService(
     private val preferences: SharedPreferencesProvider,
