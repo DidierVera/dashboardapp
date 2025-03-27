@@ -1,5 +1,8 @@
 package com.cameparkare.dashboardapp.domain.models.components
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class CommonStyleModel(
     val backgroundColor: String? = null,
     val density: Int = 100,

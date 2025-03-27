@@ -23,6 +23,9 @@ import com.cameparkare.dashboardapp.infrastructure.repositories.external.FtpServ
 import com.cameparkare.dashboardapp.infrastructure.repositories.local.DashboardElementRepositoryImpl
 import com.cameparkare.dashboardapp.infrastructure.repositories.remote.TerminalConnectionImpl
 import com.cameparkare.dashboardapp.infrastructure.source.external.ConfigFileDao
+import com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver.AndroidApiServer
+import com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver.ApiServerRepository
+import com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver.ApiServerRepositoryImpl
 import com.cameparkare.dashboardapp.infrastructure.source.remote.services.MockService
 import com.cameparkare.dashboardapp.infrastructure.source.remote.services.SignalRService
 import com.cameparkare.dashboardapp.infrastructure.source.remote.services.TerminalSocketService
@@ -47,6 +50,7 @@ val utilsModule = module {
     singleOf(::ServerConnectionImpl) { bind<IServerConnection>() }
     factory { getPlatform() }
     factory { FTPServer() }
+    factory { AndroidApiServer(get()) }
 }
 
 val viewModelModule = module {
@@ -66,6 +70,7 @@ val repositoryModule = module {
     singleOf(::FtpServerFileImpl) { bind<FtpServerFileRepository>() }
     singleOf(::ConfigFileRepositoryImpl) { bind<ConfigFileRepository>() }
     singleOf(::DashboardElementRepositoryImpl) { bind<DashboardElementRepository>() }
+    singleOf(::ApiServerRepositoryImpl) { bind<ApiServerRepository>() }
 }
 
 val servicesModule = module {

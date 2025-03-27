@@ -2,22 +2,81 @@ package com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver
 
 import android.util.Log
 import fi.iki.elonen.NanoHTTPD
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.Json
 
-class AndroidApiServer: NanoHTTPD(2023) { // Puerto 2023
+class AndroidApiServer(
+    private val apiServerRepository: ApiServerRepository,
+    port: Int = 2023
+): NanoHTTPD(port) {
     private val TAG = "AndroidApiServer"
+    private val serverScope = CoroutineScope(Job() + Dispatchers.Default)
+
     override fun serve(session: IHTTPSession): Response {
+
         val method = session.method
         val uri = session.uri
-        val params = session.parms
+        val params = session.parameters
 
+        val response = CompletableDeferred<Response>()
         Log.d(TAG, "Request: $method $uri")
 
         return when {
-            // GET /api/hello?name=John
-            uri == "/api/hello" && method == Method.GET -> {
-                val name = params["name"] ?: "World"
-                val response = """{"message": "Hello, $name!"}"""
-                newFixedLengthResponse(Response.Status.OK, "application/json", response)
+            // GET Dashboard ip list
+            uri == "/api/dashboardList" && method == Method.GET -> {
+                serverScope.launch {
+                    try {
+                        val result = apiServerRepository.getDashboardIpList()
+                        response.complete(
+                            newFixedLengthResponse(
+                                Response.Status.OK,
+                                "application/json",
+                                Json.encodeToString(result)
+                            )
+                        )
+                    } catch (e: Exception) {
+                        response.complete(
+                            newFixedLengthResponse(
+                                Response.Status.INTERNAL_ERROR,
+                                "application/json",
+                                """{"error": "${e.message}"}"""
+                            )
+                        )
+                    }
+                }
+
+                runBlocking { response.await() }
+            }
+
+            uri == "/api/getcurrentconfiguration" && method == Method.GET  ->{
+                serverScope.launch {
+                    try {
+                        val result = apiServerRepository.getCurrentConfiguration()
+                        response.complete(
+                            newFixedLengthResponse(
+                                Response.Status.OK,
+                                "application/json",
+                                Json.encodeToString(result)
+                            )
+                        )
+                    } catch (e: Exception) {
+                        response.complete(
+                            newFixedLengthResponse(
+                                Response.Status.INTERNAL_ERROR,
+                                "application/json",
+                                """{"error": "${e.message}"}"""
+                            )
+                        )
+                    }
+                }
+
+                runBlocking { response.await() }
             }
 
             // POST /api/data
@@ -45,11 +104,9 @@ class AndroidApiServer: NanoHTTPD(2023) { // Puerto 2023
             else -> newFixedLengthResponse(Response.Status.NOT_FOUND, "text/plain", "404 Not Found")
         }
     }
-}
-fun String.escapeJson(): String {
-    return this.replace("\\", "\\\\")
-        .replace("\"", "\\\"")
-        .replace("\n", "\\n")
-        .replace("\r", "\\r")
-        .replace("\t", "\\t")
+
+    override fun stop() {
+        serverScope.cancel()
+        super.stop()
+    }
 }

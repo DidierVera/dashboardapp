@@ -1,5 +1,6 @@
 package com.cameparkare.dashboardapp.ui.screens.activity
 
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import com.cameparkare.dashboardapp.config.constants.Constants.FTP_APP_PASSWORD
 import com.cameparkare.dashboardapp.config.constants.Constants.FTP_APP_PORT
@@ -8,12 +9,15 @@ import com.cameparkare.dashboardapp.config.constants.Constants.FTP_DEVICE_PASSWO
 import com.cameparkare.dashboardapp.config.constants.Constants.FTP_DEVICE_PORT
 import com.cameparkare.dashboardapp.config.constants.Constants.FTP_DEVICE_USER
 import com.cameparkare.dashboardapp.config.utils.SharedPreferencesProvider
+import com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver.AndroidApiServer
+import com.cameparkare.dashboardapp.ui.utils.ConfigUI
 import com.cameparkare.dashboardapp.ui.utils.FTPServer
 
 class MainActivityViewModel (
     private val preferences: SharedPreferencesProvider,
     private val ftpServerConfig: FTPServer,
-    private val ftpServerRoot: FTPServer
+    private val ftpServerRoot: FTPServer,
+    private val androidApiServer: AndroidApiServer
 ): ViewModel() {
 
     fun startDeviceFtpServer(rootDir: String){
@@ -33,5 +37,21 @@ class MainActivityViewModel (
     fun stopFtpServers(){
         ftpServerConfig.stopServer()
         ftpServerRoot.stopServer()
+    }
+
+    fun initAndroidServer(showMessage: (String) -> Unit){
+        try {
+            androidApiServer.start()
+            val ipAddress = ConfigUI.getEthernetIpAddress() // Utiliza una función para obtener la IP del dispositivo
+            val ipByWifi = ConfigUI.getWifiIpAddress()
+            ipAddress?.let {
+                showMessage.invoke("API iniciado en: http://$it:2023")
+            }
+            ipByWifi?.let {
+                showMessage.invoke("API iniciado en: http://$it:2023")
+            }
+        } catch (e: Exception) {
+            showMessage.invoke("Error al iniciar el servidor: ${e.message}")
+        }
     }
 }

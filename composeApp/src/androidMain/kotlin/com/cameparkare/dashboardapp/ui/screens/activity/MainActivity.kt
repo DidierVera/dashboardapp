@@ -29,14 +29,20 @@ class MainActivity : ComponentActivity() {
 
     private val mainViewModel: MainActivityViewModel by viewModel()
     private var webAppServer:  WebAppServer? = null
-    private var androidServer: AndroidApiServer? = null
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     override fun onStart() {
         super.onStart()
         ConfigUI.hideSystemUI(this)
         startFTPServer()
+        startAndroidApiServer()
         setContent()
+    }
+
+    private fun startAndroidApiServer() {
+        mainViewModel.initAndroidServer { message ->
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+        }
     }
 
     private fun startFTPServer() {
@@ -67,7 +73,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initWebServer()
-        initAndroidServer()
         copyWebAppFiles()
     }
 
@@ -85,23 +90,6 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
-        }
-    }
-
-    private fun initAndroidServer(){
-        androidServer = AndroidApiServer()
-        try {
-            androidServer?.start()
-            val ipAddress = ConfigUI.getEthernetIpAddress() // Utiliza una función para obtener la IP del dispositivo
-            val ipByWifi = ConfigUI.getWifiIpAddress()
-            ipAddress?.let {
-                Toast.makeText(this, "API iniciado en: http://$it:2023", Toast.LENGTH_LONG).show()
-            }
-            ipByWifi?.let {
-                Toast.makeText(this, "API iniciado en: http://$it:2023", Toast.LENGTH_LONG).show()
-            }
-        } catch (e: Exception) {
-            Toast.makeText(this, "Error al iniciar el servidor: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
 
