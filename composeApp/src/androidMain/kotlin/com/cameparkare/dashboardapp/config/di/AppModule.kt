@@ -90,4 +90,8 @@ val databaseModules = module {
         val database = get<AppDatabase>()
         database.screenDao()
     }
+    single {
+        val database = get<AppDatabase>()
+        database.imagesDao()
+    }
 }

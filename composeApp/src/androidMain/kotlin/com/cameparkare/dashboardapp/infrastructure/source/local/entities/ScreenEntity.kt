@@ -9,6 +9,7 @@ import com.cameparkare.dashboardapp.infrastructure.source.local.entities.compone
 import com.cameparkare.dashboardapp.infrastructure.source.local.entities.components.toModel
 import com.cameparkare.dashboardapp.infrastructure.source.local.entities.config.ElementListConverter
 import com.cameparkare.dashboardapp.infrastructure.source.local.entities.config.RoomTableNames.SCREEN_TABLE_NAME
+import kotlinx.serialization.SerialName
 
 @Entity(tableName = SCREEN_TABLE_NAME)
 data class ScreenEntity(
@@ -16,6 +17,10 @@ data class ScreenEntity(
     val id: Int = 0,
     val screenId: String,
     val dispatcherCode: Long,
+    val marginTop: Int = 0,
+    val marginBottom: Int = 0,
+    val marginLeft: Int = 0,
+    val marginRight: Int = 0,
     @TypeConverters(ElementListConverter::class)
     val elements: List<ElementEntity>
 )
@@ -24,6 +29,10 @@ fun ScreenModel.toEntity(): ScreenEntity {
     return ScreenEntity(
         screenId = screenId,
         dispatcherCode = dispatcherCode,
+        marginTop = marginTop,
+        marginBottom = marginBottom,
+        marginLeft = marginLeft,
+        marginRight = marginRight,
         elements = mapElementsModelToEntity(elements)
     )
 }
@@ -32,6 +41,10 @@ fun ScreenEntity.toModel(): ScreenModel {
     return ScreenModel(
         screenId = screenId,
         dispatcherCode = dispatcherCode,
+        marginTop = marginTop,
+        marginBottom = marginBottom,
+        marginLeft = marginLeft,
+        marginRight = marginRight,
         elements = mapElementsEntityToModel(elements)
     )
 }

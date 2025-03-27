@@ -12,12 +12,22 @@ import kotlinx.serialization.modules.SerializersModule
 data class ScreenDto(
     @SerialName("dispatch-code") val dispatchCode: Long,
     @SerialName("screen-id") val screenId: String,
+    @SerialName("margin-top") val marginTop: Int = 20,
+    @SerialName("margin-bottom") val marginBottom: Int = 20,
+    @SerialName("margin-left") val marginLeft: Int = 20,
+    @SerialName("margin-right") val marginRight: Int = 20,
     val data: List<ElementDto>
 )
 
 fun ScreenDto.toModel(): ScreenModel {
     return ScreenModel(
-        screenId = screenId, dispatcherCode = dispatchCode, elements = getElementsDtoToModel(data)
+        screenId = screenId,
+        dispatcherCode = dispatchCode,
+        marginTop = marginTop,
+        marginBottom = marginBottom,
+        marginLeft = marginLeft,
+        marginRight = marginRight,
+        elements = getElementsDtoToModel(data)
     )
 }
 

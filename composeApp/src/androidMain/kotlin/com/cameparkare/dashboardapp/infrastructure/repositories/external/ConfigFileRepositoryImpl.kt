@@ -1,12 +1,8 @@
 package com.cameparkare.dashboardapp.infrastructure.repositories.external
 
-import android.provider.Telephony.Carriers.PORT
-import com.cameparkare.dashboardapp.config.constants.Constants.MARGIN_BOTTOM
-import com.cameparkare.dashboardapp.config.constants.Constants.IP_ADDRESS
-import com.cameparkare.dashboardapp.config.constants.Constants.MARGIN_LEFT
-import com.cameparkare.dashboardapp.config.constants.Constants.MARGIN_RIGHT
-import com.cameparkare.dashboardapp.config.constants.Constants.MARGIN_TOP
-import com.cameparkare.dashboardapp.config.constants.Constants.SIGNAL_R_URI
+import com.cameparkare.dashboardapp.config.constants.Constants.TERMINAL_API
+import com.cameparkare.dashboardapp.config.constants.Constants.TERMINAL_IP
+import com.cameparkare.dashboardapp.config.constants.Constants.TERMINAL_PORT
 import com.cameparkare.dashboardapp.config.constants.Constants.TEXT_SIZE_SCALE
 import com.cameparkare.dashboardapp.config.constants.Constants.TIME_DELAY
 import com.cameparkare.dashboardapp.config.constants.Constants.VIDEO_FRAME
@@ -16,9 +12,11 @@ import com.cameparkare.dashboardapp.config.dataclasses.TypeConnectionEnum
 import com.cameparkare.dashboardapp.config.utils.AppLogger
 import com.cameparkare.dashboardapp.config.utils.IServerConnection
 import com.cameparkare.dashboardapp.config.utils.SharedPreferencesProvider
+import com.cameparkare.dashboardapp.domain.models.ImagesModel
 import com.cameparkare.dashboardapp.domain.models.ScreenModel
 import com.cameparkare.dashboardapp.domain.repositories.external.ConfigFileRepository
 import com.cameparkare.dashboardapp.domain.repositories.local.DashboardElementRepository
+import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.ConnectionConfigDto
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.DashboardItemDto
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.ScreenDto
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.toModel
@@ -34,20 +32,42 @@ class ConfigFileRepositoryImpl(
 ): ConfigFileRepository {
     override suspend fun getConnectionConfig(): ServiceResult<Boolean> {
         appLogger.trackLog("getConnectionConfig: ", "_________")
-        return when (val dataFromFile = configFileDao.readJsonFromFile<String?>(
+        when (val dataFromFile = configFileDao.readJsonFromFile<ConnectionConfigDto>(
             filename = "connection_config.json",
             defaultValues = ConfigFileMock.getConnectionConfiguration()
         )){
 
-//            is ServiceResult.Error -> return ServiceResult.Error(dataFromFile.error)
-//            is ServiceResult.Success -> {
-//                val data = dataFromFile.data ?: return ServiceResult.Error(ErrorTypeClass.WrongConfigFile)
-//
-//            }
-            is ServiceResult.Error -> TODO()
-            is ServiceResult.Success -> TODO()
-        }
+            is ServiceResult.Error -> return ServiceResult.Error(dataFromFile.error)
+            is ServiceResult.Success -> {
+                val data = dataFromFile.data ?: return ServiceResult.Error(ErrorTypeClass.WrongConfigFile)
 
+                when (data.connectionWay){
+                    1 -> serverConnection.setTypeConnection(TypeConnectionEnum.SIGNAL_R)
+                    2 -> serverConnection.setTypeConnection(TypeConnectionEnum.SOCKET)
+                    else -> serverConnection.setTypeConnection(TypeConnectionEnum.MOCK)
+                }
+
+                //storage local config preferences
+                preferences.put(TERMINAL_IP, data.terminalIp)
+                preferences.put(TERMINAL_PORT, data.port)
+                preferences.put(TERMINAL_API, data.terminalApi)
+                preferences.put(TIME_DELAY, data.timeDelay)
+                preferences.put(VIDEO_FRAME, data.videoFrame)
+                preferences.put(TEXT_SIZE_SCALE, data.textSizeScale)
+
+                //storage images
+                storageImages(data.files)
+
+                return ServiceResult.Success(true)
+            }
+        }
+    }
+
+    private suspend fun storageImages(files: Map<String, String>?) {
+        if (files.isNullOrEmpty()) return
+        dashboardElementRepository.saveImages(
+            files.map { (name, content) -> ImagesModel(fileName = name, fileContent = content) }
+        )
     }
 
     override suspend fun getFileConfiguration(): ServiceResult<List<ScreenModel>> {
@@ -60,52 +80,6 @@ class ConfigFileRepositoryImpl(
             is ServiceResult.Error -> return ServiceResult.Error(dataFromFile.error)
             is ServiceResult.Success -> {
                 val data = dataFromFile.data ?: return ServiceResult.Error(ErrorTypeClass.WrongConfigFile)
-                var checkConfiguration = false
-
-                //storage local config preferences
-                data.socketIp?.let {
-                    checkConfiguration = true
-                    appLogger.trackLog("CONNECTION MODE: ", TypeConnectionEnum.SOCKET.toString())
-                    appLogger.trackLog("$IP_ADDRESS: ", it)
-                    serverConnection.setTypeConnection(TypeConnectionEnum.SOCKET)
-                    preferences.put(IP_ADDRESS, it) }
-                data.socketPort?.let {
-                    appLogger.trackLog("$PORT: ", "$it")
-                    preferences.put(PORT, it)
-                }
-                data.signalRUrl?.let {
-                    checkConfiguration = true
-                    appLogger.trackLog("CONNECTION MODE: ", TypeConnectionEnum.SIGNAL_R.toString())
-                    appLogger.trackLog("$SIGNAL_R_URI: ", it)
-                    appLogger.trackLog("$TIME_DELAY: ", "${ data.timeDelay }")
-                    serverConnection.setTypeConnection(TypeConnectionEnum.SIGNAL_R)
-                    preferences.put(SIGNAL_R_URI, it) }
-
-                if (!checkConfiguration){
-                    appLogger.trackLog("CONNECTION MODE: ", "MOCK")
-                    serverConnection.setTypeConnection(TypeConnectionEnum.MOCK)
-                }
-                data.timeDelay?.let {
-                    preferences.put(TIME_DELAY, it)
-                }
-                data.videoFrame?.let {
-                    preferences.put(VIDEO_FRAME, it)
-                }
-                data.marginTop?.let {
-                    preferences.put(MARGIN_TOP, it)
-                }
-                data.marginBottom?.let {
-                    preferences.put(MARGIN_BOTTOM, it)
-                }
-                data.marginRight?.let {
-                    preferences.put(MARGIN_RIGHT, it)
-                }
-                data.marginLeft?.let {
-                    preferences.put(MARGIN_LEFT, it)
-                }
-                data.textSizeScale?.let {
-                    preferences.put(TEXT_SIZE_SCALE, it)
-                }
 
                 //delete and storage screens and elements
                 storageScreensAndElements(data.screens)

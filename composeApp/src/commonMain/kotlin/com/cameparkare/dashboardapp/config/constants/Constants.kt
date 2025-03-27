@@ -5,6 +5,7 @@ object Constants {
     const val SIGNAL_R_URI = "SignalRUrl"
     const val IP_ADDRESS = "ipAddress"
     const val SOCKET_URL = "SocketUrl"
+    const val TERMINAL_IP = "TerminalIP"
     const val TERMINAL_PORT = "TerminalPort"
     const val TERMINAL_API = "TerminalApi"
     const val TIME_DELAY = "timeDelay"

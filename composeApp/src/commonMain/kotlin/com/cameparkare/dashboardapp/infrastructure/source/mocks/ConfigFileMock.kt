@@ -20,20 +20,14 @@ object ConfigFileMock {
     fun getConfigFile(): String {
         return """
             {
-                "signalR-url": null,
-                "socket-ip": null,
-                "socket-port": null,
-                "time-delay": 5,
-                "video-frame": false,
-                "text-size-scale": 10,
-                "margin-top": 20,
-                "margin-bottom": 100,
-                "margin-left": 20,
-                "margin-right": 20,
                 "screens": [
                     {
                         "dispatch-code": 0,
                         "screen-id": "DLG_BOOT",
+                        "margin-top": 20,
+                        "margin-bottom": 100,
+                        "margin-left": 20,
+                        "margin-right": 20,
                         "data": [
                             {
                                 "element-type": "box",
@@ -62,6 +56,10 @@ object ConfigFileMock {
                     {
                         "dispatch-code": 5,
                         "screen-id": "IDLE",
+                        "margin-top": 20,
+                        "margin-bottom": 100,
+                        "margin-left": 20,
+                        "margin-right": 20,
                         "data": [
                             {
                                 "element-type": "row",
@@ -318,6 +316,10 @@ object ConfigFileMock {
                     {
                         "dispatch-code": 1005,
                         "screen-id": "IDLE_DISCONNECTED",
+                        "margin-top": 20,
+                        "margin-bottom": 100,
+                        "margin-left": 20,
+                        "margin-right": 20,
                         "data": [
                             {
                                 "element-type": "row",
@@ -392,6 +394,10 @@ object ConfigFileMock {
                     {
                         "dispatch-code": 6,
                         "screen-id": "DLG_OUT_SERVICE",
+                        "margin-top": 20,
+                        "margin-bottom": 100,
+                        "margin-left": 20,
+                        "margin-right": 20,
                         "data": [
                             {
                                 "element-type": "box",
@@ -420,6 +426,10 @@ object ConfigFileMock {
                     {
                         "dispatch-code": 7,
                         "screen-id": "DLG_PARKING_FULL",
+                        "margin-top": 20,
+                        "margin-bottom": 100,
+                        "margin-left": 20,
+                        "margin-right": 20,
                         "data": [
                             {
                                 "element-type": "text",
@@ -506,6 +516,10 @@ object ConfigFileMock {
                     {
                         "dispatch-code": 8,
                         "screen-id": "USER",
+                        "margin-top": 20,
+                        "margin-bottom": 100,
+                        "margin-left": 20,
+                        "margin-right": 20,
                         "data": [
                             {
                                 "element-type": "text",
@@ -662,6 +676,10 @@ object ConfigFileMock {
                     {
                         "dispatch-code": 9,
                         "screen-id": "READING_PLATE",
+                        "margin-top": 20,
+                        "margin-bottom": 100,
+                        "margin-left": 20,
+                        "margin-right": 20,
                         "data": [
                             {
                                 "element-type": "row",
@@ -848,6 +866,10 @@ object ConfigFileMock {
                     {
                         "dispatch-code": 12,
                         "screen-id": "PLEASE_PROCEED",
+                        "margin-top": 20,
+                        "margin-bottom": 100,
+                        "margin-left": 20,
+                        "margin-right": 20,
                         "data": [
                             {
                                 "element-type": "column",
@@ -1033,6 +1055,10 @@ object ConfigFileMock {
                     {
                         "dispatch-code": 18,
                         "screen-id": "DLG_CARD_ERROR",
+                        "margin-top": 20,
+                        "margin-bottom": 100,
+                        "margin-left": 20,
+                        "margin-right": 20,
                         "data": [
                             {
                                 "element-type": "column",
@@ -1190,6 +1216,10 @@ object ConfigFileMock {
                     {
                         "dispatch-code": 96,
                         "screen-id": "DLG_OUT_SERVICE",
+                        "margin-top": 20,
+                        "margin-bottom": 100,
+                        "margin-left": 20,
+                        "margin-right": 20,
                         "data": [
                             {
                                 "element-type": "box",
