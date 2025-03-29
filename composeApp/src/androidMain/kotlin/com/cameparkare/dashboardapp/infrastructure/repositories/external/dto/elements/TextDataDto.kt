@@ -4,6 +4,7 @@ import com.cameparkare.dashboardapp.domain.models.components.BoxDataModel
 import com.cameparkare.dashboardapp.domain.models.components.CommonStyleModel
 import com.cameparkare.dashboardapp.domain.models.components.ElementModel
 import com.cameparkare.dashboardapp.domain.models.components.TextDataModel
+import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.ElementDto
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.getElementsDtoToModel
 import kotlinx.serialization.Serializable
 
@@ -14,7 +15,7 @@ data class TextDataDto(
     val defaultText: String,
     val textSize: Int,
     val textColor: String,
-    val padding: Int,
+    val padding: Int? = 0,
     val fontWeight: String,
     val dataKey: String? = null,
     val ditTypeCode: Int? = null,
@@ -35,6 +36,22 @@ fun TextDataDto.toModel(): ElementModel.TextModel{
             style = CommonStyleModel(
                  padding = padding
             )
+        )
+    )
+}
+fun ElementModel.TextModel.toDto(): ElementDto.TextDto{
+    return ElementDto.TextDto(
+        elementType = "text",
+        data = TextDataDto(
+            dataKey = data.dataKey, validValue = data.validValue, ditTypeCode = data.ditTypeCode,
+            fontWeight = data.fontWeight,
+            textColor = data.textColor,
+            translations = data.translations,
+            dashboardItemId = data.dashboardItemId,
+            defaultText = data.defaultText,
+            textSize = data.textSize,
+                 padding = data.style.padding
+
         )
     )
 }

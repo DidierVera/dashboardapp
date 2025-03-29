@@ -5,6 +5,7 @@ import com.cameparkare.dashboardapp.domain.models.ScreenModel
 import com.cameparkare.dashboardapp.domain.models.TerminalConnectionModel
 import com.cameparkare.dashboardapp.domain.repositories.local.DashboardElementRepository
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.ScreenDto
+import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.toDto
 
 class ApiServerRepositoryImpl(
     private val dashboardElementRepository: DashboardElementRepository
