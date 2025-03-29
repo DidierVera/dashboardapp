@@ -1,7 +1,4 @@
 package com.cameparkare.dashboardapp.infrastructure.repositories.external.dto
-import com.cameparkare.dashboardapp.domain.models.components.BoxDataModel
-import com.cameparkare.dashboardapp.domain.models.components.CommonStyleModel
-import com.cameparkare.dashboardapp.domain.models.components.ElementModel
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.elements.BoxDataDto
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.elements.ColumnDataDto
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.elements.ImageDataDto
@@ -24,14 +21,10 @@ import kotlinx.serialization.json.jsonPrimitive
 @JsonClassDiscriminator("element-type")
 sealed class ElementDto {
     @Serializable
-    @SerialName("element-type")
-    abstract val elementType: String
-
-    @Serializable
     @SerialName("box")
     data class BoxDto(
         @SerialName("element-type")
-        override val elementType: String,
+        val elementType: String,
         val data: BoxDataDto
     ) : ElementDto()
 
@@ -39,7 +32,7 @@ sealed class ElementDto {
     @SerialName("spacer")
     data class SpacerDto(
         @SerialName("element-type")
-        override val elementType: String,
+        val elementType: String,
         val data: SpacerDataDto
     ) : ElementDto()
 
@@ -47,7 +40,7 @@ sealed class ElementDto {
     @SerialName("column")
     data class ColumnDto(
         @SerialName("element-type")
-        override val elementType: String,
+        val elementType: String,
         val data: ColumnDataDto
     ) : ElementDto()
 
@@ -55,7 +48,7 @@ sealed class ElementDto {
     @SerialName("text")
     data class TextDto(
         @SerialName("element-type")
-        override val elementType: String,
+        val elementType: String,
         val data: TextDataDto
     ) : ElementDto()
 
@@ -63,7 +56,7 @@ sealed class ElementDto {
     @SerialName("row")
     data class RowDto(
         @SerialName("element-type")
-        override val elementType: String,
+        val elementType: String,
         val data: RowDataDto
     ) : ElementDto()
 
@@ -71,7 +64,7 @@ sealed class ElementDto {
     @SerialName("image")
     data class ImageDto(
         @SerialName("element-type")
-        override val elementType: String,
+        val elementType: String,
         val data: ImageDataDto
     ) : ElementDto()
 
@@ -79,7 +72,7 @@ sealed class ElementDto {
     @SerialName("video")
     data class VideoDto(
         @SerialName("element-type")
-        override val elementType: String,
+        val elementType: String,
         val data: VideoDataDto
     ) : ElementDto()
 }

@@ -17,7 +17,7 @@ data class ScreenDto(
     @SerialName("margin-bottom") val marginBottom: Int = 20,
     @SerialName("margin-left") val marginLeft: Int = 20,
     @SerialName("margin-right") val marginRight: Int = 20,
-    val data: List<ElementDto>
+    val data: List<@Serializable(with = ElementSerializer::class)ElementDto>
 )
 
 fun ScreenDto.toModel(): ScreenModel {
