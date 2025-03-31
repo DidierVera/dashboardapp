@@ -1,7 +1,6 @@
 package com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver
 
 import fi.iki.elonen.NanoHTTPD
-import kotlinx.serialization.json.Json
 
 object ApiRequestPredicates {
     fun NanoHTTPD.IHTTPSession.isGetDashboardListRequest(): Boolean {
@@ -27,16 +26,8 @@ object ApiRequestPredicates {
             if (body.startsWith('\uFEFF')) {
                 body.substring(1) // Remove BOM if present
             } else {
-                String(body.toByteArray(Charsets.ISO_8859_1), Charsets.UTF_8)
+                String(body.toByteArray(Charsets.UTF_8), Charsets.UTF_8)
             }
         }
-    }
-
-    val json = Json {
-        ignoreUnknownKeys = true
-        encodeDefaults = true
-        explicitNulls = false
-        // Important for special characters:
-        allowStructuredMapKeys = true
     }
 }

@@ -61,13 +61,11 @@ class AndroidApiServer(
     }
 
     private fun handleSaveDevice(session: IHTTPSession): Response {
-        return processAsyncRequest(
-            preProcess = { session.readBodyAsUtf8() },
-            parse = { body -> Json { ignoreUnknownKeys = true }.decodeFromString<DeviceDto>(body) },
-            operation = { dto -> apiServerRepository.saveDashboardIp(dto) },
-            successTransform = { result -> """{"status": $result}""" }
+        return processPostRequest<DeviceDto>(
+            session = session,
+            parseBody = { body -> Json.decodeFromString<DeviceDto>(body) },
+            operation = { dto -> apiServerRepository.saveDashboardIp(dto) == 0 }
         )
-
     }
 
     private fun handleSaveScreen(session: IHTTPSession): Response {
@@ -87,13 +85,7 @@ class AndroidApiServer(
     ): Response {
         return processAsyncRequest(
             preProcess = {
-                val files = mutableMapOf<String, String>()
-                session.parseBody(files)
-                // Explicit UTF-8 reading
-                InputStreamReader(
-                    ByteArrayInputStream(files.values.first().toByteArray()),
-                    Charsets.UTF_8
-                ).use { it.readText() }.trimStart('\uFEFF')
+                session.readBodyAsUtf8()
             },
             parse = parseBody,
             operation = operation,
