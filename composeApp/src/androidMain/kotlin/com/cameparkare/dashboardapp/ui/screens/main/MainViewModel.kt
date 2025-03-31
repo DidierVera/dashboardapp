@@ -6,10 +6,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cameparkare.dashboardapp.config.DefaultDits
-import com.cameparkare.dashboardapp.config.constants.Constants.MARGIN_BOTTOM
-import com.cameparkare.dashboardapp.config.constants.Constants.MARGIN_LEFT
-import com.cameparkare.dashboardapp.config.constants.Constants.MARGIN_RIGHT
-import com.cameparkare.dashboardapp.config.constants.Constants.MARGIN_TOP
 import com.cameparkare.dashboardapp.config.constants.Constants.TEXT_SIZE_SCALE
 import com.cameparkare.dashboardapp.config.constants.Constants.TIME_DELAY
 import com.cameparkare.dashboardapp.config.constants.Constants.VIDEO_FRAME

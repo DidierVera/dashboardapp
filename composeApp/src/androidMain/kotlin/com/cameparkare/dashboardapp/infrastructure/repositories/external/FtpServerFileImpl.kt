@@ -40,6 +40,22 @@ class FtpServerFileImpl(
         }
     }
 
+    override suspend fun writeFtpServerConfiguration(newData: FtpServerConnectionDto): ServiceResult<Boolean> {
+        try {
+            val result = configFileDao.writeJsonToFile(filename = "ftp_connection.json",
+                content = newData)
+            return when(result){
+                is ServiceResult.Error -> ServiceResult.Error(result.error)
+                is ServiceResult.Success -> {
+                    saveFtpServerConfig(newData)
+                    ServiceResult.Success(true)
+                }
+            }
+        }catch (e: Exception){
+            return ServiceResult.Error(ErrorTypeClass.GeneralException(messageError = e.message))
+        }
+    }
+
     private fun saveFtpServerConfig(data: FtpServerConnectionDto) {
         preferences.put(FTP_DEVICE_PORT, data.deviceRoot.port)
         preferences.put(FTP_DEVICE_USER, data.deviceRoot.username)

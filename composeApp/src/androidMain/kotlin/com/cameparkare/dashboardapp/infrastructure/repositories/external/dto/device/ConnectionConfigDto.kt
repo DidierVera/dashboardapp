@@ -9,6 +9,7 @@ data class ConnectionConfigDto(
     @SerialName("connection-way") val connectionWay: Int,
     @SerialName("terminal-ip") val terminalIp: String,
     @SerialName("port") val port: Int,
+    @SerialName("api-port") val apiPort: Int,
     @SerialName("api") val terminalApi: String?,
     @SerialName("time-delay") val timeDelay: Int,
     @SerialName("video-frame") val videoFrame: Boolean,
@@ -18,12 +19,16 @@ data class ConnectionConfigDto(
 
 fun ConnectionConfigDto.toModel(): ConnectionConfigModel {
     return ConnectionConfigModel(
-        connectionWay, terminalIp, port, terminalApi, timeDelay, videoFrame, textSizeScale
+        connectionWay=connectionWay,
+        terminalIp=terminalIp, port=port, apiPort=apiPort, terminalApi=terminalApi,
+        timeDelay=timeDelay, videoFrame=videoFrame, textSizeScale=textSizeScale
     )
 }
 
 fun ConnectionConfigModel.toDto(): ConnectionConfigDto {
     return ConnectionConfigDto(
-        connectionWay, terminalIp, port, terminalApi, timeDelay, videoFrame, textSizeScale
+        connectionWay=connectionWay,
+        terminalIp=terminalIp, port=port, apiPort=apiPort, terminalApi=terminalApi,
+        timeDelay=timeDelay, videoFrame=videoFrame, textSizeScale=textSizeScale
     )
 }

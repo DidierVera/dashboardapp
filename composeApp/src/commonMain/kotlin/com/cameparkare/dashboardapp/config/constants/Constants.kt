@@ -8,12 +8,9 @@ object Constants {
     const val TERMINAL_IP = "TerminalIP"
     const val TERMINAL_PORT = "TerminalPort"
     const val TERMINAL_API = "TerminalApi"
+    const val API_PORT = "apiPort"
     const val TIME_DELAY = "timeDelay"
     const val VIDEO_FRAME = "videoFrame"
-    const val MARGIN_TOP = "marginTop"
-    const val MARGIN_BOTTOM = "marginBottom"
-    const val MARGIN_RIGHT = "marginRight"
-    const val MARGIN_LEFT = "marginLeft"
     const val TEXT_SIZE_SCALE = "textSizeScale"
 
 

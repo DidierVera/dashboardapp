@@ -11,6 +11,7 @@ import com.cameparkare.dashboardapp.config.utils.IServerConnection
 import com.cameparkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.cameparkare.dashboardapp.domain.models.ImagesModel
 import com.cameparkare.dashboardapp.domain.models.ConnectionConfigModel
+import com.cameparkare.dashboardapp.domain.repositories.external.ConfigFileRepository
 import com.cameparkare.dashboardapp.domain.repositories.local.DashboardDevicesRepository
 import com.cameparkare.dashboardapp.domain.repositories.local.DashboardElementRepository
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.ScreenDto
@@ -25,6 +26,7 @@ class ApiServerRepositoryImpl(
     private val dashboardElementRepository: DashboardElementRepository,
     private val serverConnection: IServerConnection,
     private val preferences: SharedPreferencesProvider,
+    private val configFileRepository: ConfigFileRepository,
     private val dashboardDevicesRepository: DashboardDevicesRepository
 ): ApiServerRepository {
     override suspend fun saveDashboardIp(device: DeviceDto): Int {
@@ -34,6 +36,8 @@ class ApiServerRepositoryImpl(
 
     override suspend fun saveScreensConfig(screensConfig: List<ScreenDto>): Int {
         dashboardElementRepository.saveScreens(screensConfig.map { it.toModel() })
+        configFileRepository.writeScreensConfig(screensConfig.map { it.toModel() })
+        serverConnection.setRestartApp(true)
         return 0
     }
 
@@ -53,32 +57,9 @@ class ApiServerRepositoryImpl(
     }
 
     override suspend fun saveTerminalConnection(data: ConnectionConfigDto): Int {
-
-        when (data.connectionWay){
-            1 -> serverConnection.setTypeConnection(TypeConnectionEnum.SIGNAL_R)
-            2 -> serverConnection.setTypeConnection(TypeConnectionEnum.SOCKET)
-            else -> serverConnection.setTypeConnection(TypeConnectionEnum.MOCK)
-        }
-
-        //storage local config preferences
-        preferences.put(TERMINAL_IP, data.terminalIp)
-        preferences.put(TERMINAL_PORT, data.port)
-        preferences.put(TERMINAL_API, data.terminalApi)
-        preferences.put(TIME_DELAY, data.timeDelay)
-        preferences.put(VIDEO_FRAME, data.videoFrame)
-        preferences.put(TEXT_SIZE_SCALE, data.textSizeScale)
-
-        //storage images
-        storageImages(data.files)
+        configFileRepository.writeConnectionConfig(data.toModel())
         serverConnection.setRestartApp(true)
         return 0
-    }
-
-    private suspend fun storageImages(files: Map<String, String>?) {
-        if (files.isNullOrEmpty()) return
-        dashboardElementRepository.saveImages(
-            files.map { (name, content) -> ImagesModel(fileName = name, fileContent = content) }
-        )
     }
 
     override suspend fun getCurrentConfiguration(): List<ScreenDto> {

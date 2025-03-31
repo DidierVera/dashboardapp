@@ -1,7 +1,7 @@
 package com.cameparkare.dashboardapp.ui.screens.activity
 
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
+import com.cameparkare.dashboardapp.config.constants.Constants.API_PORT
 import com.cameparkare.dashboardapp.config.constants.Constants.FTP_APP_PASSWORD
 import com.cameparkare.dashboardapp.config.constants.Constants.FTP_APP_PORT
 import com.cameparkare.dashboardapp.config.constants.Constants.FTP_APP_USER
@@ -44,11 +44,12 @@ class MainActivityViewModel (
             androidApiServer.start()
             val ipAddress = ConfigUI.getEthernetIpAddress() // Utiliza una función para obtener la IP del dispositivo
             val ipByWifi = ConfigUI.getWifiIpAddress()
+            val port = preferences.get(API_PORT, 2023)
             ipAddress?.let {
-                showMessage.invoke("API iniciado en: http://$it:2023")
+                showMessage.invoke("API iniciado en: http://$it:$port")
             }
             ipByWifi?.let {
-                showMessage.invoke("API iniciado en: http://$it:2023")
+                showMessage.invoke("API iniciado en: http://$it:$port")
             }
         } catch (e: Exception) {
             showMessage.invoke("Error al iniciar el servidor: ${e.message}")

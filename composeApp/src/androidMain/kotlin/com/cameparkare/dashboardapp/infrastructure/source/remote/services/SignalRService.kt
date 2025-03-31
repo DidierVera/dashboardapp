@@ -30,7 +30,7 @@ class SignalRService(
         println("SIGNALR == Inicio de aplicación conexión SIGNAL R")
 
         val signalRIp = preferences.get(SIGNAL_R_URI, "192.168.209.14")
-        val terminalPort = preferences.get(TERMINAL_PORT, "9011")
+        val terminalPort = preferences.get(TERMINAL_PORT, 9011)
         val terminalApi = preferences.get(TERMINAL_API, "signalr")
         val signalRUri = "http://$signalRIp:$terminalPort/$terminalApi"
 

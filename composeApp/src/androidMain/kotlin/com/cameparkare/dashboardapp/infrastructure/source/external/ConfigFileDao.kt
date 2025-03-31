@@ -76,6 +76,33 @@ class ConfigFileDao (
         }
     }
 
+    inline fun <reified T> writeJsonToFile(filename: String, content: T): ServiceResult<Unit> {
+        val folder = getFolderPath() ?: return ServiceResult.Error(ErrorTypeClass.CanNoAccessToConfigFile)
+
+        // Ensure directory exists
+        if (folder.exists().not() && !folder.mkdirs()) {
+            return ServiceResult.Error(ErrorTypeClass.ConfigFileNotExist)
+        }
+
+        val file = File(folder, filename)
+
+        return try {
+            // Convert content to JSON string
+            val jsonString = json.encodeToString(content)
+
+            // Write to file
+            file.writeText(jsonString)
+            file.setExecutable(true, false)
+
+            appLogger.trackLog("Successfully save info to $filename", jsonString)
+            ServiceResult.Success(Unit)
+        } catch (ex: Exception) {
+            appLogger.trackLog("WRITE CONFIG FILE: ", message = "ERROR: See the exception file")
+            appLogger.trackError(ex)
+            ServiceResult.Error(ErrorTypeClass.CanNoAccessToConfigFile)
+        }
+    }
+
     val json = Json {
         prettyPrint = true
         ignoreUnknownKeys = true

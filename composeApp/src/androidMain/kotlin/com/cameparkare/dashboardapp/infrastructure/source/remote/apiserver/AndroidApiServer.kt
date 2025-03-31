@@ -1,6 +1,8 @@
 package com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver
 
 import android.util.Log
+import com.cameparkare.dashboardapp.config.constants.Constants.API_PORT
+import com.cameparkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.ScreenDto
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.device.ConnectionConfigDto
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.device.DeviceDto
@@ -24,8 +26,9 @@ import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
 
 class AndroidApiServer(
+    private val preferences: SharedPreferencesProvider,
     private val apiServerRepository: ApiServerRepository,
-    port: Int = 2023
+    port: Int = preferences.get(API_PORT, 2023)
 ): NanoHTTPD(port) {
     private val TAG = "AndroidApiServer"
     private val serverScope = CoroutineScope(Job() + Dispatchers.Default)
