@@ -1,19 +1,17 @@
-package com.cameparkare.dashboardapp.ui.screens.settings.importexport
+package com.cameparkare.dashboardapp.ui.screens.settings.importfile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class ImportExportViewModel(): ViewModel(){
+class ImportViewModel(): ViewModel(){
 
-    private val _state = MutableStateFlow(ImportExportState())
-    val state: StateFlow<ImportExportState>
+    private val _state = MutableStateFlow(ImportState())
+    val state: StateFlow<ImportState>
         get() = _state.asStateFlow()
 
     fun setValues(fileName: String, fileContent: String){

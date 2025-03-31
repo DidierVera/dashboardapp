@@ -7,6 +7,9 @@
     <string name="testing_option">Testing</string>
     <string name="dashboard_list_option">Dashboard list</string>
     <string name="import_export_option">Import/Export</string>
+    <string name="import_option">Import</string>
+    <string name="export_option">Export</string>
+    <string name="share_config_option">Share config</string>
 
     <!--Buttons general-->
     <string name="general_configuration_title">GENERAL CONFIGURATION</string>

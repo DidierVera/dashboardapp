@@ -4,7 +4,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
 import com.cameparkare.dashboardapp.config.di.wasmAppModule
 import com.cameparkare.dashboardapp.ui.navigation.AppContent
-import com.cameparkare.dashboardapp.ui.screens.main.MainScreen
 import kotlinx.browser.document
 import org.koin.core.context.GlobalContext.startKoin
 

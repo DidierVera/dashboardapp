@@ -7,12 +7,19 @@ import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.compose_multiplatform
 import dashboardapp.composeapp.generated.resources.connection_option
 import dashboardapp.composeapp.generated.resources.dashboard_list_option
+import dashboardapp.composeapp.generated.resources.export_option
 import dashboardapp.composeapp.generated.resources.ic_connection
+import dashboardapp.composeapp.generated.resources.ic_download
 import dashboardapp.composeapp.generated.resources.ic_import_export
 import dashboardapp.composeapp.generated.resources.ic_monitor
+import dashboardapp.composeapp.generated.resources.ic_share
 import dashboardapp.composeapp.generated.resources.ic_testing
+import dashboardapp.composeapp.generated.resources.ic_upload
 import dashboardapp.composeapp.generated.resources.import_export_option
+import dashboardapp.composeapp.generated.resources.import_option
+import dashboardapp.composeapp.generated.resources.share_config_option
 import dashboardapp.composeapp.generated.resources.testing_option
+import dashboardapp.composeapp.generated.resources.upload_file_button
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,12 +39,16 @@ class SettingViewModel: ViewModel() {
         get() = _selectedOption.asStateFlow()
 
     init {
+        loadLeftPanelOptions()
+    }
+
+    private fun loadLeftPanelOptions() {
         _optionsState.update {
             listOf(
                 SettingOptionsState(
                     iconRes = Res.drawable.ic_connection,
                     nameRes = Res.string.connection_option,
-                    isSelected = false
+                    isSelected = true
                 ),
                 SettingOptionsState(
                     iconRes = Res.drawable.ic_monitor,
@@ -45,8 +56,18 @@ class SettingViewModel: ViewModel() {
                     isSelected = false
                 ),
                 SettingOptionsState(
-                    iconRes = Res.drawable.ic_import_export,
-                    nameRes = Res.string.import_export_option,
+                    iconRes = Res.drawable.ic_upload,
+                    nameRes = Res.string.import_option,
+                    isSelected = false
+                ),
+                SettingOptionsState(
+                    iconRes = Res.drawable.ic_download,
+                    nameRes = Res.string.export_option,
+                    isSelected = false
+                ),
+                SettingOptionsState(
+                    iconRes = Res.drawable.ic_share,
+                    nameRes = Res.string.share_config_option,
                     isSelected = false
                 ),
                 SettingOptionsState(

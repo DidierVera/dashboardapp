@@ -10,13 +10,17 @@ import com.cameparkare.dashboardapp.ui.screens.settings.components.LeftOptionsPa
 import com.cameparkare.dashboardapp.ui.screens.settings.components.SettingTopBar
 import com.cameparkare.dashboardapp.ui.screens.settings.connection.ConnectionTab
 import com.cameparkare.dashboardapp.ui.screens.settings.dashboardlist.DashboardListTab
-import com.cameparkare.dashboardapp.ui.screens.settings.importexport.ImportExportTab
+import com.cameparkare.dashboardapp.ui.screens.settings.exportfile.ExportTab
+import com.cameparkare.dashboardapp.ui.screens.settings.importfile.ImportTab
+import com.cameparkare.dashboardapp.ui.screens.settings.shareconfig.ShareConfigTab
 import com.cameparkare.dashboardapp.ui.screens.settings.testing.TestingTab
 import com.cameparkare.dashboardapp.ui.screens.settings.viewmodels.SettingViewModel
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.connection_option
 import dashboardapp.composeapp.generated.resources.dashboard_list_option
-import dashboardapp.composeapp.generated.resources.import_export_option
+import dashboardapp.composeapp.generated.resources.export_option
+import dashboardapp.composeapp.generated.resources.import_option
+import dashboardapp.composeapp.generated.resources.share_config_option
 import dashboardapp.composeapp.generated.resources.testing_option
 import org.koin.compose.koinInject
 
@@ -37,7 +41,9 @@ fun SettingsScreen(onBackClick: () -> Unit, onSaveClick: () -> Unit){
             when(selectedOption.value.nameRes){
                 Res.string.connection_option -> ConnectionTab()
                 Res.string.dashboard_list_option -> DashboardListTab()
-                Res.string.import_export_option -> ImportExportTab()
+                Res.string.import_option -> ImportTab()
+                Res.string.export_option -> ExportTab()
+                Res.string.share_config_option -> ShareConfigTab()
                 Res.string.testing_option -> TestingTab()
                 else -> {}
             }

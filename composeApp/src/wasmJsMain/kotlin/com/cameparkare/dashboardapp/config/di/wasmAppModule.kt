@@ -2,7 +2,7 @@ package com.cameparkare.dashboardapp.config.di
 
 import com.cameparkare.dashboardapp.ui.navigation.Navigator
 import com.cameparkare.dashboardapp.ui.screens.settings.components.viewmodels.FilePickerDialogViewModel
-import com.cameparkare.dashboardapp.ui.screens.settings.importexport.ImportExportViewModel
+import com.cameparkare.dashboardapp.ui.screens.settings.importfile.ImportViewModel
 import com.cameparkare.dashboardapp.ui.screens.settings.viewmodels.SettingViewModel
 import com.cameparkare.dashboardapp.ui.utils.UiUtils
 import com.cameparkare.dashboardapp.ui.utils.UiUtilsImpl
@@ -18,7 +18,7 @@ val wasmAppModule = module {
     //viewModels
     viewModelOf(::SettingViewModel)
     viewModelOf(::FilePickerDialogViewModel)
-    viewModelOf(::ImportExportViewModel)
+    viewModelOf(::ImportViewModel)
 
     single { Navigator() }
 }
