@@ -10,11 +10,21 @@ import kotlinx.coroutines.flow.update
 class ServerConnectionImpl(): IServerConnection {
 
     private val _statusConnection: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    private val _restartApp: MutableStateFlow<Boolean> = MutableStateFlow(true)
     private val _typeConnection = MutableStateFlow(TypeConnectionEnum.SIGNAL_R)
+
     override val typeConnection: StateFlow<TypeConnectionEnum>
         get() = _typeConnection.asStateFlow()
+
     override val statusConnection: StateFlow<Boolean>
         get() = _statusConnection.asStateFlow()
+
+    override val restartApp: StateFlow<Boolean>
+        get() = _restartApp.asStateFlow()
+
+    override fun setRestartApp(restart: Boolean) {
+        _restartApp.update { restart }
+    }
 
     override fun setTypeConnection(type: TypeConnectionEnum) {
         _typeConnection.update { type }

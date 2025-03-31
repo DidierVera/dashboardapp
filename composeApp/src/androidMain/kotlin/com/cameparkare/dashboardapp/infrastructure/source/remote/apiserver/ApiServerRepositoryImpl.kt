@@ -10,10 +10,11 @@ import com.cameparkare.dashboardapp.config.dataclasses.TypeConnectionEnum
 import com.cameparkare.dashboardapp.config.utils.IServerConnection
 import com.cameparkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.cameparkare.dashboardapp.domain.models.ImagesModel
-import com.cameparkare.dashboardapp.domain.models.TerminalConnectionModel
+import com.cameparkare.dashboardapp.domain.models.ConnectionConfigModel
 import com.cameparkare.dashboardapp.domain.repositories.local.DashboardDevicesRepository
 import com.cameparkare.dashboardapp.domain.repositories.local.DashboardElementRepository
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.ScreenDto
+import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.device.ConnectionConfigDto
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.device.DeviceDto
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.device.toDto
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.device.toModel
@@ -51,7 +52,7 @@ class ApiServerRepositoryImpl(
         return 0
     }
 
-    override suspend fun saveTerminalConnection(data: TerminalConnectionModel): Int {
+    override suspend fun saveTerminalConnection(data: ConnectionConfigDto): Int {
 
         when (data.connectionWay){
             1 -> serverConnection.setTypeConnection(TypeConnectionEnum.SIGNAL_R)
@@ -69,7 +70,7 @@ class ApiServerRepositoryImpl(
 
         //storage images
         storageImages(data.files)
-
+        serverConnection.setRestartApp(true)
         return 0
     }
 

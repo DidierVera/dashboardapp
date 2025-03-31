@@ -1,5 +1,7 @@
 package com.cameparkare.dashboardapp.ui.screens.main
 
+import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,9 +17,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
+import com.cameparkare.dashboardapp.MainApplication
 import com.cameparkare.dashboardapp.R
 import com.cameparkare.dashboardapp.domain.models.components.ElementModel
 import com.cameparkare.dashboardapp.ui.components.BuildComposable
@@ -40,6 +44,7 @@ fun MainScreen() {
             LoadDashboardItems(modifier = Modifier.weight(0.7f))
             VideoExoPlayer(modifier = Modifier.weight(0.3f))
         }
+        RestartApp()
     }
 }
 
@@ -50,6 +55,21 @@ private fun UpdateDataByLang(
     val state by viewModel.itemsState.collectAsState()
     if (state.currentLang.isNotBlank()){
         viewModel.getTranslationText(state.currentLang)
+    }
+}
+
+@Composable
+private fun RestartApp(
+    viewModel: MainViewModel = koinViewModel()
+){
+    val context = LocalContext.current
+    viewModel.onRestartApp{
+        val packageManager = context.packageManager
+        val intent = packageManager.getLaunchIntentForPackage(context.packageName)
+        val componentName = intent?.component
+        val mainIntent = Intent.makeRestartActivityTask(componentName)
+        context.startActivity(mainIntent)
+        Runtime.getRuntime().exit(0)
     }
 }
 

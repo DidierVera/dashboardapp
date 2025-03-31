@@ -19,6 +19,10 @@ object ApiRequestPredicates {
         return uri == "/api/screen/save" && method == NanoHTTPD.Method.POST
     }
 
+    fun NanoHTTPD.IHTTPSession.isSaveConnectionConfig(): Boolean {
+        return uri == "/api/connection/config" && method == NanoHTTPD.Method.POST
+    }
+
     fun NanoHTTPD.IHTTPSession.readBodyAsUtf8(): String {
         val files = mutableMapOf<String, String>()
         this.parseBody(files)

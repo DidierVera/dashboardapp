@@ -2,12 +2,15 @@ package com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver
 
 import android.util.Log
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.ScreenDto
+import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.device.ConnectionConfigDto
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.device.DeviceDto
 import com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetCurrentConfigRequest
 import com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetDashboardListRequest
+import com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveConnectionConfig
 import com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveDeviceRequest
 import com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveScreenRequest
 import com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.readBodyAsUtf8
+import dashboardapp.composeapp.generated.resources.Res
 import fi.iki.elonen.NanoHTTPD
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -35,6 +38,7 @@ class AndroidApiServer(
             session.isGetCurrentConfigRequest() -> handleGetCurrentConfiguration(session)
             session.isSaveDeviceRequest() -> handleSaveDevice(session)
             session.isSaveScreenRequest() -> handleSaveScreen(session)
+            session.isSaveConnectionConfig() -> handleSaveTerminalConnection(session)
             else -> createNotFoundResponse()
         }
     }
@@ -46,6 +50,14 @@ class AndroidApiServer(
 
 
     //region Request Handlers
+    private fun handleSaveTerminalConnection(session: IHTTPSession): Response {
+        return processPostRequest<ConnectionConfigDto>(
+            session = session,
+            parseBody = { body -> Json.decodeFromString(body) },
+            operation = { dto -> apiServerRepository.saveTerminalConnection(dto) == 0 }
+        )
+    }
+
     private fun handleGetDashboardList(session: IHTTPSession): Response {
         return processAsyncRequest<Unit, List<DeviceDto>>(
             operation = { apiServerRepository.getDashboardIpList() },

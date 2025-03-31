@@ -71,6 +71,7 @@ class MainViewModel (
     private var loopJob: Job? = null
     init {
         try {
+            serverConnection.setRestartApp(false)
             appLogger.trackLog("INIT", "Inicio de aplicación")
             checkBackgroundImage()
             initAppConfig()
@@ -260,5 +261,13 @@ class MainViewModel (
             DefaultDits.getElementText(text = error.javaClass.simpleName, fontWeight = "Regular",textColor = "#FF5800"),
         )
         _itemsState.update { it.copy(newItems = dashboardItems) }
+    }
+
+    fun onRestartApp(launch: () -> Unit){
+        serverConnection.restartApp.onEach { value ->
+            if (value){
+                launch.invoke()
+            }
+        }.launchIn(viewModelScope)
     }
 }

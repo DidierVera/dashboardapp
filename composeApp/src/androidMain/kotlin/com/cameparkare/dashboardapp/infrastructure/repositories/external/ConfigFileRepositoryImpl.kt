@@ -16,7 +16,7 @@ import com.cameparkare.dashboardapp.domain.models.ImagesModel
 import com.cameparkare.dashboardapp.domain.models.ScreenModel
 import com.cameparkare.dashboardapp.domain.repositories.external.ConfigFileRepository
 import com.cameparkare.dashboardapp.domain.repositories.local.DashboardElementRepository
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.ConnectionConfigDto
+import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.device.ConnectionConfigDto
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.DashboardItemDto
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.ScreenDto
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.toModel
