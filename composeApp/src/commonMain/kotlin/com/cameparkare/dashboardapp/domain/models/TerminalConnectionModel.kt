@@ -1,5 +1,8 @@
 package com.cameparkare.dashboardapp.domain.models
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class TerminalConnectionModel(
     val connectionWay: Int,
     val terminalIp: String,

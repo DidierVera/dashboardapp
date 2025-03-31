@@ -3,6 +3,7 @@ package com.cameparkare.dashboardapp.config.di
 import androidx.room.Room
 import com.cameparkare.dashboardapp.config.database.AppDatabase
 import com.cameparkare.dashboardapp.config.database.migrations.Migration_2_3
+import com.cameparkare.dashboardapp.config.database.migrations.Migration_3_4
 import com.cameparkare.dashboardapp.config.utils.AppLogger
 import com.cameparkare.dashboardapp.config.utils.AppLoggerImpl
 import com.cameparkare.dashboardapp.config.utils.IServerConnection
@@ -10,6 +11,7 @@ import com.cameparkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.cameparkare.dashboardapp.config.utils.SharedPreferencesWrapper
 import com.cameparkare.dashboardapp.domain.repositories.external.ConfigFileRepository
 import com.cameparkare.dashboardapp.domain.repositories.external.FtpServerFileRepository
+import com.cameparkare.dashboardapp.domain.repositories.local.DashboardDevicesRepository
 import com.cameparkare.dashboardapp.domain.repositories.local.DashboardElementRepository
 import com.cameparkare.dashboardapp.domain.repositories.remote.TerminalConnectionRepository
 import com.cameparkare.dashboardapp.domain.usecases.ConnectionConfig
@@ -20,6 +22,7 @@ import com.cameparkare.dashboardapp.domain.usecases.StartSocketConnection
 import com.cameparkare.dashboardapp.getPlatform
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.ConfigFileRepositoryImpl
 import com.cameparkare.dashboardapp.infrastructure.repositories.external.FtpServerFileImpl
+import com.cameparkare.dashboardapp.infrastructure.repositories.local.DashboardDeviceRepositoryImpl
 import com.cameparkare.dashboardapp.infrastructure.repositories.local.DashboardElementRepositoryImpl
 import com.cameparkare.dashboardapp.infrastructure.repositories.remote.TerminalConnectionImpl
 import com.cameparkare.dashboardapp.infrastructure.source.external.ConfigFileDao
@@ -71,6 +74,7 @@ val repositoryModule = module {
     singleOf(::ConfigFileRepositoryImpl) { bind<ConfigFileRepository>() }
     singleOf(::DashboardElementRepositoryImpl) { bind<DashboardElementRepository>() }
     singleOf(::ApiServerRepositoryImpl) { bind<ApiServerRepository>() }
+    singleOf(::DashboardDeviceRepositoryImpl) { bind<DashboardDevicesRepository>() }
 }
 
 val servicesModule = module {
@@ -91,7 +95,7 @@ val databaseModules = module {
             "dashboard_db"
         )
             .fallbackToDestructiveMigration()
-            .addMigrations(Migration_2_3)
+            .addMigrations(Migration_2_3, Migration_3_4)
             .build()
     }
     single {
@@ -101,5 +105,9 @@ val databaseModules = module {
     single {
         val database = get<AppDatabase>()
         database.imagesDao()
+    }
+    single {
+        val database = get<AppDatabase>()
+        database.dashboardDeviceDao()
     }
 }
