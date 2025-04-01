@@ -78,7 +78,7 @@ class ConfigFileRepositoryImpl(
         )
     }
 
-    override suspend fun getFileConfiguration(): ServiceResult<List<ScreenModel>> {
+    override suspend fun getFileConfiguration(): ServiceResult<Boolean> {
         appLogger.trackLog("getFileConfiguration: ", "_________")
         when (val dataFromFile =
             configFileDao.readJsonFromFile<List<ScreenDto>>(
@@ -91,9 +91,8 @@ class ConfigFileRepositoryImpl(
 
                 //delete and storage screens and elements
                 storageScreensAndElements(data)
-                val screens = dashboardElementRepository.getAllScreens()
                 appLogger.trackLog("getFileConfiguration: ", "Success")
-                return ServiceResult.Success(screens)
+                return ServiceResult.Success(true)
             }
         }
     }
@@ -133,5 +132,7 @@ class ConfigFileRepositoryImpl(
     private suspend fun storageScreensAndElements(screens: List<ScreenDto>) {
         dashboardElementRepository.deleteAll()
         dashboardElementRepository.saveScreens(screens.map { it.toModel() })
+        val storedScreens = dashboardElementRepository.getAllScreens()
+        serverConnection.setScreensList(storedScreens)
     }
 }

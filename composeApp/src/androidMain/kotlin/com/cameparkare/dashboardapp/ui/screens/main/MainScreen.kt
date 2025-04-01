@@ -32,7 +32,9 @@ import com.cameparkare.dashboardapp.ui.theme.BlackColor
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    viewModel: MainViewModel = koinViewModel()) {
+    val showVideoFrame by viewModel.showVideoFrame.collectAsState()
     Box(Modifier.fillMaxSize()) {
         LoadBackground()
         NetworkIndicatorView(Modifier.padding(4.dp))
@@ -42,9 +44,8 @@ fun MainScreen() {
             modifier = Modifier.fillMaxSize()
         ) {
             LoadDashboardItems(modifier = Modifier.weight(0.7f))
-            VideoExoPlayer(modifier = Modifier.weight(0.3f))
+            if(showVideoFrame) VideoExoPlayer(modifier = Modifier.weight(0.3f))
         }
-        RestartApp()
     }
 }
 
@@ -58,20 +59,6 @@ private fun UpdateDataByLang(
     }
 }
 
-@Composable
-private fun RestartApp(
-    viewModel: MainViewModel = koinViewModel()
-){
-    val context = LocalContext.current
-    viewModel.onRestartApp{
-        val packageManager = context.packageManager
-        val intent = packageManager.getLaunchIntentForPackage(context.packageName)
-        val componentName = intent?.component
-        val mainIntent = Intent.makeRestartActivityTask(componentName)
-        context.startActivity(mainIntent)
-        Runtime.getRuntime().exit(0)
-    }
-}
 
 @Composable
 private fun LoadBackground(
@@ -101,10 +88,10 @@ private fun LoadDashboardItems(
     viewModel: MainViewModel = koinViewModel()
 ){
     val state by viewModel.itemsState.collectAsState()
+    val showVideoFrame by viewModel.showVideoFrame.collectAsState()
     val items: List<ElementModel> = state.newItems
     if (items.isEmpty()) return
     val boxMargin = state.contentPadding
-    val showVideoFrame = viewModel.showVideoFrame()
 
     LazyColumn(modifier = modifier.padding(boxMargin),
         horizontalAlignment = Alignment.CenterHorizontally,

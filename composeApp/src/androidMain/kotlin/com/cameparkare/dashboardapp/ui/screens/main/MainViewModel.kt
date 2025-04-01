@@ -14,11 +14,8 @@ import com.cameparkare.dashboardapp.config.dataclasses.ServiceResult
 import com.cameparkare.dashboardapp.config.utils.AppLogger
 import com.cameparkare.dashboardapp.config.utils.IServerConnection
 import com.cameparkare.dashboardapp.config.utils.SharedPreferencesProvider
-import com.cameparkare.dashboardapp.domain.models.ScreenModel
 import com.cameparkare.dashboardapp.domain.models.components.ElementModel
 import com.cameparkare.dashboardapp.domain.models.terminal.TerminalResponseModel
-import com.cameparkare.dashboardapp.domain.usecases.ConnectionConfig
-import com.cameparkare.dashboardapp.domain.usecases.FtpServerConfiguration
 import com.cameparkare.dashboardapp.domain.usecases.GetScreenByDispatcher
 import com.cameparkare.dashboardapp.domain.usecases.InitConfiguration
 import com.cameparkare.dashboardapp.domain.usecases.StartSocketConnection
@@ -42,8 +39,6 @@ import kotlin.coroutines.cancellation.CancellationException
 
 class MainViewModel (
     private val initConfiguration: InitConfiguration,
-    private val connectionConfig: ConnectionConfig,
-    private val ftpServerConfiguration: FtpServerConfiguration,
     private val startParkingConnection: StartSocketConnection,
     private val getScreenByDispatcher: GetScreenByDispatcher,
     private val ditsUtils: UiUtils,
@@ -64,15 +59,17 @@ class MainViewModel (
     private val _videoState = MutableStateFlow(VideoPlayerState(emptyList()))
     val videoState: StateFlow<VideoPlayerState> = _videoState.asStateFlow()
 
+    private val _showVideoFrame = MutableStateFlow(false)
+    val showVideoFrame: StateFlow<Boolean>
+        get() = _showVideoFrame.asStateFlow()
+
     private var loopJob: Job? = null
     init {
         try {
-            serverConnection.setRestartApp(false)
             appLogger.trackLog("INIT", "Inicio de aplicación")
-            checkBackgroundImage()
-            initAppConfig()
-            checkTextSizeScale()
-            checkVideos()
+            onRestartApp()
+            registerListeners()
+            initAllConfig()
         }catch (e: Exception) {
             appLogger.trackError(e)
             val dashboardItems = listOf(
@@ -82,7 +79,47 @@ class MainViewModel (
             _itemsState.update { it.copy(newItems = dashboardItems) }
         }
     }
-    fun showVideoFrame() = preferences.get(VIDEO_FRAME, false)
+
+    private fun registerListeners() {
+        registerScreensListener()
+        registerConnectionSignal()
+    }
+
+    private fun initAllConfig() {
+        checkVideoFrame()
+        checkBackgroundImage()
+        checkTextSizeScale()
+        registerTerminalListener()
+        getAllDataFromServices()
+    }
+
+    private fun registerTerminalListener() {
+        startParkingConnection.invoke { result ->
+            when(result){
+                is ServiceResult.Error -> validateError(result.error)
+                is ServiceResult.Success -> {
+                    loadScreenInformation(result.data!!, _itemsState.value.translations.first())
+                }
+            }
+        }
+    }
+
+    private fun registerScreensListener() {
+        serverConnection.screensList.onEach { screens ->
+            _itemsState.update { it.copy(screenList = screens) }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun checkVideoFrame() {
+        val videoFrame = preferences.get(VIDEO_FRAME, false)
+        _showVideoFrame.update { videoFrame }
+        if (videoFrame){
+            checkVideos()
+        }else{
+            _videoState.update { it.copy(videoRoutes = emptyList()) }
+        }
+    }
+
 
     private fun checkBackgroundImage() {
         val backgroundImage = filesUtils.getImageFromDirectory(
@@ -96,42 +133,19 @@ class MainViewModel (
     }
 
 
-    private fun initAppConfig() {
+    private fun getAllDataFromServices() {
         viewModelScope.launch {
-            showIsConnectingSignal()
-            //connection config initialization
-            when (val connectionResult = connectionConfig.invoke()){
-                is ServiceResult.Error -> validateError(connectionResult.error)
-                is ServiceResult.Success -> {}
-            }
-            //ftp server config initialization
-            when(val ftpServerConfigResult = ftpServerConfiguration.invoke()){
-                is ServiceResult.Error -> validateError(ftpServerConfigResult.error)
-                else -> { }
-            }
             //screens config initialization
             when (val initConfigResult = initConfiguration.invoke()){
                 is ServiceResult.Error -> validateError(initConfigResult.error)
                 is ServiceResult.Success -> {
+                    loadLanguages()
 
-                    if(initConfigResult.data?.any { it.dispatcherCode == 5L } != null){
-                        _itemsState.update { it.copy(screenList = initConfigResult.data) }
-                        loadScreenInformation(
-                            data = TerminalResponseModel(5, DefaultDits.idleConnected())
-                        )
-
-                        loadLanguages()
+                    if(_itemsState.value.screenList.any { it.dispatcherCode == 5L }){
+                        loadScreenInformation(data = TerminalResponseModel(5, DefaultDits.idleConnected()))
                     }
+
                     loopJob = customLoop() // Start the initial loop
-
-                    startParkingConnection.invoke { result ->
-                        when(result){
-                            is ServiceResult.Error -> validateError(result.error)
-                            is ServiceResult.Success -> {
-                                loadScreenInformation(result.data!!, _itemsState.value.translations.first())
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -176,8 +190,7 @@ class MainViewModel (
     }
 
     private fun checkVideos() {
-        if(!showVideoFrame()) return
-
+        _videoState.update { it .copy(videoRoutes = emptyList()) }
         val files = filesUtils.getVideosFiles("${Environment.DIRECTORY_MOVIES}/Dashboard/videos")
         if (files.isNotEmpty()){
 
@@ -192,6 +205,7 @@ class MainViewModel (
             }
         }
     }
+
     private fun loadScreenInformation(
         data: TerminalResponseModel,
         lang: String = "lang1"
@@ -213,7 +227,7 @@ class MainViewModel (
     }
 
 
-    private fun showIsConnectingSignal() {
+    private fun registerConnectionSignal() {
         serverConnection.statusConnection.onEach { status ->
             appLogger.trackLog("Is Connected to terminal: ", "$status")
             if(status != _itemsState.value.statusConnection) {
@@ -241,8 +255,7 @@ class MainViewModel (
     private fun checkContentMargin(marginLeft: Int, marginTop: Int, marginRight: Int, marginBottom: Int) {
         _itemsState.update { it.copy(contentPadding = PaddingValues(
             marginLeft.dp, marginTop.dp,
-            marginRight.dp, marginBottom.dp)
-        )
+            marginRight.dp, marginBottom.dp))
         }
     }
 
@@ -259,10 +272,11 @@ class MainViewModel (
         _itemsState.update { it.copy(newItems = dashboardItems) }
     }
 
-    fun onRestartApp(launch: () -> Unit){
+    private fun onRestartApp(){
         serverConnection.restartApp.onEach { value ->
             if (value){
-                launch.invoke()
+                initAllConfig()
+                serverConnection.setRestartApp(false)
             }
         }.launchIn(viewModelScope)
     }

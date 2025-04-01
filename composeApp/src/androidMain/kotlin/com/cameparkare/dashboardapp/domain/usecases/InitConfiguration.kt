@@ -8,24 +8,44 @@ import com.cameparkare.dashboardapp.domain.repositories.external.ConfigFileRepos
 import java.io.FileNotFoundException
 
 class InitConfiguration (
-    private val configFileRepository: ConfigFileRepository,
+    private val getScreenConfigurations: GetScreenConfigurations,
+    private val connectionConfig: ConnectionConfig,
+    private val ftpServerConfiguration: FtpServerConfiguration,
     private val appLogger: AppLogger
 ) {
-    suspend fun invoke(): ServiceResult<List<ScreenModel>> {
+    suspend fun invoke(): ServiceResult<Int> {
         return try {
             appLogger.trackLog("Use case Load initial configuration", "============")
-            when(val result = configFileRepository.getFileConfiguration()){
-                is ServiceResult.Error -> ServiceResult.Error(result.error)
-                is ServiceResult.Success -> ServiceResult.Success(result.data)
-            }
-        }
-        catch (e: FileNotFoundException){
+            getFtpConfig()
+            getScreenConfig()
+            getConnectionConfig()
+        } catch (e: Exception){
             appLogger.trackError(e)
-            ServiceResult.Error(ErrorTypeClass.CanNoAccessToConfigFile)
+            ServiceResult.Error(ErrorTypeClass.GeneralException(messageError = e.message))
         }
-        catch (e: Exception){
-            appLogger.trackError(e)
-            ServiceResult.Error(ErrorTypeClass.WrongConfigFile)
+    }
+
+    private suspend fun getScreenConfig(): ServiceResult<Int>{
+        //screens config initialization
+        return when (val initConfigResult = getScreenConfigurations.invoke()) {
+            is ServiceResult.Error -> ServiceResult.Error(initConfigResult.error)
+            is ServiceResult.Success -> ServiceResult.Success(0)
+        }
+    }
+
+    private suspend fun getFtpConfig(): ServiceResult<Int>{
+        //ftp server config initialization
+        return when(val ftpServerConfigResult = ftpServerConfiguration.invoke()){
+            is ServiceResult.Error -> ServiceResult.Error(ftpServerConfigResult.error)
+            else -> ServiceResult.Success(0)
+        }
+    }
+
+    private suspend fun getConnectionConfig(): ServiceResult<Int>{
+        //connection config initialization
+        return when (val connectionResult = connectionConfig.invoke()){
+            is ServiceResult.Error -> ServiceResult.Error(connectionResult.error)
+            is ServiceResult.Success -> ServiceResult.Success(0)
         }
     }
 }

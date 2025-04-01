@@ -17,6 +17,7 @@ import com.cameparkare.dashboardapp.domain.repositories.remote.TerminalConnectio
 import com.cameparkare.dashboardapp.domain.usecases.ConnectionConfig
 import com.cameparkare.dashboardapp.domain.usecases.FtpServerConfiguration
 import com.cameparkare.dashboardapp.domain.usecases.GetScreenByDispatcher
+import com.cameparkare.dashboardapp.domain.usecases.GetScreenConfigurations
 import com.cameparkare.dashboardapp.domain.usecases.InitConfiguration
 import com.cameparkare.dashboardapp.domain.usecases.StartSocketConnection
 import com.cameparkare.dashboardapp.getPlatform
@@ -63,10 +64,11 @@ val viewModelModule = module {
 
 val useCasesModule = module {
     factory { ConnectionConfig(get(), get()) }
-    factory { InitConfiguration(get(), get()) }
+    factory { InitConfiguration(get(), get(), get(), get()) }
     factory { StartSocketConnection(get(), get()) }
     factory { FtpServerConfiguration(get(), get()) }
     factory { GetScreenByDispatcher(get(), get()) }
+    factory { GetScreenConfigurations(get(), get()) }
 }
 val repositoryModule = module {
     singleOf(::TerminalConnectionImpl) { bind<TerminalConnectionRepository>() }

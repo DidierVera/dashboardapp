@@ -7,6 +7,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -22,10 +23,12 @@ import com.cameparkare.dashboardapp.ui.screens.main.MainViewModel
 import org.koin.androidx.compose.koinViewModel
 
 
-@OptIn(UnstableApi::class) @Composable
+@OptIn(UnstableApi::class)
+@Composable
 fun VideoExoPlayer(
     modifier: Modifier = Modifier,
     viewModel: MainViewModel = koinViewModel()
+
 ){
     Log.i("DASHBOARD_LOG", "Entra en VideoExoPlayer")
     val context = LocalContext.current
@@ -37,11 +40,10 @@ fun VideoExoPlayer(
 
     val uri = state.videoRoutes
     val index = remember {
-        mutableStateOf(0)
+        mutableIntStateOf(0)
     }
-
     if (uri.isEmpty()) {
-        if (viewModel.showVideoFrame()) EmptyVideoFrame(modifier)
+        EmptyVideoFrame(modifier)
         return
     }
 
