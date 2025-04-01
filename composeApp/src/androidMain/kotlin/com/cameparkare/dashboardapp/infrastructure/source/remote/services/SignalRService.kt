@@ -13,6 +13,9 @@ import com.microsoft.signalr.HubConnectionBuilder
 import com.microsoft.signalr.HubConnectionState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -25,40 +28,44 @@ class SignalRService(
     private val serverConnection: IServerConnection,
     private val appLogger: AppLogger
 ) {
-    private lateinit var hubConnection: HubConnection
-    fun startConnection(onSignalRResult: (ServiceResult<TerminalResponseDto>) -> Unit){
+    private val signalRScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private var signalRJob: Job? = null
+
+    private var hubConnection: HubConnection? = null
+
+    fun startConnection(onSignalRResult: (ServiceResult<TerminalResponseDto>) -> Unit) {
         println("SIGNALR == Inicio de aplicación conexión SIGNAL R")
+
+        // Cancel any existing connection first
+        //cleanup()
 
         val signalRIp = preferences.get(SIGNAL_R_URI, "192.168.209.14")
         val terminalPort = preferences.get(TERMINAL_PORT, 9011)
         val terminalApi = preferences.get(TERMINAL_API, "signalr")
         val signalRUri = "http://$signalRIp:$terminalPort/$terminalApi"
 
-        CoroutineScope(Dispatchers.IO).launch {
-
+        signalRJob = signalRScope.launch {
             try {
-                hubConnection =
-                    HubConnectionBuilder.create(signalRUri).build();
+                hubConnection = HubConnectionBuilder.create(signalRUri).build()
 
-                hubConnection.on("SendDto", { result ->
-
+                hubConnection?.on("SendDto", { result ->
                     appLogger.trackLog("connection DATA-Response: ", Json.encodeToString(result))
                     onSignalRResult.invoke(ServiceResult.Success(result))
                 }, TerminalResponseDto::class.java)
 
-                appLogger.trackLog("dashboardapp.signalR-STATUS", hubConnection.connectionState.name)
-                while (isActive){
-                    if (hubConnection.connectionState != HubConnectionState.CONNECTED) {
-                        appLogger.trackLog("signalR-STATUS", hubConnection.connectionState.name)
+                appLogger.trackLog("dashboardapp.signalR-STATUS", hubConnection?.connectionState?.name)
+                while (!Thread.currentThread().isInterrupted)  {
+                    if (hubConnection?.connectionState != HubConnectionState.CONNECTED) {
+                        appLogger.trackLog("signalR-STATUS", hubConnection?.connectionState?.name)
                         serverConnection.setStatusConnection(false)
-                        hubConnection.start()
-                    }else{
+                        hubConnection?.start()
+                    } else {
                         serverConnection.setStatusConnection(true)
                     }
                     delay(500)
                 }
 
-                hubConnection.onClosed {
+                hubConnection?.onClosed {
                     appLogger.trackError(it)
                 }
 
@@ -66,6 +73,23 @@ class SignalRService(
                 appLogger.trackError(e)
                 appLogger.trackLog("error-com.came.parkare.dashboardapp.signalR", e.message.toString())
             }
+        }
+    }
+
+    fun cleanup() {
+        if(signalRJob != null){
+            signalRJob?.cancel("Connection stopped by user")
+            signalRJob = null
+
+            try {
+                if (hubConnection?.connectionState == HubConnectionState.CONNECTED) {
+                    hubConnection?.stop()
+                }else hubConnection?.close()
+            } catch (e: Exception) {
+                appLogger.trackError(e)
+            }
+
+            hubConnection = null
         }
     }
 }

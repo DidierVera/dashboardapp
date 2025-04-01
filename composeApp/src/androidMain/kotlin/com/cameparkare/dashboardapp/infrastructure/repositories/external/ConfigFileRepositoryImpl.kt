@@ -52,12 +52,6 @@ class ConfigFileRepositoryImpl(
     }
 
     private suspend fun saveConnectionConfig(data: ConnectionConfigDto) {
-        when (data.connectionWay){
-            1 -> serverConnection.setTypeConnection(TypeConnectionEnum.SIGNAL_R)
-            2 -> serverConnection.setTypeConnection(TypeConnectionEnum.SOCKET)
-            else -> serverConnection.setTypeConnection(TypeConnectionEnum.MOCK)
-        }
-
         //storage local config preferences
         preferences.put(TERMINAL_IP, data.terminalIp)
         preferences.put(TERMINAL_PORT, data.port)
@@ -66,6 +60,12 @@ class ConfigFileRepositoryImpl(
         preferences.put(TIME_DELAY, data.timeDelay)
         preferences.put(VIDEO_FRAME, data.videoFrame)
         preferences.put(TEXT_SIZE_SCALE, data.textSizeScale)
+
+        when (data.connectionWay){
+            1 -> serverConnection.setTypeConnection(TypeConnectionEnum.SIGNAL_R)
+            2 -> serverConnection.setTypeConnection(TypeConnectionEnum.SOCKET)
+            else -> serverConnection.setTypeConnection(TypeConnectionEnum.MOCK)
+        }
 
         //storage images
         storageImages(data.files)

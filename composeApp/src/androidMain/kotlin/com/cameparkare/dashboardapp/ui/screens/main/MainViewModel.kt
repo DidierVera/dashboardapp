@@ -83,25 +83,27 @@ class MainViewModel (
     private fun registerListeners() {
         registerScreensListener()
         registerConnectionSignal()
+        registerTerminalListener()
+        getAllDataFromServices()
     }
 
     private fun initAllConfig() {
         checkVideoFrame()
         checkBackgroundImage()
         checkTextSizeScale()
-        registerTerminalListener()
-        getAllDataFromServices()
     }
 
     private fun registerTerminalListener() {
-        startParkingConnection.invoke { result ->
-            when(result){
-                is ServiceResult.Error -> validateError(result.error)
-                is ServiceResult.Success -> {
-                    loadScreenInformation(result.data!!, _itemsState.value.translations.first())
+        serverConnection.typeConnection.onEach { connection ->
+            startParkingConnection.invoke(connection) { result ->
+                when(result){
+                    is ServiceResult.Error -> validateError(result.error)
+                    is ServiceResult.Success -> {
+                        loadScreenInformation(result.data!!, _itemsState.value.translations.first())
+                    }
                 }
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
     private fun registerScreensListener() {

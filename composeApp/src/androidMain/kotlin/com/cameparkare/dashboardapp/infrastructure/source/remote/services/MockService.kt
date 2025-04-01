@@ -8,6 +8,7 @@ import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.TerminalRes
 import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.common.TypeResponseDto
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
@@ -17,17 +18,22 @@ class MockService (
     private val serverConnection: IServerConnection,
     private val logger: AppLogger
 ) {
+    private var mockThread: Thread? = null
+    private val mockScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
     fun startConnection(onSocketResult: (ServiceResult<TerminalResponseDto>) -> Unit) {
+        //cleanup() // Clean up any existing connection
 
-        CoroutineScope(Dispatchers.IO).launch {
-
-            Thread {
+        mockScope.launch {
+            mockThread = Thread {
                 try {
                     logger.trackLog("com.came.parkare.dashboardapp.Mock", "Inicio de aplicación conexión MOCK")
-                    while (true){
+                    while (!Thread.currentThread().isInterrupted) {
                         serverConnection.setStatusConnection(true)
                         Thread.sleep((2000L..8000).random())
                         for(screenToShow in 1 until 13){
+                            if (Thread.currentThread().isInterrupted) break
+
                             println("Code Screen to show: $screenToShow")
                             var result = getBootDit()
                             when(screenToShow){
@@ -50,11 +56,18 @@ class MockService (
                     }
 
                 }catch (e: Exception){
-                    logger.trackError(e)
-                    e.printStackTrace()
+                    if (!Thread.currentThread().isInterrupted) {
+                        logger.trackError(e)
+                        e.printStackTrace()
+                    }
                 }
-            }.start()
+            }.apply { start() }
         }
+    }
+
+    fun cleanup() {
+        mockThread?.interrupt()
+        mockThread = null
     }
 
     private fun getTerminalLockedDit(): TerminalResponseDto {

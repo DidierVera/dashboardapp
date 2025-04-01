@@ -11,6 +11,7 @@ import com.cameparkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.cameparkare.dashboardapp.infrastructure.source.remote.dto.TerminalResponseDto
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import java.io.BufferedReader
@@ -23,47 +24,82 @@ class TerminalSocketService(
     private val serverConnection: IServerConnection,
     private val appLogger: AppLogger
 ) {
+    private var socketThread: Thread? = null
+    private var socket: Socket? = null
+    private var input: BufferedReader? = null
+    private val socketScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
+
     fun startConnection(onSocketResult: (ServiceResult<TerminalResponseDto>) -> Unit) {
+        //cleanup() // Clean up any existing connection
+
         val serverIp = preferences.get(SOCKET_URL, "192.168.209.62")
-        val serverPort = preferences.get(TERMINAL_PORT, "9010")
-        CoroutineScope(Dispatchers.IO).launch {
-            Thread {
+        val serverPort = preferences.get(TERMINAL_PORT, 9010)
+
+        socketScope.launch {
+            socketThread = Thread {
                 try {
                     Log.d("com.came.parkare.dashboardapp.Socket", "Inicio de aplicación conexión SOCKET")
-
-                    val socket = Socket(serverIp, serverPort.toInt())
+                    socket = Socket(serverIp, serverPort)
                     Log.d("com.came.parkare.dashboardapp.Socket", "Conexión con la ip y el puerto")
 
-                    val input = BufferedReader(InputStreamReader(socket.getInputStream()))
+                    input = BufferedReader(InputStreamReader(socket?.getInputStream()))
                     Log.d("com.came.parkare.dashboardapp.Socket", "Obtención de la información del socket input")
-                    //val output = PrintWriter(socket.getOutputStream(), true)
 
                     val buffer = CharArray(100000)
 
-                    while (true) {
-                        if(socket.isConnected) serverConnection.setStatusConnection(socket.isConnected)
+                    while (!Thread.currentThread().isInterrupted) {
+                        if (socket?.isConnected == true) {
+                            serverConnection.setStatusConnection(true)
+                        }
 
-                        val st = input.read(buffer);
+                        val st = input?.read(buffer) ?: -1
                         if (st != -1) {
-                            val serverMessage = String(buffer, 0, st);
+                            val serverMessage = String(buffer, 0, st)
                             Log.d("Socket", "Start message ${serverMessage}")
                             try {
                                 val data = Json.decodeFromString<TerminalResponseDto>(serverMessage)
                                 onSocketResult.invoke(ServiceResult.Success(data))
-                            }catch (e: Exception){
+                            } catch (e: Exception) {
                                 appLogger.trackError(e)
                             }
                         } else {
-                            Log.d("com.came.parkare.dashboardapp.Socket", "ruptura por falta de  información")
+                            Log.d("com.came.parkare.dashboardapp.Socket", "ruptura por falta de información")
                             onSocketResult.invoke(ServiceResult.Error(ErrorTypeClass.NotSocketResponse))
                             Thread.sleep(12000)
                         }
                     }
                 } catch (e: Exception) {
-                    serverConnection.setStatusConnection(false)
-                    appLogger.trackError(e)
+                    if (!Thread.currentThread().isInterrupted) {
+                        serverConnection.setStatusConnection(false)
+                        appLogger.trackError(e)
+                    }
+                } finally {
+                    cleanupResources()
                 }
-            }.start()
+            }.apply { start() }
         }
+    }
+
+    fun cleanup() {
+        socketThread?.interrupt()
+        socketThread = null
+        cleanupResources()
+    }
+
+    private fun cleanupResources() {
+        try {
+            input?.close()
+        } catch (e: Exception) {
+            appLogger.trackError(e)
+        }
+        input = null
+
+        try {
+            socket?.close()
+        } catch (e: Exception) {
+            appLogger.trackError(e)
+        }
+        socket = null
     }
 }
