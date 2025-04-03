@@ -26,12 +26,8 @@ class HttpClient(basePath: String = "") {
             val xhr = XMLHttpRequest()
 
             xhr.open(method, apiUrl, true)
-            xhr.setRequestHeader("Content-Type", "application/json")
-            xhr.setRequestHeader("Accept", "application/json;charset=utf-8")
-            xhr.setRequestHeader("Access-Control-Allow-Origin", "*")
-            xhr.setRequestHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-            xhr.setRequestHeader("Access-Control-Allow-Headers", "Content-Type")
-
+            xhr.setRequestHeader("Content-Type", "application/json;charset=utf-8")
+            xhr.setRequestHeader("Accept", "application/json")
             xhr.onload = {
                 when (xhr.status) {
                     in 200..299 -> {

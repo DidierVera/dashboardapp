@@ -2,6 +2,8 @@ package com.cameparkare.dashboardapp.ui.screens.settings.importfile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cameparkare.dashboardapp.config.dataclasses.ErrorTypeClass
+import com.cameparkare.dashboardapp.config.dataclasses.ServiceResult
 import com.cameparkare.dashboardapp.domain.models.ScreenModel
 import com.cameparkare.dashboardapp.domain.usecases.SaveScreenConfig
 import com.cameparkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
@@ -36,7 +38,24 @@ class ImportViewModel(
         val configuration = Json.decodeFromString<List<ScreenDto>>(fileContent)
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
-            saveScreenConfig.invoke(ipAddress, configuration)
+            val result = saveScreenConfig.invoke(ipAddress, configuration)
+            when(result){
+                is ServiceResult.Error -> {
+                    when(result.error){
+                        ErrorTypeClass.CanNoAccessToConfigFile -> TODO()
+                        ErrorTypeClass.ConfigFileNotExist -> TODO()
+                        is ErrorTypeClass.GeneralException -> {
+                            _state.update { it.copy(contentFile = result.error.messageError.orEmpty(), fileName = "") }
+                        }
+                        ErrorTypeClass.NotSocketResponse -> TODO()
+                        ErrorTypeClass.SocketConnectionError -> TODO()
+                        ErrorTypeClass.WrongConfigFile -> TODO()
+                    }
+                }
+                is ServiceResult.Success -> {
+                    _state.update { it.copy(contentFile = "", fileName = "") }
+                }
+            }
             _state.update { it.copy(isLoading = false) }
         }
     }
