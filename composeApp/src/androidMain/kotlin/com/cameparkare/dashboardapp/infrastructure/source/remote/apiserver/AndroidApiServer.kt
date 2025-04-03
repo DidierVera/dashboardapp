@@ -8,6 +8,7 @@ import com.cameparkare.dashboardapp.infrastructure.source.external.dto.device.Co
 import com.cameparkare.dashboardapp.infrastructure.source.external.dto.device.DeviceDto
 import com.cameparkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
 import com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetCurrentConfigRequest
+import com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetCurrentConnectionConfig
 import com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetDashboardListRequest
 import com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveConnectionConfig
 import com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveDeviceRequest
@@ -34,9 +35,16 @@ class AndroidApiServer(
     override fun serve(session: IHTTPSession): Response {
         Log.d(TAG, "Request: ${session.method} ${session.uri}")
 
+        // Handle OPTIONS (preflight) requests
+        if (session.method == Method.OPTIONS) {
+            return newFixedLengthResponse(Response.Status.OK, "text/plain", "").apply {
+                addCorsHeaders(this)
+            }
+        }
         return when {
             session.isGetDashboardListRequest() -> handleGetDashboardList(session)
             session.isGetCurrentConfigRequest() -> handleGetCurrentConfiguration(session)
+            session.isGetCurrentConnectionConfig() -> handleGetCurrentConnectionConfig(session)
             session.isSaveDeviceRequest() -> handleSaveDevice(session)
             session.isSaveScreenRequest() -> handleSaveScreen(session)
             session.isSaveConnectionConfig() -> handleSaveTerminalConnection(session)
@@ -62,6 +70,13 @@ class AndroidApiServer(
     private fun handleGetDashboardList(session: IHTTPSession): Response {
         return processAsyncRequest<Unit, List<DeviceDto>>(
             operation = { apiServerRepository.getDashboardIpList() },
+            successTransform = { result -> Json.encodeToString(result) }
+        )
+    }
+
+    private fun handleGetCurrentConnectionConfig(session: IHTTPSession): Response {
+        return processAsyncRequest<Unit, ConnectionConfigDto>(
+            operation = { apiServerRepository.getCurrentConnectionConfig() },
             successTransform = { result -> Json.encodeToString(result) }
         )
     }
@@ -140,7 +155,7 @@ class AndroidApiServer(
             "application/json; charset=utf-8",  // Explicit charset
             body
         ).apply {
-            addHeader("Content-Type", "application/json; charset=utf-8")
+            addCorsHeaders(this)
         }
     }
 
@@ -151,7 +166,9 @@ class AndroidApiServer(
             else Response.Status.INTERNAL_ERROR,
             "application/json",
             """{"error": "${exception.message.orEmpty()}"}"""
-        )
+        ).apply {
+            addCorsHeaders(this)
+        }
     }
 
     private fun createNotFoundResponse(): Response {
@@ -159,7 +176,17 @@ class AndroidApiServer(
             Response.Status.NOT_FOUND,
             "text/plain",
             "404 Not Found"
-        )
+        ).apply {
+            addCorsHeaders(this)
+        }
+    }
+
+    private fun addCorsHeaders(response: Response) {
+        response.addHeader("Access-Control-Allow-Origin", "*")
+        response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+        response.addHeader("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        response.addHeader("Access-Control-Allow-Credentials", "true")
+        response.addHeader("Access-Control-Max-Age", "3600")
     }
     //endregion
 }

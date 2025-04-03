@@ -1,5 +1,6 @@
-package com.cameparkare.dashboardapp.infrastructure.source.services
+package com.cameparkare.dashboardapp.infrastructure.source.services.base
 
+import com.cameparkare.dashboardapp.config.dataclasses.ResponseStatusDto
 import kotlinx.browser.window
 import kotlinx.serialization.json.Json
 import org.w3c.xhr.XMLHttpRequest
@@ -8,10 +9,9 @@ import kotlin.coroutines.suspendCoroutine
 
 class HttpClient(basePath: String = "") {
     val json = Json { ignoreUnknownKeys = true }
-    val baseUrl = "${window.location.protocol}//${window.location.hostname}$basePath"
 
     // Generic GET method
-    suspend inline fun <reified T> get1(path: String): T = request<T, Int>("GET", path, null)
+    suspend inline fun <reified T> get(path: String): T = request<T, ResponseStatusDto>("GET", path, null)
 
     // Generic POST method
     suspend inline fun <reified T, reified R> post(path: String, requestBody: R): T =
@@ -19,22 +19,24 @@ class HttpClient(basePath: String = "") {
 
     suspend inline fun <reified T, reified R> request(
         method: String,
-        path: String,
+        apiUrl: String,
         requestBody: R?
     ): T {
         return suspendCoroutine { continuation ->
-            val url = "$baseUrl$path"
             val xhr = XMLHttpRequest()
 
-            xhr.open(method, url, true)
+            xhr.open(method, apiUrl, true)
             xhr.setRequestHeader("Content-Type", "application/json")
-            xhr.setRequestHeader("Accept", "application/json")
+            xhr.setRequestHeader("Accept", "application/json;charset=utf-8")
+            xhr.setRequestHeader("Access-Control-Allow-Origin", "*")
+            xhr.setRequestHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+            xhr.setRequestHeader("Access-Control-Allow-Headers", "Content-Type")
 
             xhr.onload = {
                 when (xhr.status) {
                     in 200..299 -> {
                         try {
-                            val response: T = if (xhr.responseText.isNullOrEmpty()) {
+                            val response: T = if (xhr.responseText.isEmpty()) {
                                 Unit as T // For empty responses
                             } else {
                                 json.decodeFromString(xhr.responseText)
@@ -62,7 +64,7 @@ class HttpClient(basePath: String = "") {
 
             xhr.onerror = {
                 continuation.resumeWith(Result.failure(
-                    Error("Network error when making $method request to $url")
+                    Error("Network error when making $method request to $apiUrl")
                 ))
             }
 

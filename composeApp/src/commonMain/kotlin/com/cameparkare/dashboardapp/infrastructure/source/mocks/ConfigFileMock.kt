@@ -13,7 +13,7 @@ object ConfigFileMock {
                 "api-port": 2023,
                 "video-frame": false,
                 "text-size-scale": 10,
-                "files": {}
+                "files": []
             }
         """.trimIndent()
     }

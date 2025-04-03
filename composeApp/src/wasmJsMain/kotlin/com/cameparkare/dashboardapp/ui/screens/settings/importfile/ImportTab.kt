@@ -15,6 +15,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -80,6 +81,7 @@ private fun EditorTitle(){
 
 @Composable
 private fun ButtonOptions(viewModel: ImportViewModel) {
+    val state by viewModel.state.collectAsState()
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(modifier = Modifier.padding(8.dp)) {
             DialogPickerDialog { name, content ->
@@ -91,7 +93,7 @@ private fun ButtonOptions(viewModel: ImportViewModel) {
             text = stringResource(Res.string.save_button),
             modifier = Modifier.align(Alignment.End),
             onClick = {
-                viewModel.saveChanges()
+                viewModel.saveChanges(state.contentFile)
             },
             buttonColors = ButtonDefaults.buttonColors(
                 containerColor = CameBlueColor,

@@ -2,7 +2,7 @@ package com.cameparkare.dashboardapp.infrastructure.source.local.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.cameparkare.dashboardapp.domain.models.ImagesModel
+import com.cameparkare.dashboardapp.domain.models.ImagesFileModel
 import com.cameparkare.dashboardapp.infrastructure.source.local.entities.config.RoomTableNames.IMAGES_TABLE_NAME
 
 @Entity(tableName = IMAGES_TABLE_NAME)
@@ -13,14 +13,14 @@ data class ImagesFilesEntity(
     val fileContent: String?
 )
 
-fun ImagesModel.toEntity(): ImagesFilesEntity {
+fun ImagesFileModel.toEntity(): ImagesFilesEntity {
     return ImagesFilesEntity(
-        fileName = fileName, fileContent = fileContent
+        id = id, fileName = fileName, fileContent = fileContent
     )
 }
 
-fun ImagesFilesEntity.toModel(): ImagesModel {
-    return ImagesModel(
-        fileName = fileName, fileContent = fileContent
+fun ImagesFilesEntity.toModel(): ImagesFileModel {
+    return ImagesFileModel(
+        id = id, fileName = fileName, fileContent = fileContent
     )
 }

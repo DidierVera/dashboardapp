@@ -4,11 +4,15 @@ import fi.iki.elonen.NanoHTTPD
 
 object ApiRequestPredicates {
     fun NanoHTTPD.IHTTPSession.isGetDashboardListRequest(): Boolean {
-        return uri == "/api/device/dashboardList" && method == NanoHTTPD.Method.GET
+        return uri == "/api/device/get" && method == NanoHTTPD.Method.GET
     }
 
     fun NanoHTTPD.IHTTPSession.isGetCurrentConfigRequest(): Boolean {
-        return uri == "/api/screen/getcurrentconfiguration" && method == NanoHTTPD.Method.GET
+        return uri == "/api/screen/get" && method == NanoHTTPD.Method.GET
+    }
+
+    fun NanoHTTPD.IHTTPSession.isGetCurrentConnectionConfig(): Boolean {
+        return uri == "/api/connection/get" && method == NanoHTTPD.Method.GET
     }
 
     fun NanoHTTPD.IHTTPSession.isSaveDeviceRequest(): Boolean {
@@ -20,7 +24,7 @@ object ApiRequestPredicates {
     }
 
     fun NanoHTTPD.IHTTPSession.isSaveConnectionConfig(): Boolean {
-        return uri == "/api/connection/config" && method == NanoHTTPD.Method.POST
+        return uri == "/api/connection/save" && method == NanoHTTPD.Method.POST
     }
 
     fun NanoHTTPD.IHTTPSession.readBodyAsUtf8(): String {

@@ -1,6 +1,16 @@
 package com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver
 
+import com.cameparkare.dashboardapp.config.constants.Constants.API_PORT
+import com.cameparkare.dashboardapp.config.constants.Constants.TERMINAL_API
+import com.cameparkare.dashboardapp.config.constants.Constants.TERMINAL_IP
+import com.cameparkare.dashboardapp.config.constants.Constants.TERMINAL_PORT
+import com.cameparkare.dashboardapp.config.constants.Constants.TEXT_SIZE_SCALE
+import com.cameparkare.dashboardapp.config.constants.Constants.TIME_DELAY
+import com.cameparkare.dashboardapp.config.constants.Constants.VIDEO_FRAME
+import com.cameparkare.dashboardapp.config.dataclasses.TypeConnectionEnum
 import com.cameparkare.dashboardapp.config.utils.IServerConnection
+import com.cameparkare.dashboardapp.config.utils.SharedPreferencesProvider
+import com.cameparkare.dashboardapp.domain.models.toDto
 import com.cameparkare.dashboardapp.domain.repositories.external.ConfigFileRepository
 import com.cameparkare.dashboardapp.domain.repositories.local.DashboardDevicesRepository
 import com.cameparkare.dashboardapp.domain.repositories.local.DashboardElementRepository
@@ -17,6 +27,7 @@ class ApiServerRepositoryImpl(
     private val dashboardElementRepository: DashboardElementRepository,
     private val serverConnection: IServerConnection,
     private val configFileRepository: ConfigFileRepository,
+    private val preferences: SharedPreferencesProvider,
     private val dashboardDevicesRepository: DashboardDevicesRepository
 ): ApiServerRepository {
     override suspend fun saveDashboardIp(device: DeviceDto): Int {
@@ -55,5 +66,36 @@ class ApiServerRepositoryImpl(
     override suspend fun getCurrentConfiguration(): List<ScreenDto> {
         val result = dashboardElementRepository.getAllScreens()
         return result.map { it.toDto() }
+    }
+
+    override suspend fun getCurrentConnectionConfig(): ConnectionConfigDto {
+        val terminalIp = preferences.get(TERMINAL_IP, "0.0.0.0")
+        val port = preferences.get(TERMINAL_PORT, 9011)
+        val terminalApi = preferences.get(TERMINAL_API, "")
+        val apiPort = preferences.get(API_PORT, 2023)
+        val timeDelay = preferences.get(TIME_DELAY, 4)
+        val videoFrame = preferences.get(VIDEO_FRAME, false)
+        val textSizeScale = preferences.get(TEXT_SIZE_SCALE, 10)
+
+        val connectionWay = when (serverConnection.typeConnection.value){
+            TypeConnectionEnum.SIGNAL_R -> 1
+            TypeConnectionEnum.SOCKET -> 2
+            else -> 0
+        }
+
+        //get images
+        val images = dashboardElementRepository.getImages()
+
+        return ConnectionConfigDto(
+            connectionWay = connectionWay,
+            terminalIp = terminalIp,
+            port = port,
+            terminalApi = terminalApi,
+            apiPort = apiPort,
+            timeDelay = timeDelay,
+            videoFrame = videoFrame,
+            textSizeScale = textSizeScale,
+            files = images.map { it.toDto() }
+        )
     }
 }

@@ -14,7 +14,7 @@ data class ConnectionConfigDto(
     @SerialName("time-delay") val timeDelay: Int,
     @SerialName("video-frame") val videoFrame: Boolean,
     @SerialName("text-size-scale") val textSizeScale: Int,
-    @SerialName("files") val files: Map<String, String>? = null
+    @SerialName("files") val files: List<ImageFileDto>? = null
 )
 
 fun ConnectionConfigDto.toModel(): ConnectionConfigModel {

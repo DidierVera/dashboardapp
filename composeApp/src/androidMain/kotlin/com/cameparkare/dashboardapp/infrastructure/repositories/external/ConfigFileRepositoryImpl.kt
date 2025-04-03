@@ -14,13 +14,14 @@ import com.cameparkare.dashboardapp.config.utils.AppLogger
 import com.cameparkare.dashboardapp.config.utils.IServerConnection
 import com.cameparkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.cameparkare.dashboardapp.domain.models.ConnectionConfigModel
-import com.cameparkare.dashboardapp.domain.models.ImagesModel
+import com.cameparkare.dashboardapp.domain.models.ImagesFileModel
 import com.cameparkare.dashboardapp.domain.models.ScreenModel
 import com.cameparkare.dashboardapp.domain.repositories.external.ConfigFileRepository
 import com.cameparkare.dashboardapp.domain.repositories.local.DashboardElementRepository
 import com.cameparkare.dashboardapp.infrastructure.source.external.ConfigFileDao
 import com.cameparkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
 import com.cameparkare.dashboardapp.infrastructure.source.external.dto.device.toDto
+import com.cameparkare.dashboardapp.infrastructure.source.external.dto.device.toModel
 import com.cameparkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
 import com.cameparkare.dashboardapp.infrastructure.source.external.dto.screen.toDto
 import com.cameparkare.dashboardapp.infrastructure.source.external.dto.screen.toModel
@@ -68,14 +69,17 @@ class ConfigFileRepositoryImpl(
         }
 
         //storage images
-        storageImages(data.files)
+        storageImages(data.files?.map { it.toModel() })
     }
 
-    private suspend fun storageImages(files: Map<String, String>?) {
-        if (files.isNullOrEmpty()) return
-        dashboardElementRepository.saveImages(
-            files.map { (name, content) -> ImagesModel(fileName = name, fileContent = content) }
-        )
+    private suspend fun storageImages(files: List<ImagesFileModel>?) {
+        if (files.isNullOrEmpty()) {
+            dashboardElementRepository.deleteAllImages()
+            return
+        }
+
+        // Otherwise, replace all images in a single transaction
+        dashboardElementRepository.replaceAllImages(files)
     }
 
     override suspend fun getFileConfiguration(): ServiceResult<Boolean> {

@@ -12,4 +12,5 @@ interface ApiServerRepository {
     suspend fun deleteDashboardDevice(id: Long): Int
     suspend fun saveTerminalConnection(data: ConnectionConfigDto): Int
     suspend fun getCurrentConfiguration(): List<ScreenDto>
+    suspend fun getCurrentConnectionConfig(): ConnectionConfigDto
 }

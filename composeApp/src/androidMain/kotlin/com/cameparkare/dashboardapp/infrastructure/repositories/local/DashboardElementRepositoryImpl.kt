@@ -1,7 +1,7 @@
 package com.cameparkare.dashboardapp.infrastructure.repositories.local
 
 import com.cameparkare.dashboardapp.config.utils.AppLogger
-import com.cameparkare.dashboardapp.domain.models.ImagesModel
+import com.cameparkare.dashboardapp.domain.models.ImagesFileModel
 import com.cameparkare.dashboardapp.domain.models.ScreenModel
 import com.cameparkare.dashboardapp.domain.repositories.local.DashboardElementRepository
 import com.cameparkare.dashboardapp.infrastructure.source.local.dao.ImagesDao
@@ -52,7 +52,7 @@ class DashboardElementRepositoryImpl(
         }
     }
 
-    override suspend fun saveImages(images: List<ImagesModel>) {
+    override suspend fun saveImages(images: List<ImagesFileModel>) {
         try {
             val ids = imagesDao.insertAll(images.map{it.toEntity()})
             if (ids.isEmpty())
@@ -62,7 +62,7 @@ class DashboardElementRepositoryImpl(
         }
     }
 
-    override suspend fun getImages(): List<ImagesModel> {
+    override suspend fun getImages(): List<ImagesFileModel> {
         return try {
             val entities = imagesDao.getAll()
             entities.map { it.toModel() }
@@ -72,11 +72,34 @@ class DashboardElementRepositoryImpl(
         }
     }
 
+    override suspend fun deleteAllImages() {
+        try {
+            imagesDao.deleteAllImages()
+        }catch (e: Exception){
+            appLogger.trackError(e)
+        }
+    }
+
+    override suspend fun getImageByName(fileName: String): ImagesFileModel? {
+        return try {
+            val entity = imagesDao.getByName(fileName)
+            entity?.toModel()
+        }catch (e: Exception){
+            appLogger.trackError(e)
+            null
+        }
+    }
+
     override suspend fun deleteImageById(id: Long) {
         try {
             imagesDao.deleteImage(id)
         }catch (e: Exception){
             appLogger.trackError(e)
         }
+    }
+
+    override suspend fun replaceAllImages(images: List<ImagesFileModel>) {
+        val entities = images.map { it.toEntity() }
+        imagesDao.replaceAllImages(entities)
     }
 }

@@ -15,11 +15,13 @@ string|dialog_label|RGlhbG9n
 string|dialog_message_label|RGlhbG9nIG1lc3NhZ2U=
 string|discard_button|RElTQ0FSRCBDSEFOR0VT
 string|download_file_button|RE9XTkxPQUQgRklMRQ==
+string|export_option|RXhwb3J0
 string|file_content_label|RmlsZSBjb250ZW50
 string|general_configuration_title|R0VORVJBTCBDT05GSUdVUkFUSU9O
 string|image_resources_label|SW1hZ2VzIHJlc291cmNlcw==
 string|import_export_option|SW1wb3J0L0V4cG9ydA==
 string|import_export_title|SW1wb3J0IC8gRXhwb3J0IGZpbGVz
+string|import_option|SW1wb3J0
 string|options_title|T3B0aW9ucw==
 string|port_label|UG9ydA==
 string|properties_label|UHJvcGVydGllcw==
@@ -27,6 +29,7 @@ string|save_button|U0FWRQ==
 string|screens_label|U2NyZWVucw==
 string|send_button|U0VORA==
 string|settings_button|U0VUVElOR1M=
+string|share_config_option|U2hhcmUgY29uZmln
 string|share_file_button|U0hBUkUgVE8=
 string|show_video_frame_label|U2hvdyB2aWRlbyBmcmFtZQ==
 string|terminal_ip_label|VGVybWluYWwgSVA=
