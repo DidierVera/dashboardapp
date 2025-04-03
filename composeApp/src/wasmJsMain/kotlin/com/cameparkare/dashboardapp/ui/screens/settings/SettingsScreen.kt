@@ -14,7 +14,6 @@ import com.cameparkare.dashboardapp.ui.screens.settings.exportfile.ExportTab
 import com.cameparkare.dashboardapp.ui.screens.settings.importfile.ImportTab
 import com.cameparkare.dashboardapp.ui.screens.settings.shareconfig.ShareConfigTab
 import com.cameparkare.dashboardapp.ui.screens.settings.testing.TestingTab
-import com.cameparkare.dashboardapp.ui.screens.settings.viewmodels.SettingViewModel
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.connection_option
 import dashboardapp.composeapp.generated.resources.dashboard_list_option

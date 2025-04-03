@@ -1,4 +1,4 @@
-package com.cameparkare.dashboardapp.ui.screens.settings.states
+package com.cameparkare.dashboardapp.ui.screens.settings
 
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.compose_multiplatform
