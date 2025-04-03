@@ -1,10 +1,8 @@
-package com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.elements
+package com.cameparkare.dashboardapp.infrastructure.source.external.dto.screen.elements
 
 import com.cameparkare.dashboardapp.domain.models.components.CommonStyleModel
 import com.cameparkare.dashboardapp.domain.models.components.ElementModel
-import com.cameparkare.dashboardapp.domain.models.components.ImageDataModel
 import com.cameparkare.dashboardapp.domain.models.components.VideoDataModel
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.ElementDto
 import kotlinx.serialization.Serializable
 
 
@@ -40,7 +38,7 @@ fun ElementModel.VideoModel.toDto(): ElementDto.VideoDto {
         elementType = "video",
         data = VideoDataDto(
             dataKey = data.dataKey, validValue = data.validValue, ditTypeCode = data.ditTypeCode,
-                width = data.style.width, height = data.style.height,
+            width = data.style.width, height = data.style.height,
             dashboardItemId = data.dashboardItemId,
             localFilePath = data.folderPath,
             fileName = data.fileName

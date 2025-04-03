@@ -3,16 +3,16 @@ package com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver
 import android.util.Log
 import com.cameparkare.dashboardapp.config.constants.Constants.API_PORT
 import com.cameparkare.dashboardapp.config.utils.SharedPreferencesProvider
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.ScreenDto
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.device.ConnectionConfigDto
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.device.DeviceDto
+import com.cameparkare.dashboardapp.domain.repositories.remote.ApiServerRepository
+import com.cameparkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
+import com.cameparkare.dashboardapp.infrastructure.source.external.dto.device.DeviceDto
+import com.cameparkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
 import com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetCurrentConfigRequest
 import com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetDashboardListRequest
 import com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveConnectionConfig
 import com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveDeviceRequest
 import com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveScreenRequest
 import com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.readBodyAsUtf8
-import dashboardapp.composeapp.generated.resources.Res
 import fi.iki.elonen.NanoHTTPD
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -22,8 +22,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
-import java.io.ByteArrayInputStream
-import java.io.InputStreamReader
 
 class AndroidApiServer(
     private val preferences: SharedPreferencesProvider,

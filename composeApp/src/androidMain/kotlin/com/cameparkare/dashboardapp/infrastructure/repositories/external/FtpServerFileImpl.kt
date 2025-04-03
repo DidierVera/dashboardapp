@@ -12,7 +12,7 @@ import com.cameparkare.dashboardapp.config.utils.AppLogger
 import com.cameparkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.cameparkare.dashboardapp.domain.repositories.external.FtpServerFileRepository
 import com.cameparkare.dashboardapp.infrastructure.source.external.ConfigFileDao
-import com.cameparkare.dashboardapp.infrastructure.source.external.dto.FtpServerConnectionDto
+import com.cameparkare.dashboardapp.infrastructure.source.external.dto.ftp.FtpServerConnectionDto
 import com.cameparkare.dashboardapp.infrastructure.source.mocks.ConfigFileMock
 
 class FtpServerFileImpl(

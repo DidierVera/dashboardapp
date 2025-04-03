@@ -1,13 +1,13 @@
-package com.cameparkare.dashboardapp.infrastructure.repositories.external.dto
+package com.cameparkare.dashboardapp.infrastructure.source.external.dto.screen
 
 import com.cameparkare.dashboardapp.domain.models.ScreenModel
 import com.cameparkare.dashboardapp.domain.models.components.ElementModel
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.elements.toDto
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.elements.toModel
+import com.cameparkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ElementDto
+import com.cameparkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ElementSerializer
+import com.cameparkare.dashboardapp.infrastructure.source.external.dto.screen.elements.toDto
+import com.cameparkare.dashboardapp.infrastructure.source.external.dto.screen.elements.toModel
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
 
 @Serializable
 data class ScreenDto(

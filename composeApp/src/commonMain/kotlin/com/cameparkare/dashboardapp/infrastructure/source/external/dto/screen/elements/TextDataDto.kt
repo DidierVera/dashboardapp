@@ -1,11 +1,8 @@
-package com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.elements
+package com.cameparkare.dashboardapp.infrastructure.source.external.dto.screen.elements
 
-import com.cameparkare.dashboardapp.domain.models.components.BoxDataModel
 import com.cameparkare.dashboardapp.domain.models.components.CommonStyleModel
 import com.cameparkare.dashboardapp.domain.models.components.ElementModel
 import com.cameparkare.dashboardapp.domain.models.components.TextDataModel
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.ElementDto
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.getElementsDtoToModel
 import kotlinx.serialization.Serializable
 
 
@@ -34,7 +31,7 @@ fun TextDataDto.toModel(): ElementModel.TextModel{
             defaultText = defaultText,
             textSize = textSize,
             style = CommonStyleModel(
-                 padding = padding
+                padding = padding
             )
         )
     )
@@ -50,7 +47,7 @@ fun ElementModel.TextModel.toDto(): ElementDto.TextDto{
             dashboardItemId = data.dashboardItemId,
             defaultText = data.defaultText,
             textSize = data.textSize,
-                 padding = data.style.padding
+            padding = data.style.padding
 
         )
     )

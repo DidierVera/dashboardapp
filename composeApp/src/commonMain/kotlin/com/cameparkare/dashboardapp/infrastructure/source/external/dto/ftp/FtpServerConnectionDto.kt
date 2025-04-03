@@ -1,4 +1,4 @@
-package com.cameparkare.dashboardapp.infrastructure.source.external.dto
+package com.cameparkare.dashboardapp.infrastructure.source.external.dto.ftp
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

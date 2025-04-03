@@ -1,31 +1,21 @@
 package com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver
 
-import com.cameparkare.dashboardapp.config.constants.Constants.TERMINAL_API
-import com.cameparkare.dashboardapp.config.constants.Constants.TERMINAL_IP
-import com.cameparkare.dashboardapp.config.constants.Constants.TERMINAL_PORT
-import com.cameparkare.dashboardapp.config.constants.Constants.TEXT_SIZE_SCALE
-import com.cameparkare.dashboardapp.config.constants.Constants.TIME_DELAY
-import com.cameparkare.dashboardapp.config.constants.Constants.VIDEO_FRAME
-import com.cameparkare.dashboardapp.config.dataclasses.TypeConnectionEnum
 import com.cameparkare.dashboardapp.config.utils.IServerConnection
-import com.cameparkare.dashboardapp.config.utils.SharedPreferencesProvider
-import com.cameparkare.dashboardapp.domain.models.ImagesModel
-import com.cameparkare.dashboardapp.domain.models.ConnectionConfigModel
 import com.cameparkare.dashboardapp.domain.repositories.external.ConfigFileRepository
 import com.cameparkare.dashboardapp.domain.repositories.local.DashboardDevicesRepository
 import com.cameparkare.dashboardapp.domain.repositories.local.DashboardElementRepository
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.ScreenDto
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.device.ConnectionConfigDto
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.device.DeviceDto
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.device.toDto
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.device.toModel
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.toDto
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.toModel
+import com.cameparkare.dashboardapp.domain.repositories.remote.ApiServerRepository
+import com.cameparkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
+import com.cameparkare.dashboardapp.infrastructure.source.external.dto.device.DeviceDto
+import com.cameparkare.dashboardapp.infrastructure.source.external.dto.device.toDto
+import com.cameparkare.dashboardapp.infrastructure.source.external.dto.device.toModel
+import com.cameparkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
+import com.cameparkare.dashboardapp.infrastructure.source.external.dto.screen.toDto
+import com.cameparkare.dashboardapp.infrastructure.source.external.dto.screen.toModel
 
 class ApiServerRepositoryImpl(
     private val dashboardElementRepository: DashboardElementRepository,
     private val serverConnection: IServerConnection,
-    private val preferences: SharedPreferencesProvider,
     private val configFileRepository: ConfigFileRepository,
     private val dashboardDevicesRepository: DashboardDevicesRepository
 ): ApiServerRepository {

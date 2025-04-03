@@ -1,8 +1,8 @@
-package com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver
+package com.cameparkare.dashboardapp.domain.repositories.remote
 
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.ScreenDto
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.device.ConnectionConfigDto
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.device.DeviceDto
+import com.cameparkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
+import com.cameparkare.dashboardapp.infrastructure.source.external.dto.device.DeviceDto
+import com.cameparkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
 
 interface ApiServerRepository {
     suspend fun saveDashboardIp(device: DeviceDto): Int

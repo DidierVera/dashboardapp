@@ -6,17 +6,10 @@ import android.os.Environment
 import com.cameparkare.dashboardapp.config.dataclasses.ErrorTypeClass
 import com.cameparkare.dashboardapp.config.dataclasses.ServiceResult
 import com.cameparkare.dashboardapp.config.utils.AppLogger
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.ElementDto
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.ElementSerializer
-import kotlinx.serialization.DeserializationStrategy
+import com.cameparkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ElementDto
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonContentPolymorphicSerializer
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
-import kotlinx.serialization.modules.subclass
 import java.io.File
 
 class ConfigFileDao (

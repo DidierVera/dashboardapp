@@ -4,6 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.cameparkare.dashboardapp.config.constants.Constants
 import com.cameparkare.dashboardapp.domain.models.DeviceModel
+import com.cameparkare.dashboardapp.infrastructure.source.external.dto.device.DeviceDto
 import com.cameparkare.dashboardapp.infrastructure.source.local.entities.config.RoomTableNames
 
 @Entity(tableName = RoomTableNames.DASHBOARD_DEVICE_TABLE_NAME)
@@ -24,5 +25,11 @@ fun DashboardDeviceEntity.toModel(): DeviceModel{
 fun DeviceModel.toEntity(): DashboardDeviceEntity{
     return DashboardDeviceEntity(
         id = id, deviceIp = deviceIp, customName = customName, terminalIp = terminalIp
+    )
+}
+
+fun DeviceDto.toEntity(): DashboardDeviceEntity {
+    return DashboardDeviceEntity(
+        id, deviceIp, customName, terminalIp
     )
 }

@@ -1,4 +1,4 @@
-package com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.device
+package com.cameparkare.dashboardapp.infrastructure.source.external.dto.device
 
 import com.cameparkare.dashboardapp.domain.models.ConnectionConfigModel
 import kotlinx.serialization.SerialName

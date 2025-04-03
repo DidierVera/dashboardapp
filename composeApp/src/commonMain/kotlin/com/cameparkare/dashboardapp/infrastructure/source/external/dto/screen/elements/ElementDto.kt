@@ -1,11 +1,5 @@
-package com.cameparkare.dashboardapp.infrastructure.repositories.external.dto
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.elements.BoxDataDto
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.elements.ColumnDataDto
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.elements.ImageDataDto
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.elements.RowDataDto
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.elements.SpacerDataDto
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.elements.TextDataDto
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.elements.VideoDataDto
+package com.cameparkare.dashboardapp.infrastructure.source.external.dto.screen.elements
+
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
@@ -15,6 +9,7 @@ import kotlinx.serialization.json.JsonContentPolymorphicSerializer
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
@@ -76,6 +71,7 @@ sealed class ElementDto {
         val data: VideoDataDto
     ) : ElementDto()
 }
+
 object ElementSerializer : JsonContentPolymorphicSerializer<ElementDto>(ElementDto::class) {
     override fun selectDeserializer(element: JsonElement): DeserializationStrategy<ElementDto> {
         val type = element.jsonObject["element-type"]?.jsonPrimitive?.content

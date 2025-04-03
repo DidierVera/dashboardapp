@@ -1,12 +1,10 @@
-package com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.elements
+package com.cameparkare.dashboardapp.infrastructure.source.external.dto.screen.elements
 
-import com.cameparkare.dashboardapp.domain.models.components.BoxDataModel
 import com.cameparkare.dashboardapp.domain.models.components.CommonStyleModel
 import com.cameparkare.dashboardapp.domain.models.components.ElementModel
 import com.cameparkare.dashboardapp.domain.models.components.ImageDataModel
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.ElementDto
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.getElementsDtoToModel
 import kotlinx.serialization.Serializable
+
 
 @Serializable
 data class ImageDataDto(
@@ -41,7 +39,7 @@ fun ElementModel.ImageModel.toDto(): ElementDto.ImageDto {
         elementType = "image",
         data = ImageDataDto(
             dataKey = data.dataKey, validValue = data.validValue, ditTypeCode = data.ditTypeCode,
-                width = data.style.width, height = data.style.height,
+            width = data.style.width, height = data.style.height,
             dashboardItemId = data.dashboardItemId,
             localFilePath = data.folderPath,
             fileName = data.fileName,

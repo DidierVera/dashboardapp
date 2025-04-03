@@ -13,6 +13,7 @@ import com.cameparkare.dashboardapp.domain.repositories.external.ConfigFileRepos
 import com.cameparkare.dashboardapp.domain.repositories.external.FtpServerFileRepository
 import com.cameparkare.dashboardapp.domain.repositories.local.DashboardDevicesRepository
 import com.cameparkare.dashboardapp.domain.repositories.local.DashboardElementRepository
+import com.cameparkare.dashboardapp.domain.repositories.remote.ApiServerRepository
 import com.cameparkare.dashboardapp.domain.repositories.remote.TerminalConnectionRepository
 import com.cameparkare.dashboardapp.domain.usecases.ConnectionConfig
 import com.cameparkare.dashboardapp.domain.usecases.FtpServerConfiguration
@@ -28,7 +29,6 @@ import com.cameparkare.dashboardapp.infrastructure.repositories.local.DashboardE
 import com.cameparkare.dashboardapp.infrastructure.repositories.remote.TerminalConnectionImpl
 import com.cameparkare.dashboardapp.infrastructure.source.external.ConfigFileDao
 import com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver.AndroidApiServer
-import com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver.ApiServerRepository
 import com.cameparkare.dashboardapp.infrastructure.source.remote.apiserver.ApiServerRepositoryImpl
 import com.cameparkare.dashboardapp.infrastructure.source.remote.services.MockService
 import com.cameparkare.dashboardapp.infrastructure.source.remote.services.SignalRService

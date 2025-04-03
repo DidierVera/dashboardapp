@@ -1,10 +1,10 @@
-package com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.elements
+package com.cameparkare.dashboardapp.infrastructure.source.external.dto.screen.elements
 
 import com.cameparkare.dashboardapp.domain.models.components.CommonStyleModel
 import com.cameparkare.dashboardapp.domain.models.components.ElementModel
 import com.cameparkare.dashboardapp.domain.models.components.SpacerDataModel
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.ElementDto
 import kotlinx.serialization.Serializable
+
 
 @Serializable
 data class SpacerDataDto(

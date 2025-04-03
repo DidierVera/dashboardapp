@@ -1,14 +1,11 @@
-package com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.elements
+package com.cameparkare.dashboardapp.infrastructure.source.external.dto.screen.elements
 
 import com.cameparkare.dashboardapp.domain.models.components.ColumnDataModel
 import com.cameparkare.dashboardapp.domain.models.components.CommonStyleModel
 import com.cameparkare.dashboardapp.domain.models.components.ElementModel
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.ElementDto
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.ElementSerializer
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.getElementsDtoToModel
-import com.cameparkare.dashboardapp.infrastructure.repositories.external.dto.getElementsModelToDto
+import com.cameparkare.dashboardapp.infrastructure.source.external.dto.screen.getElementsDtoToModel
+import com.cameparkare.dashboardapp.infrastructure.source.external.dto.screen.getElementsModelToDto
 import kotlinx.serialization.Serializable
-
 
 @Serializable
 data class ColumnDataDto(
@@ -43,7 +40,7 @@ fun ElementModel.ColumnModel.toDto(): ElementDto.ColumnDto{
         data = ColumnDataDto(
             dataKey = data.dataKey, validValue = data.validValue, ditTypeCode = data.ditTypeCode, spacing = data.spacing,
             backgroundColor = data.style.backgroundColor, density = data.style.density, roundBorder = data.style.roundBorder,
-                hasShadow = data.style.hasShadow, padding = data.style.padding,
+            hasShadow = data.style.hasShadow, padding = data.style.padding,
             content = getElementsModelToDto(data.content)
         )
     )
