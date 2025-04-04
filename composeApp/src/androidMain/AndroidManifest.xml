@@ -38,6 +38,15 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.screens.activity.MainActivity" android:exported="false" />
+        <receiver
+            android:name=".ui.utils.BootReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" /> <!-- For some devices like HTC -->
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

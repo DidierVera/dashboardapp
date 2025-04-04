@@ -62,8 +62,17 @@ class SplashActivity: ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        checkLauncherStatus()
+    }
+
+    private fun checkLauncherStatus() {
         if (!isMyAppLauncherDefault()) {
-            showSetDefaultLauncherDialog()
+            AlertDialog.Builder(this)
+                .setTitle("Launcher Changed")
+                .setMessage("This app is no longer the default launcher. Set it again?")
+                .setPositiveButton("Yes") { _, _ -> requestDefaultLauncher() }
+                .setNegativeButton("No", null)
+                .show()
         }
     }
 
