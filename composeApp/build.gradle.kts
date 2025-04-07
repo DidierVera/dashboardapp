@@ -98,15 +98,15 @@ kotlin {
 }
 
 android {
-    namespace = "com.cameparkare.dashboardapp"
+    namespace = "com.came.parkare.dashboardapp"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.cameparkare.dashboardapp"
+        applicationId = "com.came.parkare.dashboardapp"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
-        versionName = "1.5.1"
+        versionName = "2.0.0"
     }
     packaging {
         resources {

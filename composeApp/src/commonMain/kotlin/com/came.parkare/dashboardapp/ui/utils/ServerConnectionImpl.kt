@@ -1,0 +1,45 @@
+package com.came.parkare.dashboardapp.ui.utils
+
+import com.came.parkare.dashboardapp.config.dataclasses.TypeConnectionEnum
+import com.came.parkare.dashboardapp.config.utils.IServerConnection
+import com.came.parkare.dashboardapp.domain.models.ScreenModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+
+class ServerConnectionImpl(): IServerConnection {
+
+    private val _statusConnection: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    private val _restartApp: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    private val _typeConnection = MutableStateFlow(TypeConnectionEnum.SIGNAL_R)
+    private val _screensList = MutableStateFlow<List<ScreenModel>>(emptyList())
+
+    override val typeConnection: StateFlow<TypeConnectionEnum>
+        get() = _typeConnection.asStateFlow()
+
+    override val statusConnection: StateFlow<Boolean>
+        get() = _statusConnection.asStateFlow()
+
+    override val restartApp: StateFlow<Boolean>
+        get() = _restartApp.asStateFlow()
+
+    override val screensList: StateFlow<List<ScreenModel>>
+        get() = _screensList.asStateFlow()
+
+    override fun setRestartApp(restart: Boolean) {
+        _restartApp.update { restart }
+    }
+
+    override fun setTypeConnection(type: TypeConnectionEnum) {
+        _typeConnection.update { type }
+    }
+
+    override fun setStatusConnection(status: Boolean) {
+        _statusConnection.update { status }
+    }
+
+    override fun setScreensList(screens: List<ScreenModel>) {
+        _screensList.update { screens }
+    }
+}

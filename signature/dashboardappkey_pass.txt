@@ -1,0 +1,3 @@
+path: \DashboardApp\app\release\dashboardappkeystore.jks
+password: Parking2016!LC
+alias: 	dashboardappalias
