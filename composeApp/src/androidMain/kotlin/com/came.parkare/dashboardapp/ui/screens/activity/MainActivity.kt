@@ -2,6 +2,8 @@ package com.came.parkare.dashboardapp.ui.screens.activity
 
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -34,9 +36,7 @@ class MainActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
         ConfigUI.hideSystemUI(this)
-        startFTPServer()
-        startAndroidApiServer()
-        setContent()
+        startServices()
     }
 
     private fun startAndroidApiServer() {
@@ -44,13 +44,29 @@ class MainActivity : ComponentActivity() {
             Toast.makeText(this, message, Toast.LENGTH_LONG).show()
         }
     }
+    private fun startServices() {
+        // Start services in sequence with delays
+        Handler(Looper.getMainLooper()).postDelayed({
+            startFTPServer()
+        }, 500)
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            startAndroidApiServer()
+        }, 1000)
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            initWebServer()
+            copyWebAppFiles()
+        }, 1500)
+
+        setContent()
+    }
 
     private fun startFTPServer() {
         coroutineScope.launch {
-            // Start the first FTP server (port 8888, app data directory)
             val appDataDir = getExternalFilesDir(null)!!.absolutePath
             mainViewModel.startAppFtpServer(appDataDir)
-            // Start the second FTP server (port 2121, root directory)
+
             val rootDir = Environment.getExternalStorageDirectory().absolutePath
             mainViewModel.startDeviceFtpServer(rootDir)
         }
@@ -68,12 +84,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        initWebServer()
-        copyWebAppFiles()
     }
 
     private fun copyWebAppFiles() {
@@ -97,8 +107,11 @@ class MainActivity : ComponentActivity() {
         webAppServer = WebAppServer(this, 8080)
         Thread {
             try {
+                webAppServer?.stop()
                 webAppServer?.start()
             } catch (e: IOException) {
+                e.printStackTrace()
+            } catch (e: Exception){
                 e.printStackTrace()
             }
         }.start()
@@ -110,6 +123,12 @@ class MainActivity : ComponentActivity() {
         ipByWifi?.let {
             Toast.makeText(this, "Servidor web: http://$it:8080", Toast.LENGTH_LONG).show()
         }
+    }
+
+    override fun onDestroy() {
+        webAppServer?.stop()
+        mainViewModel.stopServers()
+        super.onDestroy()
     }
 }
 
