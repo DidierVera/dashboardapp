@@ -2,16 +2,15 @@ package com.came.parkare.dashboardapp.ui.screens.settings.connection
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.came.parkare.dashboardapp.config.constants.Constants.SELECTED_IP_ADDRESS
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
-import com.came.parkare.dashboardapp.config.utils.WasmSharedPreferencesProvider
 import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.SaveConnectionConfig
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ImageFileDto
+import com.came.parkare.dashboardapp.ui.components.loading.LoadingHandler
 import com.came.parkare.dashboardapp.ui.screens.settings.components.states.FilePickerDialogState
-import kotlinx.browser.window
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,7 +20,8 @@ import kotlinx.coroutines.withContext
 
 class ConnectionViewModel(
     private val getConnectionConfig: GetConnectionConfig,
-    private val  saveConnectionConfig: SaveConnectionConfig
+    private val  saveConnectionConfig: SaveConnectionConfig,
+    private val loadingHandler: LoadingHandler
 ): ViewModel() {
     private val _state = MutableStateFlow(ConnectionState())
     val state: StateFlow<ConnectionState>
@@ -34,11 +34,16 @@ class ConnectionViewModel(
 
     private fun loadCurrentConfig() {
         viewModelScope.launch {
+            loadingHandler.showLoading(true)
+            delay(1600)
             val currentConfig = withContext(Dispatchers.Default){
                 getConnectionConfig.invoke()
             }
             when(currentConfig){
-                is ServiceResult.Error -> println(currentConfig.error.toString())
+                is ServiceResult.Error -> {
+                    loadingHandler.showLoading(false)
+                    println(currentConfig.error.toString())
+                }
                 is ServiceResult.Success -> {
                     if (currentConfig.data != null)
                     with(currentConfig.data){
@@ -61,6 +66,7 @@ class ConnectionViewModel(
                             )
                         }
                     }
+                    loadingHandler.showLoading(false)
                 }
             }
         }
@@ -122,30 +128,21 @@ class ConnectionViewModel(
             )
         }
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
+            loadingHandler.showLoading(true)
             val result = withContext(Dispatchers.Default){
                 saveConnectionConfig.invoke(model)
             }
             when(result){
                 is ServiceResult.Error -> {
                     println(result.error.toString())
+                    loadingHandler.showLoading(false)
                 }
-                is ServiceResult.Success -> clearForm()
+                is ServiceResult.Success -> {
+                    loadCurrentConfig()
+                    loadingHandler.showLoading(false)
+                }
             }
         }
-    }
-
-    private fun clearForm() {
-        _state.update { it.copy(
-            port = 9011,
-            connectionWay = Pair(-1, "Select one"),
-            api = "signalR",
-            imagesResources = emptyList(),
-            terminalIp = "",
-            delayTime = 5,
-            showVideoFrame = false,
-            clearSelectedFiles = true
-        ) }
     }
 
     fun setConnectionWay(newValue: String) {

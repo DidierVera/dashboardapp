@@ -13,7 +13,7 @@ val Pink40 = Color(0xFF7D5260)
 
 val BlackColor = Color(0xFF000000)
 val CameBlueColor = Color(0xFF009FE3)
-val LightBlackColor = Color(0xFF282858)
+val LightBlackColor = Color(0xFF081818)
 val GreenColor = Color(0xFF35C759)
 val YellowColor = Color(0xFFF2F208)
 val WarningColor = Color(0xFFF08200)

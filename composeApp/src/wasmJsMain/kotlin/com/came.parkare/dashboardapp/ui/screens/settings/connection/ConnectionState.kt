@@ -3,7 +3,6 @@ package com.came.parkare.dashboardapp.ui.screens.settings.connection
 import com.came.parkare.dashboardapp.ui.screens.settings.components.states.FilePickerDialogState
 
 data class ConnectionState(
-    val isLoading: Boolean = false,
     val connectionWay: Pair<Int, String> = Pair(-1, "Select one"),
     val connectionWayOptions: List<Pair<Int, String>> = emptyList(),
     val terminalIp: String = "",

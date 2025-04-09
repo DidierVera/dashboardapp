@@ -14,6 +14,9 @@ import com.came.parkare.dashboardapp.domain.usecases.SaveScreenConfig
 import com.came.parkare.dashboardapp.infrastructure.repositories.device.DeviceRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.repositories.screen.ScreenRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.source.services.base.HttpClient
+import com.came.parkare.dashboardapp.ui.components.loading.LoadingHandler
+import com.came.parkare.dashboardapp.ui.components.loading.LoadingHandlerImpl
+import com.came.parkare.dashboardapp.ui.components.viewmodels.AppLoadingViewModel
 import com.came.parkare.dashboardapp.ui.navigation.Navigator
 import com.came.parkare.dashboardapp.ui.screens.home.HomeViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.components.viewmodels.FilePickerDialogViewModel
@@ -37,6 +40,7 @@ val wasmAppModule = module {
     single { provideStorage() }
     singleOf(::WebStoragePreferences) { bind<WasmSharedPreferencesProvider>() }
     singleOf(::WebStoragePreferences) { bind<SharedPreferencesProvider>() }
+    singleOf(::LoadingHandlerImpl) { bind<LoadingHandler>() }
 
     //viewModels
     viewModelOf(::SettingViewModel)
@@ -44,6 +48,7 @@ val wasmAppModule = module {
     viewModelOf(::ImportViewModel)
     viewModelOf(::HomeViewModel)
     viewModelOf(::ConnectionViewModel)
+    viewModelOf(::AppLoadingViewModel)
 
     //repositories
     singleOf(::DeviceRepositoryImpl) { bind<DeviceRepository>() }

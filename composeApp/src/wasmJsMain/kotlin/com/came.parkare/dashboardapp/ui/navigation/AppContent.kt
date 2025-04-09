@@ -2,6 +2,7 @@ package com.came.parkare.dashboardapp.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import com.came.parkare.dashboardapp.ui.components.loading.AppLoading
 import com.came.parkare.dashboardapp.ui.screens.home.HomeScreen
 import com.came.parkare.dashboardapp.ui.screens.settings.SettingsScreen
 import org.koin.mp.KoinPlatform.getKoin
@@ -23,4 +24,5 @@ fun AppContent() {
             onSaveClick = {navigator.goBack()}
         )
     }
+    AppLoading()
 }
