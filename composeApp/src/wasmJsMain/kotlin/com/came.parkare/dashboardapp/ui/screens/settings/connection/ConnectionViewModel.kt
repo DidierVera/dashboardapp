@@ -20,7 +20,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ConnectionViewModel(
-    private val preferences: WasmSharedPreferencesProvider,
     private val getConnectionConfig: GetConnectionConfig,
     private val  saveConnectionConfig: SaveConnectionConfig
 ): ViewModel() {
@@ -30,13 +29,49 @@ class ConnectionViewModel(
 
     init {
         loadConnectionWays()
+        loadCurrentConfig()
+    }
+
+    private fun loadCurrentConfig() {
+        viewModelScope.launch {
+            val currentConfig = withContext(Dispatchers.Default){
+                getConnectionConfig.invoke()
+            }
+            when(currentConfig){
+                is ServiceResult.Error -> println(currentConfig.error.toString())
+                is ServiceResult.Success -> {
+                    if (currentConfig.data != null)
+                    with(currentConfig.data){
+                        _state.update {
+                            it.copy(
+                                port = port,
+                                connectionWay = _state.value.connectionWayOptions.first { it.first == connectionWay },
+                                api = terminalApi.orEmpty(),
+                                textSizeScale = textSizeScale,
+                                terminalIp = terminalIp,
+                                showVideoFrame = videoFrame,
+                                delayTime = timeDelay,
+                                imagesResources = files?.map {
+                                    FilePickerDialogState(
+                                        fileNames = it.fileName,
+                                        fileContentsRaw = it.fileContent,
+                                        id = it.id
+                                    )
+                                }.orEmpty()
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private fun loadConnectionWays() {
-        _state.update { it.copy(connectionWayOptions = mapOf(
+        _state.update { it.copy(connectionWayOptions = listOf(
             0 to "Pruebas",
             1 to "SignalR",
-            2 to "Socket"))
+            2 to "Socket")
+        )
         }
     }
 
@@ -70,14 +105,9 @@ class ConnectionViewModel(
     }
 
     fun saveChanges() {
-        val mainIp = window.location.hostname
-        val ipAddress = preferences.get(SELECTED_IP_ADDRESS, mainIp)
-
-
         val model = with(_state.value){
             ConnectionConfigDto(
-                connectionWay = connectionWayOptions.filter {
-                    it.value == connectionWay }.keys.iterator().next(),
+                connectionWay = connectionWay.first,
                 textSizeScale = textSizeScale,
                 terminalIp = terminalIp,
                 videoFrame = showVideoFrame,
@@ -94,7 +124,7 @@ class ConnectionViewModel(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
             val result = withContext(Dispatchers.Default){
-                saveConnectionConfig.invoke(ipAddress, model)
+                saveConnectionConfig.invoke(model)
             }
             when(result){
                 is ServiceResult.Error -> {
@@ -108,7 +138,7 @@ class ConnectionViewModel(
     private fun clearForm() {
         _state.update { it.copy(
             port = 9011,
-            connectionWay = "Select one",
+            connectionWay = Pair(-1, "Select one"),
             api = "signalR",
             imagesResources = emptyList(),
             terminalIp = "",
@@ -119,7 +149,7 @@ class ConnectionViewModel(
     }
 
     fun setConnectionWay(newValue: String) {
-        val connectionWay = _state.value.connectionWayOptions.filter { it.value == newValue }
-        _state.update { it.copy(connectionWay = connectionWay.entries.iterator().next().value) }
+        val connectionWay = _state.value.connectionWayOptions.first { it.second == newValue }
+        _state.update { it.copy(connectionWay = connectionWay) }
     }
 }

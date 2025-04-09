@@ -52,8 +52,8 @@ val wasmAppModule = module {
     //useCases
     single { GetScreensConfig(get()) }
     single { SaveScreenConfig(get()) }
-    single { SaveConnectionConfig(get()) }
-    single { GetConnectionConfig(get()) }
+    single { SaveConnectionConfig(get(), get()) }
+    single { GetConnectionConfig(get(), get()) }
 
 
     single { Navigator() }

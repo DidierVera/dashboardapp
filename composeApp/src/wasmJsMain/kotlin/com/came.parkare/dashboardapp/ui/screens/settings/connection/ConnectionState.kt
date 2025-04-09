@@ -4,8 +4,8 @@ import com.came.parkare.dashboardapp.ui.screens.settings.components.states.FileP
 
 data class ConnectionState(
     val isLoading: Boolean = false,
-    val connectionWay: String = "Select one",
-    val connectionWayOptions: Map<Int, String> = emptyMap(),
+    val connectionWay: Pair<Int, String> = Pair(-1, "Select one"),
+    val connectionWayOptions: List<Pair<Int, String>> = emptyList(),
     val terminalIp: String = "",
     val port: Int = 9011,
     val api: String = "signalr",

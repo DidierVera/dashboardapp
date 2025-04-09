@@ -55,7 +55,8 @@ fun ConnectionTab() {
 
         Column {
             AppLabel(Res.string.connection_way_label)
-            ConnectionWayControl(state.connectionWayOptions, state.connectionWay)//connection way
+            ConnectionWayControl(state.connectionWayOptions.map { it.second },
+                state.connectionWay.second)//connection way
         }
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -93,7 +94,7 @@ fun ConnectionTab() {
 
         UploadImages()
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(4.dp))
 
         SaveButton(modifier = Modifier.align(Alignment.End))
 
@@ -135,10 +136,10 @@ fun SaveButton(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ConnectionWayControl(connectionWayOptions: Map<Int, String>, connectionWay: String) {
+fun ConnectionWayControl(options: List<String>, connectionWay: String) {
     val viewModel: ConnectionViewModel = koinViewModel()
     CustomDropdownSelector(
-        items = connectionWayOptions.map { it.value }.toList(),
+        items = options,
         selectedItem = connectionWay,
         onItemSelected = { viewModel.setConnectionWay(it) },
         itemContent = { item ->

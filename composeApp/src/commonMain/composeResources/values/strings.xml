@@ -28,7 +28,7 @@
     <!--Import/export screen-->
     <string name="import_export_title">Import / Export files</string>
     <string name="file_content_label">File content</string>
-    <string name="upload_file_button">UPLOAD FILE</string>
+    <string name="upload_file_button">UPLOAD FILES</string>
     <string name="download_file_button">DOWNLOAD FILE</string>
     <string name="share_file_button">SHARE TO</string>
 
