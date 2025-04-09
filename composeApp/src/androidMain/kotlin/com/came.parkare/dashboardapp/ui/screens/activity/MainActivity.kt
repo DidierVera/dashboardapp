@@ -7,15 +7,12 @@ import android.os.Looper
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.AndroidApiServer
 import com.came.parkare.dashboardapp.infrastructure.source.remote.services.WebAppServer
 import com.came.parkare.dashboardapp.ui.screens.main.MainScreen
 import com.came.parkare.dashboardapp.ui.theme.DashboardAppTheme

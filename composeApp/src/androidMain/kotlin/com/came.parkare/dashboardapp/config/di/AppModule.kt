@@ -54,7 +54,7 @@ val utilsModule = module {
     singleOf(::ServerConnectionImpl) { bind<IServerConnection>() }
     factory { getPlatform() }
     factory { FTPServer() }
-    factory { AndroidApiServer(get(),get()) }
+    factory { AndroidApiServer(get(),get(),get()) }
 }
 
 val viewModelModule = module {

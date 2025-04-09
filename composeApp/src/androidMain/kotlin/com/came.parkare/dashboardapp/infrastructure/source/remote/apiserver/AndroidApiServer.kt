@@ -2,6 +2,7 @@ package com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver
 
 import android.util.Log
 import com.came.parkare.dashboardapp.config.constants.Constants.API_PORT
+import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.came.parkare.dashboardapp.domain.repositories.remote.ApiServerRepository
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
@@ -15,22 +16,16 @@ import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiR
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveScreenRequest
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.readBodyAsUtf8
 import fi.iki.elonen.NanoHTTPD
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 
 class AndroidApiServer(
     private val preferences: SharedPreferencesProvider,
     private val apiServerRepository: ApiServerRepository,
+    private val appLogger: AppLogger,
     port: Int = preferences.get(API_PORT, 2023)
 ): NanoHTTPD(port) {
     private val TAG = "AndroidApiServer"
-    private val serverScope = CoroutineScope(Job() + Dispatchers.Default)
 
     override fun serve(session: IHTTPSession): Response {
         Log.d(TAG, "Request: ${session.method} ${session.uri}")
@@ -51,12 +46,6 @@ class AndroidApiServer(
             else -> createNotFoundResponse()
         }
     }
-
-    override fun stop() {
-        serverScope.cancel()
-        super.stop()
-    }
-
 
     //region Request Handlers
     private fun handleSaveTerminalConnection(session: IHTTPSession): Response {
@@ -128,23 +117,17 @@ class AndroidApiServer(
         noinline operation: suspend (T) -> R,
         noinline successTransform: (R) -> String
     ): Response {
-        val deferred = CompletableDeferred<Response>()
-
-        serverScope.launch {
+        return runBlocking {
             try {
                 val input = preProcess?.let { it() }
                 val parsedInput = input?.let { parse?.invoke(it) } ?: Unit as T
                 val result = operation(parsedInput)
-
-                deferred.complete(
-                    createSuccessResponse(successTransform(result)))
-
-            } catch (e: Exception) {
-                deferred.complete(createErrorResponse(e))
+                createSuccessResponse(successTransform(result))
+            }catch (e: Exception){
+                appLogger.trackError(e)
+                createErrorResponse(e)
             }
         }
-
-        return runBlocking { deferred.await() }
     }
     //endregion
 
