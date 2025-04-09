@@ -39,7 +39,7 @@ fun ImportTab() {
     val viewModel: ImportViewModel = koinInject()
     val state = viewModel.state.collectAsState()
 
-    Column {
+    Column(modifier = Modifier.padding(8.dp)) {
         TabTitle(Res.string.import_export_title)
         ButtonOptions(viewModel)
 

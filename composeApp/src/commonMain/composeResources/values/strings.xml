@@ -44,6 +44,7 @@
     <string name="delay_time_label">Delay time(s)</string>
     <string name="show_video_frame_label">Show video frame</string>
     <string name="image_resources_label">Images resources</string>
+    <string name="text_size_scale_label">Text size scale</string>
 
     <!--canvas screen-->
     <string name="screens_label">Screens</string>

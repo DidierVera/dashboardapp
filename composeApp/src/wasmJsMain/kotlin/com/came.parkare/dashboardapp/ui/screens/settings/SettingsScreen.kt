@@ -1,3 +1,5 @@
+@file:OptIn(KoinExperimentalAPI::class)
+
 package com.came.parkare.dashboardapp.ui.screens.settings
 
 import androidx.compose.foundation.layout.Column
@@ -27,7 +29,6 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 
-@OptIn(KoinExperimentalAPI::class)
 @Composable
 fun SettingsScreen(onBackClick: () -> Unit, onSaveClick: () -> Unit){
     val viewModel: SettingViewModel = koinViewModel()
@@ -51,7 +52,6 @@ fun SettingsScreen(onBackClick: () -> Unit, onSaveClick: () -> Unit){
     }
 }
 
-@OptIn(KoinExperimentalAPI::class)
 @Composable
 fun LeftPanel() {
     val viewModel: SettingViewModel  = koinViewModel()

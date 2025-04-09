@@ -3,17 +3,24 @@ package com.came.parkare.dashboardapp.ui.screens.settings.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import com.came.parkare.dashboardapp.ui.components.FilePicker
+import com.came.parkare.dashboardapp.ui.components.MultipleFilePicker
 import com.came.parkare.dashboardapp.ui.screens.settings.components.states.FilePickerDialogState
 import com.came.parkare.dashboardapp.ui.screens.settings.components.viewmodels.FilePickerDialogViewModel
 import dashboardapp.composeapp.generated.resources.Res
@@ -30,12 +37,22 @@ import org.koin.compose.koinInject
 fun DialogPickerDialog(
     buttonText: StringResource = Res.string.upload_file_button,
     buttonIcon: DrawableResource = Res.drawable.ic_import_export,
-    onFileSelected: (String, String) -> Unit
+    multipleFiles: Boolean = false,
+    clearFiles: Boolean = false,
+    onFilesSelected: ((List<FilePickerDialogState>) -> Unit)? = null,
+    onFileSelected: ((String, String) -> Unit)? = null
 ){
 
     val filePickerViewModel: FilePickerDialogViewModel = koinInject()
     val filePickerState = filePickerViewModel.state.collectAsState()
+    val filesState by filePickerViewModel.multipleFiles.collectAsState()
+
     val scope = rememberCoroutineScope()
+
+    when(clearFiles){
+        true -> filePickerViewModel.clearPickedValues()
+        false -> { }
+    }
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Button(
             onClick = {
@@ -47,29 +64,62 @@ fun DialogPickerDialog(
                 Icon(painter = painterResource(buttonIcon), contentDescription = null)
             }
         }
-
-        Text(text = filePickerState.value.fileNames)
-    }
-
-    FilePicker(
-        show = filePickerState.value.pickerVisible,
-        fileExtensions = listOf("json", "png", "jpg")
-    ) {
-        filePickerViewModel.setPickerVisible(false)
-        filePickerViewModel.clearPickedValues()
-
-        if (it != null) {
-            filePickerViewModel.setIsFileSelected(true)
-            scope.launch {
-                filePickerViewModel.addFile(it)
+        when (multipleFiles){
+            true -> {
+                LazyColumn(modifier = Modifier.heightIn(max = 150.dp)) {
+                    items(filesState){ item ->
+                        Text(text = item.fileNames)
+                    }
+                }
             }
-        } else {
-            filePickerViewModel.setIsFileSelected(false)
-            filePickerViewModel.setPickerVisible(false)
+            false -> Text(text = filePickerState.value.fileNames)
         }
     }
 
-    if (filePickerState.value.fileContents.isNotBlank()){
-        onFileSelected.invoke(filePickerState.value.fileNames, filePickerState.value.fileContents)
+    when (multipleFiles){
+        true -> {
+            MultipleFilePicker(
+                show = filePickerState.value.pickerVisible,
+                fileExtensions = listOf("png", "jpg")
+            ){
+                filePickerViewModel.setPickerVisible(false)
+                filePickerViewModel.clearPickedValues()
+                if (it != null) {
+                    filePickerViewModel.setIsFileSelected(true)
+                    scope.launch {
+                        filePickerViewModel.addFiles(it)
+                    }
+                } else {
+                    filePickerViewModel.setIsFileSelected(false)
+                    filePickerViewModel.setPickerVisible(false)
+                }
+            }
+
+        }
+        false -> {
+            FilePicker(
+                show = filePickerState.value.pickerVisible,
+                fileExtensions = listOf("json", "png", "jpg")
+            ) {
+                filePickerViewModel.setPickerVisible(false)
+                filePickerViewModel.clearPickedValues()
+
+                if (it != null) {
+                    filePickerViewModel.setIsFileSelected(true)
+                    scope.launch {
+                        filePickerViewModel.addFile(it)
+                    }
+                } else {
+                    filePickerViewModel.setIsFileSelected(false)
+                    filePickerViewModel.setPickerVisible(false)
+                }
+            }
+        }
+    }
+
+    if (filesState.isNotEmpty()){
+        onFilesSelected?.invoke(filesState)
+    }else if (filePickerState.value.fileContents.isNotBlank()){
+        onFileSelected?.invoke(filePickerState.value.fileNames, filePickerState.value.fileContents)
     }
 }

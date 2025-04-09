@@ -7,7 +7,9 @@ import com.came.parkare.dashboardapp.config.utils.WasmSharedPreferencesProvider
 import com.came.parkare.dashboardapp.config.utils.WebStoragePreferences
 import com.came.parkare.dashboardapp.domain.repositories.device.DeviceRepository
 import com.came.parkare.dashboardapp.domain.repositories.screen.ScreenRepository
+import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
+import com.came.parkare.dashboardapp.domain.usecases.SaveConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.SaveScreenConfig
 import com.came.parkare.dashboardapp.infrastructure.repositories.device.DeviceRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.repositories.screen.ScreenRepositoryImpl
@@ -17,6 +19,7 @@ import com.came.parkare.dashboardapp.ui.screens.home.HomeViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.components.viewmodels.FilePickerDialogViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.importfile.ImportViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.SettingViewModel
+import com.came.parkare.dashboardapp.ui.screens.settings.connection.ConnectionViewModel
 import com.came.parkare.dashboardapp.ui.utils.UiUtils
 import com.came.parkare.dashboardapp.ui.utils.UiUtilsImpl
 import kotlinx.browser.window
@@ -40,6 +43,7 @@ val wasmAppModule = module {
     viewModelOf(::FilePickerDialogViewModel)
     viewModelOf(::ImportViewModel)
     viewModelOf(::HomeViewModel)
+    viewModelOf(::ConnectionViewModel)
 
     //repositories
     singleOf(::DeviceRepositoryImpl) { bind<DeviceRepository>() }
@@ -48,6 +52,8 @@ val wasmAppModule = module {
     //useCases
     single { GetScreensConfig(get()) }
     single { SaveScreenConfig(get()) }
+    single { SaveConnectionConfig(get()) }
+    single { GetConnectionConfig(get()) }
 
 
     single { Navigator() }

@@ -55,17 +55,18 @@ fun <T> CustomDropdownSelector(
         OutlinedButton(
             border = BorderStroke(0.2.dp, Color.LightGray),
             shape = RoundedCornerShape(10),
-            modifier = modifier.widthIn(min = 150.dp),
             onClick = {expanded = !expanded},
             enabled = true,
             colors = buttonColors) {
-            Box(modifier = Modifier) {
-                selectedItemContent(selectedItem)
+            Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = modifier.widthIn(min = 130.dp)) {
+                Box(modifier = Modifier) {
+                    selectedItemContent(selectedItem)
+                }
+                Icon(
+                    imageVector = Icons.Default.ArrowDropDown,
+                    contentDescription = "Dropdown Arrow"
+                )
             }
-            Icon(
-                imageVector = Icons.Default.ArrowDropDown,
-                contentDescription = "Dropdown Arrow"
-            )
         }
 
         DropdownMenu(
