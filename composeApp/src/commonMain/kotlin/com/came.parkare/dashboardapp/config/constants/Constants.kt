@@ -21,4 +21,7 @@ object Constants {
     const val FTP_APP_PORT = "ftpAppPort"
     const val FTP_APP_USER = "ftpAppUser"
     const val FTP_APP_PASSWORD = "ftpAppPassword"
+
+    //Web preferences
+    const val SELECTED_IP_ADDRESS = "selectedIpAddress"
 }

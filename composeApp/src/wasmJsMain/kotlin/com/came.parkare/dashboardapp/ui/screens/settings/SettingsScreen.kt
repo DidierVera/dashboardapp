@@ -3,8 +3,10 @@ package com.came.parkare.dashboardapp.ui.screens.settings
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.came.parkare.dashboardapp.ui.screens.settings.components.LeftOptionsPanel
 import com.came.parkare.dashboardapp.ui.screens.settings.components.SettingTopBar
@@ -22,22 +24,21 @@ import dashboardapp.composeapp.generated.resources.import_option
 import dashboardapp.composeapp.generated.resources.share_config_option
 import dashboardapp.composeapp.generated.resources.testing_option
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.annotation.KoinExperimentalAPI
 
+@OptIn(KoinExperimentalAPI::class)
 @Composable
 fun SettingsScreen(onBackClick: () -> Unit, onSaveClick: () -> Unit){
-    val viewModel: SettingViewModel = koinInject()
-    val optionsState = viewModel.optionsState.collectAsState()
-    val selectedOption = viewModel.selectedOption.collectAsState()
+    val viewModel: SettingViewModel = koinViewModel()
+    val selectedOption by viewModel.selectedOption.collectAsState()
+
     Column(modifier = Modifier.fillMaxSize()) {
         SettingTopBar(onBackClick, onSaveClick)
-
         Row {
-            LeftOptionsPanel(optionsState.value){ option ->
-                viewModel.selectItem(option)
-            }
+            LeftPanel()
 
-            //content
-            when(selectedOption.value.nameRes){
+            when(selectedOption.nameRes){
                 Res.string.connection_option -> ConnectionTab()
                 Res.string.dashboard_list_option -> DashboardListTab()
                 Res.string.import_option -> ImportTab()
@@ -48,5 +49,18 @@ fun SettingsScreen(onBackClick: () -> Unit, onSaveClick: () -> Unit){
             }
         }
     }
+}
 
+@OptIn(KoinExperimentalAPI::class)
+@Composable
+fun LeftPanel() {
+    val viewModel: SettingViewModel  = koinViewModel()
+    val optionsState by viewModel.optionsState.collectAsState()
+    val settingsState by viewModel.settingsState.collectAsState()
+    Column {
+        LeftOptionsPanel(settingsState.ipSelected, optionsState, onIpAddressClicked = {
+        }){ option ->
+            viewModel.selectItem(option)
+        }
+    }
 }

@@ -13,6 +13,7 @@ import com.came.parkare.dashboardapp.infrastructure.repositories.device.DeviceRe
 import com.came.parkare.dashboardapp.infrastructure.repositories.screen.ScreenRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.source.services.base.HttpClient
 import com.came.parkare.dashboardapp.ui.navigation.Navigator
+import com.came.parkare.dashboardapp.ui.screens.home.HomeViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.components.viewmodels.FilePickerDialogViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.importfile.ImportViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.SettingViewModel
@@ -38,6 +39,7 @@ val wasmAppModule = module {
     viewModelOf(::SettingViewModel)
     viewModelOf(::FilePickerDialogViewModel)
     viewModelOf(::ImportViewModel)
+    viewModelOf(::HomeViewModel)
 
     //repositories
     singleOf(::DeviceRepositoryImpl) { bind<DeviceRepository>() }
