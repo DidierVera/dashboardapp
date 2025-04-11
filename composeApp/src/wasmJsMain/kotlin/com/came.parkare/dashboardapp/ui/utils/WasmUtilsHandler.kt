@@ -1,8 +1,8 @@
-package com.came.parkare.dashboardapp.ui.components.loading
+package com.came.parkare.dashboardapp.ui.utils
 
 import kotlinx.coroutines.flow.StateFlow
 
-interface LoadingHandler {
+interface WasmUtilsHandler {
     val loadingStatus: StateFlow<Boolean>
 
     fun showLoading(value: Boolean)

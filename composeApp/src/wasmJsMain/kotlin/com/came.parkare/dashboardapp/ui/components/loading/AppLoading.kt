@@ -16,7 +16,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.came.parkare.dashboardapp.ui.components.viewmodels.AppLoadingViewModel
 import com.came.parkare.dashboardapp.ui.theme.CameBlueColor
 import com.came.parkare.dashboardapp.ui.theme.LightBlackColor
 import com.came.parkare.dashboardapp.ui.theme.WhiteColor

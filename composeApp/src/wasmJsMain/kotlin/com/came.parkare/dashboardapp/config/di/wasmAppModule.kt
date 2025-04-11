@@ -14,9 +14,9 @@ import com.came.parkare.dashboardapp.domain.usecases.SaveScreenConfig
 import com.came.parkare.dashboardapp.infrastructure.repositories.device.DeviceRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.repositories.screen.ScreenRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.source.services.base.HttpClient
-import com.came.parkare.dashboardapp.ui.components.loading.LoadingHandler
-import com.came.parkare.dashboardapp.ui.components.loading.LoadingHandlerImpl
-import com.came.parkare.dashboardapp.ui.components.viewmodels.AppLoadingViewModel
+import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
+import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandlerImpl
+import com.came.parkare.dashboardapp.ui.components.loading.AppLoadingViewModel
 import com.came.parkare.dashboardapp.ui.navigation.Navigator
 import com.came.parkare.dashboardapp.ui.screens.home.HomeViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.components.viewmodels.FilePickerDialogViewModel
@@ -40,7 +40,7 @@ val wasmAppModule = module {
     single { provideStorage() }
     singleOf(::WebStoragePreferences) { bind<WasmSharedPreferencesProvider>() }
     singleOf(::WebStoragePreferences) { bind<SharedPreferencesProvider>() }
-    singleOf(::LoadingHandlerImpl) { bind<LoadingHandler>() }
+    singleOf(::WasmUtilsHandlerImpl) { bind<WasmUtilsHandler>() }
 
     //viewModels
     viewModelOf(::SettingViewModel)

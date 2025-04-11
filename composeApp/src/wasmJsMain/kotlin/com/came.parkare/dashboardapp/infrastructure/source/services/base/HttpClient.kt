@@ -7,7 +7,7 @@ import org.w3c.xhr.XMLHttpRequest
 import kotlin.coroutines.suspendCoroutine
 
 
-class HttpClient(basePath: String = "") {
+class HttpClient() {
     val json = Json { ignoreUnknownKeys = true }
 
     // Generic GET method
@@ -40,19 +40,19 @@ class HttpClient(basePath: String = "") {
                             continuation.resumeWith(Result.success(response))
                         } catch (e: Exception) {
                             continuation.resumeWith(Result.failure(
-                                Error("Failed to parse response: ${e.message}")
+                                Exception("Failed to parse response: ${e.message}")
                             ))
                         }
                     }
                     in 401..402 -> {
                         window.location.href = "/login" // Example: Redirect on unauthorized
                         continuation.resumeWith(Result.failure(
-                            Error("Unauthorized - redirected to login")
+                            Exception("Unauthorized - redirected to login")
                         ))
                     }
                     else -> {
                         continuation.resumeWith(Result.failure(
-                            Error("HTTP error ${xhr.status}: ${xhr.statusText}")
+                            Exception("HTTP error ${xhr.status}: ${xhr.statusText}")
                         ))
                     }
                 }
@@ -60,7 +60,7 @@ class HttpClient(basePath: String = "") {
 
             xhr.onerror = {
                 continuation.resumeWith(Result.failure(
-                    Error("Network error when making $method request to $apiUrl")
+                    Exception("Network error when making $method request to $apiUrl")
                 ))
             }
 

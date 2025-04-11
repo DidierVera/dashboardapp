@@ -7,7 +7,7 @@ import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.SaveConnectionConfig
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ImageFileDto
-import com.came.parkare.dashboardapp.ui.components.loading.LoadingHandler
+import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import com.came.parkare.dashboardapp.ui.screens.settings.components.states.FilePickerDialogState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -21,7 +21,7 @@ import kotlinx.coroutines.withContext
 class ConnectionViewModel(
     private val getConnectionConfig: GetConnectionConfig,
     private val  saveConnectionConfig: SaveConnectionConfig,
-    private val loadingHandler: LoadingHandler
+    private val wasmUtilsHandler: WasmUtilsHandler
 ): ViewModel() {
     private val _state = MutableStateFlow(ConnectionState())
     val state: StateFlow<ConnectionState>
@@ -34,14 +34,14 @@ class ConnectionViewModel(
 
     private fun loadCurrentConfig() {
         viewModelScope.launch {
-            loadingHandler.showLoading(true)
+            wasmUtilsHandler.showLoading(true)
             delay(1600)
             val currentConfig = withContext(Dispatchers.Default){
                 getConnectionConfig.invoke()
             }
             when(currentConfig){
                 is ServiceResult.Error -> {
-                    loadingHandler.showLoading(false)
+                    wasmUtilsHandler.showLoading(false)
                     println(currentConfig.error.toString())
                 }
                 is ServiceResult.Success -> {
@@ -66,7 +66,7 @@ class ConnectionViewModel(
                             )
                         }
                     }
-                    loadingHandler.showLoading(false)
+                    wasmUtilsHandler.showLoading(false)
                 }
             }
         }
@@ -128,18 +128,18 @@ class ConnectionViewModel(
             )
         }
         viewModelScope.launch {
-            loadingHandler.showLoading(true)
+            wasmUtilsHandler.showLoading(true)
             val result = withContext(Dispatchers.Default){
                 saveConnectionConfig.invoke(model)
             }
             when(result){
                 is ServiceResult.Error -> {
                     println(result.error.toString())
-                    loadingHandler.showLoading(false)
+                    wasmUtilsHandler.showLoading(false)
                 }
                 is ServiceResult.Success -> {
                     loadCurrentConfig()
-                    loadingHandler.showLoading(false)
+                    wasmUtilsHandler.showLoading(false)
                 }
             }
         }
