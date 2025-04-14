@@ -1,5 +1,6 @@
 package com.came.parkare.dashboardapp.ui.screens.settings.connection
 
+import com.came.parkare.dashboardapp.infrastructure.source.mocks.ImagesDefaultFiles
 import com.came.parkare.dashboardapp.ui.screens.settings.components.states.FilePickerDialogState
 
 data class ConnectionState(
@@ -12,5 +13,7 @@ data class ConnectionState(
     val textSizeScale: Int = 10,
     val showVideoFrame: Boolean = false,
     val clearSelectedFiles: Boolean = false,
-    val imagesResources: List<FilePickerDialogState> = emptyList()
+    val imagesResources: List<FilePickerDialogState> = ImagesDefaultFiles.getDefaultImages().map { FilePickerDialogState(
+        fileContentsRaw = it.fileContent.orEmpty(), fileNames = it.fileName.orEmpty()
+    ) }
 )

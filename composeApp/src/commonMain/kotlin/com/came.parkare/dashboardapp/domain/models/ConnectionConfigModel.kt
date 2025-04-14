@@ -9,5 +9,5 @@ data class ConnectionConfigModel(
     val timeDelay: Int,
     val videoFrame: Boolean,
     val textSizeScale: Int,
-    val files: Map<String, String>? = null
+    val files: List<ImagesFileModel>? = null
 )

@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.came.parkare.dashboardapp.ui.theme.BlackColor
@@ -48,6 +50,7 @@ import org.koin.compose.viewmodel.koinViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.core.annotation.KoinExperimentalAPI
 
 @Composable
@@ -65,7 +68,9 @@ fun AppToast(modifier: Modifier = Modifier){
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.floatingButton().width(250.dp).padding(4.dp)) {
 
-                Text(state.message, color = BlackColor, modifier = Modifier.widthIn(max = 200.dp))
+                Text(state.message, color = BlackColor,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Medium),
+                    modifier = Modifier.widthIn(max = 200.dp))
 
                 Spacer(Modifier.height(4.dp))
 
@@ -74,6 +79,10 @@ fun AppToast(modifier: Modifier = Modifier){
                 }
             }
         }
+    }
+    if(state.messageRes != null){
+        val message = stringResource(state.messageRes!!)
+        viewModel.setMessage(message)
     }
 }
 

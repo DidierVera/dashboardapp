@@ -41,6 +41,7 @@ import com.came.parkare.dashboardapp.ui.theme.BlackColor
 import com.came.parkare.dashboardapp.ui.theme.CameBlueColor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.compose.KoinContext
 
 
 class SplashActivity: ComponentActivity() {
@@ -52,7 +53,9 @@ class SplashActivity: ComponentActivity() {
     override fun onStart() {
         super.onStart()
         setContent{
-            SplashScreen()
+            KoinContext() {
+                SplashScreen()
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 package com.came.parkare.dashboardapp.config.di
 
 import com.came.parkare.dashboardapp.config.utils.AppLogger
+import com.came.parkare.dashboardapp.config.utils.ErrorValidator
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.came.parkare.dashboardapp.config.utils.WasmAppLoggerImpl
 import com.came.parkare.dashboardapp.config.utils.WasmSharedPreferencesProvider
@@ -24,6 +25,7 @@ import com.came.parkare.dashboardapp.ui.screens.settings.components.viewmodels.F
 import com.came.parkare.dashboardapp.ui.screens.settings.importfile.ImportViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.SettingViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.connection.ConnectionViewModel
+import com.came.parkare.dashboardapp.ui.utils.ErrorValidatorImpl
 import com.came.parkare.dashboardapp.ui.utils.UiUtils
 import com.came.parkare.dashboardapp.ui.utils.UiUtilsImpl
 import kotlinx.browser.window
@@ -42,6 +44,7 @@ val wasmAppModule = module {
     singleOf(::WebStoragePreferences) { bind<WasmSharedPreferencesProvider>() }
     singleOf(::WebStoragePreferences) { bind<SharedPreferencesProvider>() }
     singleOf(::WasmUtilsHandlerImpl) { bind<WasmUtilsHandler>() }
+    singleOf(::ErrorValidatorImpl) { bind<ErrorValidator>() }
 
     //viewModels
     viewModelOf(::SettingViewModel)

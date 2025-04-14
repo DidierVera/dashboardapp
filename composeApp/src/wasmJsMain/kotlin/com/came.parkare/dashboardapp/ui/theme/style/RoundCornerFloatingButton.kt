@@ -8,10 +8,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun Modifier.floatingButton(isSelected: Boolean = false, onSelectClick: (() -> Unit)? = null):Modifier {
+fun Modifier.floatingButton(
+    isSelected: Boolean = false,
+    background: Color = MaterialTheme.colorScheme.surface, onSelectClick: (() -> Unit)? = null):Modifier {
     return this.padding(4.dp) // Add padding around each row
         .shadow(
             elevation = 4.dp,
@@ -26,7 +29,7 @@ fun Modifier.floatingButton(isSelected: Boolean = false, onSelectClick: (() -> U
         }
         .background(
             color = if(isSelected) MaterialTheme.colorScheme.onSecondary
-            else MaterialTheme.colorScheme.surface,
+            else background,
             shape = RoundedCornerShape(8.dp)
         )
         .padding(4.dp)

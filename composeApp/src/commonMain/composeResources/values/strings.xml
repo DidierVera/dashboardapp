@@ -51,4 +51,8 @@
     <string name="components_label">Components</string>
     <string name="properties_label">Properties</string>
 
+    <!--  Messages  -->
+    <string name="exception">Properties</string>
+
+
 </resources>

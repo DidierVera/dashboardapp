@@ -3,10 +3,12 @@ package com.came.parkare.dashboardapp.ui.screens.settings.connection
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
+import com.came.parkare.dashboardapp.config.utils.ErrorValidator
 import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.SaveConnectionConfig
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ImageFileDto
+import com.came.parkare.dashboardapp.infrastructure.source.mocks.ImagesDefaultFiles
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import com.came.parkare.dashboardapp.ui.screens.settings.components.states.FilePickerDialogState
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +23,8 @@ import kotlinx.coroutines.withContext
 class ConnectionViewModel(
     private val getConnectionConfig: GetConnectionConfig,
     private val  saveConnectionConfig: SaveConnectionConfig,
-    private val wasmUtilsHandler: WasmUtilsHandler
+    private val wasmUtilsHandler: WasmUtilsHandler,
+    private val validator: ErrorValidator
 ): ViewModel() {
     private val _state = MutableStateFlow(ConnectionState())
     val state: StateFlow<ConnectionState>
@@ -30,7 +33,6 @@ class ConnectionViewModel(
     init {
         loadConnectionWays()
         loadCurrentConfig()
-        wasmUtilsHandler.showToastMessage("Hola mundo!!")
     }
 
     private fun loadCurrentConfig() {
@@ -43,7 +45,7 @@ class ConnectionViewModel(
             when(currentConfig){
                 is ServiceResult.Error -> {
                     wasmUtilsHandler.showLoading(false)
-                    wasmUtilsHandler.showToastMessage("Has been an error getting the information")
+                    validator.validate(currentConfig.error)
                     println(currentConfig.error.toString())
                 }
                 is ServiceResult.Success -> {
@@ -136,8 +138,7 @@ class ConnectionViewModel(
             }
             when(result){
                 is ServiceResult.Error -> {
-                    wasmUtilsHandler.showToastMessage("Ocurrió un error guardando la configuración")
-                    println(result.error.toString())
+                    validator.validate(result.error)
                     wasmUtilsHandler.showLoading(false)
                 }
                 is ServiceResult.Success -> {
@@ -152,5 +153,9 @@ class ConnectionViewModel(
     fun setConnectionWay(newValue: String) {
         val connectionWay = _state.value.connectionWayOptions.first { it.second == newValue }
         _state.update { it.copy(connectionWay = connectionWay) }
+    }
+
+    fun removeImage(image: FilePickerDialogState) {
+        _state.update { it.copy(imagesResources = it.imagesResources.filter { img -> img != image }) }
     }
 }

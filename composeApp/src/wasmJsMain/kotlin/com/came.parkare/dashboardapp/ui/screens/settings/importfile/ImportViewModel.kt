@@ -50,6 +50,7 @@ class ImportViewModel(
                         ErrorTypeClass.NotSocketResponse -> TODO()
                         ErrorTypeClass.SocketConnectionError -> TODO()
                         ErrorTypeClass.WrongConfigFile -> TODO()
+                        is ErrorTypeClass.ResourceGeneralException -> TODO()
                     }
                 }
                 is ServiceResult.Success -> {

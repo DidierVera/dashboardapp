@@ -64,16 +64,6 @@ fun DialogPickerDialog(
                 Icon(painter = painterResource(buttonIcon), contentDescription = null)
             }
         }
-        when (multipleFiles){
-            true -> {
-                LazyColumn(modifier = Modifier.heightIn(max = 150.dp)) {
-                    items(filesState){ item ->
-                        Text(text = item.fileNames)
-                    }
-                }
-            }
-            false -> Text(text = filePickerState.value.fileNames)
-        }
     }
 
     when (multipleFiles){

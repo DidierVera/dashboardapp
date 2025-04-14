@@ -4,19 +4,27 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import org.jetbrains.compose.resources.StringResource
 
 class WasmUtilsHandlerImpl: WasmUtilsHandler {
     private val _loadingStatus: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val _toastMessage: MutableStateFlow<String> = MutableStateFlow("")
+    private val _toastResMessage: MutableStateFlow<StringResource?> = MutableStateFlow(null)
 
     override val loadingStatus: StateFlow<Boolean>
         get() = _loadingStatus.asStateFlow()
 
     override val toastMessage: StateFlow<String>
         get() = _toastMessage.asStateFlow()
+    override val toastResMessage: StateFlow<StringResource?>
+        get() = _toastResMessage.asStateFlow()
 
     override fun showToastMessage(message: String) {
         _toastMessage.update { message }
+    }
+
+    override fun showToastMessage(stringRes: StringResource) {
+        _toastResMessage.update { stringRes }
     }
 
     override fun showLoading(value: Boolean) {
