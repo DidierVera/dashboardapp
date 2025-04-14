@@ -18,5 +18,11 @@ class BootReceiver(
             }
             context.startActivity(mainIntent)
         }
+        if (intent.action == Intent.ACTION_USER_PRESENT) {
+            appLogger.trackLog("MyBroadcastReceiver", "User is present, launching app")
+            val launchIntent = Intent(context, SplashActivity::class.java)
+            launchIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            context.startActivity(launchIntent)
+        }
     }
 }

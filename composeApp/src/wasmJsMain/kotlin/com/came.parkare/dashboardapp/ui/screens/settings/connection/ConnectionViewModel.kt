@@ -30,6 +30,7 @@ class ConnectionViewModel(
     init {
         loadConnectionWays()
         loadCurrentConfig()
+        wasmUtilsHandler.showToastMessage("Hola mundo!!")
     }
 
     private fun loadCurrentConfig() {
@@ -42,6 +43,7 @@ class ConnectionViewModel(
             when(currentConfig){
                 is ServiceResult.Error -> {
                     wasmUtilsHandler.showLoading(false)
+                    wasmUtilsHandler.showToastMessage("Has been an error getting the information")
                     println(currentConfig.error.toString())
                 }
                 is ServiceResult.Success -> {
@@ -134,10 +136,12 @@ class ConnectionViewModel(
             }
             when(result){
                 is ServiceResult.Error -> {
+                    wasmUtilsHandler.showToastMessage("Ocurrió un error guardando la configuración")
                     println(result.error.toString())
                     wasmUtilsHandler.showLoading(false)
                 }
                 is ServiceResult.Success -> {
+                    wasmUtilsHandler.showToastMessage("Configuración guardada con éxito")
                     loadCurrentConfig()
                     wasmUtilsHandler.showLoading(false)
                 }

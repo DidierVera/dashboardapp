@@ -17,6 +17,7 @@ import com.came.parkare.dashboardapp.infrastructure.source.services.base.HttpCli
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandlerImpl
 import com.came.parkare.dashboardapp.ui.components.loading.AppLoadingViewModel
+import com.came.parkare.dashboardapp.ui.components.messages.AppToastViewModel
 import com.came.parkare.dashboardapp.ui.navigation.Navigator
 import com.came.parkare.dashboardapp.ui.screens.home.HomeViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.components.viewmodels.FilePickerDialogViewModel
@@ -49,6 +50,7 @@ val wasmAppModule = module {
     viewModelOf(::HomeViewModel)
     viewModelOf(::ConnectionViewModel)
     viewModelOf(::AppLoadingViewModel)
+    viewModelOf(::AppToastViewModel)
 
     //repositories
     singleOf(::DeviceRepositoryImpl) { bind<DeviceRepository>() }

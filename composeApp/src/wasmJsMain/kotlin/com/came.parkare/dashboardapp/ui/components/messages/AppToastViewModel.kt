@@ -13,12 +13,29 @@ import kotlinx.coroutines.flow.update
 class AppToastViewModel(
     private val wasmUtilsHandler: WasmUtilsHandler
 ): ViewModel() {
-    private val _state = MutableStateFlow(false)
-    val state: StateFlow<Boolean>
+    private val _state = MutableStateFlow(AppToastState())
+    val state: StateFlow<AppToastState>
         get() = _state.asStateFlow()
     init {
-        wasmUtilsHandler.loadingStatus.onEach { value ->
-            _state.update { value }
+        wasmUtilsHandler.toastMessage.onEach { value ->
+            if(value.isNotBlank()){
+                showToastMessage(value)
+            }
         }.launchIn(viewModelScope)
+    }
+
+    private fun showToastMessage(newMessage: String) {
+        _state.update { it.copy(message = newMessage) }
+        _state.update { it.copy(showMessage = true) }
+        _state.update { it.copy(timer = 250f) }
+    }
+
+    fun hideMessage(){
+        _state.update { it.copy(showMessage = false) }
+        _state.update { it.copy(message = "") }
+    }
+
+    fun setTimer(newValue: Float){
+        _state.update { it.copy(timer = newValue) }
     }
 }
