@@ -9,8 +9,10 @@ import com.came.parkare.dashboardapp.config.utils.WebStoragePreferences
 import com.came.parkare.dashboardapp.domain.repositories.device.DeviceRepository
 import com.came.parkare.dashboardapp.domain.repositories.screen.ScreenRepository
 import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
+import com.came.parkare.dashboardapp.domain.usecases.GetDeviceList
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
 import com.came.parkare.dashboardapp.domain.usecases.SaveConnectionConfig
+import com.came.parkare.dashboardapp.domain.usecases.SaveNewDevice
 import com.came.parkare.dashboardapp.domain.usecases.SaveScreenConfig
 import com.came.parkare.dashboardapp.infrastructure.repositories.device.DeviceRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.repositories.screen.ScreenRepositoryImpl
@@ -25,6 +27,7 @@ import com.came.parkare.dashboardapp.ui.screens.settings.components.viewmodels.F
 import com.came.parkare.dashboardapp.ui.screens.settings.importfile.ImportViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.SettingViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.connection.ConnectionViewModel
+import com.came.parkare.dashboardapp.ui.screens.settings.dashboardlist.DashboardListViewModel
 import com.came.parkare.dashboardapp.ui.utils.ErrorValidatorImpl
 import com.came.parkare.dashboardapp.ui.utils.UiUtils
 import com.came.parkare.dashboardapp.ui.utils.UiUtilsImpl
@@ -54,6 +57,7 @@ val wasmAppModule = module {
     viewModelOf(::ConnectionViewModel)
     viewModelOf(::AppLoadingViewModel)
     viewModelOf(::AppToastViewModel)
+    viewModelOf(::DashboardListViewModel)
 
     //repositories
     singleOf(::DeviceRepositoryImpl) { bind<DeviceRepository>() }
@@ -64,6 +68,8 @@ val wasmAppModule = module {
     single { SaveScreenConfig(get()) }
     single { SaveConnectionConfig(get(), get()) }
     single { GetConnectionConfig(get(), get()) }
+    single { GetDeviceList(get(), get()) }
+    single { SaveNewDevice(get(), get()) }
 
 
     single { Navigator() }

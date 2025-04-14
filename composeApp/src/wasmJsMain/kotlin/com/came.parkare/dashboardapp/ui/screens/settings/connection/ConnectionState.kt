@@ -13,7 +13,5 @@ data class ConnectionState(
     val textSizeScale: Int = 10,
     val showVideoFrame: Boolean = false,
     val clearSelectedFiles: Boolean = false,
-    val imagesResources: List<FilePickerDialogState> = ImagesDefaultFiles.getDefaultImages().map { FilePickerDialogState(
-        fileContentsRaw = it.fileContent.orEmpty(), fileNames = it.fileName.orEmpty()
-    ) }
+    val imagesResources: List<FilePickerDialogState> = emptyList()
 )

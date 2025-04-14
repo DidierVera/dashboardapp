@@ -65,13 +65,13 @@ class SettingViewModel(
                     isSelected = false
                 ),
                 MenuOptionState(
-                    iconRes = Res.drawable.ic_upload,
-                    nameRes = Res.string.import_option,
+                    iconRes = Res.drawable.ic_download,
+                    nameRes = Res.string.export_option,
                     isSelected = false
                 ),
                 MenuOptionState(
-                    iconRes = Res.drawable.ic_download,
-                    nameRes = Res.string.export_option,
+                    iconRes = Res.drawable.ic_upload,
+                    nameRes = Res.string.import_option,
                     isSelected = false
                 ),
                 MenuOptionState(

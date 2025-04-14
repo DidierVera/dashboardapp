@@ -192,7 +192,7 @@ fun UploadImages() {
 }
 
 @Composable
-fun SaveButton(modifier: Modifier = Modifier) {
+private fun SaveButton(modifier: Modifier = Modifier) {
     val viewModel: ConnectionViewModel = koinViewModel()
     // Save button
     AppButton(
