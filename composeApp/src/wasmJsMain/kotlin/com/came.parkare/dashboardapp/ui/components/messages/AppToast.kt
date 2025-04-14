@@ -55,10 +55,7 @@ fun AppToast(){
 
     val scope = rememberCoroutineScope() // Create a coroutine scope
     var progress by remember { mutableStateOf(0.1f) }
-    val animatedProgress = animateFloatAsState(
-        targetValue = progress,
-        animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec, label = "loading"
-    ).value
+
 
     LaunchedEffect(key1 = true){
         scope.launch {
@@ -78,6 +75,6 @@ fun AppToast(){
 
         LinearProgressIndicator(modifier = Modifier.width(300.dp)
             ,color = CameBlueColor
-            , progress = animatedProgress)
+            , progress = { progress })
     }
 }
