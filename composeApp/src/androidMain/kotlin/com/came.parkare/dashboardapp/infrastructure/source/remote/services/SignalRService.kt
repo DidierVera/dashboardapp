@@ -31,6 +31,7 @@ class SignalRService(
     private val signalRScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var signalRJob: Job? = null
 
+    private val cancellationMessage = "Connection stopped by user"
     private var hubConnection: HubConnection? = null
 
     fun startConnection(onSignalRResult: (ServiceResult<TerminalResponseDto>) -> Unit) {
@@ -70,26 +71,32 @@ class SignalRService(
                 }
 
             } catch (e: Exception) {
-                appLogger.trackError(e)
-                appLogger.trackLog("error-com.came.parkare.dashboardapp.signalR", e.message.toString())
+                if(e.message?.contains(cancellationMessage) == false){
+                    appLogger.trackError(e)
+                    appLogger.trackLog("error-com.came.parkare.dashboardapp.signalR", e.message.toString())
+                }
             }
         }
     }
 
     fun cleanup() {
-        if(signalRJob != null){
-            signalRJob?.cancel("Connection stopped by user")
-            signalRJob = null
+        try {
+            if(signalRJob != null){
+                signalRJob?.cancel(cancellationMessage)
+                signalRJob = null
 
-            try {
-                if (hubConnection?.connectionState == HubConnectionState.CONNECTED) {
-                    hubConnection?.stop()
-                }else hubConnection?.close()
-            } catch (e: Exception) {
+
+                    if (hubConnection?.connectionState == HubConnectionState.CONNECTED) {
+                        hubConnection?.stop()
+                    }else hubConnection?.close()
+
+
+                hubConnection = null
+            }
+        } catch (e: Exception) {
+            if (e.message?.contains(cancellationMessage) == false) {
                 appLogger.trackError(e)
             }
-
-            hubConnection = null
         }
     }
 }

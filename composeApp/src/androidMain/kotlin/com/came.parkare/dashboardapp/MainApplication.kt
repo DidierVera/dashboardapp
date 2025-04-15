@@ -6,6 +6,9 @@ import android.util.Log
 import com.came.parkare.dashboardapp.config.di.initKoin
 import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.ui.screens.splash.SplashActivity
+import com.google.firebase.BuildConfig
+import com.google.firebase.FirebaseApp
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -22,7 +25,8 @@ class MainApplication : Application() {
             androidContext(this@MainApplication)
             androidLogger()
         }
-
+        FirebaseApp.initializeApp(this)
+        FirebaseCrashlytics.getInstance().isCrashlyticsCollectionEnabled = !BuildConfig.DEBUG
         setupCrashHandler()
     }
 
@@ -30,6 +34,7 @@ class MainApplication : Application() {
     private fun setupCrashHandler() {
         val appLogger = getKoin().get<AppLogger>()
         Thread.setDefaultUncaughtExceptionHandler { _, throwable ->
+            appLogger.trackLog("APP CRASHED", throwable.message)
             appLogger.trackError(throwable as Exception)
 
             // Restart the launcher

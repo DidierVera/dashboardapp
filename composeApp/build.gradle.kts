@@ -8,6 +8,8 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.ksp)
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
     kotlin("plugin.serialization") version "2.1.0"
 }
 
@@ -73,6 +75,12 @@ kotlin {
             //Room database
             implementation (libs.room.ktx)
             implementation (libs.room.runtime)
+
+            //firebase
+            implementation(project.dependencies.platform("com.google.firebase:firebase-bom:33.12.0"))
+            implementation("com.google.firebase:firebase-analytics")
+            implementation(libs.firebase.crashlytics.ktx)
+            implementation(libs.firebase.analytics.ktx)
         }
         commonMain.dependencies {
             implementation(compose.runtime)

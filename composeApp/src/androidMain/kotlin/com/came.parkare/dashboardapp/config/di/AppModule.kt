@@ -41,6 +41,7 @@ import com.came.parkare.dashboardapp.ui.utils.FilesUtilsImpl
 import com.came.parkare.dashboardapp.ui.utils.ServerConnectionImpl
 import com.came.parkare.dashboardapp.ui.utils.UiUtils
 import com.came.parkare.dashboardapp.ui.utils.UiUtilsImpl
+import com.google.firebase.analytics.FirebaseAnalytics
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
@@ -55,6 +56,9 @@ val utilsModule = module {
     factory { getPlatform() }
     factory { FTPServer() }
     factory { AndroidApiServer(get(),get(),get()) }
+    single<FirebaseAnalytics> {
+        FirebaseAnalytics.getInstance(get())
+    }
 }
 
 val viewModelModule = module {
