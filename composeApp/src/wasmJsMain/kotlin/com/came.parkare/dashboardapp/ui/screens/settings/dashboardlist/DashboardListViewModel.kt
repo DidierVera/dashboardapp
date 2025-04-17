@@ -1,14 +1,26 @@
 package com.came.parkare.dashboardapp.ui.screens.settings.dashboardlist
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
+import com.came.parkare.dashboardapp.config.utils.ErrorValidator
+import com.came.parkare.dashboardapp.domain.models.DeviceModel
+import com.came.parkare.dashboardapp.domain.usecases.GetDeviceList
+import com.came.parkare.dashboardapp.domain.usecases.SaveNewDevice
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
+import dashboardapp.composeapp.generated.resources.Res
+import dashboardapp.composeapp.generated.resources.general_configuration_title
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class DashboardListViewModel(
-    private val wasmUtilsHandler: WasmUtilsHandler
+    private val wasmUtilsHandler: WasmUtilsHandler,
+    private val getDeviceList: GetDeviceList,
+    private val saveNewDevice: SaveNewDevice,
+    private val validator: ErrorValidator
 ):ViewModel() {
     private val _state: MutableStateFlow<DashboardListState> = MutableStateFlow(DashboardListState())
     val state: StateFlow<DashboardListState>
@@ -19,12 +31,59 @@ class DashboardListViewModel(
     }
 
     private fun getCurrentItems() {
+        viewModelScope.launch {
+            wasmUtilsHandler.showLoading(true)
+            when(val result = getDeviceList.invoke()){
+                is ServiceResult.Error -> {
+                    validator.validate(result.error)
+                    wasmUtilsHandler.showLoading(false)
+                }
+                is ServiceResult.Success -> {
+                    _state.update { it.copy(
+                        currentItems = result.data.orEmpty().map { devices ->
+                            DashboardListState(
+                            dashboardIp = devices.deviceIp,
+                            terminalIp = devices.terminalIp,
+                            customName = devices.customName
+                        ) }
+                    ) }
+                    wasmUtilsHandler.showLoading(false)
 
+                }
+            }
+        }
     }
 
     fun saveNewItem(){
-        wasmUtilsHandler.showToastMessage("Momento de guardar todo con: ${_state.value.dashboardIp}; ${_state.value.customName} y ${_state.value.terminalIp}")
+        viewModelScope.launch {
+            wasmUtilsHandler.showLoading(true)
+            val result = saveNewDevice.invoke(DeviceModel(
+                terminalIp = _state.value.terminalIp,
+                deviceIp = _state.value.dashboardIp,
+                customName = _state.value.customName.orEmpty(),
+                id = 0
+            ))
 
+            when(result){
+                is ServiceResult.Error -> {
+                    validator.validate(result.error)
+                    wasmUtilsHandler.showLoading(false)
+                }
+                is ServiceResult.Success -> {
+                    wasmUtilsHandler.showToastMessage("Device saved successfully")
+                    wasmUtilsHandler.showLoading(false)
+                    getCurrentItems()
+                    clearFields()
+                }
+            }
+        }
+
+    }
+
+    private fun clearFields() {
+        _state.update { it.copy(dashboardIp = "", customName = null, terminalIp = null,
+            isSaveEnabled = false
+        ) }
     }
 
     fun setDashboardIp(value: String){
@@ -61,7 +120,7 @@ class DashboardListViewModel(
         return ipv4Pattern.matches(ip) || ipv6Pattern.matches(ip)
     }
 
-    private fun enableSaveButton(value: Boolean){
-        _state.update { it.copy(isSaveEnabled = value) }
+    fun removeItem(deviceModel: DashboardListState){
+        wasmUtilsHandler.showToastMessage(Res.string.general_configuration_title)
     }
 }

@@ -11,10 +11,6 @@ import org.koin.core.context.GlobalContext.startKoin
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
-//    startKoin {
-//        modules(wasmAppModule)
-//    }
-
     ComposeViewport(document.body!!) {
         KoinApplication(application = {
             modules(wasmAppModule)

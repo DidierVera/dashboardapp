@@ -27,7 +27,7 @@ class AppToastViewModel(
             if (value != null){
                 showStringResMessage(value)
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
     private fun showStringResMessage(resValue: StringResource) {

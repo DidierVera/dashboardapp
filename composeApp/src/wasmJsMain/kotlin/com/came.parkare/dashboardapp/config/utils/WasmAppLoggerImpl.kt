@@ -11,4 +11,8 @@ class WasmAppLoggerImpl(
 
     override fun trackLog(tag: String, message: String?) {
     }
+
+    override fun trackEvent(eventName: String, params: Map<String, Any>) {
+
+    }
 }

@@ -2,23 +2,27 @@
 
 package com.came.parkare.dashboardapp.ui.screens.settings.dashboardlist
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -26,15 +30,15 @@ import androidx.compose.ui.unit.dp
 import com.came.parkare.dashboardapp.ui.components.AppButton
 import com.came.parkare.dashboardapp.ui.components.AppLabel
 import com.came.parkare.dashboardapp.ui.screens.settings.components.TabTitle
-import com.came.parkare.dashboardapp.ui.theme.CameBlueColor
+import com.came.parkare.dashboardapp.ui.theme.style.floatingButton
 import dashboardapp.composeapp.generated.resources.Res
-import dashboardapp.composeapp.generated.resources.connection_title
 import dashboardapp.composeapp.generated.resources.custom_name_label
 import dashboardapp.composeapp.generated.resources.dashboard_ip_label
 import dashboardapp.composeapp.generated.resources.dashboard_list_option
-import dashboardapp.composeapp.generated.resources.port_label
+import dashboardapp.composeapp.generated.resources.ic_trash
 import dashboardapp.composeapp.generated.resources.save_button
 import dashboardapp.composeapp.generated.resources.terminal_ip_label
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -43,16 +47,11 @@ import org.koin.core.annotation.KoinExperimentalAPI
 @Composable
 fun DashboardListTab() {
 
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp),
+    Column(verticalArrangement = Arrangement.spacedBy(20.dp),
         modifier = Modifier.padding(8.dp)) {
         TabTitle(Res.string.dashboard_list_option)
-        Spacer(modifier = Modifier.height(12.dp))
-
         AddNewItem()
-
         DeviceList()
-
-
     }
 }
 
@@ -60,27 +59,87 @@ fun DashboardListTab() {
 fun DeviceList() {
     val viewModel: DashboardListViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.fillMaxWidth()) {
+        LoadHeader(modifier = Modifier)
+        HorizontalDivider()
+        if(state.currentItems.isEmpty()) EmptyContent()
+        else LoadRows(state.currentItems, Modifier)
+    }
+}
 
-    LazyColumn {
-        item {
-            Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-                Text(text = stringResource(Res.string.custom_name_label),
-                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold))
-                Text(text = stringResource(Res.string.dashboard_ip_label),
-                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold))
+@Composable
+fun EmptyContent() {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp, alignment = Alignment.CenterVertically),
+        modifier = Modifier.fillMaxWidth().padding(8.dp).background(Color.LightGray)) {
+        Text(text = "There are no items to show", modifier = Modifier.padding(16.dp))
+        Box(modifier = Modifier.size(100.dp, 1.dp).background(Color.DarkGray).padding(8.dp))
+    }
+}
+
+@Composable
+fun LoadRows(devices: List<DashboardListState>, modifier: Modifier) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
+        modifier = modifier.fillMaxWidth().floatingButton()
+    ) {
+        devices.forEach { device ->
+            items(3) { col ->
+                when (col) {
+                    0 -> LoadCell(device.customName)
+                    1 -> LoadCell(device.dashboardIp)
+                    2 -> LastColumn(device.terminalIp, device)
+                }
             }
-        }
-        items(items = state.currentItems){ device ->
-            DeviceItem(device)
         }
     }
 }
 
 @Composable
-fun DeviceItem(device: DashboardListState) {
-    Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-        Text(text = device.customName ?: "sin nombre")
-        Text(text = device.dashboardIp)
+fun LastColumn(terminalIp: String?, device: DashboardListState) {
+    val viewModel: DashboardListViewModel = koinViewModel()
+    Row {
+        LoadCell(terminalIp)
+        IconButton(onClick = {
+            viewModel.removeItem(device)
+        }){
+            Image(painter = painterResource(Res.drawable.ic_trash), contentDescription = null)
+        }
+    }
+
+}
+
+@Composable
+fun LoadCell(text: String?) {
+    Column(modifier = Modifier.padding(0.dp, 8.dp)) {
+        Text(text = text ?: "---- ----", style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(4.dp))
+        Box(modifier = Modifier.background(Color.LightGray).fillMaxWidth(0.9F).height(1.dp))
+    }
+}
+
+@Composable
+fun LoadHeader(modifier: Modifier = Modifier) {
+    //header
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
+        modifier = modifier.fillMaxWidth()
+    ) {
+        items(3) { col ->
+            when (col) {
+                0 -> Text(text = stringResource(Res.string.custom_name_label),
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold))
+
+                1 -> Text(text = stringResource(Res.string.dashboard_ip_label),
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold))
+
+                2 -> Text(text = stringResource(Res.string.terminal_ip_label),
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold))
+            }
+        }
     }
 }
 
@@ -88,7 +147,7 @@ fun DeviceItem(device: DashboardListState) {
 fun AddNewItem() {
     val viewModel: DashboardListViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
-    Column {
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             TextField(//Dashboard ip
                 value = state.dashboardIp,
@@ -113,12 +172,7 @@ fun AddNewItem() {
             onClick = {
                 viewModel.saveNewItem()
             },
-            modifier = Modifier.run {
-            if (state.isSaveEnabled) {
-                background(CameBlueColor)
-            } else {
-                background(Color.LightGray)
-            }
-        })
+            isEnabled = state.isSaveEnabled
+        )
     }
 }
