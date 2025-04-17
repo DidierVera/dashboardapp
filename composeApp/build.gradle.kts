@@ -64,6 +64,8 @@ kotlin {
 
             //Serialization
             implementation(libs.serialization.json)
+            implementation(libs.gson)
+
             //nano http server hub
             implementation (libs.nanohttpd)
 

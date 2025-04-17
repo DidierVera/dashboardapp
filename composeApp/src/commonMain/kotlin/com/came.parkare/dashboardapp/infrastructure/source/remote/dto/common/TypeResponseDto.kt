@@ -10,3 +10,8 @@ data class TypeResponseDto(
     @SerialName("DtoType")
     val dtoType: Int
 )
+
+data class TypeResponseDtoSignalR(
+    val DtoName: String,
+    val DtoType: Int
+)

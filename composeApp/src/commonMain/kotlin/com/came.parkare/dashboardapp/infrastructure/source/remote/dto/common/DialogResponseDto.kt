@@ -10,3 +10,8 @@ data class DialogResponseDto(
     @SerialName("DialogNr")
     val dialogNumber: Int
 )
+
+data class DialogResponseDtoSignalR(
+    val DialogName: String,
+    val DialogNr: Int
+)
