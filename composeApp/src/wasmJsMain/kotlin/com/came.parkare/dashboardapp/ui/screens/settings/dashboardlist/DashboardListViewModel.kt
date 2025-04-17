@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.ErrorValidator
 import com.came.parkare.dashboardapp.domain.models.DeviceModel
+import com.came.parkare.dashboardapp.domain.usecases.DeleteDevice
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceList
 import com.came.parkare.dashboardapp.domain.usecases.SaveNewDevice
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
@@ -20,6 +21,7 @@ class DashboardListViewModel(
     private val wasmUtilsHandler: WasmUtilsHandler,
     private val getDeviceList: GetDeviceList,
     private val saveNewDevice: SaveNewDevice,
+    private val deleteDevice: DeleteDevice,
     private val validator: ErrorValidator
 ):ViewModel() {
     private val _state: MutableStateFlow<DashboardListState> = MutableStateFlow(DashboardListState())
@@ -40,11 +42,12 @@ class DashboardListViewModel(
                 }
                 is ServiceResult.Success -> {
                     _state.update { it.copy(
-                        currentItems = result.data.orEmpty().map { devices ->
+                        currentItems = result.data.orEmpty().map { device ->
                             DashboardListState(
-                            dashboardIp = devices.deviceIp,
-                            terminalIp = devices.terminalIp,
-                            customName = devices.customName
+                                dashboardIp = device.deviceIp,
+                                terminalIp = device.terminalIp,
+                                customName = device.customName,
+                                id = device.id
                         ) }
                     ) }
                     wasmUtilsHandler.showLoading(false)
@@ -104,10 +107,14 @@ class DashboardListViewModel(
         val enableButton = if(isValidIPAddressRegex(_state.value.dashboardIp)){
             if (!_state.value.terminalIp.isNullOrBlank()){
                 isValidIPAddressRegex(_state.value.terminalIp.orEmpty())
+            }else if(_state.value.currentItems.find { x -> x.dashboardIp == _state.value.dashboardIp } != null) {
+                wasmUtilsHandler.showToastMessage("This Dashboard IP already exist")
+                false
             }else{
                 true
             }
-        }else{
+        }
+        else{
             false
         }
 
@@ -121,6 +128,25 @@ class DashboardListViewModel(
     }
 
     fun removeItem(deviceModel: DashboardListState){
+        viewModelScope.launch {
+            wasmUtilsHandler.showLoading(true)
+            val result = deleteDevice.invoke(DeviceModel(
+                id = deviceModel.id, terminalIp = deviceModel.terminalIp,
+                customName = deviceModel.customName.orEmpty(), deviceIp = deviceModel.dashboardIp
+            ))
+            when (result){
+                is ServiceResult.Error -> {
+                    wasmUtilsHandler.showLoading(false)
+                    validator.validate(result.error)
+                }
+                is ServiceResult.Success -> {
+                    wasmUtilsHandler.showLoading(false)
+                    getCurrentItems()
+                    wasmUtilsHandler.showToastMessage("Device: ${deviceModel.dashboardIp} Eliminado correctamente")
+                }
+            }
+        }
+
         wasmUtilsHandler.showToastMessage(Res.string.general_configuration_title)
     }
 }

@@ -8,6 +8,7 @@ import com.came.parkare.dashboardapp.config.utils.WasmSharedPreferencesProvider
 import com.came.parkare.dashboardapp.config.utils.WebStoragePreferences
 import com.came.parkare.dashboardapp.domain.repositories.device.DeviceRepository
 import com.came.parkare.dashboardapp.domain.repositories.screen.ScreenRepository
+import com.came.parkare.dashboardapp.domain.usecases.DeleteDevice
 import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceList
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
@@ -70,6 +71,7 @@ val wasmAppModule = module {
     single { GetConnectionConfig(get(), get()) }
     single { GetDeviceList(get(), get()) }
     single { SaveNewDevice(get(), get()) }
+    single { DeleteDevice(get(), get()) }
 
 
     single { Navigator() }

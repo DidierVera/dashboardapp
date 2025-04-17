@@ -5,8 +5,8 @@ object ConfigFileMock {
     fun getConnectionConfiguration(): String {
         return """
             {
-                "connection-way": 1,
-                "terminal-ip": "192.168.209.21",
+                "connection-way": 0,
+                "terminal-ip": "192.168.209.216",
                 "port": 9011,
                 "api": "signalr",
                 "time-delay": 5,

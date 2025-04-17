@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -106,7 +107,9 @@ fun LastColumn(terminalIp: String?, device: DashboardListState) {
         IconButton(onClick = {
             viewModel.removeItem(device)
         }){
-            Image(painter = painterResource(Res.drawable.ic_trash), contentDescription = null)
+            Icon(
+                painter = painterResource(Res.drawable.ic_trash),
+                contentDescription = null, )
         }
     }
 

@@ -20,10 +20,12 @@ class WasmUtilsHandlerImpl: WasmUtilsHandler {
         get() = _toastResMessage.asStateFlow()
 
     override fun showToastMessage(message: String) {
+        _toastMessage.update { "" }
         _toastMessage.update { message }
     }
 
     override fun showToastMessage(stringRes: StringResource) {
+        _toastResMessage.update { null }
         _toastResMessage.update { stringRes }
     }
 

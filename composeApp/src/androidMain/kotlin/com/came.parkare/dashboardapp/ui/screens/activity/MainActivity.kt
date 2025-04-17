@@ -119,10 +119,10 @@ class MainActivity : ComponentActivity() {
         val ipAddress = ConfigUI.getEthernetIpAddress() // Utiliza una función para obtener la IP del dispositivo
         val ipByWifi = ConfigUI.getWifiIpAddress()
         ipAddress?.let {
-            Toast.makeText(this, "Servidor web: http://$it:8080", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Configurador web: http://$it:8080", Toast.LENGTH_SHORT).show()
         }
         ipByWifi?.let {
-            Toast.makeText(this, "Servidor web: http://$it:8080", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Configurador web: http://$it:8080", Toast.LENGTH_SHORT).show()
         }
     }
 

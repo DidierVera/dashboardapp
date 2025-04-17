@@ -11,6 +11,7 @@ import com.came.parkare.dashboardapp.config.constants.Constants.TIME_DELAY
 import com.came.parkare.dashboardapp.config.constants.Constants.VIDEO_FRAME
 import com.came.parkare.dashboardapp.config.dataclasses.ErrorTypeClass
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
+import com.came.parkare.dashboardapp.config.dataclasses.TypeConnectionEnum
 import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.IServerConnection
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
@@ -91,19 +92,24 @@ class MainViewModel (
         checkVideoFrame()
         checkBackgroundImage()
         checkTextSizeScale()
+        setTerminalConnection(serverConnection.typeConnection.value)
     }
 
     private fun registerTerminalListener() {
         serverConnection.typeConnection.onEach { connection ->
-            startParkingConnection.invoke(connection) { result ->
-                when(result){
-                    is ServiceResult.Error -> validateError(result.error)
-                    is ServiceResult.Success -> {
-                        loadScreenInformation(result.data!!, _itemsState.value.translations.first())
-                    }
+            setTerminalConnection(connection)
+        }.launchIn(viewModelScope)
+    }
+
+    private fun setTerminalConnection(connection: TypeConnectionEnum) {
+        startParkingConnection.invoke(connection) { result ->
+            when(result){
+                is ServiceResult.Error -> validateError(result.error)
+                is ServiceResult.Success -> {
+                    loadScreenInformation(result.data!!, _itemsState.value.translations.first())
                 }
             }
-        }.launchIn(viewModelScope)
+        }
     }
 
     private fun registerScreensListener() {
@@ -239,6 +245,8 @@ class MainViewModel (
                 loadScreenInformation(
                     data = TerminalResponseModel(1005, null)
                 )
+            }else{
+                loadScreenInformation(data = TerminalResponseModel(5, DefaultDits.idleConnected()))
             }
         }.launchIn(viewModelScope)
     }

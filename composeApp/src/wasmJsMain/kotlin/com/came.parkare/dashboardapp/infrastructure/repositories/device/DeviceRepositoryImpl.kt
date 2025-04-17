@@ -55,4 +55,18 @@ class DeviceRepositoryImpl(
             ServiceResult.Error(ErrorTypeClass.GeneralException(e.message))
         }
     }
+
+    override suspend fun deleteDevice(
+        ipAddress: String,
+        deviceModel: DeviceDto
+    ): ServiceResult<ResponseStatusDto> {
+        return try {
+            val result = httpClient.post<ResponseStatusDto, DeviceDto>("http://$ipAddress:2023/api/device/delete", deviceModel)
+            ServiceResult.Success(result)
+
+        }catch (e: Exception){
+            appLogger.trackError(e)
+            ServiceResult.Error(ErrorTypeClass.GeneralException(e.message))
+        }
+    }
 }

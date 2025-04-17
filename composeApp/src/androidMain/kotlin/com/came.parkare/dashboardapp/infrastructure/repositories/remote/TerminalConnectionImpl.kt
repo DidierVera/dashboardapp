@@ -71,7 +71,7 @@ class TerminalConnectionImpl(
         when(result) {
             is ServiceResult.Error -> onResult.invoke(ServiceResult.Error(result.error))
             is ServiceResult.Success -> {
-                appLogger.trackLog("DESERIALIZE DATA: ", Json.encodeToString(result.data))
+                //appLogger.trackLog("DESERIALIZE DATA: ", Json.encodeToString(result.data))
                 onResult.invoke(ServiceResult.Success(result.data?.toModel()))
             }
         }
