@@ -8,6 +8,7 @@ import com.came.parkare.dashboardapp.domain.repositories.remote.ApiServerReposit
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.DeviceDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isDeleteDevice
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetCurrentConfigRequest
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetCurrentConnectionConfig
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetDashboardListRequest
@@ -41,6 +42,7 @@ class AndroidApiServer(
             session.isGetCurrentConfigRequest() -> handleGetCurrentConfiguration(session)
             session.isGetCurrentConnectionConfig() -> handleGetCurrentConnectionConfig(session)
             session.isSaveDeviceRequest() -> handleSaveDevice(session)
+            session.isDeleteDevice() -> handleDeleteDevice(session)
             session.isSaveScreenRequest() -> handleSaveScreen(session)
             session.isSaveConnectionConfig() -> handleSaveTerminalConnection(session)
             else -> createNotFoundResponse()
@@ -82,6 +84,14 @@ class AndroidApiServer(
             session = session,
             parseBody = { body -> Json.decodeFromString<DeviceDto>(body) },
             operation = { dto -> apiServerRepository.saveDashboardIp(dto) == 0 }
+        )
+    }
+
+    private fun handleDeleteDevice(session: IHTTPSession): Response {
+        return processPostRequest<DeviceDto>(
+            session = session,
+            parseBody = { body -> Json.decodeFromString<DeviceDto>(body) },
+            operation = { dto -> apiServerRepository.deleteDashboardDevice(dto.id) == 0 }
         )
     }
 

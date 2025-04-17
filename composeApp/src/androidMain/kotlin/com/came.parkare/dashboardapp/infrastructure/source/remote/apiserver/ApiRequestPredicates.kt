@@ -19,6 +19,10 @@ object ApiRequestPredicates {
         return uri == "/api/device/save" && method == NanoHTTPD.Method.POST
     }
 
+    fun NanoHTTPD.IHTTPSession.isDeleteDevice(): Boolean {
+        return uri == "/api/device/delete" && method == NanoHTTPD.Method.POST
+    }
+
     fun NanoHTTPD.IHTTPSession.isSaveScreenRequest(): Boolean {
         return uri == "/api/screen/save" && method == NanoHTTPD.Method.POST
     }
