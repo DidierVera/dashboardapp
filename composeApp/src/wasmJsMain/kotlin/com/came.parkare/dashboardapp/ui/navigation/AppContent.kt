@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.came.parkare.dashboardapp.ui.components.dialog.AppDialog
 import com.came.parkare.dashboardapp.ui.components.loading.AppLoading
 import com.came.parkare.dashboardapp.ui.components.messages.AppToast
 import com.came.parkare.dashboardapp.ui.screens.home.HomeScreen
@@ -28,6 +29,7 @@ fun AppContent(modifier: Modifier = Modifier) {
             )
         }
         AppLoading()
+        AppDialog(modifier = Modifier.align(Alignment.Center))
         AppToast(modifier = Modifier.align(Alignment.TopCenter))
     }
 }

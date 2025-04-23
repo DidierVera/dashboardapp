@@ -18,6 +18,7 @@ import com.came.parkare.dashboardapp.domain.usecases.SaveScreenConfig
 import com.came.parkare.dashboardapp.infrastructure.repositories.device.DeviceRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.repositories.screen.ScreenRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.source.services.base.HttpClient
+import com.came.parkare.dashboardapp.ui.components.dialog.AppDialogViewModel
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandlerImpl
 import com.came.parkare.dashboardapp.ui.components.loading.AppLoadingViewModel
@@ -59,6 +60,7 @@ val wasmAppModule = module {
     viewModelOf(::AppLoadingViewModel)
     viewModelOf(::AppToastViewModel)
     viewModelOf(::DashboardListViewModel)
+    viewModelOf(::AppDialogViewModel)
 
     //repositories
     singleOf(::DeviceRepositoryImpl) { bind<DeviceRepository>() }

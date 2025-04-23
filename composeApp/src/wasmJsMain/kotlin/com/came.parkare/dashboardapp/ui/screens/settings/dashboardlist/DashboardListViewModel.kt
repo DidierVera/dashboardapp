@@ -8,6 +8,7 @@ import com.came.parkare.dashboardapp.domain.models.DeviceModel
 import com.came.parkare.dashboardapp.domain.usecases.DeleteDevice
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceList
 import com.came.parkare.dashboardapp.domain.usecases.SaveNewDevice
+import com.came.parkare.dashboardapp.ui.components.dialog.AppDialogState
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.general_configuration_title
@@ -128,25 +129,32 @@ class DashboardListViewModel(
     }
 
     fun removeItem(deviceModel: DashboardListState){
-        viewModelScope.launch {
-            wasmUtilsHandler.showLoading(true)
-            val result = deleteDevice.invoke(DeviceModel(
-                id = deviceModel.id, terminalIp = deviceModel.terminalIp,
-                customName = deviceModel.customName.orEmpty(), deviceIp = deviceModel.dashboardIp
-            ))
-            when (result){
-                is ServiceResult.Error -> {
-                    wasmUtilsHandler.showLoading(false)
-                    validator.validate(result.error)
-                }
-                is ServiceResult.Success -> {
-                    wasmUtilsHandler.showLoading(false)
-                    getCurrentItems()
-                    wasmUtilsHandler.showToastMessage("Device: ${deviceModel.dashboardIp} Eliminado correctamente")
+
+        wasmUtilsHandler.showDialogMessage(model = AppDialogState(
+            message = "Are you sure you want to delete the item: ${deviceModel.dashboardIp}",
+            onAccept = {
+                viewModelScope.launch {
+                    callServiceAndDeleteItem(deviceModel)
                 }
             }
-        }
+        ))
+    }
 
-        wasmUtilsHandler.showToastMessage(Res.string.general_configuration_title)
+    private suspend fun callServiceAndDeleteItem(deviceModel: DashboardListState) {
+        val result = deleteDevice.invoke(DeviceModel(
+            id = deviceModel.id, terminalIp = deviceModel.terminalIp,
+            customName = deviceModel.customName.orEmpty(), deviceIp = deviceModel.dashboardIp
+        ))
+        when (result){
+            is ServiceResult.Error -> {
+                wasmUtilsHandler.showLoading(false)
+                validator.validate(result.error)
+            }
+            is ServiceResult.Success -> {
+                wasmUtilsHandler.showLoading(false)
+                getCurrentItems()
+                wasmUtilsHandler.showToastMessage("Device: ${deviceModel.dashboardIp} Eliminado correctamente")
+            }
+        }
     }
 }
