@@ -38,6 +38,7 @@ import dashboardapp.composeapp.generated.resources.dashboard_list_option
 import dashboardapp.composeapp.generated.resources.ic_trash
 import dashboardapp.composeapp.generated.resources.save_button
 import dashboardapp.composeapp.generated.resources.terminal_ip_label
+import kotlinx.browser.window
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -104,15 +105,16 @@ fun LastColumn(terminalIp: String?, device: DashboardListState) {
     val viewModel: DashboardListViewModel = koinViewModel()
     Row {
         LoadCell(terminalIp)
-        IconButton(onClick = {
-            viewModel.removeItem(device)
-        }){
-            Icon(
-                painter = painterResource(Res.drawable.ic_trash),
-                contentDescription = null, )
+        if (device.dashboardIp != window.location.hostname){
+            IconButton(onClick = {
+                viewModel.removeItem(device)
+            }){
+                Icon(
+                    painter = painterResource(Res.drawable.ic_trash),
+                    contentDescription = null, )
+            }
         }
     }
-
 }
 
 @Composable

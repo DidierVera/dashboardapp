@@ -12,6 +12,7 @@ import com.came.parkare.dashboardapp.ui.components.dialog.AppDialogState
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.general_configuration_title
+import kotlinx.browser.window
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -43,6 +44,18 @@ class DashboardListViewModel(
                     wasmUtilsHandler.showLoading(false)
                 }
                 is ServiceResult.Success -> {
+                    if (result.data.isNullOrEmpty()){
+                        val newFile = saveNewDevice.invoke(DeviceModel(
+                            terminalIp = null,
+                            deviceIp = window.location.hostname,
+                            customName = "Current device",
+                            id = 0
+                        ))
+                        when(newFile){
+                            is ServiceResult.Error -> validator.validate(newFile.error)
+                            is ServiceResult.Success -> getCurrentItems()
+                        }
+                    }
                     _state.update { it.copy(
                         currentItems = result.data.orEmpty().map { device ->
                             DashboardListState(
