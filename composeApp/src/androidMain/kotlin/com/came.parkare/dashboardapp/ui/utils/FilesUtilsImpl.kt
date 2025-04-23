@@ -3,10 +3,26 @@ package com.came.parkare.dashboardapp.ui.utils
 import android.content.Context
 import android.os.Environment
 import android.util.Log
+import com.came.parkare.dashboardapp.domain.usecases.GetImageFromDbByName
 import java.io.File
 
 
-class FilesUtilsImpl(private val context: Context): FilesUtils {
+class FilesUtilsImpl(
+    private val context: Context,
+    private val getImageFromDb: GetImageFromDbByName): FilesUtils {
+
+    override suspend fun getImageFromDatabase(filename: String): String? {
+        val extensions = listOf(".jpg", ".png", ".svg", ".jpeg")
+
+        extensions.firstOrNull { filename.endsWith(it) }?.let {
+            return getImageFromDb.invoke(filename)?.fileContent
+        }
+
+        return extensions.firstNotNullOfOrNull { ext ->
+            getImageFromDb.invoke("$filename$ext")?.fileContent
+        }
+    }
+
     override fun getImageFromDirectory(folder: String, filename: String): String? {
         val directory = Environment.getExternalStoragePublicDirectory(
             "${Environment.DIRECTORY_PICTURES}$folder")

@@ -53,7 +53,7 @@ class MainViewModel (
     val itemsState: StateFlow<MainState>
         get() = _itemsState.asStateFlow()
 
-    private val _backgroundState = MutableStateFlow(String())
+    private val _backgroundState = MutableStateFlow("")
     val backgroundState: StateFlow<String>
         get() = _backgroundState.asStateFlow()
 
@@ -130,13 +130,10 @@ class MainViewModel (
 
 
     private fun checkBackgroundImage() {
-        val backgroundImage = filesUtils.getImageFromDirectory(
-            "/Dashboard",
-            "background-image")
-        println("check the background image: $backgroundImage")
-        if (!backgroundImage.isNullOrBlank()){
+        viewModelScope.launch {
+            val backgroundImage = filesUtils.getImageFromDatabase("background-image")
             appLogger.trackLog("BACKGROUND_IMAGE", backgroundImage)
-            _backgroundState.update { backgroundImage }
+            _backgroundState.update { backgroundImage ?: "" }
         }
     }
 

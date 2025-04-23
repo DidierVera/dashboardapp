@@ -165,14 +165,23 @@ fun BuildComposable(elementModel: ElementModel, textSizeScale: Int): Unit {
 
             is ElementModel.ImageModel -> {
                 if (!elementModel.data.folderPath.isNullOrBlank()) {
-                    Image(
-                        painter = imageItemStyle(elementModel.data.folderPath),
-                        contentDescription = null,
-                        contentScale = ContentScale.FillHeight,
-                        modifier = Modifier
-                            .size(((elementModel.data.style.width ?: 1).toFloat() * scaleFactor).dp,
-                                ((elementModel.data.style.height ?: 1).toFloat() * scaleFactor).dp)
-                    )
+                    if(elementModel.data.folderPath.isBase64()){
+                        Base64Image(elementModel.data.folderPath,
+                            contentScale = ContentScale.FillHeight,
+                            modifier = Modifier
+                                .size(((elementModel.data.style.width ?: 1).toFloat() * scaleFactor).dp,
+                                    ((elementModel.data.style.height ?: 1).toFloat() * scaleFactor).dp)
+                        )
+                    }else{
+                        Image(
+                            painter = imageItemStyle(elementModel.data.folderPath),
+                            contentDescription = null,
+                            contentScale = ContentScale.FillHeight,
+                            modifier = Modifier
+                                .size(((elementModel.data.style.width ?: 1).toFloat() * scaleFactor).dp,
+                                    ((elementModel.data.style.height ?: 1).toFloat() * scaleFactor).dp)
+                        )
+                    }
                 } else Unit
             }
             is ElementModel.VideoModel -> {}

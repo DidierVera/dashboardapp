@@ -19,8 +19,8 @@ class ConfigFileDao (
 
     fun getFolderPath(): File? {
         val result = when(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-            true -> context.getExternalFilesDir("/config")
-            false -> Environment.getExternalStoragePublicDirectory("${Environment.DIRECTORY_DOCUMENTS}/Dashboard/config")
+            true -> context.getExternalFilesDir("/")
+            false -> Environment.getExternalStoragePublicDirectory("${Environment.DIRECTORY_PICTURES}/Dashboard/")
         }
         return result //Environment.getExternalStoragePublicDirectory("${Environment.DIRECTORY_DOCUMENTS}/Dashboard/config")
     }

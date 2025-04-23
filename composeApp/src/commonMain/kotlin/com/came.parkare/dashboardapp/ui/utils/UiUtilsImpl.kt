@@ -121,11 +121,11 @@ class UiUtilsImpl(
         return textModel.copy(data = textModel.data.copy(defaultText = newText ?: defaultText))
     }
 
-    private fun processImageElement(imageModel: ElementModel.ImageModel, dits: List<DitResponseModel>?): ElementModel {
+    private suspend fun processImageElement(imageModel: ElementModel.ImageModel, dits: List<DitResponseModel>?): ElementModel {
         val dataKey = imageModel.data.dataKey
         val ditTypeCode = imageModel.data.ditTypeCode
         val defaultFile = if(imageModel.data.fileName.isNullOrEmpty()) null else {
-            filesUtils.getImageFromDirectory("/Dashboard",
+            filesUtils.getImageFromDatabase(
                 imageModel.data.fileName)
         }
 

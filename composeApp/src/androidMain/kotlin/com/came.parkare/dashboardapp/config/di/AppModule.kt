@@ -13,10 +13,12 @@ import com.came.parkare.dashboardapp.domain.repositories.external.ConfigFileRepo
 import com.came.parkare.dashboardapp.domain.repositories.external.FtpServerFileRepository
 import com.came.parkare.dashboardapp.domain.repositories.local.DashboardDevicesRepository
 import com.came.parkare.dashboardapp.domain.repositories.local.DashboardElementRepository
+import com.came.parkare.dashboardapp.domain.repositories.local.ImageRepository
 import com.came.parkare.dashboardapp.domain.repositories.remote.ApiServerRepository
 import com.came.parkare.dashboardapp.domain.repositories.remote.TerminalConnectionRepository
 import com.came.parkare.dashboardapp.domain.usecases.ConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.FtpServerConfiguration
+import com.came.parkare.dashboardapp.domain.usecases.GetImageFromDbByName
 import com.came.parkare.dashboardapp.domain.usecases.GetScreenByDispatcher
 import com.came.parkare.dashboardapp.domain.usecases.GetScreenConfigurations
 import com.came.parkare.dashboardapp.domain.usecases.InitConfiguration
@@ -26,6 +28,7 @@ import com.came.parkare.dashboardapp.infrastructure.repositories.external.Config
 import com.came.parkare.dashboardapp.infrastructure.repositories.external.FtpServerFileImpl
 import com.came.parkare.dashboardapp.infrastructure.repositories.local.DashboardDeviceRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.repositories.local.DashboardElementRepositoryImpl
+import com.came.parkare.dashboardapp.infrastructure.repositories.local.ImageRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.repositories.remote.TerminalConnectionImpl
 import com.came.parkare.dashboardapp.infrastructure.source.external.ConfigFileDao
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.AndroidApiServer
@@ -73,6 +76,7 @@ val useCasesModule = module {
     factory { FtpServerConfiguration(get(), get()) }
     factory { GetScreenByDispatcher(get(), get()) }
     factory { GetScreenConfigurations(get(), get()) }
+    factory { GetImageFromDbByName(get()) }
 }
 val repositoryModule = module {
     singleOf(::TerminalConnectionImpl) { bind<TerminalConnectionRepository>() }
@@ -81,6 +85,7 @@ val repositoryModule = module {
     singleOf(::DashboardElementRepositoryImpl) { bind<DashboardElementRepository>() }
     singleOf(::ApiServerRepositoryImpl) { bind<ApiServerRepository>() }
     singleOf(::DashboardDeviceRepositoryImpl) { bind<DashboardDevicesRepository>() }
+    singleOf(::ImageRepositoryImpl) { bind<ImageRepository>() }
 }
 
 val servicesModule = module {
