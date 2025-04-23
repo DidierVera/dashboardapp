@@ -89,7 +89,7 @@ fun DialogPickerDialog(
         false -> {
             FilePicker(
                 show = filePickerState.value.pickerVisible,
-                fileExtensions = listOf("json", "png", "jpg")
+                fileExtensions = listOf("json")
             ) {
                 filePickerViewModel.setPickerVisible(false)
                 filePickerViewModel.clearPickedValues()

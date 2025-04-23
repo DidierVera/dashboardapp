@@ -111,7 +111,25 @@ class ConnectionViewModel(
 
     fun setImages(filesSelected: List<FilePickerDialogState>) {
         _state.update { it.copy(clearSelectedFiles = false) }
-        _state.update { it.copy(imagesResources = filesSelected) }
+
+        val currentImages = _state.value.imagesResources.toMutableList()
+
+        filesSelected.forEach { newImage ->
+            // Check if an image with the same fileName exists
+            val existingImageIndex = currentImages.indexOfFirst { it.fileNames == newImage.fileNames }
+
+            if (existingImageIndex != -1) {
+                // If it exists but has different content, REPLACE it
+                if (currentImages[existingImageIndex].fileContentsRaw != newImage.fileContentsRaw) {
+                    currentImages[existingImageIndex] = newImage
+                }
+            } else {
+                // If fileName doesn't exist, ADD it
+                currentImages.add(newImage)
+            }
+        }
+
+        _state.update { it.copy(imagesResources = currentImages) }
     }
 
     fun saveChanges() {
@@ -156,6 +174,7 @@ class ConnectionViewModel(
     }
 
     fun removeImage(image: FilePickerDialogState) {
+        _state.update { it.copy(clearSelectedFiles = true) }
         _state.update { it.copy(imagesResources = it.imagesResources.filter { img -> img != image }) }
     }
 }
