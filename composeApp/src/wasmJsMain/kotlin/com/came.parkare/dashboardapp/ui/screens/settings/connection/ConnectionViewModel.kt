@@ -30,7 +30,8 @@ class ConnectionViewModel(
     val state: StateFlow<ConnectionState>
         get() = _state.asStateFlow()
 
-    init {
+    fun initTab(){
+        _state.update { ConnectionState() }
         loadConnectionWays()
         loadCurrentConfig()
     }
@@ -133,22 +134,7 @@ class ConnectionViewModel(
     }
 
     fun saveChanges() {
-        val model = with(_state.value){
-            ConnectionConfigDto(
-                connectionWay = connectionWay.first,
-                textSizeScale = textSizeScale,
-                terminalIp = terminalIp,
-                videoFrame = showVideoFrame,
-                port = port,
-                terminalApi = api,
-                timeDelay = delayTime,
-                apiPort = 2023,
-                files = imagesResources.map { ImageFileDto(
-                    fileName = it.fileNames,
-                    fileContent = it.fileContentsRaw
-                ) }
-            )
-        }
+        val model = getConnectionConfigModel()
         viewModelScope.launch {
             wasmUtilsHandler.showLoading(true)
             val result = withContext(Dispatchers.Default){
@@ -166,6 +152,17 @@ class ConnectionViewModel(
                 }
             }
         }
+    }
+
+    private fun getConnectionConfigModel() = with(_state.value){
+        ConnectionConfigDto(connectionWay = connectionWay.first, textSizeScale = textSizeScale,
+            terminalIp = terminalIp, videoFrame = showVideoFrame, port = port,
+            terminalApi = api, timeDelay = delayTime, apiPort = 2023,
+            files = imagesResources.map { ImageFileDto(
+                fileName = it.fileNames,
+                fileContent = it.fileContentsRaw
+            ) }
+        )
     }
 
     fun setConnectionWay(newValue: String) {

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import com.came.parkare.dashboardapp.ui.screens.settings.components.LeftOptionsPanel
 import com.came.parkare.dashboardapp.ui.screens.settings.components.SettingTopBar
@@ -30,21 +31,25 @@ import org.koin.core.annotation.KoinExperimentalAPI
 @Composable
 fun SettingsScreen(onBackClick: () -> Unit){
     val viewModel: SettingViewModel = koinViewModel()
-    val selectedOption by viewModel.selectedOption.collectAsState()
+    val refreshState by viewModel.refreshState.collectAsState()
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        SettingTopBar(onBackClick)
-        Row {
-            LeftPanel()
+    key(refreshState){
+        val selectedOption by viewModel.selectedOption.collectAsState()
 
-            when(selectedOption.nameRes){
-                Res.string.connection_option -> ConnectionTab()
-                Res.string.dashboard_list_option -> DashboardListTab()
-                Res.string.import_option -> ImportTab()
-                Res.string.export_option -> ExportTab()
-                Res.string.share_config_option -> ShareConfigTab()
-                Res.string.testing_option -> TestingTab()
-                else -> {}
+        Column(modifier = Modifier.fillMaxSize()) {
+            SettingTopBar(onBackClick)
+            Row {
+                LeftPanel()
+
+                when(selectedOption.nameRes){
+                    Res.string.connection_option -> ConnectionTab()
+                    Res.string.dashboard_list_option -> DashboardListTab()
+                    Res.string.import_option -> ImportTab()
+                    Res.string.export_option -> ExportTab()
+                    Res.string.share_config_option -> ShareConfigTab()
+                    Res.string.testing_option -> TestingTab()
+                    else -> {}
+                }
             }
         }
     }

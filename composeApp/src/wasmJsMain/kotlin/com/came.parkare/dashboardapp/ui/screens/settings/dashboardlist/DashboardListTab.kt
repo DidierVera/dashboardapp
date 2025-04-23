@@ -2,7 +2,6 @@
 
 package com.came.parkare.dashboardapp.ui.screens.settings.dashboardlist
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -47,7 +46,8 @@ import org.koin.core.annotation.KoinExperimentalAPI
 
 @Composable
 fun DashboardListTab() {
-
+    val viewModel: DashboardListViewModel = koinViewModel()
+    viewModel.initTab()
     Column(verticalArrangement = Arrangement.spacedBy(20.dp),
         modifier = Modifier.padding(8.dp)) {
         TabTitle(Res.string.dashboard_list_option)

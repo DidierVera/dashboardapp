@@ -29,7 +29,8 @@ class DashboardListViewModel(
     val state: StateFlow<DashboardListState>
         get() = _state.asStateFlow()
 
-    init {
+    fun initTab(){
+        _state.update { DashboardListState() }
         getCurrentItems()
     }
 

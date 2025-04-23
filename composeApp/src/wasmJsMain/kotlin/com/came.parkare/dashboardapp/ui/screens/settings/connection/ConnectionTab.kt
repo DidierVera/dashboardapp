@@ -70,6 +70,7 @@ import org.koin.core.annotation.KoinExperimentalAPI
 @Composable
 fun ConnectionTab() {
     val viewModel: ConnectionViewModel = koinViewModel()
+    viewModel.initTab()
     val state by viewModel.state.collectAsState()
 
     LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp),

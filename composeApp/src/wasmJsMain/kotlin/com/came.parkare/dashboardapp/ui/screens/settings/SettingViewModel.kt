@@ -49,6 +49,10 @@ class SettingViewModel(
     val ipAddresses: StateFlow<List<String>>
         get() = _ipAddresses.asStateFlow()
 
+    private val _refreshState = MutableStateFlow(0)
+    val refreshState: StateFlow<Int>
+        get() = _refreshState.asStateFlow()
+
     init {
         loadLeftPanelOptions()
         loadIpAddress()
@@ -64,6 +68,7 @@ class SettingViewModel(
     fun setIpAddress(ip: String){
         _settingsState.update { it.copy(ipSelected = ip) }
         preferences.put(SELECTED_IP_ADDRESS, ip)
+        resetComponent()
     }
 
     private fun loadLeftPanelOptions() {
@@ -116,6 +121,11 @@ class SettingViewModel(
                 }
             }
         }
+    }
+
+    private fun resetComponent(){
+        val newValue = refreshState.value + 1
+        _refreshState.update { newValue }
     }
 
     private fun getIpAddress(){
