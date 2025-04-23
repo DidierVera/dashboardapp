@@ -3,7 +3,10 @@ package com.came.parkare.dashboardapp.ui.screens.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.came.parkare.dashboardapp.config.constants.Constants.SELECTED_IP_ADDRESS
+import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
+import com.came.parkare.dashboardapp.config.utils.ErrorValidator
 import com.came.parkare.dashboardapp.config.utils.WasmSharedPreferencesProvider
+import com.came.parkare.dashboardapp.domain.usecases.GetDeviceList
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.connection_option
 import dashboardapp.composeapp.generated.resources.dashboard_list_option
@@ -25,7 +28,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class SettingViewModel(
-    private val preferences: WasmSharedPreferencesProvider
+    private val preferences: WasmSharedPreferencesProvider,
+    private val getDeviceList: GetDeviceList,
+    private val validator: ErrorValidator
 ): ViewModel() {
 
     private val _optionsState = MutableStateFlow<List<MenuOptionState>>(listOf())
@@ -40,15 +45,25 @@ class SettingViewModel(
     val settingsState: StateFlow<SettingsState>
         get() = _settingsState.asStateFlow()
 
+    private val _ipAddresses = MutableStateFlow<List<String>>(emptyList())
+    val ipAddresses: StateFlow<List<String>>
+        get() = _ipAddresses.asStateFlow()
+
     init {
         loadLeftPanelOptions()
         loadIpAddress()
+        getIpAddress()
     }
 
     private fun loadIpAddress() {
         val ip = window.location.hostname
         val currentIp = preferences.get(SELECTED_IP_ADDRESS, ip)
-        _settingsState.update { it.copy(ipSelected = currentIp) }
+        setIpAddress(currentIp)
+    }
+
+    fun setIpAddress(ip: String){
+        _settingsState.update { it.copy(ipSelected = ip) }
+        preferences.put(SELECTED_IP_ADDRESS, ip)
     }
 
     private fun loadLeftPanelOptions() {
@@ -98,6 +113,17 @@ class SettingViewModel(
                     } else {
                         item.copy(isSelected = false)
                     }
+                }
+            }
+        }
+    }
+
+    private fun getIpAddress(){
+        viewModelScope.launch {
+            when(val result = getDeviceList.invoke()){
+                is ServiceResult.Error -> validator.validate(result.error)
+                is ServiceResult.Success -> {
+                    _ipAddresses.update { result.data.orEmpty().map { it.deviceIp } }
                 }
             }
         }

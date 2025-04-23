@@ -22,7 +22,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun SettingTopBar(onBackClick: () -> Unit, onSaveClick: () -> Unit){
+fun SettingTopBar(onBackClick: () -> Unit){
     Box(
         modifier = Modifier.fillMaxWidth().background(HeaderColor).padding(4.dp),
         contentAlignment = Alignment.Center

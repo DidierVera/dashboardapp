@@ -5,7 +5,6 @@ package com.came.parkare.dashboardapp.ui.screens.settings
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -25,17 +24,16 @@ import dashboardapp.composeapp.generated.resources.export_option
 import dashboardapp.composeapp.generated.resources.import_option
 import dashboardapp.composeapp.generated.resources.share_config_option
 import dashboardapp.composeapp.generated.resources.testing_option
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 
 @Composable
-fun SettingsScreen(onBackClick: () -> Unit, onSaveClick: () -> Unit){
+fun SettingsScreen(onBackClick: () -> Unit){
     val viewModel: SettingViewModel = koinViewModel()
     val selectedOption by viewModel.selectedOption.collectAsState()
 
     Column(modifier = Modifier.fillMaxSize()) {
-        SettingTopBar(onBackClick, onSaveClick)
+        SettingTopBar(onBackClick)
         Row {
             LeftPanel()
 
@@ -51,6 +49,7 @@ fun SettingsScreen(onBackClick: () -> Unit, onSaveClick: () -> Unit){
         }
     }
 }
+
 
 @Composable
 fun LeftPanel() {

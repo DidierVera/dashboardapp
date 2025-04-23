@@ -24,8 +24,7 @@ fun AppContent(modifier: Modifier = Modifier) {
                 }
             )
             is WasmScreen.Settings -> SettingsScreen(
-                onBackClick = {navigator.goBack()},
-                onSaveClick = {navigator.goBack()}
+                onBackClick = {navigator.goBack()}
             )
         }
         AppLoading()
