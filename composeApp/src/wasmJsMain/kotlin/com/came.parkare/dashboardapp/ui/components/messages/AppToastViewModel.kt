@@ -56,6 +56,7 @@ class AppToastViewModel(
     fun hideMessage(){
         _state.update { it.copy(showMessage = false) }
         _state.update { it.copy(message = "") }
+        wasmUtilsHandler.showToastMessage("")
     }
 
     fun setTimer(newValue: Float){
