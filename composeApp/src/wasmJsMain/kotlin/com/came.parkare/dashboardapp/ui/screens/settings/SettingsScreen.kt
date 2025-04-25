@@ -14,6 +14,7 @@ import com.came.parkare.dashboardapp.ui.screens.settings.components.LeftOptionsP
 import com.came.parkare.dashboardapp.ui.screens.settings.components.SettingTopBar
 import com.came.parkare.dashboardapp.ui.screens.settings.connection.ConnectionTab
 import com.came.parkare.dashboardapp.ui.screens.settings.dashboardlist.DashboardListTab
+import com.came.parkare.dashboardapp.ui.screens.settings.editconfig.EditConfigTab
 import com.came.parkare.dashboardapp.ui.screens.settings.exportfile.ExportTab
 import com.came.parkare.dashboardapp.ui.screens.settings.importfile.ImportTab
 import com.came.parkare.dashboardapp.ui.screens.settings.shareconfig.ShareConfigTab
@@ -21,7 +22,9 @@ import com.came.parkare.dashboardapp.ui.screens.settings.testing.TestingTab
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.connection_option
 import dashboardapp.composeapp.generated.resources.dashboard_list_option
+import dashboardapp.composeapp.generated.resources.edit_current_config_option
 import dashboardapp.composeapp.generated.resources.export_option
+import dashboardapp.composeapp.generated.resources.import_export_option
 import dashboardapp.composeapp.generated.resources.import_option
 import dashboardapp.composeapp.generated.resources.share_config_option
 import dashboardapp.composeapp.generated.resources.testing_option
@@ -48,6 +51,7 @@ fun SettingsScreen(onBackClick: () -> Unit){
                     Res.string.export_option -> ExportTab()
                     Res.string.share_config_option -> ShareConfigTab()
                     Res.string.testing_option -> TestingTab()
+                    Res.string.edit_current_config_option -> EditConfigTab()
                     else -> {}
                 }
             }

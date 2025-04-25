@@ -10,6 +10,7 @@ import com.came.parkare.dashboardapp.domain.usecases.GetDeviceList
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.connection_option
 import dashboardapp.composeapp.generated.resources.dashboard_list_option
+import dashboardapp.composeapp.generated.resources.edit_current_config_option
 import dashboardapp.composeapp.generated.resources.export_option
 import dashboardapp.composeapp.generated.resources.ic_connection
 import dashboardapp.composeapp.generated.resources.ic_download
@@ -17,6 +18,8 @@ import dashboardapp.composeapp.generated.resources.ic_monitor
 import dashboardapp.composeapp.generated.resources.ic_share
 import dashboardapp.composeapp.generated.resources.ic_testing
 import dashboardapp.composeapp.generated.resources.ic_upload
+import dashboardapp.composeapp.generated.resources.ico_edit_file
+import dashboardapp.composeapp.generated.resources.import_export_option
 import dashboardapp.composeapp.generated.resources.import_option
 import dashboardapp.composeapp.generated.resources.share_config_option
 import dashboardapp.composeapp.generated.resources.testing_option
@@ -92,6 +95,11 @@ class SettingViewModel(
                 MenuOptionState(
                     iconRes = Res.drawable.ic_upload,
                     nameRes = Res.string.import_option,
+                    isSelected = false
+                ),
+                MenuOptionState(
+                    iconRes = Res.drawable.ico_edit_file,
+                    nameRes = Res.string.edit_current_config_option,
                     isSelected = false
                 ),
                 MenuOptionState(

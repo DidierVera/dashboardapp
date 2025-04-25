@@ -10,6 +10,8 @@ import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.C
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ImageFileDto
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import com.came.parkare.dashboardapp.ui.screens.settings.components.states.FilePickerDialogState
+import dashboardapp.composeapp.generated.resources.Res
+import dashboardapp.composeapp.generated.resources.config_saved_message
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -145,7 +147,7 @@ class ConnectionViewModel(
                     wasmUtilsHandler.showLoading(false)
                 }
                 is ServiceResult.Success -> {
-                    wasmUtilsHandler.showToastMessage("Configuración guardada con éxito")
+                    wasmUtilsHandler.showToastMessage(Res.string.config_saved_message)
                     loadCurrentConfig()
                     wasmUtilsHandler.showLoading(false)
                 }

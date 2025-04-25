@@ -11,13 +11,17 @@ import com.came.parkare.dashboardapp.domain.usecases.SaveNewDevice
 import com.came.parkare.dashboardapp.ui.components.dialog.AppDialogState
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import dashboardapp.composeapp.generated.resources.Res
+import dashboardapp.composeapp.generated.resources.device_deleted_message
+import dashboardapp.composeapp.generated.resources.device_saved_message
 import dashboardapp.composeapp.generated.resources.general_configuration_title
+import dashboardapp.composeapp.generated.resources.ip_already_exist_message
 import kotlinx.browser.window
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 
 class DashboardListViewModel(
     private val wasmUtilsHandler: WasmUtilsHandler,
@@ -88,7 +92,7 @@ class DashboardListViewModel(
                     wasmUtilsHandler.showLoading(false)
                 }
                 is ServiceResult.Success -> {
-                    wasmUtilsHandler.showToastMessage("Device saved successfully")
+                    wasmUtilsHandler.showToastMessage(Res.string.device_saved_message)
                     wasmUtilsHandler.showLoading(false)
                     getCurrentItems()
                     clearFields()
@@ -123,7 +127,7 @@ class DashboardListViewModel(
             if (!_state.value.terminalIp.isNullOrBlank()){
                 isValidIPAddressRegex(_state.value.terminalIp.orEmpty())
             }else if(_state.value.currentItems.find { x -> x.dashboardIp == _state.value.dashboardIp } != null) {
-                wasmUtilsHandler.showToastMessage("This Dashboard IP already exist")
+                wasmUtilsHandler.showToastMessage(Res.string.ip_already_exist_message)
                 false
             }else{
                 true
@@ -167,7 +171,7 @@ class DashboardListViewModel(
             is ServiceResult.Success -> {
                 wasmUtilsHandler.showLoading(false)
                 getCurrentItems()
-                wasmUtilsHandler.showToastMessage("Device: ${deviceModel.dashboardIp} Eliminado correctamente")
+                wasmUtilsHandler.showToastMessage(Res.string.device_deleted_message)
             }
         }
     }

@@ -31,6 +31,10 @@ import com.came.parkare.dashboardapp.ui.components.CloseButton
 import com.came.parkare.dashboardapp.ui.theme.BlackColor
 import com.came.parkare.dashboardapp.ui.theme.LightBlackColor
 import com.came.parkare.dashboardapp.ui.theme.style.floatingButton
+import dashboardapp.composeapp.generated.resources.Res
+import dashboardapp.composeapp.generated.resources.accept_button
+import dashboardapp.composeapp.generated.resources.cancel_button
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 
@@ -76,11 +80,11 @@ fun ActionButtons(modifier: Modifier = Modifier,
                   onAccept: () -> Unit, onCancel: () -> Unit) {
     val viewModel: AppDialogViewModel = koinViewModel()
     Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-        AppButton(text = "Accept", onClick = {
+        AppButton(text = stringResource(Res.string.accept_button), onClick = {
             onAccept.invoke()
             viewModel.hideDialog()
         })
-        AppButton(text = "Cancel", buttonColors = ButtonDefaults.buttonColors().copy(
+        AppButton(text = stringResource(Res.string.cancel_button), buttonColors = ButtonDefaults.buttonColors().copy(
             containerColor = Color.DarkGray,
             contentColor = Color.White,
             ),

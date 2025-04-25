@@ -9,7 +9,7 @@ class HomeViewModel(
     private val preferences: WasmSharedPreferencesProvider
 ): ViewModel() {
     init {
-        val ownIpAddress = window.location.hostname
+        val ownIpAddress = "192.168.209.52"//window.location.hostname
         preferences.put(SELECTED_IP_ADDRESS, ownIpAddress)
     }
 }

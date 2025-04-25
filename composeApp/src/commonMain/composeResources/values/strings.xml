@@ -9,12 +9,15 @@
     <string name="import_export_option">Import/Export</string>
     <string name="import_option">Import</string>
     <string name="export_option">Export</string>
+    <string name="edit_current_config_option">Edit current config</string>
     <string name="share_config_option">Share config</string>
 
     <!--Buttons general-->
     <string name="general_configuration_title">GENERAL CONFIGURATION</string>
     <string name="discard_button">DISCARD CHANGES</string>
     <string name="save_button">SAVE</string>
+    <string name="accept_button">ACCEPT</string>
+    <string name="cancel_button">CANCEL</string>
     <string name="back_button_alt">Back button</string>
     <string name="settings_button">SETTINGS</string>
 
@@ -26,8 +29,10 @@
     <string name="send_button">SEND</string>
 
     <!--Import/export screen-->
-    <string name="import_export_title">Import / Export files</string>
+    <string name="import_title">Import Configuration</string>
+    <string name="export_title">Export Configuration file</string>
     <string name="file_content_label">File content</string>
+    <string name="current_config_label">Current configuration</string>
     <string name="upload_file_button">UPLOAD FILES</string>
     <string name="download_file_button">DOWNLOAD FILE</string>
     <string name="share_file_button">SHARE TO</string>
@@ -52,7 +57,12 @@
     <string name="properties_label">Properties</string>
 
     <!--  Messages  -->
-    <string name="exception">Properties</string>
-
+    <string name="screen_config_saved_message">The new screens configuration has been saved successfully.</string>
+    <string name="device_deleted_message">Device: %1$s has been deleted successfully.</string>
+    <string name="ip_already_exist_message">This Dashboard IP already exist.</string>
+    <string name="device_saved_message">Device saved successfully.</string>
+    <string name="config_saved_message">Connection config saved successfully.</string>
+    <string name="delete_device_dialog_message">Are you sure you want to delete the item: %1$s ?.</string>
+    <string name="no_items_to_show_message">There aren't items to show.</string>
 
 </resources>

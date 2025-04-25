@@ -4,10 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.came.parkare.dashboardapp.config.dataclasses.ErrorTypeClass
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
+import com.came.parkare.dashboardapp.config.utils.ErrorValidator
 import com.came.parkare.dashboardapp.domain.models.ScreenModel
 import com.came.parkare.dashboardapp.domain.usecases.SaveScreenConfig
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toModel
+import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
+import dashboardapp.composeapp.generated.resources.Res
+import dashboardapp.composeapp.generated.resources.screen_config_saved_message
 import kotlinx.browser.window
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +24,9 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 class ImportViewModel(
-    private val saveScreenConfig: SaveScreenConfig
+    private val saveScreenConfig: SaveScreenConfig,
+    private val wasmUtilsHandler: WasmUtilsHandler,
+    private val validator: ErrorValidator
 ): ViewModel(){
 
     private val _state = MutableStateFlow(ImportState())
@@ -34,42 +40,22 @@ class ImportViewModel(
     }
 
     fun saveChanges(fileContent: String) {
-        val ipAddress = window.location.hostname
         val configuration = Json.decodeFromString<List<ScreenDto>>(fileContent)
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
-            val result = saveScreenConfig.invoke(ipAddress, configuration)
+            wasmUtilsHandler.showLoading(true)
+            val result = saveScreenConfig.invoke(configuration)
             when(result){
                 is ServiceResult.Error -> {
-                    when(result.error){
-                        ErrorTypeClass.CanNoAccessToConfigFile -> TODO()
-                        ErrorTypeClass.ConfigFileNotExist -> TODO()
-                        is ErrorTypeClass.GeneralException -> {
-                            _state.update { it.copy(contentFile = result.error.messageError.orEmpty(), fileName = "") }
-                        }
-                        ErrorTypeClass.NotSocketResponse -> TODO()
-                        ErrorTypeClass.SocketConnectionError -> TODO()
-                        ErrorTypeClass.WrongConfigFile -> TODO()
-                        is ErrorTypeClass.ResourceGeneralException -> TODO()
-                    }
+                    validator.validate(result.error)
+                    wasmUtilsHandler.showLoading(false)
                 }
                 is ServiceResult.Success -> {
+                    wasmUtilsHandler.showLoading(false)
+                    wasmUtilsHandler.showToastMessage(Res.string.screen_config_saved_message)
                     _state.update { it.copy(contentFile = "", fileName = "") }
                 }
             }
             _state.update { it.copy(isLoading = false) }
         }
-    }
-
-    fun getCurrentConfiguration(){
-
-    }
-
-    fun sendConfigurationTo(){
-
-    }
-
-    private fun getDashboardIP(){
-
     }
 }

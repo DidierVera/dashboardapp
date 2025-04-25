@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -17,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import com.came.parkare.dashboardapp.ui.components.FilePicker
@@ -35,6 +37,7 @@ import org.koin.compose.koinInject
 
 @Composable
 fun DialogPickerDialog(
+    iconSize: Dp = 32.dp,
     buttonText: StringResource = Res.string.upload_file_button,
     buttonIcon: DrawableResource = Res.drawable.ic_import_export,
     multipleFiles: Boolean = false,
@@ -59,9 +62,9 @@ fun DialogPickerDialog(
                 filePickerViewModel.setPickerVisible(true)
             }
         ){
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp), modifier = Modifier.padding(4.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(4.dp)) {
                 Text(text = stringResource(buttonText))
-                Icon(painter = painterResource(buttonIcon), contentDescription = null)
+                Icon(painter = painterResource(buttonIcon), modifier = Modifier.size(iconSize),  contentDescription = null)
             }
         }
     }

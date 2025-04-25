@@ -28,7 +28,8 @@ import com.came.parkare.dashboardapp.ui.theme.CameBlueColor
 import com.came.parkare.dashboardapp.ui.theme.WhiteColor
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.file_content_label
-import dashboardapp.composeapp.generated.resources.import_export_title
+import dashboardapp.composeapp.generated.resources.ic_upload
+import dashboardapp.composeapp.generated.resources.import_title
 import dashboardapp.composeapp.generated.resources.save_button
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
@@ -40,7 +41,7 @@ fun ImportTab() {
     val state = viewModel.state.collectAsState()
 
     Column(modifier = Modifier.padding(8.dp)) {
-        TabTitle(Res.string.import_export_title)
+        TabTitle(Res.string.import_title)
         ButtonOptions(viewModel)
 
         LazyColumn(userScrollEnabled = true) {
@@ -84,7 +85,9 @@ private fun ButtonOptions(viewModel: ImportViewModel) {
     val state by viewModel.state.collectAsState()
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(modifier = Modifier.padding(8.dp)) {
-            DialogPickerDialog { name, content ->
+            DialogPickerDialog(
+                buttonIcon = Res.drawable.ic_upload
+            ) { name, content ->
                 viewModel.setValues(name, fileContent = content)
             }
         }

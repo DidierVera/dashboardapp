@@ -30,6 +30,7 @@ import com.came.parkare.dashboardapp.ui.screens.settings.importfile.ImportViewMo
 import com.came.parkare.dashboardapp.ui.screens.settings.SettingViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.connection.ConnectionViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.dashboardlist.DashboardListViewModel
+import com.came.parkare.dashboardapp.ui.screens.settings.exportfile.ExportViewModel
 import com.came.parkare.dashboardapp.ui.utils.ErrorValidatorImpl
 import com.came.parkare.dashboardapp.ui.utils.UiUtils
 import com.came.parkare.dashboardapp.ui.utils.UiUtilsImpl
@@ -55,6 +56,7 @@ val wasmAppModule = module {
     viewModelOf(::SettingViewModel)
     viewModelOf(::FilePickerDialogViewModel)
     viewModelOf(::ImportViewModel)
+    viewModelOf(::ExportViewModel)
     viewModelOf(::HomeViewModel)
     viewModelOf(::ConnectionViewModel)
     viewModelOf(::AppLoadingViewModel)
@@ -67,8 +69,8 @@ val wasmAppModule = module {
     singleOf(::ScreenRepositoryImpl) { bind<ScreenRepository>() }
 
     //useCases
-    single { GetScreensConfig(get()) }
-    single { SaveScreenConfig(get()) }
+    single { GetScreensConfig(get(), get()) }
+    single { SaveScreenConfig(get(),get()) }
     single { SaveConnectionConfig(get(), get()) }
     single { GetConnectionConfig(get(), get()) }
     single { GetDeviceList(get(), get()) }
