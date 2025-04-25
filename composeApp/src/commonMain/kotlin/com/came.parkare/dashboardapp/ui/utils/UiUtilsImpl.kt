@@ -158,7 +158,6 @@ class UiUtilsImpl(
                             is JsonPrimitive -> value.content // Extract the raw content
                             else -> Json.encodeToString(value) // Fallback for other JSON types
                         }
-                        println("Result dits obj === $dataResult")
                     }
                 }
             }

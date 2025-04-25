@@ -1,7 +1,9 @@
 package com.came.parkare.dashboardapp.config.utils
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import androidx.core.os.toPersistableBundle
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -20,18 +22,18 @@ class AppLoggerImpl (
 ): AppLogger {
 
     // Directorio donde se guardarán los logs
-    private val logDirectory: File = File(
-        context.getExternalFilesDir("logs"),
-        ""
-    )
+    private val logDirectory: File? = when(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+        true -> context.getExternalFilesDir("/logs")
+        false -> Environment.getExternalStoragePublicDirectory("${Environment.DIRECTORY_DOCUMENTS}/Dashboard/logs")
+    }
 
     // Formato de la fecha para nombrar los archivos
     private val dateFormat = SimpleDateFormat("dd-MM-yyyy")
 
     init {
         // Crear el directorio si no existe
-        if (!logDirectory.exists()) {
-            logDirectory.mkdirs()
+        if (logDirectory?.exists() != true) {
+            logDirectory?.mkdirs()
         }
     }
 
@@ -72,6 +74,8 @@ class AppLoggerImpl (
         } catch (ioe: IOException) {
             // Manejo de error en caso de fallo en la escritura del archivo
             ioe.printStackTrace()
+        } catch (e: Exception){
+            e.printStackTrace()
         }
     }
 
@@ -83,7 +87,7 @@ class AppLoggerImpl (
 
     private fun cleanupOldLogs() {
         try {
-            val files = logDirectory.listFiles() ?: return
+            val files = logDirectory?.listFiles() ?: return
             val currentDate = Date()
             val calendar = Calendar.getInstance()
 

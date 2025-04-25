@@ -1,6 +1,7 @@
 package com.came.parkare.dashboardapp.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,10 +12,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.came.parkare.dashboardapp.R
+import com.came.parkare.dashboardapp.ui.screens.activity.MainActivity
 import com.came.parkare.dashboardapp.ui.screens.main.MainViewModel
 import com.came.parkare.dashboardapp.ui.theme.GreenColor
 import com.came.parkare.dashboardapp.ui.theme.WarningColor
@@ -30,7 +33,9 @@ fun NetworkIndicatorView(modifier: Modifier, viewModel: MainViewModel = koinView
             Box(modifier = modifier
                 .clip(shape = RoundedCornerShape(12.dp))
                 .size(4.dp)
-                .background(GreenColor))
+                .background(GreenColor).clickable {
+                    (LocalContext as MainActivity).finish()
+                })
         }
         false -> {
             Icon(

@@ -46,31 +46,11 @@ import org.koin.compose.KoinContext
 
 class SplashActivity: ComponentActivity() {
 
-    companion object {
-        private const val REQUEST_CODE_SET_DEFAULT_LAUNCHER = 1001
-    }
-
     override fun onStart() {
         super.onStart()
         setContent{
             KoinContext() {
                 SplashScreen()
-            }
-        }
-    }
-
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when (requestCode) {
-            REQUEST_CODE_SET_DEFAULT_LAUNCHER -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    // Successfully set as default launcher
-                    showToast("Successfully set as default launcher!")
-                } else {
-                    // User declined or failed to set as default
-                    showToast("Please set this app as default launcher to access all features")
-                }
             }
         }
     }
@@ -152,11 +132,12 @@ class SplashActivity: ComponentActivity() {
     private fun requestStoragePermissions() {
         Log.i("REQUEST_PERMI", "All Permissions")
         val permissionsToRequest: MutableList<String> = mutableListOf(
-            Manifest.permission.READ_MEDIA_VIDEO,
-            Manifest.permission.READ_MEDIA_IMAGES        )
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU){
-            permissionsToRequest.add(Manifest.permission.READ_EXTERNAL_STORAGE)
-            permissionsToRequest.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU){
+            permissionsToRequest.add(Manifest.permission.READ_MEDIA_VIDEO)
+            permissionsToRequest.add(Manifest.permission.READ_MEDIA_IMAGES)
         }
         checkPermission(permissionsToRequest.toTypedArray() , 10001)
     }

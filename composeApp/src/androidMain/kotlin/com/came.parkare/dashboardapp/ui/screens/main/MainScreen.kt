@@ -14,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -73,22 +74,24 @@ private fun LoadBackground(
                     .fillMaxSize()
                     .background(BlackColor)
             )
+        }else{
+            LoadBackgroundImage(rememberAsyncImagePainter(model = customBackground))
         }
     }else{
-        val painter = when(customBackground.isBlank()){
-            false -> rememberAsyncImagePainter(model = customBackground)
-            true -> painterResource(id = R.drawable.dashboard_backgroud)
-        }
-
-        Image(
-            painter = painter,
-            contentDescription = null,
-            contentScale = ContentScale.FillHeight,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(BlackColor)
-        )
+        LoadBackgroundImage(painterResource(id = R.drawable.dashboard_backgroud))
     }
+}
+
+@Composable
+fun LoadBackgroundImage(painter: Painter){
+    Image(
+        painter = painter,
+        contentDescription = null,
+        contentScale = ContentScale.FillHeight,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(BlackColor)
+    )
 }
 
 @Composable

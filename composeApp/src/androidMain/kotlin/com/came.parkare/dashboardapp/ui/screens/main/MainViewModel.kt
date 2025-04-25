@@ -82,10 +82,10 @@ class MainViewModel (
     }
 
     private fun registerListeners() {
+        getAllDataFromServices()
         registerScreensListener()
         registerConnectionSignal()
         registerTerminalListener()
-        getAllDataFromServices()
     }
 
     private fun initAllConfig() {

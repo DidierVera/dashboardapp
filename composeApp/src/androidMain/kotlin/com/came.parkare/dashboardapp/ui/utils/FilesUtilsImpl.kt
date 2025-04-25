@@ -14,6 +14,9 @@ class FilesUtilsImpl(
     override suspend fun getImageFromDatabase(filename: String): String? {
         val extensions = listOf(".jpg", ".png", ".svg", ".jpeg")
 
+        val imageFromFolder = getImageFromDirectory("/Dashboard", filename)
+        if(!imageFromFolder.isNullOrEmpty()) return imageFromFolder //check image on directory first
+
         extensions.firstOrNull { filename.endsWith(it) }?.let {
             return getImageFromDb.invoke(filename)?.fileContent
         }
