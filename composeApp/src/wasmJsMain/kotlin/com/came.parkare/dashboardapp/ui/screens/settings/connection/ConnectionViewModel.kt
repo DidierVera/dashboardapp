@@ -8,7 +8,6 @@ import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.SaveConnectionConfig
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ImageFileDto
-import com.came.parkare.dashboardapp.infrastructure.source.mocks.ImagesDefaultFiles
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import com.came.parkare.dashboardapp.ui.screens.settings.components.states.FilePickerDialogState
 import kotlinx.coroutines.Dispatchers

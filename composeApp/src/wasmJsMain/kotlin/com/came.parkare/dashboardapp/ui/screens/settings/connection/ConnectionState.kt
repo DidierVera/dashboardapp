@@ -1,6 +1,5 @@
 package com.came.parkare.dashboardapp.ui.screens.settings.connection
 
-import com.came.parkare.dashboardapp.infrastructure.source.mocks.ImagesDefaultFiles
 import com.came.parkare.dashboardapp.ui.screens.settings.components.states.FilePickerDialogState
 
 data class ConnectionState(
