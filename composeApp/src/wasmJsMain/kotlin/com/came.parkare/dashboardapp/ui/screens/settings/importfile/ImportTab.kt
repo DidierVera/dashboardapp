@@ -52,7 +52,7 @@ fun ImportTab() {
 }
 
 @Composable
-fun EditorField(viewModel: ImportViewModel, state: State<ImportState>) {
+private fun EditorField(viewModel: ImportViewModel, state: State<ImportState>) {
     Box(modifier = Modifier.fillMaxWidth()
         .padding(4.dp) // Add padding around each row
         .shadow(
