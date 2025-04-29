@@ -42,6 +42,7 @@ class ExportViewModel (
                     val prettyJson = Json {
                         prettyPrint = true
                         prettyPrintIndent = " "
+                        encodeDefaults = true
                     }
 
                     wasmUtilsHandler.showLoading(false)

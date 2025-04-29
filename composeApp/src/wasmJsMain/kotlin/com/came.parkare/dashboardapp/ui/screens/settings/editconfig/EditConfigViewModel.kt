@@ -61,6 +61,7 @@ class EditConfigViewModel(
             val prettyJson = Json {
                 prettyPrint = true
                 prettyPrintIndent = " "
+                encodeDefaults = true
             }
             val fileContent = prettyJson.encodeToString(element)
             _state.update {
