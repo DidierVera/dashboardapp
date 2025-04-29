@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,16 +35,17 @@ import com.came.parkare.dashboardapp.domain.models.ScreenModel
 import com.came.parkare.dashboardapp.domain.models.components.ElementModel
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toModel
+import com.came.parkare.dashboardapp.ui.components.AppButton
 import com.came.parkare.dashboardapp.ui.components.BuildComposable
 import com.came.parkare.dashboardapp.ui.screens.settings.components.TabTitle
 import com.came.parkare.dashboardapp.ui.theme.BlackColor
 import com.came.parkare.dashboardapp.ui.theme.CameBlueColor
+import com.came.parkare.dashboardapp.ui.theme.WhiteColor
 import dashboardapp.composeapp.generated.resources.Res
-import dashboardapp.composeapp.generated.resources.compose_multiplatform
 import dashboardapp.composeapp.generated.resources.dashboard_backgroud
 import dashboardapp.composeapp.generated.resources.edit_current_config_option
 import dashboardapp.composeapp.generated.resources.file_content_label
-import kotlinx.serialization.json.Json
+import dashboardapp.composeapp.generated.resources.save_button
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -61,13 +63,13 @@ fun EditConfigTab(modifier: Modifier = Modifier){
         TabTitle(Res.string.edit_current_config_option)
 
         Row(modifier = Modifier.fillMaxWidth().padding(4.dp)) {
-            LazyColumn(modifier = Modifier.padding(16.dp).weight(0.3f)) {
+            LazyColumn(modifier = Modifier.padding(16.dp).weight(0.35f)) {
                 items(items = state.screens){ screen ->
                     LoadScreen(screen)
                 }
             }
 
-            LazyColumn(modifier = Modifier.weight(0.7f)) {
+            LazyColumn(modifier = Modifier.weight(0.65f)) {
                 item { EditorTitle() }
                 item { EditorField(viewModel, state) }
             }
@@ -95,30 +97,26 @@ private fun LoadScreen(screen: ScreenDto) {
         Box(Modifier.fillMaxSize().padding(4.dp)) {
             LoadBackground()
             LoadDashboardItems(modifier = Modifier.align(Alignment.Center),
-                screens =  screen.toModel())
+                screen =  screen.toModel())
         }
     }
 }
 
 @Composable
-private fun LoadDashboardItems(
-    modifier: Modifier = Modifier,
-    screens: ScreenModel
-){
+private fun LoadDashboardItems(modifier: Modifier = Modifier, screen: ScreenModel){
     val viewModel: EditConfigViewModel = koinViewModel()
-    val items: List<ElementModel> = screens.elements
+    val items: List<ElementModel> = screen.elements
     if (items.isEmpty()) return
-    val boxMargin = PaddingValues(screens.marginLeft.dp, screens.marginTop.dp, screens.marginRight.dp, screens.marginBottom.dp)
-    println(boxMargin.toString())
+    val boxMargin = PaddingValues(screen.marginLeft.dp, screen.marginTop.dp, screen.marginRight.dp, screen.marginBottom.dp)
 
     Column(modifier = modifier.padding(boxMargin),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center
     ){
-        items.forEach { mItem ->
+        for(i in items.indices){
+            val mItem = items[i]
             val textSizeScale = 10
             Box(modifier = Modifier.clickable {
-                viewModel.selectItemOnScreen(mItem)
+                viewModel.selectItemOnScreen(mItem, i, screen)
             }) {
                 BuildComposable(elementModel = mItem, textSizeScale = textSizeScale)
             }
@@ -161,8 +159,22 @@ private fun EditorField(viewModel: EditConfigViewModel, state: EditConfigState) 
 
 @Composable
 private fun EditorTitle(){
-    Text(
-        text = stringResource(Res.string.file_content_label),
-        fontWeight = FontWeight.Bold,
-        style = MaterialTheme.typography.titleMedium)
+    val viewModel: EditConfigViewModel = koinViewModel()
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = stringResource(Res.string.file_content_label),
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleMedium)
+        AppButton(text = "APPLY",
+            buttonColors = ButtonDefaults.buttonColors().copy(
+                containerColor = Color.LightGray,
+                contentColor = BlackColor),
+            onClick = {
+            viewModel.applyChanges()
+        })
+        AppButton(text = stringResource(Res.string.save_button), onClick = {
+            viewModel.saveChanges()
+        })
+    }
 }
