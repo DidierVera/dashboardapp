@@ -1,7 +1,7 @@
 @file:OptIn(KoinExperimentalAPI::class)
+
 package com.came.parkare.dashboardapp.ui.components.messages
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,20 +32,24 @@ import com.came.parkare.dashboardapp.ui.components.CloseButton
 import com.came.parkare.dashboardapp.ui.theme.BlackColor
 import com.came.parkare.dashboardapp.ui.theme.CameBlueColor
 import com.came.parkare.dashboardapp.ui.theme.style.floatingButton
-import dashboardapp.composeapp.generated.resources.Res
-import dashboardapp.composeapp.generated.resources.ic_close
-import org.koin.compose.viewmodel.koinViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 
 @Composable
 fun AppToast(modifier: Modifier = Modifier){
     val viewModel: AppToastViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
-    if(state.showMessage) {
+
+    val message = state.message.ifEmpty {
+        state.messageRes?.let { stringResource(it) } ?: ""
+    }
+
+    println("AppToastView: $message")
+
+    if (state.showMessage && message.isNotBlank()) {
         Box(
             modifier = modifier
                 .padding(4.dp)
@@ -57,7 +60,7 @@ fun AppToast(modifier: Modifier = Modifier){
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.floatingButton().width(250.dp).padding(4.dp)) {
 
-                Text(state.message, color = BlackColor,
+                Text(message, color = BlackColor,
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Medium),
                     modifier = Modifier.widthIn(max = 200.dp))
 
@@ -66,10 +69,6 @@ fun AppToast(modifier: Modifier = Modifier){
                 ProgressBar(modifier = Modifier.align(Alignment.Top))
             }
         }
-    }
-    if(state.messageRes != null){
-        val message = stringResource(state.messageRes!!)
-        viewModel.setMessage(message)
     }
 }
 

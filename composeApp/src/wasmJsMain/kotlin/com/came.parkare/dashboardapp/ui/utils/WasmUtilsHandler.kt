@@ -11,7 +11,7 @@ interface WasmUtilsHandler {
     val dialogMessage: StateFlow<AppDialogState>
 
     fun showToastMessage(message: String)
-    fun showToastMessage(stringRes: StringResource)
+    fun showToastMessage(stringRes: StringResource?)
     fun showLoading(value: Boolean)
     fun showDialogMessage(model: AppDialogState)
 }

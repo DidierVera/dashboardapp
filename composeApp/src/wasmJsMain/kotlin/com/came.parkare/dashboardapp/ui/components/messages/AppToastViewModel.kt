@@ -3,12 +3,15 @@ package com.came.parkare.dashboardapp.ui.components.messages
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
+import dashboardapp.composeapp.generated.resources.Res
+import dashboardapp.composeapp.generated.resources.app_name
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.StringResource
 
 class AppToastViewModel(
@@ -23,23 +26,27 @@ class AppToastViewModel(
     }
 
     private fun toastResString() {
-        wasmUtilsHandler.toastResMessage.onEach { value ->
-            if (value != null){
-                showStringResMessage(value)
-            }
-        }.launchIn(viewModelScope)
+        viewModelScope.launch {
+            wasmUtilsHandler.toastResMessage.onEach { value ->
+                if (value != null && value != Res.string.app_name) {
+                    showStringResMessage(value)
+                }
+            }.launchIn(viewModelScope)
+        }
     }
 
     private fun showStringResMessage(resValue: StringResource) {
         _state.update { it.copy(messageRes = resValue) }
+        _state.update { it.copy(showMessage = true) }
+        _state.update { it.copy(timer = 250f) }
     }
 
     private fun toastString() {
-        wasmUtilsHandler.toastMessage.onEach { value ->
-            if(value.isNotBlank()){
+        viewModelScope.launch {
+            wasmUtilsHandler.toastMessage.onEach { value ->
                 showToastMessage(value)
-            }
-        }.launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
+        }
     }
 
     private fun showToastMessage(newMessage: String) {
@@ -48,15 +55,12 @@ class AppToastViewModel(
         _state.update { it.copy(timer = 250f) }
     }
 
-    fun setMessage(message: String){
-        _state.update { it.copy(messageRes = null) }
-        showToastMessage(message)
-    }
-
     fun hideMessage(){
         _state.update { it.copy(showMessage = false) }
         _state.update { it.copy(message = "") }
+        _state.update { it.copy(messageRes = null) }
         wasmUtilsHandler.showToastMessage("")
+        wasmUtilsHandler.showToastMessage(null)
     }
 
     fun setTimer(newValue: Float){

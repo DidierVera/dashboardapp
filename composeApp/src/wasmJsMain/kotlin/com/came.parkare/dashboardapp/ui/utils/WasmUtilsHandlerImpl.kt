@@ -28,7 +28,7 @@ class WasmUtilsHandlerImpl: WasmUtilsHandler {
         _toastMessage.update { message }
     }
 
-    override fun showToastMessage(stringRes: StringResource) {
+    override fun showToastMessage(stringRes: StringResource?) {
         _toastResMessage.update { null }
         _toastResMessage.update { stringRes }
     }
