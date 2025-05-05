@@ -12,6 +12,7 @@ object Constants {
     const val TIME_DELAY = "timeDelay"
     const val VIDEO_FRAME = "videoFrame"
     const val TEXT_SIZE_SCALE = "textSizeScale"
+    const val CONFIG_TYPE = "templateConfigType"
 
 
     //Ftp

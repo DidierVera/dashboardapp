@@ -6,4 +6,5 @@ object RoomTableNames {
     const val DASHBOARD_DEVICE_TABLE_NAME = "tbl_dashboard_device"
     const val LANGUAGE_TABLE_NAME = "tbl_language"
     const val CARD_CLASS_TABLE_NAME = "tbl_cardClass"
+    const val CONFIG_TEMPLATE_TABLE_NAME = "tbl_configTemplate"
 }

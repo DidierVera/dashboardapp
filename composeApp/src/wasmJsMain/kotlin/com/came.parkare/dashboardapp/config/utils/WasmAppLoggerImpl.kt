@@ -15,4 +15,12 @@ class WasmAppLoggerImpl(
     override fun trackEvent(eventName: String, params: Map<String, Any>) {
 
     }
+
+    override fun trackConfiguratorLog(tag: String, message: String?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun trackConfiguratorError(stackTrace: String, localizedMessage: String) {
+        TODO("Not yet implemented")
+    }
 }
