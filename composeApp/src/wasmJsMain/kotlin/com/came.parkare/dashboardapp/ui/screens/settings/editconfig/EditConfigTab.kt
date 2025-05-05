@@ -83,10 +83,8 @@ private fun LoadScreen(screen: ScreenDto) {
     val state by viewModel.state.collectAsState()
     Column(horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = Modifier.clickable {
-            viewModel.selectScreen(screen)
-        } .background(
-            if(screen == state.selectedScreen) CameBlueColor.copy(alpha = 0.2f) else Color.White
+        modifier = Modifier.background(
+            if(screen == state.containerScreen) CameBlueColor.copy(alpha = 0.2f) else Color.White
         )
     ) {
         HorizontalDivider()

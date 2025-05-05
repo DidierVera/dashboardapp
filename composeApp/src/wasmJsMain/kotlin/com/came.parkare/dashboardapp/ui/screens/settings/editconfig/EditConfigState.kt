@@ -8,6 +8,5 @@ data class EditConfigState(
     val screens: List<ScreenDto> = emptyList(),
     val selectedElement: ElementDto? = null,
     val elementPosition: Int? = null,
-    val selectedScreen: ScreenDto? = null,
     val containerScreen: ScreenDto? = null
 )

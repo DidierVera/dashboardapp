@@ -54,20 +54,12 @@ class EditConfigViewModel(
                 }
                 is ServiceResult.Success -> {
                     wasmUtilsHandler.showLoading(false)
-                    val firstScreen = result.data.orEmpty().first()
-                    selectEditableScreen(firstScreen)
                     _state.update { it.copy(screens = result.data.orEmpty()) }
                 }
             }
         }
     }
 
-    private fun selectEditableScreen(screen: ScreenDto){
-        viewModelScope.launch {
-            encodeAndSetEditableElement(screen)
-            _state.update { it.copy(selectedScreen = screen) }
-        }
-    }
 
     @OptIn(ExperimentalSerializationApi::class)
     private inline fun<reified T> encodeAndSetEditableElement(element: T) {
@@ -88,10 +80,6 @@ class EditConfigViewModel(
         viewModelScope.launch {
             _state.update { it.copy(contentFile = fileContent) }
         }
-    }
-
-    fun selectScreen(screen: ScreenDto) {
-        selectEditableScreen(screen)
     }
 
     fun selectItemOnScreen(element: ElementModel, position: Int, screen: ScreenModel) {
