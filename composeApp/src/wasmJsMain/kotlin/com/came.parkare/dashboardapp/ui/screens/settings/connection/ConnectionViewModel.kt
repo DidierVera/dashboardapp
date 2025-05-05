@@ -48,7 +48,6 @@ class ConnectionViewModel(
                 is ServiceResult.Error -> {
                     wasmUtilsHandler.showLoading(false)
                     validator.validate(currentConfig.error)
-                    println(currentConfig.error.toString())
                 }
                 is ServiceResult.Success -> {
                     if (currentConfig.data != null)

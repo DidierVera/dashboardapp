@@ -186,7 +186,7 @@ class MainViewModel (
                         delay(delayTime.toLong() * 1000)
                     }
                 } catch (e: CancellationException){
-                    println("Coroutine cancelled: ${e.message}")
+                    println("Coroutine cancelled because change screen: ${e.message}")
                 }catch (e: Exception){
                     appLogger.trackError(e)
                 }

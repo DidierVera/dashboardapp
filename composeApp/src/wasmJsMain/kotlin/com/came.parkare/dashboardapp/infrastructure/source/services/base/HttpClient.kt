@@ -7,7 +7,7 @@ import org.w3c.xhr.XMLHttpRequest
 import kotlin.coroutines.suspendCoroutine
 
 
-class HttpClient() {
+class HttpClient {
     val json = Json { ignoreUnknownKeys = true }
 
     // Generic GET method
@@ -17,11 +17,11 @@ class HttpClient() {
     suspend inline fun <reified T, reified R> post(path: String, requestBody: R): T =
         request("POST", path, requestBody)
 
-    suspend inline fun <reified T, reified R> request(
+    suspend inline fun <reified K, reified R> request(
         method: String,
         apiUrl: String,
         requestBody: R?
-    ): T {
+    ): K {
         return suspendCoroutine { continuation ->
             val xhr = XMLHttpRequest()
 
@@ -32,8 +32,8 @@ class HttpClient() {
                 when (xhr.status) {
                     in 200..299 -> {
                         try {
-                            val response: T = if (xhr.responseText.isEmpty()) {
-                                Unit as T // For empty responses
+                            val response: K = if (xhr.responseText.isEmpty()) {
+                                Unit as K // For empty responses
                             } else {
                                 json.decodeFromString(xhr.responseText)
                             }

@@ -47,8 +47,6 @@ fun AppToast(modifier: Modifier = Modifier){
         state.messageRes?.let { stringResource(it) } ?: ""
     }
 
-    println("AppToastView: $message")
-
     if (state.showMessage && message.isNotBlank()) {
         Box(
             modifier = modifier
