@@ -106,7 +106,7 @@ class ApiServerRepositoryImpl(
         )
     }
 
-    override suspend fun saveScreenConfigType(type: Int): Boolean {
+    override suspend fun saveScreenConfigType(type: Long): Boolean {
         preferences.put(CONFIG_TYPE, type)
         return true
     }

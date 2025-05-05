@@ -16,7 +16,7 @@ interface ApiServerRepository {
     suspend fun saveTerminalConnection(data: ConnectionConfigDto): Int
     suspend fun getCurrentConfiguration(): List<ScreenDto>
     suspend fun getCurrentConnectionConfig(): ConnectionConfigDto
-    suspend fun saveScreenConfigType(type: Int): Boolean
+    suspend fun saveScreenConfigType(type: Long): Boolean
     suspend fun getScreenConfigType(): Long
     suspend fun saveConfiguratorLog(dto: TrackLogDto): Int
     suspend fun saveConfiguratorException(dto: TrackErrorDto): Int

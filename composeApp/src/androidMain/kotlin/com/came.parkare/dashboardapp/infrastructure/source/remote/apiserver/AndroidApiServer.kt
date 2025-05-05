@@ -114,10 +114,10 @@ class AndroidApiServer(
     }
 
     private fun handleSetConfigType(session: IHTTPSession): Response {
-        return processPostRequest<Int>(
+        return processPostRequest<Long>(
             session = session,
             parseBody = { body -> Json.decodeFromString(body) },
-            operation = { dto -> apiServerRepository.saveScreenConfigType(dto) }
+            operation = { value -> apiServerRepository.saveScreenConfigType(value) }
         )
     }
 
