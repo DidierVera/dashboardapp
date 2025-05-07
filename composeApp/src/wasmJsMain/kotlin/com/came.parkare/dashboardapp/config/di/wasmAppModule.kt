@@ -7,6 +7,7 @@ import com.came.parkare.dashboardapp.config.utils.WasmAppLoggerImpl
 import com.came.parkare.dashboardapp.config.utils.WasmSharedPreferencesProvider
 import com.came.parkare.dashboardapp.config.utils.WebStoragePreferences
 import com.came.parkare.dashboardapp.domain.repositories.device.DeviceRepository
+import com.came.parkare.dashboardapp.domain.repositories.log.LogRepository
 import com.came.parkare.dashboardapp.domain.repositories.screen.ScreenRepository
 import com.came.parkare.dashboardapp.domain.usecases.DeleteDevice
 import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
@@ -16,6 +17,7 @@ import com.came.parkare.dashboardapp.domain.usecases.SaveConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.SaveNewDevice
 import com.came.parkare.dashboardapp.domain.usecases.SaveScreenConfig
 import com.came.parkare.dashboardapp.infrastructure.repositories.device.DeviceRepositoryImpl
+import com.came.parkare.dashboardapp.infrastructure.repositories.logs.LogRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.repositories.screen.ScreenRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.source.services.base.HttpClient
 import com.came.parkare.dashboardapp.ui.components.dialog.AppDialogViewModel
@@ -71,6 +73,7 @@ val wasmAppModule = module {
     //repositories
     singleOf(::DeviceRepositoryImpl) { bind<DeviceRepository>() }
     singleOf(::ScreenRepositoryImpl) { bind<ScreenRepository>() }
+    singleOf(::LogRepositoryImpl) { bind<LogRepository>() }
 
     //useCases
     single { GetScreensConfig(get(), get()) }

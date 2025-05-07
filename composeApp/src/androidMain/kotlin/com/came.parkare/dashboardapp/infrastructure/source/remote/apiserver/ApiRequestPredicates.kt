@@ -1,5 +1,6 @@
 package com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver
 
+import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.CHECK_STATUS
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.DELETE_CONFIG_TEMPLATE
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.DELETE_DEVICE
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_CONFIG_TEMPLATE
@@ -60,6 +61,9 @@ object ApiRequestPredicates {
 
     fun NanoHTTPD.IHTTPSession.isGetConfigTemplate(): Boolean {
         return uri == GET_CONFIG_TEMPLATE && method == NanoHTTPD.Method.GET
+    }
+    fun NanoHTTPD.IHTTPSession.isCheckStatus(): Boolean {
+        return uri == CHECK_STATUS && method == NanoHTTPD.Method.GET
     }
 
     fun NanoHTTPD.IHTTPSession.isSaveConfigTemplate(): Boolean {

@@ -2,6 +2,7 @@ package com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver
 
 import android.util.Log
 import com.came.parkare.dashboardapp.config.constants.Constants.API_PORT
+import com.came.parkare.dashboardapp.config.dataclasses.ResponseStatusDto
 import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.came.parkare.dashboardapp.domain.models.toDto
@@ -14,6 +15,7 @@ import com.came.parkare.dashboardapp.infrastructure.source.external.dto.logs.Tra
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ConfigTemplateDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toModel
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isCheckStatus
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isDeleteConfigTemplate
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isDeleteDevice
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetConfigTemplate
@@ -68,6 +70,7 @@ class AndroidApiServer(
             session.isUpdateConfigTemplate() -> handleUpdateConfigTemplate(session)
             session.isSaveConfiguratorLog() -> handleTrackLog(session)
             session.isSaveConfiguratorError() -> handleTrackError(session)
+            session.isCheckStatus() -> handleCheckStatus()
             else -> createNotFoundResponse()
         }
     }
@@ -127,6 +130,14 @@ class AndroidApiServer(
             successTransform = { result -> Json.encodeToString(result) }
         )
     }
+
+    private fun handleCheckStatus(): Response {
+        return processAsyncRequest<Unit, ResponseStatusDto>(
+            operation = { ResponseStatusDto(status = true) },
+            successTransform = { result -> Json.encodeToString(result) }
+        )
+    }
+
     private fun handleGetConfigType(): Response {
         return processAsyncRequest<Unit, Long>(
             operation = { apiServerRepository.getScreenConfigType() },

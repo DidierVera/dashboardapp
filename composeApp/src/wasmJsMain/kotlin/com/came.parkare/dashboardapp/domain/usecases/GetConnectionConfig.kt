@@ -1,5 +1,6 @@
 package com.came.parkare.dashboardapp.domain.usecases
 
+import com.came.parkare.dashboardapp.config.constants.Constants.API_PORT
 import com.came.parkare.dashboardapp.config.constants.Constants.SELECTED_IP_ADDRESS
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.WasmSharedPreferencesProvider
@@ -13,6 +14,13 @@ class GetConnectionConfig(
 ) {
     suspend fun invoke(): ServiceResult<ConnectionConfigDto> {
         val ipAddress = preferences.get(SELECTED_IP_ADDRESS, window.location.hostname)
-        return deviceRepository.getCurrentConfiguration(ipAddress)
+        val result = deviceRepository.getCurrentConfiguration(ipAddress)
+        when(result){
+            is ServiceResult.Error -> {}
+            is ServiceResult.Success -> {
+                preferences.put(API_PORT, result.data?.apiPort)
+            }
+        }
+        return result
     }
 }
