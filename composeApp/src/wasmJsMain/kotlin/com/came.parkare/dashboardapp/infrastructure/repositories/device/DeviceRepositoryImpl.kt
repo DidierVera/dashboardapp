@@ -1,5 +1,6 @@
 package com.came.parkare.dashboardapp.infrastructure.repositories.device
 
+import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.CHECK_STATUS
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.DELETE_DEVICE
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_CONNECTION_CONFIG
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_DEVICE_LIST
@@ -74,6 +75,16 @@ class DeviceRepositoryImpl(
             val result = httpClient.post<ResponseStatusDto, DeviceDto>("$SSL_PROTOCOL$ipAddress:$apiPort$DELETE_DEVICE", deviceModel)
             ServiceResult.Success(result)
 
+        }catch (e: Exception){
+            appLogger.trackError(e)
+            ServiceResult.Error(ErrorTypeClass.GeneralException(e.message))
+        }
+    }
+
+    override suspend fun getDeviceStatus(ipAddress: String): ServiceResult<Boolean> {
+        return try {
+            val result = httpClient.get<ResponseStatusDto>("$SSL_PROTOCOL$ipAddress:$apiPort$CHECK_STATUS")
+            ServiceResult.Success(result.status)
         }catch (e: Exception){
             appLogger.trackError(e)
             ServiceResult.Error(ErrorTypeClass.GeneralException(e.message))
