@@ -6,9 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.ErrorValidator
+import com.came.parkare.dashboardapp.domain.models.ScreenModel
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceList
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceStatus
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toModel
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -39,7 +41,28 @@ class ShareConfigViewModel(
         viewModelScope.launch {
             wasmUtils.showLoading(true)
             loadDeviceList()
+            loadScreenConfig()
+        }
+    }
 
+    private fun loadScreenConfig() {
+        viewModelScope.launch {
+            wasmUtils.showLoading(true)
+            when(val screenConfig = getScreensConfig.invoke()){
+                is ServiceResult.Error -> {
+                    validator.validate(screenConfig.error)
+                    wasmUtils.showLoading(false)
+                }
+                is ServiceResult.Success -> {
+
+                    _state.update {
+                        it.copy(configToShare = screenConfig.data?.map { scr ->
+                            scr.toModel()
+                        } ?: emptyList()) }
+
+                    wasmUtils.showLoading(false)
+                }
+            }
         }
     }
 
@@ -118,28 +141,26 @@ class ShareConfigViewModel(
                 else item
             }
         ) }
-    }
-
-    private var statusCheckJob: Job? = null
-
-    private fun startPeriodicStatusCheck() {
-        stopPeriodicStatusCheck() // Cancel any existing job
-
-        statusCheckJob = CoroutineScope(Dispatchers.Default).launch {
-            while (isActive) {
-                checkDeviceStatus()
-                delay(120_000) // 12 seconds delay
-            }
+        if (_state.value.dashboardList.any { it.isChecked }){
+            _state.update { it.copy(allowedToShare = true) }
+        }else{
+            _state.update { it.copy(allowedToShare = false) }
         }
     }
 
-    private fun stopPeriodicStatusCheck() {
-        statusCheckJob?.cancel()
-        statusCheckJob = null
+    fun selectScreen(screen: ScreenModel){
+        if (_state.value.screenViewer == screen.screenId){
+            _state.update { it.copy(screenViewer = null, elementsByScreen = emptyList()) }
+        }else{
+            _state.update { it.copy(screenViewer = screen.screenId, elementsByScreen = screen.elements)}
+        }
     }
 
-    // Call this when your component is being disposed
-    fun cleanup() {
-        stopPeriodicStatusCheck()
+    fun launchPasswordRequest(onClick: () -> Unit){
+
+    }
+
+    fun shareConfig() {
+
     }
 }

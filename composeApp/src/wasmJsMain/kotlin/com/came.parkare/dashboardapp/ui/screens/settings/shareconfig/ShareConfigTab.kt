@@ -2,21 +2,50 @@
 
 package com.came.parkare.dashboardapp.ui.screens.settings.shareconfig
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.came.parkare.dashboardapp.domain.models.components.ElementModel
+import com.came.parkare.dashboardapp.ui.components.AppButton
 import com.came.parkare.dashboardapp.ui.screens.settings.components.TabTitle
 import com.came.parkare.dashboardapp.ui.screens.settings.shareconfig.components.DeviceListView
+import com.came.parkare.dashboardapp.ui.screens.settings.shareconfig.components.LoadElementImage
+import com.came.parkare.dashboardapp.ui.screens.settings.shareconfig.components.LoadElementText
+import com.came.parkare.dashboardapp.ui.theme.WhiteColor
+import com.came.parkare.dashboardapp.ui.theme.style.floatingButton
+import com.came.parkare.dashboardapp.ui.theme.style.shadowContainer
 import dashboardapp.composeapp.generated.resources.Res
-import dashboardapp.composeapp.generated.resources.import_title
+import dashboardapp.composeapp.generated.resources.config_to_share_label
+import dashboardapp.composeapp.generated.resources.content_label
+import dashboardapp.composeapp.generated.resources.device_list_label
+import dashboardapp.composeapp.generated.resources.ic_back_arrow
+import dashboardapp.composeapp.generated.resources.ic_item_arrow
+import dashboardapp.composeapp.generated.resources.share_button
 import dashboardapp.composeapp.generated.resources.share_config_option
-import org.koin.compose.koinInject
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 
@@ -26,11 +55,157 @@ fun ShareConfigTab() {
 
     viewModel.initConfig()
 
-    Column(modifier = Modifier.padding(8.dp)) {
+    Column(modifier = Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         TabTitle(Res.string.share_config_option)
-        Column {
-            Text(text = "Device list")
-            DeviceListView()
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            item {
+                Column(
+                    modifier = Modifier.padding(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = stringResource(Res.string.device_list_label),
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
+                    )
+                    DeviceListView()
+                }
+            }
+
+            item { VerticalDivider() }
+
+            item { ConfigToBeShared() }
+
+            item { ElementsList() }
         }
+    }
+}
+
+@Composable
+private fun ElementsList() {
+    val viewModel: ShareConfigViewModel = koinViewModel()
+    val state by viewModel.state.collectAsState()
+    if (state.elementsByScreen.isNotEmpty()){
+        Row {
+            VerticalDivider()
+            LazyColumn(horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.shadowContainer()) {
+                item { loadElements(state.elementsByScreen) }
+            }
+        }
+    }
+}
+
+@Composable
+private fun loadElements(elements: List<ElementModel>){
+    elements.forEach { element ->
+        HorizontalDivider()
+        when(element){
+            is ElementModel.BoxModel -> {
+                val box = element.data
+                Box(modifier = Modifier.shadowContainer().widthIn(min = 450.dp)){
+                    loadElements(box.content)
+                }
+            }
+            is ElementModel.ColumnModel -> {
+                val column = element.data
+                Column(horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.shadowContainer().widthIn(min = 450.dp)){
+                    loadElements(column.content)
+                }
+            }
+            is ElementModel.ImageModel -> {
+                val image = element.data
+                LoadElementImage(image)
+            }
+            is ElementModel.RowModel -> {
+                val row = element.data
+                Row(verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.shadowContainer().widthIn(min = 450.dp)){
+                    loadElements(row.content)
+                }
+            }
+            is ElementModel.SpacerModel -> {
+                Box(modifier = Modifier.shadowContainer().widthIn(min = 450.dp)){
+                    Text(text = "Spacer value: ${element.data.value}",
+                        modifier = Modifier.align(Alignment.Center))
+                }
+            }
+            is ElementModel.TextModel -> {
+                val text = element.data
+                LoadElementText(text)
+            }
+            is ElementModel.VideoModel -> {
+                Text(text = "Video")
+            }
+        }
+    }
+}
+
+@Composable
+private fun ConfigToBeShared() {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        HeaderConfigToShare()
+        Box(modifier = Modifier.shadowContainer()){
+            LoadScreensAndElements()
+        }
+    }
+}
+
+@Composable
+private fun LoadScreensAndElements() {
+    val viewModel: ShareConfigViewModel = koinViewModel()
+    val state by viewModel.state.collectAsState()
+    LazyColumn(modifier = Modifier.heightIn(max = 600.dp)) {
+        items(state.configToShare){ screen ->
+            Row(modifier = Modifier
+                .widthIn(min = 450.dp)
+                .floatingButton(
+                    isSelected = screen.screenId == state.screenViewer,
+                    onSelectClick = {
+                    viewModel.selectScreen(screen) })
+                .padding(8.dp)
+                ,
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Icon(
+                    painter = painterResource(Res.drawable.ic_item_arrow),
+                    contentDescription = null,
+                    modifier = Modifier.padding(8.dp).size(20.dp)
+                )
+                Text(text = screen.screenId, fontWeight =
+                    if(state.screenViewer == screen.screenId) FontWeight.Bold
+                    else FontWeight.Normal
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun HeaderConfigToShare() {
+    val viewModel: ShareConfigViewModel = koinViewModel()
+    val state by viewModel.state.collectAsState()
+    Text(text = stringResource(Res.string.config_to_share_label),
+        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold))
+    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(text = stringResource(Res.string.config_to_share_label),
+            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold))
+        Text(text = state.configType)
+    }
+    Row(horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier.widthIn(min = 450.dp)) {
+        Text(text = stringResource(Res.string.content_label),
+            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold))
+
+        AppButton(
+            text = stringResource(Res.string.share_button),
+            isEnabled = state.allowedToShare,
+            onClick = {
+                viewModel.launchPasswordRequest {
+                    viewModel.shareConfig()
+                }
+            }
+        )
     }
 }
