@@ -12,6 +12,7 @@ import com.came.parkare.dashboardapp.domain.repositories.screen.ScreenRepository
 import com.came.parkare.dashboardapp.domain.usecases.DeleteDevice
 import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceList
+import com.came.parkare.dashboardapp.domain.usecases.GetDeviceStatus
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
 import com.came.parkare.dashboardapp.domain.usecases.SaveConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.SaveNewDevice
@@ -83,6 +84,7 @@ val wasmAppModule = module {
     single { GetDeviceList(get(), get()) }
     single { SaveNewDevice(get(), get()) }
     single { DeleteDevice(get(), get()) }
+    single { GetDeviceStatus(get(), get()) }
 
 
     single { Navigator() }
