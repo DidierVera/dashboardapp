@@ -11,6 +11,7 @@ data class ShareConfigState(
     val allowedToShare: Boolean = false,
     val screenViewer: String? = null,
     val configType: String = "",
+    val textSizeScale: Int = 10,
     val elementsByScreen: List<ElementModel> = emptyList()
 
 )

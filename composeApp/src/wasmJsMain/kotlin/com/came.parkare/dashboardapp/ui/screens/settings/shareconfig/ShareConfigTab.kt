@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -29,6 +30,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.came.parkare.dashboardapp.domain.models.components.ElementModel
 import com.came.parkare.dashboardapp.ui.components.AppButton
+import com.came.parkare.dashboardapp.ui.components.elements.BuildBoxView
+import com.came.parkare.dashboardapp.ui.components.elements.BuildColumnView
+import com.came.parkare.dashboardapp.ui.components.elements.BuildRowView
+import com.came.parkare.dashboardapp.ui.components.elements.BuildTextView
 import com.came.parkare.dashboardapp.ui.screens.settings.components.TabTitle
 import com.came.parkare.dashboardapp.ui.screens.settings.shareconfig.components.DeviceListView
 import com.came.parkare.dashboardapp.ui.screens.settings.shareconfig.components.LoadElementImage
@@ -89,29 +94,25 @@ private fun ElementsList() {
             VerticalDivider()
             LazyColumn(horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.shadowContainer()) {
-                item { loadElements(state.elementsByScreen) }
+                item { loadElements(state.elementsByScreen, state.textSizeScale) }
             }
         }
     }
 }
 
 @Composable
-private fun loadElements(elements: List<ElementModel>){
+private fun loadElements(elements: List<ElementModel>, textSizeScale: Int){
+    val scaleFactor = (textSizeScale / 10f).coerceIn(0.5f, 3f)
     elements.forEach { element ->
         HorizontalDivider()
         when(element){
             is ElementModel.BoxModel -> {
                 val box = element.data
-                Box(modifier = Modifier.shadowContainer().widthIn(min = 450.dp)){
-                    loadElements(box.content)
-                }
+                BuildBoxView(box = box, textSizeScale = textSizeScale, scaleFactor = scaleFactor)
             }
             is ElementModel.ColumnModel -> {
                 val column = element.data
-                Column(horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.shadowContainer().widthIn(min = 450.dp)){
-                    loadElements(column.content)
-                }
+                BuildColumnView(column = column, textSizeScale = textSizeScale, scaleFactor = scaleFactor)
             }
             is ElementModel.ImageModel -> {
                 val image = element.data
@@ -119,21 +120,14 @@ private fun loadElements(elements: List<ElementModel>){
             }
             is ElementModel.RowModel -> {
                 val row = element.data
-                Row(verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.shadowContainer().widthIn(min = 450.dp)){
-                    loadElements(row.content)
-                }
+                BuildRowView(row = row, textSizeScale = textSizeScale, scaleFactor = scaleFactor)
             }
             is ElementModel.SpacerModel -> {
-                Box(modifier = Modifier.shadowContainer().widthIn(min = 450.dp)){
-                    Text(text = "Spacer value: ${element.data.value}",
-                        modifier = Modifier.align(Alignment.Center))
-                }
+                Spacer(modifier = Modifier.size((element.data.value.toFloat() * scaleFactor).dp))
             }
             is ElementModel.TextModel -> {
                 val text = element.data
-                LoadElementText(text)
+                BuildTextView(text = text, scaleFactor)
             }
             is ElementModel.VideoModel -> {
                 Text(text = "Video")

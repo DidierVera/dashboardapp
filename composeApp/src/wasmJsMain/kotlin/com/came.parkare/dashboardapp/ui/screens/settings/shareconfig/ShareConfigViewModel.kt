@@ -4,8 +4,10 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.came.parkare.dashboardapp.config.constants.Constants.TEXT_SIZE_SCALE
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.ErrorValidator
+import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.came.parkare.dashboardapp.domain.models.ScreenModel
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceList
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceStatus
@@ -28,6 +30,7 @@ class ShareConfigViewModel(
     private val getDeviceList: GetDeviceList,
     private val getScreensConfig: GetScreensConfig,
     private val validator: ErrorValidator,
+    private val preferences: SharedPreferencesProvider,
     private val wasmUtils: WasmUtilsHandler
 
 
@@ -42,6 +45,7 @@ class ShareConfigViewModel(
             wasmUtils.showLoading(true)
             loadDeviceList()
             loadScreenConfig()
+            checkTextSizeScale()
         }
     }
 
@@ -160,6 +164,10 @@ class ShareConfigViewModel(
 
     }
 
+    private fun checkTextSizeScale() {
+        val textSizeScale = preferences.get(TEXT_SIZE_SCALE, 10)
+        _state.update { it.copy(textSizeScale = textSizeScale) }
+    }
     fun shareConfig() {
 
     }
