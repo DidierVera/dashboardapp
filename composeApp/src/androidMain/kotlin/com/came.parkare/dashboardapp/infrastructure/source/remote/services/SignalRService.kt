@@ -68,7 +68,7 @@ class SignalRService(
                 }, TerminalResponseDtoSignalR::class.java)
 
                 appLogger.trackLog("dashboardapp.signalR-STATUS", hubConnection?.connectionState?.name)
-                while (!Thread.currentThread().isInterrupted)  {
+                while (!Thread.currentThread().isInterrupted) {
                     if (hubConnection?.connectionState != HubConnectionState.CONNECTED) {
                         appLogger.trackLog("signalR-STATUS", hubConnection?.connectionState?.name)
                         serverConnection.setStatusConnection(false)
@@ -97,12 +97,11 @@ class SignalRService(
             if(signalRJob != null){
                 signalRJob?.cancel(cancellationMessage)
                 signalRJob = null
-
-
-                    if (hubConnection?.connectionState == HubConnectionState.CONNECTED) {
-                        hubConnection?.stop()
-                    }else hubConnection?.close()
-
+                if (hubConnection?.connectionState == HubConnectionState.CONNECTED) {
+                    hubConnection?.stop()
+                }else {
+                    hubConnection?.close()
+                }
 
                 hubConnection = null
             }
