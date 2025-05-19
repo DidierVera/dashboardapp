@@ -11,12 +11,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
+import com.came.parkare.dashboardapp.domain.models.components.ElementModel
 import com.came.parkare.dashboardapp.domain.models.components.RowDataModel
 import com.came.parkare.dashboardapp.ui.components.BuildComposable
 import com.came.parkare.dashboardapp.ui.theme.hexToColor
 
 @Composable
-fun BuildRowView(modifier: Modifier = Modifier, row: RowDataModel, textSizeScale: Int, scaleFactor: Float) {
+fun BuildRowView(
+    modifier: Modifier = Modifier,
+    row: RowDataModel,
+    textSizeScale: Int, scaleFactor: Float,
+    buildChildren: @Composable (ElementModel, Int) -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(
@@ -36,7 +41,7 @@ fun BuildRowView(modifier: Modifier = Modifier, row: RowDataModel, textSizeScale
             .padding(((row.style.padding ?: 1).toFloat() * scaleFactor).dp)
     ) {
         row.content.forEach { contentDto ->
-            BuildComposable(contentDto, textSizeScale)
+            buildChildren(contentDto, textSizeScale)
         }
     }
 }

@@ -9,9 +9,11 @@ import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.ErrorValidator
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.came.parkare.dashboardapp.domain.models.ScreenModel
+import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceList
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceStatus
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toModel
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toModel
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import kotlinx.coroutines.CoroutineScope
@@ -30,10 +32,8 @@ class ShareConfigViewModel(
     private val getDeviceList: GetDeviceList,
     private val getScreensConfig: GetScreensConfig,
     private val validator: ErrorValidator,
-    private val preferences: SharedPreferencesProvider,
-    private val wasmUtils: WasmUtilsHandler
-
-
+    private val wasmUtils: WasmUtilsHandler,
+    private val getConnectionConfig: GetConnectionConfig
 ): ViewModel() {
 
     private val _state = MutableStateFlow(ShareConfigState())
@@ -43,9 +43,28 @@ class ShareConfigViewModel(
     fun initConfig() {
         viewModelScope.launch {
             wasmUtils.showLoading(true)
+            loadConfigImages()
             loadDeviceList()
             loadScreenConfig()
-            checkTextSizeScale()
+        }
+    }
+
+    private fun loadConfigImages() {
+        viewModelScope.launch {
+            wasmUtils.showLoading(true)
+            when(val config = getConnectionConfig.invoke()){
+                is ServiceResult.Error -> {
+                    validator.validate(config.error)
+                    wasmUtils.showLoading(false)
+                }
+                is ServiceResult.Success -> {
+                    _state.update { it.copy(
+                        textSizeScale = config.data?.textSizeScale ?: 10,
+                        imagesSource = config.data?.files?.map { dto -> dto.toModel() }.orEmpty()
+                    ) }
+                    wasmUtils.showLoading(false)
+                }
+            }
         }
     }
 
@@ -164,10 +183,6 @@ class ShareConfigViewModel(
 
     }
 
-    private fun checkTextSizeScale() {
-        val textSizeScale = preferences.get(TEXT_SIZE_SCALE, 10)
-        _state.update { it.copy(textSizeScale = textSizeScale) }
-    }
     fun shareConfig() {
 
     }

@@ -57,20 +57,26 @@ fun BuildComposable(elementModel: ElementModel, textSizeScale: Int): Unit {
         when (elementModel) {
             is ElementModel.BoxModel -> {
                 // Box Composable with appropriate styling
-                BuildBoxView(box = elementModel.data, textSizeScale = textSizeScale, scaleFactor = scaleFactor)
+                BuildBoxView(box = elementModel.data, textSizeScale = textSizeScale, scaleFactor = scaleFactor){ dto, scale ->
+                    BuildComposable(dto, scale)
+                }
             }
             is ElementModel.SpacerModel -> {
                 Spacer(modifier = Modifier.size((elementModel.data.value.toFloat() * scaleFactor).dp))
             }
             is ElementModel.ColumnModel -> {
-                BuildColumnView(column = elementModel.data, textSizeScale = textSizeScale, scaleFactor = scaleFactor)
+                BuildColumnView(column = elementModel.data, textSizeScale = textSizeScale, scaleFactor = scaleFactor){ dto, scale ->
+                    BuildComposable(dto, scale)
+                }
             }
             is ElementModel.TextModel -> {
                 BuildTextView(elementModel.data, scaleFactor)
             }
 
             is ElementModel.RowModel -> {
-                BuildRowView(row = elementModel.data, textSizeScale = textSizeScale, scaleFactor = scaleFactor)
+                BuildRowView(row = elementModel.data, textSizeScale = textSizeScale, scaleFactor = scaleFactor){ dto, scale ->
+                    BuildComposable(dto, scale)
+                }
             }
 
             is ElementModel.ImageModel -> {
