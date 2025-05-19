@@ -47,9 +47,12 @@ import dashboardapp.composeapp.generated.resources.config_to_share_label
 import dashboardapp.composeapp.generated.resources.content_label
 import dashboardapp.composeapp.generated.resources.dashboard_backgroud
 import dashboardapp.composeapp.generated.resources.device_list_label
+import dashboardapp.composeapp.generated.resources.device_saved_message
+import dashboardapp.composeapp.generated.resources.dialog_message_label
 import dashboardapp.composeapp.generated.resources.ic_item_arrow
 import dashboardapp.composeapp.generated.resources.share_button
 import dashboardapp.composeapp.generated.resources.share_config_option
+import dashboardapp.composeapp.generated.resources.share_configuration_message
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -223,11 +226,13 @@ private fun HeaderConfigToShare() {
         Text(text = stringResource(Res.string.content_label),
             style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold))
 
+        val shareMessage = stringResource(Res.string.share_configuration_message)
+
         AppButton(
             text = stringResource(Res.string.share_button),
             isEnabled = state.allowedToShare,
             onClick = {
-                viewModel.launchPasswordRequest {
+                viewModel.launchPasswordRequest(message = shareMessage) {
                     viewModel.shareConfig()
                 }
             }

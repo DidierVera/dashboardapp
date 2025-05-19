@@ -2,9 +2,11 @@ package com.came.parkare.dashboardapp.ui.screens.settings.importfile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.came.parkare.dashboardapp.config.constants.Constants
 import com.came.parkare.dashboardapp.config.dataclasses.ErrorTypeClass
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.ErrorValidator
+import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.came.parkare.dashboardapp.domain.models.ScreenModel
 import com.came.parkare.dashboardapp.domain.usecases.SaveScreenConfig
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
@@ -26,6 +28,7 @@ import kotlinx.serialization.json.Json
 class ImportViewModel(
     private val saveScreenConfig: SaveScreenConfig,
     private val wasmUtilsHandler: WasmUtilsHandler,
+    private val preferences: SharedPreferencesProvider,
     private val validator: ErrorValidator
 ): ViewModel(){
 
@@ -43,8 +46,8 @@ class ImportViewModel(
         val configuration = Json.decodeFromString<List<ScreenDto>>(fileContent)
         viewModelScope.launch {
             wasmUtilsHandler.showLoading(true)
-            val result = saveScreenConfig.invoke(configuration)
-            when(result){
+            val ipAddress = preferences.get(Constants.SELECTED_IP_ADDRESS, window.location.hostname)
+            when(val result = saveScreenConfig.invoke(ipAddress, configuration)){
                 is ServiceResult.Error -> {
                     validator.validate(result.error)
                     wasmUtilsHandler.showLoading(false)

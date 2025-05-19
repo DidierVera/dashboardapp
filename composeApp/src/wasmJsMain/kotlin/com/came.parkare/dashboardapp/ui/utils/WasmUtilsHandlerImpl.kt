@@ -40,4 +40,8 @@ class WasmUtilsHandlerImpl: WasmUtilsHandler {
     override fun showDialogMessage(model: AppDialogState) {
         _dialogMessage.update { model }
     }
+
+    override fun showDialogRequestPassword(model: AppDialogState) {
+        _dialogMessage.update { model }
+    }
 }

@@ -2,9 +2,11 @@ package com.came.parkare.dashboardapp.ui.screens.settings.editconfig
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.came.parkare.dashboardapp.config.constants.Constants
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.ErrorValidator
+import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.came.parkare.dashboardapp.domain.models.ScreenModel
 import com.came.parkare.dashboardapp.domain.models.components.ElementModel
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
@@ -23,6 +25,7 @@ import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.t
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.screen_config_saved_message
+import kotlinx.browser.window
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -36,6 +39,7 @@ class EditConfigViewModel(
     private val validator: ErrorValidator,
     private val wasmUtilsHandler: WasmUtilsHandler,
     private val saveScreenConfig: SaveScreenConfig,
+    private val preferences: SharedPreferencesProvider,
     private val appLogger: AppLogger
 ): ViewModel() {
 
@@ -132,7 +136,8 @@ class EditConfigViewModel(
             try {
                 wasmUtilsHandler.showLoading(true)
                 val newData = _state.value.screens
-                saveScreenConfig.invoke(newData)
+                val ipAddress = preferences.get(Constants.SELECTED_IP_ADDRESS, window.location.hostname)
+                saveScreenConfig.invoke(ipAddress, newData)
                 wasmUtilsHandler.showLoading(false)
                 wasmUtilsHandler.showToastMessage (Res.string.screen_config_saved_message)
             }catch (e: Exception){

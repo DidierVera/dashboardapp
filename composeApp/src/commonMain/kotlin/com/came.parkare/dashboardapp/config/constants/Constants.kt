@@ -25,4 +25,6 @@ object Constants {
 
     //Web preferences
     const val SELECTED_IP_ADDRESS = "selectedIpAddress"
+
+    const val PASSWORD_VALIDATION = "Parking2010"
 }
