@@ -63,6 +63,7 @@
     <string name="config_to_share_label">Config to share</string>
     <string name="config_type_label">Config type:</string>
     <string name="content_label">Content:</string>
+    <string name="password_label">Password</string>
 
     <!--  Messages  -->
     <string name="screen_config_saved_message">The new screens configuration has been saved successfully.</string>
@@ -72,5 +73,8 @@
     <string name="config_saved_message">Connection config saved successfully.</string>
     <string name="delete_device_dialog_message">Are you sure you want to delete the item: %1$s ?.</string>
     <string name="no_items_to_show_message">There aren't items to show.</string>
+    <string name="share_configuration_message">Are you sure you want to share this configuration with the selected devices? \n Please enter the password to confirm it</string>
+    <string name="configuration_shared_successfully">Congratulations... \n Config shared with all the selected devices successfully!</string>
+    <string name="configuration_shared_with_errors">Configuration shared with errors.. \n The config has been shared with some of the selected devices, check the log file in the current host to see details.</string>
 
 </resources>

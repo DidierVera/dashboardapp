@@ -1,6 +1,7 @@
 package com.came.parkare.dashboardapp.ui.screens.settings.shareconfig
 
 import com.came.parkare.dashboardapp.domain.models.DeviceModel
+import com.came.parkare.dashboardapp.domain.models.ImagesFileModel
 import com.came.parkare.dashboardapp.domain.models.ScreenModel
 import com.came.parkare.dashboardapp.domain.models.components.ElementModel
 
@@ -11,8 +12,9 @@ data class ShareConfigState(
     val allowedToShare: Boolean = false,
     val screenViewer: String? = null,
     val configType: String = "",
-    val elementsByScreen: List<ElementModel> = emptyList()
-
+    val textSizeScale: Int = 10,
+    val elementsByScreen: List<ElementModel> = emptyList(),
+    val imagesSource:List<ImagesFileModel> = emptyList()
 )
 
 data class DeviceItemState(

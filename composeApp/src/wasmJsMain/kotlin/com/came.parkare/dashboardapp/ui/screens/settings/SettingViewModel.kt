@@ -57,6 +57,9 @@ class SettingViewModel(
         get() = _refreshState.asStateFlow()
 
     init {
+        val ownIpAddress = window.location.hostname
+        preferences.put(SELECTED_IP_ADDRESS, ownIpAddress)
+
         loadLeftPanelOptions()
         loadIpAddress()
         getIpAddress()

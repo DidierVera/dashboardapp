@@ -17,14 +17,16 @@ import org.koin.mp.KoinPlatform.getKoin
 fun AppContent(modifier: Modifier = Modifier) {
     val navigator: Navigator = remember { getKoin().get() }
     Box(modifier = modifier.fillMaxSize()) {
-        when (val currentScreen = navigator.screens.lastOrNull() ?: WasmScreen.Home) {
+        when (val currentScreen = navigator.screens.lastOrNull() ?: WasmScreen.Settings) {
             is WasmScreen.Home -> HomeScreen(
                 onSettingsClick = {
                     navigator.navigateTo(WasmScreen.Settings)
                 }
             )
             is WasmScreen.Settings -> SettingsScreen(
-                onBackClick = {navigator.goBack()}
+                onBackClick = {
+                    //navigator.goBack()
+                }
             )
         }
         AppLoading()

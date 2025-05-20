@@ -23,9 +23,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.came.parkare.dashboardapp.config.constants.Constants
 import com.came.parkare.dashboardapp.ui.components.AppButton
 import com.came.parkare.dashboardapp.ui.components.CloseButton
 import com.came.parkare.dashboardapp.ui.theme.BlackColor
@@ -34,6 +37,7 @@ import com.came.parkare.dashboardapp.ui.theme.style.floatingButton
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.accept_button
 import dashboardapp.composeapp.generated.resources.cancel_button
+import dashboardapp.composeapp.generated.resources.password_label
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -79,11 +83,17 @@ fun ShowDialog(modifier: Modifier = Modifier, model: AppDialogState) {
 fun ActionButtons(modifier: Modifier = Modifier,
                   onAccept: () -> Unit, onCancel: () -> Unit) {
     val viewModel: AppDialogViewModel = koinViewModel()
+    val state by viewModel.state.collectAsState()
+    val passwordState by viewModel.passwordState.collectAsState()
+    val isAcceptButtonActive = if (state.requirePassword){
+        passwordState.isNotBlank() && passwordState == Constants.PASSWORD_VALIDATION
+    }else true
     Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+
         AppButton(text = stringResource(Res.string.accept_button), onClick = {
             onAccept.invoke()
             viewModel.hideDialog()
-        })
+        }, isEnabled = isAcceptButtonActive)
         AppButton(text = stringResource(Res.string.cancel_button), buttonColors = ButtonDefaults.buttonColors().copy(
             containerColor = Color.DarkGray,
             contentColor = Color.White,
@@ -103,7 +113,10 @@ private fun PasswordField(requirePassword: Boolean) {
     if (requirePassword){
         TextField(value = passwordState, onValueChange = {
             viewModel.setPassword(it)
-        })
+        }, label = {
+            Text(text = stringResource(Res.string.password_label),
+                style = MaterialTheme.typography.titleSmall)
+        }, visualTransformation = PasswordVisualTransformation())
     }
 }
 

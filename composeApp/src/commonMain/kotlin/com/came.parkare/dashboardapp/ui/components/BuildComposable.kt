@@ -30,6 +30,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.came.parkare.dashboardapp.domain.models.components.ElementModel
+import com.came.parkare.dashboardapp.ui.components.elements.BuildBoxView
+import com.came.parkare.dashboardapp.ui.components.elements.BuildColumnView
+import com.came.parkare.dashboardapp.ui.components.elements.BuildImageView
+import com.came.parkare.dashboardapp.ui.components.elements.BuildRowView
+import com.came.parkare.dashboardapp.ui.components.elements.BuildTextView
 import com.came.parkare.dashboardapp.ui.components.itemStyles.LicensePlateItemStyle
 import com.came.parkare.dashboardapp.ui.components.itemStyles.imageItemStyle
 import com.came.parkare.dashboardapp.ui.theme.LicensePlateFont
@@ -52,137 +57,30 @@ fun BuildComposable(elementModel: ElementModel, textSizeScale: Int): Unit {
         when (elementModel) {
             is ElementModel.BoxModel -> {
                 // Box Composable with appropriate styling
-                Box(
-                    modifier = Modifier
-                        .shadow(
-                            elevation = if (elementModel.data.style.hasShadow) 1.5.dp else 0.dp,
-                            shape = RoundedCornerShape(elementModel.data.style.roundBorder.dp)
-                        )
-                        .background(
-                            hexToColor(elementModel.data.style.backgroundColor)
-                                .copy(alpha = (elementModel.data.style.density / 100f))
-                        )
-                        .fillMaxWidth()
-                        .padding(((elementModel.data.style.padding ?: 1).toFloat() * scaleFactor).dp), contentAlignment = Alignment.Center
-                ) {
-                    // Recursively build content Composable
-                    Box(modifier = Modifier.align(Alignment.Center)) {
-                        elementModel.data.content.forEach { contentDto ->
-                            BuildComposable(contentDto, textSizeScale)
-                        }
-                    }
+                BuildBoxView(box = elementModel.data, textSizeScale = textSizeScale, scaleFactor = scaleFactor){ dto, scale ->
+                    BuildComposable(dto, scale)
                 }
             }
             is ElementModel.SpacerModel -> {
                 Spacer(modifier = Modifier.size((elementModel.data.value.toFloat() * scaleFactor).dp))
             }
             is ElementModel.ColumnModel -> {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(
-                        (elementModel.data.spacing.toFloat() * scaleFactor).dp,
-                        alignment = Alignment.CenterVertically),
-                    modifier = Modifier
-                        .shadow(
-                            elevation = if (elementModel.data.style.hasShadow) 1.5.dp else 0.dp,
-                            shape = RoundedCornerShape(elementModel.data.style.roundBorder.dp)
-                        )
-                        .background(
-                            hexToColor(elementModel.data.style.backgroundColor)
-                                .copy(alpha = (elementModel.data.style.density / 100f))
-                        )
-                        .fillMaxWidth()
-                        .padding(((elementModel.data.style.padding ?: 1).toFloat() * scaleFactor).dp)
-                ) {
-                    elementModel.data.content.forEach { contentDto ->
-                        BuildComposable(contentDto, textSizeScale)
-                    }
+                BuildColumnView(column = elementModel.data, textSizeScale = textSizeScale, scaleFactor = scaleFactor){ dto, scale ->
+                    BuildComposable(dto, scale)
                 }
             }
             is ElementModel.TextModel -> {
-                val weight = when {
-                    elementModel.data.fontWeight.lowercase().contains("bold") -> FontWeight.Bold
-                    elementModel.data.fontWeight.lowercase().contains("medium") -> FontWeight.Medium
-                    else -> FontWeight.Normal
-                }
-                val textSize = (elementModel.data.textSize.toFloat() * scaleFactor)
-                    .coerceAtLeast((elementModel.data.textSize - 8).toFloat())
-                if (elementModel.data.dashboardItemId.contains("license-plate-value")) {
-                    println("license-plate-value==== ${elementModel.data.defaultText}")
-                    LicensePlateItemStyle { modifier ->
-                        Text(
-                            text = elementModel.data.defaultText,
-                            fontSize = textSize.sp,
-                            fontFamily = LicensePlateFont,
-                            letterSpacing = 2.sp,
-                            fontWeight = weight,
-                            textAlign = TextAlign.Center,
-                            color = hexToColor(elementModel.data.textColor),
-                            modifier = modifier.padding(0.dp, 0.dp, 0.dp, 10.dp)
-                                .padding(((elementModel.data.style.padding ?: 1).toFloat() * scaleFactor).dp)
-                        )
-                    }
-
-                } else {
-                    val animatedText = animateFloatAsState(targetValue = scaleFactor)
-                    Text(
-                        text = elementModel.data.defaultText,
-                        fontSize = textSize.sp * animatedText.value,
-                        fontFamily = Rubik,
-                        fontWeight = weight,
-                        lineHeight = 1.2.em,
-                        textAlign = TextAlign.Center,
-                        color = hexToColor(elementModel.data.textColor),
-                        modifier = Modifier.padding(((elementModel.data.style.padding ?: 1).toFloat() * scaleFactor).dp)
-                    )
-                }
+                BuildTextView(elementModel.data, scaleFactor)
             }
 
             is ElementModel.RowModel -> {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(
-                        (elementModel.data.spacing.toFloat() * scaleFactor).dp,
-                        alignment = Alignment.CenterHorizontally
-                    ),
-                    modifier = Modifier
-                        .shadow(
-                            elevation = if (elementModel.data.style.hasShadow) 1.5.dp else 0.dp,
-                            shape = RoundedCornerShape(elementModel.data.style.roundBorder.dp)
-                        )
-                        .background(
-                            hexToColor(elementModel.data.style.backgroundColor)
-                                .copy(alpha = (elementModel.data.style.density / 100f))
-                        )
-                        .fillMaxWidth()
-                        .padding(((elementModel.data.style.padding ?: 1).toFloat() * scaleFactor).dp)
-                ) {
-                    elementModel.data.content.forEach { contentDto ->
-                        BuildComposable(contentDto, textSizeScale)
-                    }
+                BuildRowView(row = elementModel.data, textSizeScale = textSizeScale, scaleFactor = scaleFactor){ dto, scale ->
+                    BuildComposable(dto, scale)
                 }
             }
 
             is ElementModel.ImageModel -> {
-                if (!elementModel.data.folderPath.isNullOrBlank()) {
-                    if(elementModel.data.folderPath.isBase64()){
-                        Base64Image(elementModel.data.folderPath,
-                            contentScale = ContentScale.FillHeight,
-                            modifier = Modifier
-                                .size(((elementModel.data.style.width ?: 1).toFloat() * scaleFactor).dp,
-                                    ((elementModel.data.style.height ?: 1).toFloat() * scaleFactor).dp)
-                        )
-                    }else{
-                        Image(
-                            painter = imageItemStyle(elementModel.data.folderPath),
-                            contentDescription = null,
-                            contentScale = ContentScale.FillHeight,
-                            modifier = Modifier
-                                .size(((elementModel.data.style.width ?: 1).toFloat() * scaleFactor).dp,
-                                    ((elementModel.data.style.height ?: 1).toFloat() * scaleFactor).dp)
-                        )
-                    }
-                } else Unit
+                BuildImageView(image = elementModel.data, scaleFactor = scaleFactor)
             }
             is ElementModel.VideoModel -> {}
         }

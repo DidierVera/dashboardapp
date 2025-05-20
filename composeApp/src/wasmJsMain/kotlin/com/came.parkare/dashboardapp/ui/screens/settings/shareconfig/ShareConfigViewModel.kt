@@ -4,14 +4,25 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.came.parkare.dashboardapp.config.constants.Constants.TEXT_SIZE_SCALE
+import com.came.parkare.dashboardapp.config.dataclasses.ResponseStatusDto
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.ErrorValidator
+import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.came.parkare.dashboardapp.domain.models.ScreenModel
+import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceList
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceStatus
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
+import com.came.parkare.dashboardapp.domain.usecases.SaveScreenConfig
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toModel
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toModel
+import com.came.parkare.dashboardapp.ui.components.dialog.AppDialogState
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
+import dashboardapp.composeapp.generated.resources.Res
+import dashboardapp.composeapp.generated.resources.configuration_shared_successfully
+import dashboardapp.composeapp.generated.resources.configuration_shared_with_errors
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -28,9 +39,9 @@ class ShareConfigViewModel(
     private val getDeviceList: GetDeviceList,
     private val getScreensConfig: GetScreensConfig,
     private val validator: ErrorValidator,
-    private val wasmUtils: WasmUtilsHandler
-
-
+    private val wasmUtils: WasmUtilsHandler,
+    private val getConnectionConfig: GetConnectionConfig,
+    private val saveScreenConfig: SaveScreenConfig
 ): ViewModel() {
 
     private val _state = MutableStateFlow(ShareConfigState())
@@ -40,8 +51,26 @@ class ShareConfigViewModel(
     fun initConfig() {
         viewModelScope.launch {
             wasmUtils.showLoading(true)
+            clearForm()
+            loadConfigImages()
             loadDeviceList()
             loadScreenConfig()
+        }
+    }
+
+    private fun loadConfigImages() {
+        viewModelScope.launch {
+            when(val config = getConnectionConfig.invoke()){
+                is ServiceResult.Error -> {
+                    validator.validate(config.error)
+                }
+                is ServiceResult.Success -> {
+                    _state.update { it.copy(
+                        textSizeScale = config.data?.textSizeScale ?: 10,
+                        imagesSource = config.data?.files?.map { dto -> dto.toModel() }.orEmpty()
+                    ) }
+                }
+            }
         }
     }
 
@@ -156,11 +185,48 @@ class ShareConfigViewModel(
         }
     }
 
-    fun launchPasswordRequest(onClick: () -> Unit){
-
+    fun launchPasswordRequest(message: String, onClick: () -> Unit){
+        wasmUtils.showDialogMessage(AppDialogState(
+            message = message,
+            onAccept = onClick, requirePassword = true
+        ))
     }
 
     fun shareConfig() {
+        viewModelScope.launch {
+            wasmUtils.showLoading(true)
+            val devices = _state.value.dashboardList.filter { it.isChecked }.map { it.dashboardIp }
+            val result = mutableListOf<ResponseStatusDto>()
+            for (device in devices){
+                val response = saveScreenConfig.invoke(device, _state.value.configToShare.map { it.toDto() })
+                when(response){
+                    is ServiceResult.Error -> {
+                        validator.validate(response.error)
+                        wasmUtils.showLoading(false)
+                    }
+                    is ServiceResult.Success -> result.add(response.data!!)
+                }
+            }
+            if (result.size == devices.size){
+                wasmUtils.showToastMessage(Res.string.configuration_shared_successfully)
+            }else{
+                wasmUtils.showToastMessage(Res.string.configuration_shared_with_errors)
+            }
 
+            wasmUtils.showLoading(false)
+            clearForm()
+            initConfig()
+        }
+
+    }
+    private fun clearForm(){
+        _state.update { it.copy(
+            configToShare = emptyList(),
+            imagesSource = emptyList(),
+            screenViewer = null,
+            elementsByScreen = emptyList(),
+            dashboardList = emptyList(),
+            allowedToShare = false
+        ) }
     }
 }

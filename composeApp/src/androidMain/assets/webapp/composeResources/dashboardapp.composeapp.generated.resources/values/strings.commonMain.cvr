@@ -6,9 +6,14 @@ string|back_button_alt|QmFjayBidXR0b24=
 string|cancel_button|Q0FOQ0VM
 string|components_label|Q29tcG9uZW50cw==
 string|config_saved_message|Q29ubmVjdGlvbiBjb25maWcgc2F2ZWQgc3VjY2Vzc2Z1bGx5Lg==
+string|config_to_share_label|Q29uZmlnIHRvIHNoYXJl
+string|config_type_label|Q29uZmlnIHR5cGU6
+string|configuration_shared_successfully|Q29uZ3JhdHVsYXRpb25zLi4uIAogQ29uZmlnIHNoYXJlZCB3aXRoIGFsbCB0aGUgc2VsZWN0ZWQgZGV2aWNlcyBzdWNjZXNzZnVsbHkh
+string|configuration_shared_with_errors|Q29uZmlndXJhdGlvbiBzaGFyZWQgd2l0aCBlcnJvcnMuLiAKIFRoZSBjb25maWcgaGFzIGJlZW4gc2hhcmVkIHdpdGggc29tZSBvZiB0aGUgc2VsZWN0ZWQgZGV2aWNlcywgY2hlY2sgdGhlIGxvZyBmaWxlIGluIHRoZSBjdXJyZW50IGhvc3QgdG8gc2VlIGRldGFpbHMu
 string|connection_option|Q29ubmVjdGlvbg==
 string|connection_title|Q29ubmVjdGlvbiBzZXR0aW5ncw==
 string|connection_way_label|Q29ubmVjdGlvbiB3YXk=
+string|content_label|Q29udGVudDo=
 string|create_new_button|Q1JFQVRFIE5FVw==
 string|current_config_label|Q3VycmVudCBjb25maWd1cmF0aW9u
 string|custom_name_label|Q3VzdG9tIG5hbWU=
@@ -17,6 +22,7 @@ string|dashboard_list_option|RGFzaGJvYXJkIGxpc3Q=
 string|delay_time_label|RGVsYXkgdGltZShzKQ==
 string|delete_device_dialog_message|QXJlIHlvdSBzdXJlIHlvdSB3YW50IHRvIGRlbGV0ZSB0aGUgaXRlbTogJTEkcyA/Lg==
 string|device_deleted_message|RGV2aWNlOiAlMSRzIGhhcyBiZWVuIGRlbGV0ZWQgc3VjY2Vzc2Z1bGx5Lg==
+string|device_list_label|RGV2aWNlIGxpc3Q=
 string|device_saved_message|RGV2aWNlIHNhdmVkIHN1Y2Nlc3NmdWxseS4=
 string|dialog_label|RGlhbG9n
 string|dialog_message_label|RGlhbG9nIG1lc3NhZ2U=
@@ -34,6 +40,7 @@ string|import_title|SW1wb3J0IENvbmZpZ3VyYXRpb24=
 string|ip_already_exist_message|VGhpcyBEYXNoYm9hcmQgSVAgYWxyZWFkeSBleGlzdC4=
 string|no_items_to_show_message|VGhlcmUgYXJlbid0IGl0ZW1zIHRvIHNob3cu
 string|options_title|T3B0aW9ucw==
+string|password_label|UGFzc3dvcmQ=
 string|port_label|UG9ydA==
 string|properties_label|UHJvcGVydGllcw==
 string|save_button|U0FWRQ==
@@ -41,7 +48,10 @@ string|screen_config_saved_message|VGhlIG5ldyBzY3JlZW5zIGNvbmZpZ3VyYXRpb24gaGFzI
 string|screens_label|U2NyZWVucw==
 string|send_button|U0VORA==
 string|settings_button|U0VUVElOR1M=
+string|share_button|U0hBUkU=
 string|share_config_option|U2hhcmUgY29uZmln
+string|share_config_title|U2hhcmUgc2NyZWVuIGNvbmZpZw==
+string|share_configuration_message|QXJlIHlvdSBzdXJlIHlvdSB3YW50IHRvIHNoYXJlIHRoaXMgY29uZmlndXJhdGlvbiB3aXRoIHRoZSBzZWxlY3RlZCBkZXZpY2VzPyAKIFBsZWFzZSBlbnRlciB0aGUgcGFzc3dvcmQgdG8gY29uZmlybSBpdA==
 string|share_file_button|U0hBUkUgVE8=
 string|show_video_frame_label|U2hvdyB2aWRlbyBmcmFtZQ==
 string|terminal_ip_label|VGVybWluYWwgSVA=
