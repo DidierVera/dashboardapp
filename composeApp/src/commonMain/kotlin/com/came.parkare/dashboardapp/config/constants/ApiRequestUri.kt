@@ -8,6 +8,7 @@ object ApiRequestUri {
     const val SAVE_SCREEN_CONFIG_TYPE = "/api/screen/config/type/save"
     const val SAVE_CONFIG_TEMPLATE = "/api/screen/config/template/save"
     const val GET_CONFIG_TEMPLATE = "/api/screen/config/template/get"
+    const val GET_DEFAULT_CONFIG_TEMPLATE = "/api/screen/config/template/default"
     const val UPDATE_CONFIG_TEMPLATE = "/api/screen/config/template/update"
     const val DELETE_CONFIG_TEMPLATE = "/api/screen/config/template/delete"
     const val GET_CONNECTION_CONFIG = "/api/connection/get"

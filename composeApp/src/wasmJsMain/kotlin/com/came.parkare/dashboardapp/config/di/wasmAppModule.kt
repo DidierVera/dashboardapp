@@ -9,17 +9,20 @@ import com.came.parkare.dashboardapp.config.utils.WebStoragePreferences
 import com.came.parkare.dashboardapp.domain.repositories.device.DeviceRepository
 import com.came.parkare.dashboardapp.domain.repositories.log.LogRepository
 import com.came.parkare.dashboardapp.domain.repositories.screen.ScreenRepository
+import com.came.parkare.dashboardapp.domain.repositories.template.ConfigTemplateRepository
 import com.came.parkare.dashboardapp.domain.usecases.DeleteDevice
 import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceList
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceStatus
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
+import com.came.parkare.dashboardapp.domain.usecases.GetTemplatesConfig
 import com.came.parkare.dashboardapp.domain.usecases.SaveConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.SaveNewDevice
 import com.came.parkare.dashboardapp.domain.usecases.SaveScreenConfig
 import com.came.parkare.dashboardapp.infrastructure.repositories.device.DeviceRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.repositories.logs.LogRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.repositories.screen.ScreenRepositoryImpl
+import com.came.parkare.dashboardapp.infrastructure.repositories.template.ConfigTemplateRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.source.services.base.HttpClient
 import com.came.parkare.dashboardapp.ui.components.dialog.AppDialogViewModel
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
@@ -75,6 +78,7 @@ val wasmAppModule = module {
     singleOf(::DeviceRepositoryImpl) { bind<DeviceRepository>() }
     singleOf(::ScreenRepositoryImpl) { bind<ScreenRepository>() }
     singleOf(::LogRepositoryImpl) { bind<LogRepository>() }
+    singleOf(::ConfigTemplateRepositoryImpl) { bind<ConfigTemplateRepository>() }
 
     //useCases
     single { GetScreensConfig(get(), get()) }
@@ -85,6 +89,7 @@ val wasmAppModule = module {
     single { SaveNewDevice(get(), get()) }
     single { DeleteDevice(get(), get()) }
     single { GetDeviceStatus(get(), get()) }
+    single { GetTemplatesConfig(get(), get(), get()) }
 
 
     single { Navigator() }

@@ -23,6 +23,7 @@ import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiR
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetCurrentConfigRequest
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetCurrentConnectionConfig
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetDashboardListRequest
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetDefaultConfigTemplate
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveConfigTemplate
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveConfiguratorError
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveConfiguratorLog
@@ -66,6 +67,7 @@ class AndroidApiServer(
             session.isSetConfigType() -> handleSetConfigType(session)
             session.isDeleteConfigTemplate() -> handleDeleteConfigTemplate(session)
             session.isGetConfigTemplate() -> handleGetConfigTemplate()
+            session.isGetDefaultConfigTemplate() -> handleGetDefaultConfigTemplate()
             session.isSaveConfigTemplate() -> handleSaveConfigTemplate(session)
             session.isUpdateConfigTemplate() -> handleUpdateConfigTemplate(session)
             session.isSaveConfiguratorLog() -> handleTrackLog(session)
@@ -127,6 +129,13 @@ class AndroidApiServer(
     private fun handleGetConfigTemplate(): Response {
         return processAsyncRequest<Unit, List<ConfigTemplateDto>>(
             operation = { configTemplateRepository.getAll().map { it.toDto() } },
+            successTransform = { result -> Json.encodeToString(result) }
+        )
+    }
+
+    private fun handleGetDefaultConfigTemplate(): Response {
+        return processAsyncRequest<Unit, List<ConfigTemplateDto>>(
+            operation = { configTemplateRepository.getDefaultTemplates().map { it.toDto() } },
             successTransform = { result -> Json.encodeToString(result) }
         )
     }

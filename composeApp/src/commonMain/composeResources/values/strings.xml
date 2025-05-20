@@ -37,6 +37,10 @@
     <string name="current_config_label">Current configuration</string>
     <string name="upload_file_button">UPLOAD FILES</string>
     <string name="download_file_button">DOWNLOAD FILE</string>
+    <string name="ticket_less_file_button">ENTRY TICKETLESS</string>
+    <string name="exit_file_button">EXIT </string>
+    <string name="entry_file_button">ENTRY WITH TICKET</string>
+    <string name="default_template_label">Default templates</string>
 
     <!--Dashboards list screen-->
     <string name="custom_name_label">Custom name</string>

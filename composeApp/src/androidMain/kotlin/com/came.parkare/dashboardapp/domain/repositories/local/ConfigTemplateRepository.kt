@@ -7,4 +7,5 @@ interface ConfigTemplateRepository {
     suspend fun saveTemplate(templateModel: ConfigTemplateModel) : Boolean
     suspend fun updateTemplate(templateModel: ConfigTemplateModel) : Boolean
     suspend fun deleteTemplate(templateModel: ConfigTemplateModel) : Boolean
+    suspend fun getDefaultTemplates() : List<ConfigTemplateModel>
 }

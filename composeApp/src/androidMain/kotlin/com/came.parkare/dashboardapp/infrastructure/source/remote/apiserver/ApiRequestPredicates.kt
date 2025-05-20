@@ -5,6 +5,7 @@ import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.DELETE_CONFI
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.DELETE_DEVICE
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_CONFIG_TEMPLATE
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_CONNECTION_CONFIG
+import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_DEFAULT_CONFIG_TEMPLATE
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_DEVICE_LIST
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_SCREENS_CONFIG
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_SCREEN_CONFIG_TYPE
@@ -61,6 +62,10 @@ object ApiRequestPredicates {
 
     fun NanoHTTPD.IHTTPSession.isGetConfigTemplate(): Boolean {
         return uri == GET_CONFIG_TEMPLATE && method == NanoHTTPD.Method.GET
+    }
+
+    fun NanoHTTPD.IHTTPSession.isGetDefaultConfigTemplate(): Boolean {
+        return uri == GET_DEFAULT_CONFIG_TEMPLATE && method == NanoHTTPD.Method.GET
     }
     fun NanoHTTPD.IHTTPSession.isCheckStatus(): Boolean {
         return uri == CHECK_STATUS && method == NanoHTTPD.Method.GET
