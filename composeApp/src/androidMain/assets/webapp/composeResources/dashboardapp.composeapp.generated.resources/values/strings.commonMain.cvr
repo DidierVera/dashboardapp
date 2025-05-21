@@ -19,9 +19,10 @@ string|current_config_label|Q3VycmVudCBjb25maWd1cmF0aW9u
 string|custom_name_label|Q3VzdG9tIG5hbWU=
 string|dashboard_ip_label|RGFzaGJvYXJkIElQ
 string|dashboard_list_option|RGFzaGJvYXJkIGxpc3Q=
+string|default_template_label|RGVmYXVsdCB0ZW1wbGF0ZXM=
 string|delay_time_label|RGVsYXkgdGltZShzKQ==
 string|delete_device_dialog_message|QXJlIHlvdSBzdXJlIHlvdSB3YW50IHRvIGRlbGV0ZSB0aGUgaXRlbTogJTEkcyA/Lg==
-string|device_deleted_message|RGV2aWNlOiAlMSRzIGhhcyBiZWVuIGRlbGV0ZWQgc3VjY2Vzc2Z1bGx5Lg==
+string|device_deleted_message|RGV2aWNlOiBoYXMgYmVlbiBkZWxldGVkIHN1Y2Nlc3NmdWxseS4=
 string|device_list_label|RGV2aWNlIGxpc3Q=
 string|device_saved_message|RGV2aWNlIHNhdmVkIHN1Y2Nlc3NmdWxseS4=
 string|dialog_label|RGlhbG9n
@@ -29,9 +30,12 @@ string|dialog_message_label|RGlhbG9nIG1lc3NhZ2U=
 string|discard_button|RElTQ0FSRCBDSEFOR0VT
 string|download_file_button|RE9XTkxPQUQgRklMRQ==
 string|edit_current_config_option|RWRpdCBjdXJyZW50IGNvbmZpZw==
+string|entry_file_button|RU5UUlkgV0lUSCBUSUNLRVQ=
+string|exit_file_button|RVhJVCA=
 string|export_option|RXhwb3J0
 string|export_title|RXhwb3J0IENvbmZpZ3VyYXRpb24gZmlsZQ==
 string|file_content_label|RmlsZSBjb250ZW50
+string|file_downloaded_message|RmlsZSBkb3dubG9hZGVkIHN1Y2Nlc3NmdWxseS4=
 string|general_configuration_title|R0VORVJBTCBDT05GSUdVUkFUSU9O
 string|image_resources_label|SW1hZ2VzIHJlc291cmNlcw==
 string|import_export_option|SW1wb3J0L0V4cG9ydA==
@@ -43,6 +47,7 @@ string|options_title|T3B0aW9ucw==
 string|password_label|UGFzc3dvcmQ=
 string|port_label|UG9ydA==
 string|properties_label|UHJvcGVydGllcw==
+string|request_password_message|RW50cnkgdGhlIHBhc3N3b3JkIGZvciBhY2Nlc3MgdG8gdGhlIHdheSBtb25pdG9yIGNvbmZpZy4=
 string|save_button|U0FWRQ==
 string|screen_config_saved_message|VGhlIG5ldyBzY3JlZW5zIGNvbmZpZ3VyYXRpb24gaGFzIGJlZW4gc2F2ZWQgc3VjY2Vzc2Z1bGx5Lg==
 string|screens_label|U2NyZWVucw==
@@ -57,4 +62,5 @@ string|show_video_frame_label|U2hvdyB2aWRlbyBmcmFtZQ==
 string|terminal_ip_label|VGVybWluYWwgSVA=
 string|testing_option|VGVzdGluZw==
 string|text_size_scale_label|VGV4dCBzaXplIHNjYWxl
+string|ticket_less_file_button|RU5UUlkgVElDS0VUTEVTUw==
 string|upload_file_button|VVBMT0FEIEZJTEVT

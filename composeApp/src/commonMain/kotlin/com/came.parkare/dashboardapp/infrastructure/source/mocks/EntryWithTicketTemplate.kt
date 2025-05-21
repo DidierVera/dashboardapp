@@ -22,7 +22,7 @@ object EntryWithTicketTemplate {
                                         {
                                             "element-type": "image",
                                             "data": {
-                                                "dashboardItemId": "arrow-down",
+                                                "dashboardItemId": "ico-disabled",
                                                 "dataKey": null,
                                                 "fileName": "ico-disabled",
                                                 "height": 480,
@@ -798,28 +798,16 @@ object EntryWithTicketTemplate {
                                 }
                             },
                             {
-                                "element-type": "box",
+                                "element-type": "text",
                                 "data": {
-                                    "backgroundColor": "#FFFFFF",
-                                    "density": 50,
-                                    "roundBorder": 0,
-                                    "hasShadow": false,
+                                    "dashboardItemId": "license-plate-value",
+                                    "defaultText": "---- ---",
+                                    "dataKey": "MainLicensePlate",
+                                    "textSize": 72,
+                                    "textColor": "#000000",
                                     "padding": 4,
-                                    "content": [
-                                        {
-                                            "element-type": "text",
-                                            "data": {
-                                                "dashboardItemId": "license-plate-value",
-                                                "defaultText": "---- ---",
-                                                "dataKey": "MainLicensePlate",
-                                                "textSize": 72,
-                                                "textColor": "#000000",
-                                                "padding": 4,
-                                                "fontWeight": "Bold",
-                                                "translations": null
-                                            }
-                                        }
-                                    ]
+                                    "fontWeight": "Bold",
+                                    "translations": null
                                 }
                             },
                             {
@@ -1114,7 +1102,7 @@ object EntryWithTicketTemplate {
                                         {
                                             "element-type": "image",
                                             "data": {
-                                                "dashboardItemId": "arrow-down",
+                                                "dashboardItemId": "ico-disabled",
                                                 "dataKey": null,
                                                 "fileName": "ico-disabled",
                                                 "height": 480,

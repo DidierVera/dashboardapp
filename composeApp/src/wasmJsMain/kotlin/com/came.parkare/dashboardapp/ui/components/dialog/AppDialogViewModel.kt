@@ -33,6 +33,7 @@ class AppDialogViewModel(
         wasmUtilsHandler.dialogMessage.onEach { model ->
             if (model != AppDialogState()){
                 _state.update { AppDialogState() }
+                _passwordState.update { "" }
                 _showDialog.update { true }
                 _state.update { model }
             }

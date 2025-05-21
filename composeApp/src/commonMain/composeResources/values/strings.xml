@@ -71,8 +71,9 @@
     <string name="password_label">Password</string>
 
     <!--  Messages  -->
+    <string name="request_password_message">Entry the password for access to the way monitor config.</string>
     <string name="screen_config_saved_message">The new screens configuration has been saved successfully.</string>
-    <string name="device_deleted_message">Device: %1$s has been deleted successfully.</string>
+    <string name="device_deleted_message">Device: has been deleted successfully.</string>
     <string name="ip_already_exist_message">This Dashboard IP already exist.</string>
     <string name="device_saved_message">Device saved successfully.</string>
     <string name="config_saved_message">Connection config saved successfully.</string>

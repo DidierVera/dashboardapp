@@ -813,29 +813,17 @@ object TicketLessExitTemplate {
                                 }
                             },
                             {
-                                "element-type": "box",
+                                "element-type": "text",
                                 "data": {
-                                    "backgroundColor": "#FFFFFF",
-                                    "density": 50,
-                                    "roundBorder": 0,
-                                    "hasShadow": false,
+                                    "dashboardItemId": "license-plate-value",
+                                    "defaultText": "---- ---",
+                                    "ditTypeCode": 10,
+                                    "dataKey": "MainLicensePlate",
+                                    "textSize": 72,
+                                    "textColor": "#000000",
                                     "padding": 4,
-                                    "content": [
-                                        {
-                                            "element-type": "text",
-                                            "data": {
-                                                "dashboardItemId": "license-plate-value",
-                                                "defaultText": "---- ---",
-                                                "ditTypeCode": 10,
-                                                "dataKey": "MainLicensePlate",
-                                                "textSize": 72,
-                                                "textColor": "#000000",
-                                                "padding": 4,
-                                                "fontWeight": "Bold",
-                                                "translations": null
-                                            }
-                                        }
-                                    ]
+                                    "fontWeight": "Bold",
+                                    "translations": null
                                 }
                             }
                         ]
@@ -845,15 +833,27 @@ object TicketLessExitTemplate {
                         "screen-id": "DLG_OUT_SERVICE",
                         "data": [
                             {
-                                "element-type": "image",
+                                "element-type": "box",
                                 "data": {
-                                    "dashboardItemId": "arrow-down",
-                                    "dataKey": null,
-                                    "fileName": "ico-disabled",
-                                    "height": 500,
-                                    "width": 500
+                                    "backgroundColor": "#FFFFFF",
+                                    "density": 0,
+                                    "roundBorder": 0,
+                                    "hasShadow": false,
+                                    "padding": 12,
+                                    "content": [
+                                        {
+                                            "element-type": "image",
+                                            "data": {
+                                                "dashboardItemId": "ico-disabled",
+                                                "dataKey": null,
+                                                "fileName": "ico-disabled",
+                                                "height": 480,
+                                                "width": 480
+                                            }
+                                        }
+                                    ]
                                 }
-                            }		
+                            }
                         ]
                     },
                     {
@@ -861,13 +861,25 @@ object TicketLessExitTemplate {
                         "screen-id": "DLG_OUT_SERVICE",
                         "data": [
                             {
-                                "element-type": "image",
+                                "element-type": "box",
                                 "data": {
-                                    "dashboardItemId": "arrow-down",
-                                    "dataKey": null,
-                                    "fileName": "ico-disabled",
-                                    "height": 500,
-                                    "width": 500
+                                    "backgroundColor": "#FFFFFF",
+                                    "density": 0,
+                                    "roundBorder": 0,
+                                    "hasShadow": false,
+                                    "padding": 12,
+                                    "content": [
+                                        {
+                                            "element-type": "image",
+                                            "data": {
+                                                "dashboardItemId": "ico-disabled",
+                                                "dataKey": null,
+                                                "fileName": "ico-disabled",
+                                                "height": 480,
+                                                "width": 480
+                                            }
+                                        }
+                                    ]
                                 }
                             }				
                         ]
@@ -877,13 +889,25 @@ object TicketLessExitTemplate {
                         "screen-id": "DLG_OUT_SERVICE",
                         "data": [
                             {
-                                "element-type": "image",
+                                "element-type": "box",
                                 "data": {
-                                    "dashboardItemId": "arrow-down",
-                                    "dataKey": null,
-                                    "fileName": "ico-disabled",
-                                    "height": 500,
-                                    "width": 500
+                                    "backgroundColor": "#FFFFFF",
+                                    "density": 0,
+                                    "roundBorder": 0,
+                                    "hasShadow": false,
+                                    "padding": 12,
+                                    "content": [
+                                        {
+                                            "element-type": "image",
+                                            "data": {
+                                                "dashboardItemId": "ico-disabled",
+                                                "dataKey": null,
+                                                "fileName": "ico-disabled",
+                                                "height": 480,
+                                                "width": 480
+                                            }
+                                        }
+                                    ]
                                 }
                             }				
                         ]
