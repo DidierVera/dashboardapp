@@ -216,10 +216,10 @@ fun ConnectionWayControl(options: List<String>, connectionWay: String) {
         selectedItem = connectionWay,
         onItemSelected = { viewModel.setConnectionWay(it) },
         itemContent = { item ->
-            Row {
-                Spacer(Modifier.width(8.dp))
-                Text(text = item)
-            }
+            Text(
+                text = item,
+                fontWeight = if (connectionWay == item) FontWeight.SemiBold else FontWeight.Normal,
+                modifier = Modifier.padding(4.dp))
         },
         selectedItemContent = { device ->
             Text(device, fontWeight = FontWeight.Bold)

@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -27,11 +28,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.came.parkare.dashboardapp.ui.components.CustomDropdownSelector
 import com.came.parkare.dashboardapp.ui.screens.settings.components.TabTitle
 import dashboardapp.composeapp.generated.resources.Res
+import dashboardapp.composeapp.generated.resources.config_type_label
 import dashboardapp.composeapp.generated.resources.download_file_button
 import dashboardapp.composeapp.generated.resources.entry_file_button
 import dashboardapp.composeapp.generated.resources.file_content_label
@@ -50,8 +53,11 @@ fun ExportTab(){
 
     viewModel.initConfig()
 
-    Column(modifier = Modifier.padding(8.dp)) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.padding(8.dp)) {
         TabTitle(Res.string.export_title)
+
 
         DownloadButton()
 
@@ -67,13 +73,16 @@ private fun DownloadButton() {
 
     val viewModel: ExportViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
-    Column {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         CustomDropdownSelector(
             items = state.templates.keys.map { it },
             selectedItem = state.selectedTemplate,
             onItemSelected = { viewModel.setSelectedTemplate(it) },
-            itemContent = { device ->
-                Text(device, modifier = Modifier.padding(4.dp))
+            itemContent = { config ->
+                Text(
+                    text = config,
+                    fontWeight = if(state.selectedTemplate == config) FontWeight.SemiBold else FontWeight.Normal,
+                    modifier = Modifier.padding(4.dp))
             },
             selectedItemContent = { device ->
                 Text(device, fontWeight = FontWeight.Bold)

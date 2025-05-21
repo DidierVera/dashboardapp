@@ -1,0 +1,16 @@
+
+//CONFIGURE WEB CONFIGURATOR FOR DEBUG
+//Create a gradle Run / Debug Configuration
+//Add the name: Configurator [WebRun]
+//In the "Run" field add the command: wasmJsBrowserRun -t --quiet
+
+
+
+//GENERATE WEB CONFIGURATOR DEPLOY PACKAGE
+
+//for generate web configurator deploy run next command on terminal: ./gradlew wasmJsBrowserDistribution
+//it'll generate the files in the location: /composeApp/build/dist/wasmJs/productionExecutable/
+//Copy all the files in the folder "productionExecutable" to the directory: /composeApp/src/androidMain/assets/webapp/
+//NOTE: the assets/webapp/ directory must have these names and must be the root
+
+

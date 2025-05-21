@@ -64,7 +64,8 @@ fun ShareConfigTab() {
 
     viewModel.initConfig()
 
-    Column(modifier = Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.padding(8.dp)) {
         TabTitle(Res.string.share_config_option)
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Column(

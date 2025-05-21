@@ -110,11 +110,11 @@ class SettingViewModel(
                     nameRes = Res.string.share_config_option,
                     isSelected = false
                 ),
-                MenuOptionState(
-                    iconRes = Res.drawable.ic_testing,
-                    nameRes = Res.string.testing_option,
-                    isSelected = false
-                )
+//                MenuOptionState(
+//                    iconRes = Res.drawable.ic_testing,
+//                    nameRes = Res.string.testing_option,
+//                    isSelected = false
+//                )
             )
         }
     }

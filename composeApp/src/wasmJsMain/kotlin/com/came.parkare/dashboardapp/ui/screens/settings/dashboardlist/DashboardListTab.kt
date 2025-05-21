@@ -49,7 +49,7 @@ import org.koin.core.annotation.KoinExperimentalAPI
 fun DashboardListTab() {
     val viewModel: DashboardListViewModel = koinViewModel()
     viewModel.initTab()
-    Column(verticalArrangement = Arrangement.spacedBy(20.dp),
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier.padding(8.dp)) {
         TabTitle(Res.string.dashboard_list_option)
         AddNewItem()

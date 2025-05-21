@@ -6,9 +6,9 @@ import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.ErrorValidator
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
-import com.came.parkare.dashboardapp.domain.usecases.GetTemplatesConfig
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
+import com.came.parkare.dashboardapp.domain.usecases.GetDefaultTemplatesConfig
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toDto
+import com.came.parkare.dashboardapp.ui.utils.CommonUtils
 import com.came.parkare.dashboardapp.ui.utils.FileDownloader
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import kotlinx.coroutines.delay
@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.Json
 
 @OptIn(ExperimentalSerializationApi::class)
 class ExportViewModel (
@@ -26,7 +25,7 @@ class ExportViewModel (
     private val validator: ErrorValidator,
     private val wasmUtilsHandler: WasmUtilsHandler,
     private val appLogger: AppLogger,
-    private val getTemplatesConfig: GetTemplatesConfig
+    private val getDefaultTemplatesConfig: GetDefaultTemplatesConfig
 ): ViewModel() {
 
     private val _state = MutableStateFlow(ExportState())
@@ -42,7 +41,7 @@ class ExportViewModel (
     private fun loadTemplates() {
         viewModelScope.launch {
             wasmUtilsHandler.showLoading(true)
-            when(val result = getTemplatesConfig.invoke()){
+            when(val result = getDefaultTemplatesConfig.invoke()){
                 is ServiceResult.Error -> {
                     validator.validate(result.error)
                     wasmUtilsHandler.showLoading(false)
@@ -50,7 +49,7 @@ class ExportViewModel (
                 is ServiceResult.Success -> {
                     val newList = _state.value.templates.toMutableMap()
                     newList.putAll(result.data.orEmpty().associate { temp -> temp.templateName to
-                            getPrettyJson(temp.screens.map { it.toDto() }) })
+                            CommonUtils().getPrettyJson(temp.screens.map { it.toDto() }) })
 
                     _state.update { it.copy(templates = newList) }
                     wasmUtilsHandler.showLoading(false)
@@ -70,22 +69,13 @@ class ExportViewModel (
                 is ServiceResult.Success -> {
 
                     wasmUtilsHandler.showLoading(false)
-                    val fileContent = getPrettyJson(result.data)
-                    _state.update { it.copy(selectedTemplate = "CURRENT CONFIG") }
-                    _state.update { it.copy(templates = mapOf("CURRENT CONFIG" to fileContent)) }
+                    val fileContent = CommonUtils().getPrettyJson(result.data)
+                    _state.update { it.copy(selectedTemplate = _state.value.currentConfigLabel) }
+                    _state.update { it.copy(templates = mapOf(_state.value.currentConfigLabel to fileContent)) }
                     _state.update { it.copy(contentFile = fileContent) }
                 }
             }
         }
-    }
-
-    private fun getPrettyJson(data: List<ScreenDto>?): String {
-        val prettyJson = Json {
-            prettyPrint = true
-            prettyPrintIndent = " "
-            encodeDefaults = true
-        }
-        return prettyJson.encodeToString(data)
     }
 
     fun setSelectedTemplate(name: String){

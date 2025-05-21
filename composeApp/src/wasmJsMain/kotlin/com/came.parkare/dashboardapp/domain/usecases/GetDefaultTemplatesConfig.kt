@@ -9,7 +9,7 @@ import com.came.parkare.dashboardapp.domain.models.ConfigTemplateModel
 import com.came.parkare.dashboardapp.domain.repositories.template.ConfigTemplateRepository
 import kotlinx.browser.window
 
-class GetTemplatesConfig(
+class GetDefaultTemplatesConfig(
     private val repository: ConfigTemplateRepository,
     private val appLogger: AppLogger,
     private val preferences: SharedPreferencesProvider

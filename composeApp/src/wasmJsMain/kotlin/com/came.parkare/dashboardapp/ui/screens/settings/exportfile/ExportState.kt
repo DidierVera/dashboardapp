@@ -5,5 +5,6 @@ import org.jetbrains.compose.resources.StringResource
 data class ExportState(
     val contentFile: String = "",
     val templates: Map<String, String> = emptyMap(),
-    val selectedTemplate: String = ""
+    val selectedTemplate: String = "",
+    val currentConfigLabel: String = "CURRENT CONFIG"
 )

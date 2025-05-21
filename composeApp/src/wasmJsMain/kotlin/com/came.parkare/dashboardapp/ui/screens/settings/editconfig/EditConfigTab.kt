@@ -59,17 +59,18 @@ fun EditConfigTab(modifier: Modifier = Modifier){
 
     viewModel.getCurrentScreenConfig()
 
-    Column(modifier = modifier.padding(8.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = modifier.padding(8.dp)) {
         TabTitle(Res.string.edit_current_config_option)
 
         Row(modifier = Modifier.fillMaxWidth().padding(4.dp)) {
-            LazyColumn(modifier = Modifier.padding(16.dp).weight(0.35f)) {
+            LazyColumn(modifier = Modifier.weight(0.50f)) {
                 items(items = state.screens){ screen ->
                     LoadScreen(screen)
                 }
             }
 
-            LazyColumn(modifier = Modifier.weight(0.65f)) {
+            LazyColumn(modifier = Modifier.weight(0.50f)) {
                 item { EditorTitle() }
                 item { EditorField(viewModel, state) }
             }
