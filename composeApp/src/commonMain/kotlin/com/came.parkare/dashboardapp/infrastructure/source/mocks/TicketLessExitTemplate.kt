@@ -858,7 +858,7 @@ object TicketLessExitTemplate {
                     },
                     {
                         "dispatch-code": 96,
-                        "screen-id": "DLG_OUT_SERVICE",
+                        "screen-id": "DLG_BLOCKED",
                         "data": [
                             {
                                 "element-type": "box",
@@ -886,7 +886,7 @@ object TicketLessExitTemplate {
                     },		
                     {
                         "dispatch-code": 0,
-                        "screen-id": "DLG_OUT_SERVICE",
+                        "screen-id": "DLG_BOOT",
                         "data": [
                             {
                                 "element-type": "box",
