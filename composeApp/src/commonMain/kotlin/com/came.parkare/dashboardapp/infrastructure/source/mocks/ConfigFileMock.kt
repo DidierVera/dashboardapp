@@ -1201,13 +1201,13 @@ object ConfigFileMock {
                                         "element-type": "text",
                                         "data": {
                                             "dashboardItemId": "contact-customer-service",
-                                            "defaultText": "Prem el botó de l'interfòn\n\rper solucionar-ho",
+                                            "defaultText": "Premi el botó de l'interfòn\n\rper solucionar-ho",
                                             "textSize": 24,
                                             "textColor": "#FF5800",
                                             "padding": 4,
                                             "fontWeight": "Medium",
                                             "translations": {
-                                                "lang1": "Prem el botó de l'interfòn\n\rper solucionar-ho"
+                                                "lang1": "Premi el botó de l'interfòn\n\rper solucionar-ho"
                                             }
                                         }
                                     },
@@ -1215,13 +1215,13 @@ object ConfigFileMock {
                                         "element-type": "text",
                                         "data": {
                                             "dashboardItemId": "contact-customer-service",
-                                            "defaultText": "Pulse botón de interfonía\n\rpara solucionarlo",
+                                            "defaultText": "Pulse el botón de interfonía\n\rpara solucionarlo",
                                             "textSize": 24,
                                             "textColor": "#FFFFFF",
                                             "padding": 4,
                                             "fontWeight": "Medium",
                                             "translations": {
-                                                "lang1": "Pulse botón de interfonía\n\rpara solucionarlo"
+                                                "lang1": "Pulse el botón de interfonía\n\rpara solucionarlo"
                                             }
                                         }
                                     }
@@ -1232,7 +1232,7 @@ object ConfigFileMock {
                 },
                 {
                     "dispatch-code": 96,
-                    "screen-id": "DLG_OUT_SERVICE",
+                    "screen-id": "DLG_BLOCKED",
                     "margin-top": 20,
                     "margin-bottom": 100,
                     "margin-left": 20,

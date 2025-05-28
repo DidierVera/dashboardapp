@@ -516,13 +516,13 @@ object EntryWithTicketTemplate {
                                             "element-type": "text",
                                             "data": {
                                                 "dashboardItemId": "fail-sorry",
-                                                "defaultText": "TIQUET → PREMI BOTÓ",
+                                                "defaultText": "TIQUET → PREMI EL BOTÓ",
                                                 "textSize": 32,
                                                 "textColor": "#FFFFFF",
                                                 "padding": 12,
                                                 "fontWeight": "Bold",
                                                 "translations": {
-                                                    "lang1": "TIQUET → PREMI BOTÓ"
+                                                    "lang1": "TIQUET → PREMI EL BOTÓ"
                                                 }
                                             }
                                         },
@@ -530,13 +530,13 @@ object EntryWithTicketTemplate {
                                             "element-type": "text",
                                             "data": {
                                                 "dashboardItemId": "fail-sorry",
-                                                "defaultText": "TIQUE → PULSE BOTÓN",
+                                                "defaultText": "TIQUE → PULSE EL BOTÓN",
                                                 "textSize": 32,
                                                 "textColor": "#FFFFFF",
                                                 "padding": 12,
                                                 "fontWeight": "Bold",
                                                 "translations": {
-                                                    "lang1": "TIQUE → PULSE BOTÓN"
+                                                    "lang1": "TIQUE → PULSE EL BOTÓN"
                                                 }
                                             }
                                         }
@@ -1057,13 +1057,13 @@ object EntryWithTicketTemplate {
                                             "element-type": "text",
                                             "data": {
                                                 "dashboardItemId": "contact-customer-service",
-                                                "defaultText": "Prem el botó de l'interfòn\n\rper solucionar-ho",
+                                                "defaultText": "Premi el botó de l'interfòn\n\rper solucionar-ho",
                                                 "textSize": 24,
                                                 "textColor": "#FF5800",
                                                 "padding": 4,
                                                 "fontWeight": "Medium",
                                                 "translations": {
-                                                    "lang1": "Prem el botó de l'interfòn\n\rper solucionar-ho"
+                                                    "lang1": "Premi el botó de l'interfòn\n\rper solucionar-ho"
                                                 }
                                             }
                                         },
@@ -1071,13 +1071,13 @@ object EntryWithTicketTemplate {
                                             "element-type": "text",
                                             "data": {
                                                 "dashboardItemId": "contact-customer-service",
-                                                "defaultText": "Pulse botón de interfonía\n\rpara solucionarlo",
+                                                "defaultText": "Pulse el botón de interfonía\n\rpara solucionarlo",
                                                 "textSize": 24,
                                                 "textColor": "#FFFFFF",
                                                 "padding": 4,
                                                 "fontWeight": "Medium",
                                                 "translations": {
-                                                    "lang1": "Pulse botón de interfonía\n\rpara solucionarlo"
+                                                    "lang1": "Pulse el botón de interfonía\n\rpara solucionarlo"
                                                 }
                                             }
                                         }

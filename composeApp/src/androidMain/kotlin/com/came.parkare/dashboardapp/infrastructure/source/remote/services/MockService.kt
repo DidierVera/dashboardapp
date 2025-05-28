@@ -3,6 +3,7 @@ package com.came.parkare.dashboardapp.infrastructure.source.remote.services
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.IServerConnection
+import com.came.parkare.dashboardapp.domain.repositories.local.DashboardElementRepository
 import com.came.parkare.dashboardapp.infrastructure.source.remote.dto.common.DialogResponseDto
 import com.came.parkare.dashboardapp.infrastructure.source.remote.dto.TerminalResponseDto
 import com.came.parkare.dashboardapp.infrastructure.source.remote.dto.common.TypeResponseDto
@@ -16,6 +17,7 @@ import kotlinx.serialization.json.JsonArray
 
 class MockService (
     private val serverConnection: IServerConnection,
+    private val dashboardElementRepository: DashboardElementRepository,
     private val logger: AppLogger
 ) {
     private var mockThread: Thread? = null
@@ -25,29 +27,33 @@ class MockService (
         //cleanup() // Clean up any existing connection
 
         mockScope.launch {
+            val screens = dashboardElementRepository.getAllScreens()
+
             mockThread = Thread {
                 try {
                     logger.trackLog("com.came.parkare.dashboardapp.Mock", "Inicio de aplicación conexión MOCK")
                     while (!Thread.currentThread().isInterrupted) {
                         serverConnection.setStatusConnection(true)
                         Thread.sleep((2000L..8000).random())
-                        for(screenToShow in 1 until 13){
+
+                        for(screenToShow in 1 until screens.size){
+                            val code = screens[screenToShow].dispatcherCode
                             if (Thread.currentThread().isInterrupted) break
 
                             println("Code Screen to show: $screenToShow")
                             var result = getBootDit()
-                            when(screenToShow){
-                                1 -> result = getBootDit()//DLG_BOOT (restart screen)
-                                2 -> result = getIdleDit()//DLG_IDLE (rest screen)
-                                3 -> setOfflineMode()//MOCK DISCONNECTED(rest screen)
-                                4 -> result = getOutServiceDit()//DLG_OUT_SERVICE
-                                5 -> result = getParkingCompleteDit()//DLG_PARKING_COMPLETED
-                                6 -> result = getReadingPlateDit()//DLG_READING_PLATE
-                                7 -> result = getPleaseProceedDit()//DLG_PLEASE_PROCEED
-                                8 -> result = getUserDit()//USER (rest screen)
-                                9 -> result = getCardErrorDit()//DLG_CARD_ERROR (rest screen)
-                                10 -> result = getPaymentRequiredDit()//DLG_PAYMENT_REQUIRED (pendiente de pago)
-                                11 -> result = getStartCurrentBillDit()//DLG_InicioCobroActual (pendiente de pago)
+                            when(code){
+                                0L -> result = getBootDit()//DLG_BOOT (restart screen)
+                                5L -> result = getIdleDit()//DLG_IDLE (rest screen)
+                                1005L -> setOfflineMode()//MOCK DISCONNECTED(rest screen)
+                                6L -> result = getOutServiceDit()//DLG_OUT_SERVICE
+                                7L -> result = getParkingCompleteDit()//DLG_PARKING_COMPLETED
+                                9L -> result = getReadingPlateDit()//DLG_READING_PLATE
+                                12L -> result = getPleaseProceedDit()//DLG_PLEASE_PROCEED
+                                8L -> result = getUserDit()//USER (rest screen)
+                                18L -> result = getCardErrorDit()//DLG_CARD_ERROR (rest screen)
+                                36L -> result = getPaymentRequiredDit()//DLG_PAYMENT_REQUIRED (pendiente de pago)
+                                89L -> result = getStartCurrentBillDit()//DLG_InicioCobroActual (pendiente de pago)
                                 else -> result = getTerminalLockedDit()//DLG_LOCKED
                             }
                             onSocketResult.invoke(ServiceResult.Success(result))
