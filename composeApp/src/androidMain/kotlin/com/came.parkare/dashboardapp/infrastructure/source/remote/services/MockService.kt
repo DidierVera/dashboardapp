@@ -36,7 +36,7 @@ class MockService (
                         serverConnection.setStatusConnection(true)
                         Thread.sleep((2000L..8000).random())
 
-                        for(screenToShow in 1 until screens.size){
+                        for(screenToShow in screens.indices){
                             val code = screens[screenToShow].dispatcherCode
                             if (Thread.currentThread().isInterrupted) break
 
