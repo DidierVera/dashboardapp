@@ -37,6 +37,7 @@ import com.came.parkare.dashboardapp.ui.components.elements.BuildBoxView
 import com.came.parkare.dashboardapp.ui.components.elements.BuildColumnView
 import com.came.parkare.dashboardapp.ui.components.elements.BuildRowView
 import com.came.parkare.dashboardapp.ui.components.elements.BuildTextView
+import com.came.parkare.dashboardapp.ui.screens.settings.components.BuildElement
 import com.came.parkare.dashboardapp.ui.screens.settings.components.TabTitle
 import com.came.parkare.dashboardapp.ui.screens.settings.shareconfig.components.DeviceListView
 import com.came.parkare.dashboardapp.ui.screens.settings.shareconfig.components.LoadElementImage
@@ -100,7 +101,7 @@ private fun ElementsList(modifier: Modifier = Modifier) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.padding(12.dp, 0.dp)) {
                             state.elementsByScreen.forEach { mItem ->
-                                buildElement(mItem, state.textSizeScale, state.imagesSource)
+                                BuildElement(mItem, state.textSizeScale, state.imagesSource)
                             }
                         }
                     }
@@ -138,48 +139,6 @@ private fun ConfigToBeShared(modifier: Modifier = Modifier) {
     }
 }
 
-@Composable
-private fun buildElement(element: ElementModel, textSizeScale: Int, imageFiles: List<ImagesFileModel>? = null){
-    val scaleFactor = (textSizeScale / 10f).coerceIn(0.5f, 3f)
-    when(element){
-        is ElementModel.BoxModel -> {
-            val box = element.data
-            BuildBoxView(box = box, textSizeScale = textSizeScale, scaleFactor = scaleFactor) { dto, scale ->
-                buildElement(dto, scale, imageFiles)
-            }
-        }
-        is ElementModel.ColumnModel -> {
-            val column = element.data
-            BuildColumnView(column = column, textSizeScale = textSizeScale, scaleFactor = scaleFactor) { dto, scale ->
-                buildElement(dto, scale, imageFiles)
-            }
-        }
-        is ElementModel.ImageModel -> {
-            val image = element.data
-            println("File Name: ${ image.fileName }")
-            val file = imageFiles?.firstOrNull { img -> img.fileName?.contains(image.fileName.orEmpty()) == true }
-            println("File Content: ${ imageFiles }")
-
-            LoadElementImage(image.copy(folderPath = file?.fileContent), file, scaleFactor)
-        }
-        is ElementModel.RowModel -> {
-            val row = element.data
-            BuildRowView(row = row, textSizeScale = textSizeScale, scaleFactor = scaleFactor) { dto, scale ->
-                buildElement(dto, scale, imageFiles)
-            }
-        }
-        is ElementModel.SpacerModel -> {
-            Spacer(modifier = Modifier.size((element.data.value.toFloat() * scaleFactor).dp))
-        }
-        is ElementModel.TextModel -> {
-            val text = element.data
-            BuildTextView(text = text, scaleFactor)
-        }
-        is ElementModel.VideoModel -> {
-            Text(text = "Video")
-        }
-    }
-}
 
 @Composable
 private fun LoadScreensAndElements() {

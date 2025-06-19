@@ -22,6 +22,7 @@
     <string name="settings_button">SETTINGS</string>
     <string name="share_file_button">SHARE TO</string>
     <string name="share_button">SHARE</string>
+    <string name="apply_button">APPLY</string>
 
     <!--Testing screen-->
     <string name="connection_way_label">Connection way</string>
@@ -70,6 +71,11 @@
     <string name="content_label">Content:</string>
     <string name="password_label">Password</string>
 
+    <!--  Edit current config  -->
+    <string name="element_code_label">Element code:</string>
+    <string name="screen_preview_label">Screen preview</string>
+    <string name="screen_list_label">Screen list</string>
+
     <!--  Messages  -->
     <string name="request_password_message">Entry the password for access to the way monitor config.</string>
     <string name="screen_config_saved_message">The new screens configuration has been saved successfully.</string>
@@ -79,6 +85,7 @@
     <string name="config_saved_message">Connection config saved successfully.</string>
     <string name="delete_device_dialog_message">Are you sure you want to delete the item: %1$s ?.</string>
     <string name="no_items_to_show_message">There aren't items to show.</string>
+    <string name="select_screen_message">Select the screen to edit...</string>
     <string name="file_downloaded_message">File downloaded successfully.</string>
     <string name="share_configuration_message">Are you sure you want to share this configuration with the selected devices? \n Please enter the password to confirm it</string>
     <string name="configuration_shared_successfully">Congratulations... \n Config shared with all the selected devices successfully!</string>

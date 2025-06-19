@@ -17,7 +17,7 @@ import com.came.parkare.dashboardapp.ui.theme.Rubik
 import com.came.parkare.dashboardapp.ui.theme.hexToColor
 
 @Composable
-fun BuildTextView(text: TextDataModel, scaleFactor: Float) {
+fun BuildTextView(text: TextDataModel, scaleFactor: Float, modifier: Modifier = Modifier) {
     val weight = when {
         text.fontWeight.lowercase().contains("bold") -> FontWeight.Bold
         text.fontWeight.lowercase().contains("medium") -> FontWeight.Medium
@@ -27,7 +27,7 @@ fun BuildTextView(text: TextDataModel, scaleFactor: Float) {
         .coerceAtLeast((text.textSize - 8).toFloat())
     if (text.dashboardItemId.contains("license-plate-value")) {
         println("license-plate-value==== ${text.defaultText}")
-        LicensePlateItemStyle { modifier ->
+        LicensePlateItemStyle(modifier = modifier) { mdf ->
             Text(
                 text = text.defaultText,
                 fontSize = textSize.sp,
@@ -36,7 +36,7 @@ fun BuildTextView(text: TextDataModel, scaleFactor: Float) {
                 fontWeight = weight,
                 textAlign = TextAlign.Center,
                 color = hexToColor(text.textColor),
-                modifier = modifier.padding(0.dp, 0.dp, 0.dp, 10.dp)
+                modifier = mdf.padding(0.dp, 0.dp, 0.dp, 10.dp)
                     .padding(((text.style.padding ?: 1).toFloat() * scaleFactor).dp)
             )
         }
@@ -51,7 +51,7 @@ fun BuildTextView(text: TextDataModel, scaleFactor: Float) {
             lineHeight = 1.2.em,
             textAlign = TextAlign.Center,
             color = hexToColor(text.textColor),
-            modifier = Modifier.padding(((text.style.padding ?: 1).toFloat() * scaleFactor).dp)
+            modifier = modifier.padding(((text.style.padding ?: 1).toFloat() * scaleFactor).dp)
         )
     }
 }

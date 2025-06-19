@@ -2,6 +2,7 @@ version:0
 string|accept_button|QUNDRVBU
 string|api_label|QVBJ
 string|app_name|RGFzaGJvYXJkIGFwcA==
+string|apply_button|QVBQTFk=
 string|back_button_alt|QmFjayBidXR0b24=
 string|cancel_button|Q0FOQ0VM
 string|components_label|Q29tcG9uZW50cw==
@@ -30,6 +31,7 @@ string|dialog_message_label|RGlhbG9nIG1lc3NhZ2U=
 string|discard_button|RElTQ0FSRCBDSEFOR0VT
 string|download_file_button|RE9XTkxPQUQgRklMRQ==
 string|edit_current_config_option|RWRpdCBjdXJyZW50IGNvbmZpZw==
+string|element_code_label|RWxlbWVudCBjb2RlOg==
 string|entry_file_button|RU5UUlkgV0lUSCBUSUNLRVQ=
 string|exit_file_button|RVhJVCA=
 string|export_option|RXhwb3J0
@@ -50,7 +52,10 @@ string|properties_label|UHJvcGVydGllcw==
 string|request_password_message|RW50cnkgdGhlIHBhc3N3b3JkIGZvciBhY2Nlc3MgdG8gdGhlIHdheSBtb25pdG9yIGNvbmZpZy4=
 string|save_button|U0FWRQ==
 string|screen_config_saved_message|VGhlIG5ldyBzY3JlZW5zIGNvbmZpZ3VyYXRpb24gaGFzIGJlZW4gc2F2ZWQgc3VjY2Vzc2Z1bGx5Lg==
+string|screen_list_label|U2NyZWVuIGxpc3Q=
+string|screen_preview_label|U2NyZWVuIHByZXZpZXc=
 string|screens_label|U2NyZWVucw==
+string|select_screen_message|U2VsZWN0IHRoZSBzY3JlZW4gdG8gZWRpdC4uLg==
 string|send_button|U0VORA==
 string|settings_button|U0VUVElOR1M=
 string|share_button|U0hBUkU=
