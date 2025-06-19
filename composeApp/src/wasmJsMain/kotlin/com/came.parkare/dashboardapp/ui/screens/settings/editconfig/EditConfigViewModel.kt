@@ -13,17 +13,8 @@ import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
 import com.came.parkare.dashboardapp.domain.usecases.SaveScreenConfig
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toModel
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.BoxDataDto
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ColumnDataDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ElementDto
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ImageDataDto
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.RowDataDto
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.SpacerDataDto
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.TextDataDto
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.VideoDataDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.toDto
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toModel
 import com.came.parkare.dashboardapp.ui.components.dialog.AppDialogState
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
@@ -215,16 +206,8 @@ class EditConfigViewModel(
                 }
 
                 if (selectedElement != null && elementPosition in currentScreenElements.indices) {
-                    val newElement = when (selectedElement) {
-                        is ElementDto.BoxDto -> getElementFromJson<ElementDto.BoxDto>()
-                        is ElementDto.ColumnDto -> getElementFromJson<ElementDto.ColumnDto>()
-                        is ElementDto.ImageDto -> getElementFromJson<ElementDto.ImageDto>()
-                        is ElementDto.RowDto -> getElementFromJson<ElementDto.RowDto>()
-                        is ElementDto.SpacerDto -> getElementFromJson<ElementDto.SpacerDto>()
-                        is ElementDto.TextDto -> getElementFromJson<ElementDto.TextDto>()
-                        is ElementDto.VideoDto -> getElementFromJson<ElementDto.VideoDto>()
-                    }
 
+                    val newElement = Json.decodeFromString<ElementDto>(state.contentFile)
                     currentScreenElements[elementPosition] = newElement
 
                     val newScreen = selectedScreen.copy(
@@ -248,16 +231,6 @@ class EditConfigViewModel(
             } finally {
                 wasmUtilsHandler.showLoading(false)
             }
-        }
-    }
-
-    private inline fun <reified T> getElementFromJson(): T {
-        val mJson = _state.value.contentFile
-        return try {
-            Json.decodeFromString(mJson)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            throw IllegalArgumentException("Failed to parse JSON for ${T::class.simpleName}", e)
         }
     }
 }

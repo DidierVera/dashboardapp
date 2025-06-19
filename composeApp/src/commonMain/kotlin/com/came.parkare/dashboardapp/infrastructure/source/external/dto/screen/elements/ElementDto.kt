@@ -12,7 +12,7 @@ import kotlinx.serialization.json.jsonPrimitive
 
 
 @OptIn(ExperimentalSerializationApi::class)
-@Serializable
+@Serializable(with = ElementSerializer::class)
 @JsonClassDiscriminator("element-type")
 sealed class ElementDto {
     @Serializable
