@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.IconButton
@@ -37,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -90,11 +92,15 @@ fun ConnectionTab() {
                 TextField(//terminal ip
                     value = state.terminalIp,
                     onValueChange = { viewModel.setTerminalIp(it) },
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    singleLine = true,
                     label = { AppLabel(Res.string.terminal_ip_label) }
                 )
                 TextField(//port
                     value = "${state.port}",
                     onValueChange ={ viewModel.setPort(it.toInt()) },
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    singleLine = true,
                     label = { AppLabel(Res.string.port_label) }
                 )
             }
@@ -104,11 +110,15 @@ fun ConnectionTab() {
                 TextField(//api
                     value = state.api,
                     onValueChange ={ viewModel.setApi(it) },
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    singleLine = true,
                     label = { AppLabel(Res.string.api_label) }
                 )
                 TextField(//delay
                     value = "${state.delayTime}",
                     onValueChange ={ viewModel.setDelayTime(it.toInt()) },
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    singleLine = true,
                     label = { AppLabel(Res.string.delay_time_label) }
                 )
             }
@@ -117,6 +127,8 @@ fun ConnectionTab() {
             TextField(//text size scale
                 value = "${state.textSizeScale}",
                 onValueChange ={ viewModel.textSizeScale(it.toInt()) },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                singleLine = true,
                 label = { AppLabel(Res.string.text_size_scale_label) }
             )
         }

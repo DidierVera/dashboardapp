@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,9 +24,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -84,16 +93,13 @@ fun ActionButtons(modifier: Modifier = Modifier,
                   onAccept: () -> Unit, onCancel: () -> Unit) {
     val viewModel: AppDialogViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
-    val passwordState by viewModel.passwordState.collectAsState()
-    val isAcceptButtonActive = if (state.requirePassword){
-        passwordState.isNotBlank() && passwordState == Constants.PASSWORD_VALIDATION
-    }else true
+
     Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
 
         AppButton(text = stringResource(Res.string.accept_button), onClick = {
             onAccept.invoke()
             viewModel.hideDialog()
-        }, isEnabled = isAcceptButtonActive)
+        }, isEnabled = state.isAcceptButtonActive)
         AppButton(text = stringResource(Res.string.cancel_button), buttonColors = ButtonDefaults.buttonColors().copy(
             containerColor = Color.DarkGray,
             contentColor = Color.White,
@@ -109,6 +115,7 @@ fun ActionButtons(modifier: Modifier = Modifier,
 @Composable
 private fun PasswordField(requirePassword: Boolean) {
     val viewModel: AppDialogViewModel = koinViewModel()
+    val state by viewModel.state.collectAsState()
     val passwordState by viewModel.passwordState.collectAsState()
     if (requirePassword){
         TextField(value = passwordState, onValueChange = {
@@ -116,7 +123,18 @@ private fun PasswordField(requirePassword: Boolean) {
         }, label = {
             Text(text = stringResource(Res.string.password_label),
                 style = MaterialTheme.typography.titleSmall)
-        }, visualTransformation = PasswordVisualTransformation())
+        }, visualTransformation = PasswordVisualTransformation(),
+            singleLine = true,
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    if(viewModel.state.value.isAcceptButtonActive){
+                        state.onAccept.invoke()
+                        viewModel.hideDialog()
+                    }
+                }
+            ),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
+        )
     }
 }
 

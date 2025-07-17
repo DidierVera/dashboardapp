@@ -4,5 +4,6 @@ data class AppDialogState(
     val message: String = "",
     val onCancel: () -> Unit = {},
     val onAccept: () -> Unit = {},
-    val requirePassword: Boolean = false
+    val requirePassword: Boolean = false,
+    val isAcceptButtonActive: Boolean = false
 )

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.came.parkare.dashboardapp.ui.components.AppButton
 import com.came.parkare.dashboardapp.ui.components.AppLabel
@@ -157,17 +159,23 @@ fun AddNewItem() {
             TextField(//Dashboard ip
                 value = state.dashboardIp,
                 onValueChange ={ viewModel.setDashboardIp(it) },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                singleLine = true,
                 label = { AppLabel(Res.string.dashboard_ip_label) }
             )
 
             TextField(//custom name
                 value = state.customName.orEmpty(),
                 onValueChange = { viewModel.setCustomName(it) },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                singleLine = true,
                 label = { AppLabel(Res.string.custom_name_label) }
             )
             TextField(//terminal ip
                 value = state.terminalIp.orEmpty(),
                 onValueChange ={ viewModel.setTerminalIp(it) },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                singleLine = true,
                 label = { AppLabel(Res.string.terminal_ip_label) }
             )
         }

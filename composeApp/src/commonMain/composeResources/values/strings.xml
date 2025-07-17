@@ -23,6 +23,7 @@
     <string name="share_file_button">SHARE TO</string>
     <string name="share_button">SHARE</string>
     <string name="apply_button">APPLY</string>
+    <string name="update_button">UPDATE</string>
 
     <!--Testing screen-->
     <string name="connection_way_label">Connection way</string>

@@ -14,7 +14,7 @@ class HomeViewModel(
 ): ViewModel() {
 
     fun showRequestLogin(message: String, onAccept:() -> Unit) {
-        val ownIpAddress = window.location.hostname
+        val ownIpAddress = "192.168.209.6"//window.location.hostname
         preferences.put(SELECTED_IP_ADDRESS, ownIpAddress)
         wasmUtils.showDialogRequestPassword(AppDialogState(
             requirePassword = true,

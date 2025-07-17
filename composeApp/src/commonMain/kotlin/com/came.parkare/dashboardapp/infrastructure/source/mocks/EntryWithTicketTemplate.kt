@@ -802,6 +802,7 @@ object EntryWithTicketTemplate {
                                 "data": {
                                     "dashboardItemId": "license-plate-value",
                                     "defaultText": "---- ---",
+                                    "ditTypeCode": 10,
                                     "dataKey": "MainLicensePlate",
                                     "textSize": 72,
                                     "textColor": "#000000",

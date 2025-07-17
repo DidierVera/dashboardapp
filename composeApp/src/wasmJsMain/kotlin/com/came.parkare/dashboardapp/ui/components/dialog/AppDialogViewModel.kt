@@ -2,6 +2,7 @@ package com.came.parkare.dashboardapp.ui.components.dialog
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.came.parkare.dashboardapp.config.constants.Constants
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -46,6 +47,15 @@ class AppDialogViewModel(
 
     fun setPassword(newValue: String){
         _passwordState.update { newValue }
+        setButtonActive()
     }
 
+    private fun setButtonActive() {
+        val passwordState = _passwordState.value
+        val isAcceptButtonActive = if (_state.value.requirePassword){
+            passwordState.isNotBlank() && passwordState == Constants.PASSWORD_VALIDATION
+        }else true
+
+        _state.update { it.copy(isAcceptButtonActive = isAcceptButtonActive) }
+    }
 }
