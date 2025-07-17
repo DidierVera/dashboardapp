@@ -4,6 +4,7 @@ import androidx.room.Room
 import com.came.parkare.dashboardapp.config.database.AppDatabase
 import com.came.parkare.dashboardapp.config.database.migrations.Migration_2_3
 import com.came.parkare.dashboardapp.config.database.migrations.Migration_3_4
+import com.came.parkare.dashboardapp.config.database.migrations.Migration_4_5
 import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.AppLoggerImpl
 import com.came.parkare.dashboardapp.config.utils.IServerConnection
@@ -11,6 +12,7 @@ import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesWrapper
 import com.came.parkare.dashboardapp.domain.repositories.external.ConfigFileRepository
 import com.came.parkare.dashboardapp.domain.repositories.external.FtpServerFileRepository
+import com.came.parkare.dashboardapp.domain.repositories.local.ConfigTemplateRepository
 import com.came.parkare.dashboardapp.domain.repositories.local.DashboardDevicesRepository
 import com.came.parkare.dashboardapp.domain.repositories.local.DashboardElementRepository
 import com.came.parkare.dashboardapp.domain.repositories.local.ImageRepository
@@ -26,6 +28,7 @@ import com.came.parkare.dashboardapp.domain.usecases.StartSocketConnection
 import com.came.parkare.dashboardapp.getPlatform
 import com.came.parkare.dashboardapp.infrastructure.repositories.external.ConfigFileRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.repositories.external.FtpServerFileImpl
+import com.came.parkare.dashboardapp.infrastructure.repositories.local.ConfigTemplateRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.repositories.local.DashboardDeviceRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.repositories.local.DashboardElementRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.repositories.local.ImageRepositoryImpl
@@ -58,7 +61,7 @@ val utilsModule = module {
     singleOf(::ServerConnectionImpl) { bind<IServerConnection>() }
     factory { getPlatform() }
     factory { FTPServer() }
-    factory { AndroidApiServer(get(),get(),get()) }
+    factory { AndroidApiServer(get(),get(),get(),get()) }
     single<FirebaseAnalytics> {
         FirebaseAnalytics.getInstance(get())
     }
@@ -86,11 +89,12 @@ val repositoryModule = module {
     singleOf(::ApiServerRepositoryImpl) { bind<ApiServerRepository>() }
     singleOf(::DashboardDeviceRepositoryImpl) { bind<DashboardDevicesRepository>() }
     singleOf(::ImageRepositoryImpl) { bind<ImageRepository>() }
+    singleOf(::ConfigTemplateRepositoryImpl) { bind<ConfigTemplateRepository>() }
 }
 
 val servicesModule = module {
     factory { TerminalSocketService(get(), get(), get()) }
-    factory { MockService(get(), get()) }
+    factory { MockService(get(), get(), get()) }
     factory { SignalRService(get(), get(), get()) }
 }
 
@@ -106,7 +110,7 @@ val databaseModules = module {
             "dashboard_db"
         )
             .fallbackToDestructiveMigration()
-            .addMigrations(Migration_2_3, Migration_3_4)
+            .addMigrations(Migration_2_3, Migration_3_4, Migration_4_5)
             .build()
     }
     single {
@@ -120,5 +124,9 @@ val databaseModules = module {
     single {
         val database = get<AppDatabase>()
         database.dashboardDeviceDao()
+    }
+    single {
+        val database = get<AppDatabase>()
+        database.configTemplateDao()
     }
 }

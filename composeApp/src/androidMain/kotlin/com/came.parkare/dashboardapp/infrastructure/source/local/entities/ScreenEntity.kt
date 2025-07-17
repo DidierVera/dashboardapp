@@ -10,7 +10,9 @@ import com.came.parkare.dashboardapp.infrastructure.source.local.entities.compon
 import com.came.parkare.dashboardapp.infrastructure.source.local.entities.config.ElementListConverter
 import com.came.parkare.dashboardapp.infrastructure.source.local.entities.config.RoomTableNames.SCREEN_TABLE_NAME
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Entity(tableName = SCREEN_TABLE_NAME)
 data class ScreenEntity(
     @PrimaryKey(autoGenerate = true)

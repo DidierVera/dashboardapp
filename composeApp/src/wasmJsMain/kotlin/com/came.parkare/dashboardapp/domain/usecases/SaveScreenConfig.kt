@@ -12,9 +12,7 @@ class SaveScreenConfig(
     private val screenRepository: ScreenRepository,
     private val preferences: WasmSharedPreferencesProvider
 ) {
-    suspend fun invoke(screens: List<ScreenDto>): ServiceResult<ResponseStatusDto>{
-
-        val ipAddress = preferences.get(Constants.SELECTED_IP_ADDRESS, window.location.hostname)
+    suspend fun invoke(ipAddress: String, screens: List<ScreenDto>): ServiceResult<ResponseStatusDto>{
         return screenRepository.saveScreens(ipAddress, screens)
     }
 }

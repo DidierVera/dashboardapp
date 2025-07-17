@@ -12,6 +12,7 @@ object Constants {
     const val TIME_DELAY = "timeDelay"
     const val VIDEO_FRAME = "videoFrame"
     const val TEXT_SIZE_SCALE = "textSizeScale"
+    const val CONFIG_TYPE = "templateConfigType"
 
 
     //Ftp
@@ -24,4 +25,6 @@ object Constants {
 
     //Web preferences
     const val SELECTED_IP_ADDRESS = "selectedIpAddress"
+
+    const val PASSWORD_VALIDATION = "Parking2010"
 }

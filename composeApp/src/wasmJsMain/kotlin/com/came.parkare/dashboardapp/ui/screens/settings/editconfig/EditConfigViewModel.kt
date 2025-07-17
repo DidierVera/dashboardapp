@@ -2,27 +2,25 @@ package com.came.parkare.dashboardapp.ui.screens.settings.editconfig
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.came.parkare.dashboardapp.config.constants.Constants
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.ErrorValidator
+import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.came.parkare.dashboardapp.domain.models.ScreenModel
 import com.came.parkare.dashboardapp.domain.models.components.ElementModel
+import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
 import com.came.parkare.dashboardapp.domain.usecases.SaveScreenConfig
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.BoxDataDto
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ColumnDataDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toModel
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ElementDto
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ImageDataDto
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.RowDataDto
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.SpacerDataDto
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.TextDataDto
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.VideoDataDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.toDto
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toModel
+import com.came.parkare.dashboardapp.ui.components.dialog.AppDialogState
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.screen_config_saved_message
+import kotlinx.browser.window
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -36,6 +34,8 @@ class EditConfigViewModel(
     private val validator: ErrorValidator,
     private val wasmUtilsHandler: WasmUtilsHandler,
     private val saveScreenConfig: SaveScreenConfig,
+    private val getConnectionConfig: GetConnectionConfig,
+    private val preferences: SharedPreferencesProvider,
     private val appLogger: AppLogger
 ): ViewModel() {
 
@@ -43,23 +43,70 @@ class EditConfigViewModel(
     val state: StateFlow<EditConfigState>
         get() = _state.asStateFlow()
 
-
-    fun getCurrentScreenConfig() {
+    fun initConfig(){
         viewModelScope.launch {
-            wasmUtilsHandler.showLoading(true)
-            when(val result = getScreensConfig.invoke()){
-                is ServiceResult.Error -> {
-                    validator.validate(error = result.error)
-                    wasmUtilsHandler.showLoading(false)
-                }
-                is ServiceResult.Success -> {
-                    wasmUtilsHandler.showLoading(false)
-                    _state.update { it.copy(screens = result.data.orEmpty()) }
-                }
+            clearForm()
+            loadConfigImages()
+            getCurrentScreenConfig()
+        }
+    }
+
+    private suspend fun loadConfigImages() {
+        wasmUtilsHandler.showLoading(true)
+        when(val config = getConnectionConfig.invoke()){
+            is ServiceResult.Error -> {
+                validator.validate(config.error)
+                wasmUtilsHandler.showLoading(false)
+            }
+            is ServiceResult.Success -> {
+                _state.update { it.copy(
+                    textSizeScale = config.data?.textSizeScale ?: 10,
+                    imagesSource = config.data?.files?.map { dto -> dto.toModel() }.orEmpty()
+                ) }
+                wasmUtilsHandler.showLoading(false)
             }
         }
     }
 
+    private fun clearForm(){
+        _state.update { it.copy(
+            imagesSource = emptyList(),
+            screenViewer = null,
+            screens = emptyList(),
+            elementsByScreen = emptyList(),
+            contentFile = ""
+        ) }
+    }
+
+    private suspend fun getCurrentScreenConfig() {
+        wasmUtilsHandler.showLoading(true)
+        when(val result = getScreensConfig.invoke()){
+            is ServiceResult.Error -> {
+                validator.validate(error = result.error)
+                wasmUtilsHandler.showLoading(false)
+            }
+            is ServiceResult.Success -> {
+                wasmUtilsHandler.showLoading(false)
+                _state.update { it.copy(screens = result.data.orEmpty()) }
+            }
+        }
+    }
+
+    fun selectScreen(screen: ScreenModel){
+        if (_state.value.screenViewer == screen.screenId){
+            _state.update { it.copy(screenViewer = null, elementsByScreen = emptyList()) }
+        }else{
+            _state.update { it.copy(screenViewer = screen.screenId, elementsByScreen = screen.elements)}
+        }
+    }
+
+    fun launchPasswordRequest(message: String, onClick: () -> Unit){
+        wasmUtilsHandler.showDialogMessage(
+            AppDialogState(
+            message = message,
+            onAccept = onClick, requirePassword = true
+        ))
+    }
 
     @OptIn(ExperimentalSerializationApi::class)
     private inline fun<reified T> encodeAndSetEditableElement(element: T) {
@@ -82,46 +129,46 @@ class EditConfigViewModel(
         }
     }
 
-    fun selectItemOnScreen(element: ElementModel, position: Int, screen: ScreenModel) {
+    fun selectItemOnScreen(element: ElementModel, position: Int) {
         when(element){
             is ElementModel.BoxModel -> {
                 encodeAndSetEditableElement(element.toDto())
-                setElementAndPosition(element.toDto(), position, screen)
+                setElementAndPosition(element.toDto(), position)
             }
             is ElementModel.ColumnModel -> {
                 encodeAndSetEditableElement(element.toDto())
-                setElementAndPosition(element.toDto(), position, screen)
+                setElementAndPosition(element.toDto(), position)
             }
             is ElementModel.ImageModel -> {
                 encodeAndSetEditableElement(element.toDto())
-                setElementAndPosition(element.toDto(), position, screen)
+                setElementAndPosition(element.toDto(), position)
             }
             is ElementModel.RowModel -> {
                 encodeAndSetEditableElement(element.toDto())
-                setElementAndPosition(element.toDto(), position, screen)
+                setElementAndPosition(element.toDto(), position)
             }
             is ElementModel.SpacerModel -> {
                 encodeAndSetEditableElement(element.toDto())
-                setElementAndPosition(element.toDto(), position, screen)
+                setElementAndPosition(element.toDto(), position)
             }
             is ElementModel.TextModel -> {
                 encodeAndSetEditableElement(element.toDto())
-                setElementAndPosition(element.toDto(), position, screen)
+                setElementAndPosition(element.toDto(), position)
             }
             is ElementModel.VideoModel -> {
                 encodeAndSetEditableElement(element.toDto())
-                setElementAndPosition(element.toDto(), position, screen)
+                setElementAndPosition(element.toDto(), position)
             }
         }
     }
 
-    private fun setElementAndPosition(elementDto: ElementDto, position: Int, screen: ScreenModel){
+    private fun setElementAndPosition(elementDto: ElementDto, position: Int){
         viewModelScope.launch {
             _state.update {
                 it.copy(
                     selectedElement = elementDto,
-                    elementPosition = position,
-                    containerScreen = screen.toDto()
+                    elementPosition = position
+
                 )
             }
         }
@@ -132,7 +179,8 @@ class EditConfigViewModel(
             try {
                 wasmUtilsHandler.showLoading(true)
                 val newData = _state.value.screens
-                saveScreenConfig.invoke(newData)
+                val ipAddress = preferences.get(Constants.SELECTED_IP_ADDRESS, window.location.hostname)
+                saveScreenConfig.invoke(ipAddress, newData)
                 wasmUtilsHandler.showLoading(false)
                 wasmUtilsHandler.showToastMessage (Res.string.screen_config_saved_message)
             }catch (e: Exception){
@@ -149,10 +197,7 @@ class EditConfigViewModel(
             try {
                 val state = _state.value
                 val selectedElement = state.selectedElement
-                val selectedScreen = state.containerScreen ?: run {
-                    wasmUtilsHandler.showLoading(false)
-                    return@launch
-                }
+                val selectedScreen = state.screens.first { it.screenId == state.screenViewer }
 
                 val currentScreenElements = selectedScreen.data.toMutableList()
                 val elementPosition = state.elementPosition ?: run {
@@ -161,16 +206,8 @@ class EditConfigViewModel(
                 }
 
                 if (selectedElement != null && elementPosition in currentScreenElements.indices) {
-                    val newElement = when (selectedElement) {
-                        is ElementDto.BoxDto -> getElementFromJson<ElementDto.BoxDto>()
-                        is ElementDto.ColumnDto -> getElementFromJson<ElementDto.ColumnDto>()
-                        is ElementDto.ImageDto -> getElementFromJson<ElementDto.ImageDto>()
-                        is ElementDto.RowDto -> getElementFromJson<ElementDto.RowDto>()
-                        is ElementDto.SpacerDto -> getElementFromJson<ElementDto.SpacerDto>()
-                        is ElementDto.TextDto -> getElementFromJson<ElementDto.TextDto>()
-                        is ElementDto.VideoDto -> getElementFromJson<ElementDto.VideoDto>()
-                    }
 
+                    val newElement = Json.decodeFromString<ElementDto>(state.contentFile)
                     currentScreenElements[elementPosition] = newElement
 
                     val newScreen = selectedScreen.copy(
@@ -184,6 +221,7 @@ class EditConfigViewModel(
                         }
                     }
 
+                    _state.update { it.copy(elementsByScreen = newScreen.toModel().elements) }
                     _state.update { it.copy(screens = newListOfScreens) }
                 }
             } catch (e: Exception) {
@@ -193,16 +231,6 @@ class EditConfigViewModel(
             } finally {
                 wasmUtilsHandler.showLoading(false)
             }
-        }
-    }
-
-    private inline fun <reified T> getElementFromJson(): T {
-        val mJson = _state.value.contentFile
-        return try {
-            Json.decodeFromString(mJson)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            throw IllegalArgumentException("Failed to parse JSON for ${T::class.simpleName}", e)
         }
     }
 }

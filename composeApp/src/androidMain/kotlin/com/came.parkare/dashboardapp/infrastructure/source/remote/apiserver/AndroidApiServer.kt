@@ -2,19 +2,36 @@ package com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver
 
 import android.util.Log
 import com.came.parkare.dashboardapp.config.constants.Constants.API_PORT
+import com.came.parkare.dashboardapp.config.dataclasses.ResponseStatusDto
 import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
+import com.came.parkare.dashboardapp.domain.models.toDto
+import com.came.parkare.dashboardapp.domain.repositories.local.ConfigTemplateRepository
 import com.came.parkare.dashboardapp.domain.repositories.remote.ApiServerRepository
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.DeviceDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.logs.TrackErrorDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.logs.TrackLogDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ConfigTemplateDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toModel
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isCheckStatus
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isDeleteConfigTemplate
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isDeleteDevice
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetConfigTemplate
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetConfigType
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetCurrentConfigRequest
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetCurrentConnectionConfig
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetDashboardListRequest
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetDefaultConfigTemplate
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveConfigTemplate
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveConfiguratorError
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveConfiguratorLog
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveConnectionConfig
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveDeviceRequest
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveScreenRequest
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSetConfigType
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isUpdateConfigTemplate
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.readBodyAsUtf8
 import fi.iki.elonen.NanoHTTPD
 import kotlinx.coroutines.runBlocking
@@ -23,6 +40,7 @@ import kotlinx.serialization.json.Json
 class AndroidApiServer(
     private val preferences: SharedPreferencesProvider,
     private val apiServerRepository: ApiServerRepository,
+    private val configTemplateRepository: ConfigTemplateRepository,
     private val appLogger: AppLogger,
     port: Int = preferences.get(API_PORT, 2023)
 ): NanoHTTPD(port) {
@@ -38,18 +56,104 @@ class AndroidApiServer(
             }
         }
         return when {
-            session.isGetDashboardListRequest() -> handleGetDashboardList(session)
-            session.isGetCurrentConfigRequest() -> handleGetCurrentConfiguration(session)
-            session.isGetCurrentConnectionConfig() -> handleGetCurrentConnectionConfig(session)
+            session.isGetDashboardListRequest() -> handleGetDashboardList()
+            session.isGetCurrentConfigRequest() -> handleGetCurrentConfiguration()
+            session.isGetCurrentConnectionConfig() -> handleGetCurrentConnectionConfig()
+            session.isGetConfigType() -> handleGetConfigType()
             session.isSaveDeviceRequest() -> handleSaveDevice(session)
             session.isDeleteDevice() -> handleDeleteDevice(session)
             session.isSaveScreenRequest() -> handleSaveScreen(session)
             session.isSaveConnectionConfig() -> handleSaveTerminalConnection(session)
+            session.isSetConfigType() -> handleSetConfigType(session)
+            session.isDeleteConfigTemplate() -> handleDeleteConfigTemplate(session)
+            session.isGetConfigTemplate() -> handleGetConfigTemplate()
+            session.isGetDefaultConfigTemplate() -> handleGetDefaultConfigTemplate()
+            session.isSaveConfigTemplate() -> handleSaveConfigTemplate(session)
+            session.isUpdateConfigTemplate() -> handleUpdateConfigTemplate(session)
+            session.isSaveConfiguratorLog() -> handleTrackLog(session)
+            session.isSaveConfiguratorError() -> handleTrackError(session)
+            session.isCheckStatus() -> handleCheckStatus()
             else -> createNotFoundResponse()
         }
     }
 
     //region Request Handlers
+    private fun handleTrackError(session: IHTTPSession): Response {
+        return processPostRequest<TrackErrorDto>(
+            session = session,
+            parseBody = { body -> Json.decodeFromString(body) },
+            operation = { dto -> apiServerRepository.saveConfiguratorException(dto) == 0 }
+        )
+    }
+
+    private fun handleTrackLog(session: IHTTPSession): Response {
+        return processPostRequest<TrackLogDto>(
+            session = session,
+            parseBody = { body -> Json.decodeFromString(body) },
+            operation = { dto -> apiServerRepository.saveConfiguratorLog(dto) == 0 }
+        )
+    }
+
+    private fun handleDeleteConfigTemplate(session: IHTTPSession): Response {
+        return processPostRequest<ConfigTemplateDto>(
+            session = session,
+            parseBody = { body -> Json.decodeFromString(body) },
+            operation = { dto -> configTemplateRepository.deleteTemplate(dto.toModel()) }
+        )
+    }
+
+    private fun handleUpdateConfigTemplate(session: IHTTPSession): Response {
+        return processPostRequest<ConfigTemplateDto>(
+            session = session,
+            parseBody = { body -> Json.decodeFromString(body) },
+            operation = { dto -> configTemplateRepository.updateTemplate(dto.toModel()) }
+        )
+    }
+
+    private fun handleSaveConfigTemplate(session: IHTTPSession): Response {
+        return processPostRequest<ConfigTemplateDto>(
+            session = session,
+            parseBody = { body -> Json.decodeFromString(body) },
+            operation = { dto -> configTemplateRepository.saveTemplate(dto.toModel()) }
+        )
+    }
+
+    private fun handleSetConfigType(session: IHTTPSession): Response {
+        return processPostRequest<Long>(
+            session = session,
+            parseBody = { body -> Json.decodeFromString(body) },
+            operation = { value -> apiServerRepository.saveScreenConfigType(value) }
+        )
+    }
+
+    private fun handleGetConfigTemplate(): Response {
+        return processAsyncRequest<Unit, List<ConfigTemplateDto>>(
+            operation = { configTemplateRepository.getAll().map { it.toDto() } },
+            successTransform = { result -> Json.encodeToString(result) }
+        )
+    }
+
+    private fun handleGetDefaultConfigTemplate(): Response {
+        return processAsyncRequest<Unit, List<ConfigTemplateDto>>(
+            operation = { configTemplateRepository.getDefaultTemplates().map { it.toDto() } },
+            successTransform = { result -> Json.encodeToString(result) }
+        )
+    }
+
+    private fun handleCheckStatus(): Response {
+        return processAsyncRequest<Unit, ResponseStatusDto>(
+            operation = { ResponseStatusDto(status = true) },
+            successTransform = { result -> Json.encodeToString(result) }
+        )
+    }
+
+    private fun handleGetConfigType(): Response {
+        return processAsyncRequest<Unit, Long>(
+            operation = { apiServerRepository.getScreenConfigType() },
+            successTransform = { result -> Json.encodeToString(result) }
+        )
+    }
+
     private fun handleSaveTerminalConnection(session: IHTTPSession): Response {
         return processPostRequest<ConnectionConfigDto>(
             session = session,
@@ -58,21 +162,21 @@ class AndroidApiServer(
         )
     }
 
-    private fun handleGetDashboardList(session: IHTTPSession): Response {
+    private fun handleGetDashboardList(): Response {
         return processAsyncRequest<Unit, List<DeviceDto>>(
             operation = { apiServerRepository.getDashboardIpList() },
             successTransform = { result -> Json.encodeToString(result) }
         )
     }
 
-    private fun handleGetCurrentConnectionConfig(session: IHTTPSession): Response {
+    private fun handleGetCurrentConnectionConfig(): Response {
         return processAsyncRequest<Unit, ConnectionConfigDto>(
             operation = { apiServerRepository.getCurrentConnectionConfig() },
             successTransform = { result -> Json.encodeToString(result) }
         )
     }
 
-    private fun handleGetCurrentConfiguration(session: IHTTPSession): Response {
+    private fun handleGetCurrentConfiguration(): Response {
         return processAsyncRequest<Unit, List<ScreenDto>>(
             operation = { apiServerRepository.getCurrentConfiguration() },
             successTransform = { result -> Json.encodeToString(result) }

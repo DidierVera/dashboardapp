@@ -108,12 +108,13 @@ class SplashActivity: ComponentActivity() {
                 if ((grantResults.isNotEmpty() &&
                             grantResults.all { it == PackageManager.PERMISSION_GRANTED } )) {
                     redirectToMain()
-
                 } else {
-//                    Toast.makeText(this, "Some Permissions have no been allowed $requestCode",
-//                        Toast.LENGTH_LONG).show()
-//
-                    redirectToMain()
+                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU){
+                        requestStoragePermissions()
+                        showToast("Some Permissions have no been allowed")
+                    }else{
+                        redirectToMain()
+                    }
                 }
                 return
             }
@@ -132,12 +133,12 @@ class SplashActivity: ComponentActivity() {
     private fun requestStoragePermissions() {
         Log.i("REQUEST_PERMI", "All Permissions")
         val permissionsToRequest: MutableList<String> = mutableListOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.READ_MEDIA_VIDEO,
+            Manifest.permission.READ_MEDIA_IMAGES
         )
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU){
-            permissionsToRequest.add(Manifest.permission.READ_MEDIA_VIDEO)
-            permissionsToRequest.add(Manifest.permission.READ_MEDIA_IMAGES)
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU){
+            permissionsToRequest.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+            permissionsToRequest.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
         checkPermission(permissionsToRequest.toTypedArray() , 10001)
     }

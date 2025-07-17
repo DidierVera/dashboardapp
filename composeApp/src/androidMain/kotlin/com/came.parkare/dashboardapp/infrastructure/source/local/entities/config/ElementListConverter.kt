@@ -2,6 +2,7 @@ package com.came.parkare.dashboardapp.infrastructure.source.local.entities.confi
 
 import androidx.room.TypeConverter
 import com.came.parkare.dashboardapp.infrastructure.source.local.entities.ElementEntity
+import com.came.parkare.dashboardapp.infrastructure.source.local.entities.ScreenEntity
 import com.google.common.reflect.TypeToken
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -17,6 +18,18 @@ class ElementListConverter {
     @TypeConverter
     fun toElementList(value: String): List<ElementEntity> {
         return json.decodeFromString<List<ElementEntity>>(value)
+    }
+}
+class ScreenListConverter {
+    val json = Json
+    @TypeConverter
+    fun fromScreenList(value: List<ScreenEntity>): String {
+        return json.encodeToString(value)
+    }
+
+    @TypeConverter
+    fun toScreenList(value: String): List<ScreenEntity> {
+        return json.decodeFromString<List<ScreenEntity>>(value)
     }
 }
 

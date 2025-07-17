@@ -34,3 +34,15 @@ fun Modifier.floatingButton(
         )
         .padding(4.dp)
 }
+
+@Composable
+fun Modifier.shadowContainer() = this
+    .padding(4.dp) // Add padding around each row
+    .shadow(
+        elevation = 4.dp,
+        shape = RoundedCornerShape(8.dp)
+    ).background(
+        color = MaterialTheme.colorScheme.surface,
+        shape = RoundedCornerShape(8.dp)
+    )
+    .padding(4.dp)

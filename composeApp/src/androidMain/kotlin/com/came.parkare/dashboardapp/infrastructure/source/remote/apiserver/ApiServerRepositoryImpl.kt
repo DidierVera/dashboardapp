@@ -1,6 +1,7 @@
 package com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver
 
 import com.came.parkare.dashboardapp.config.constants.Constants.API_PORT
+import com.came.parkare.dashboardapp.config.constants.Constants.CONFIG_TYPE
 import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_API
 import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_IP
 import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_PORT
@@ -8,10 +9,12 @@ import com.came.parkare.dashboardapp.config.constants.Constants.TEXT_SIZE_SCALE
 import com.came.parkare.dashboardapp.config.constants.Constants.TIME_DELAY
 import com.came.parkare.dashboardapp.config.constants.Constants.VIDEO_FRAME
 import com.came.parkare.dashboardapp.config.dataclasses.TypeConnectionEnum
+import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.IServerConnection
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.came.parkare.dashboardapp.domain.models.toDto
 import com.came.parkare.dashboardapp.domain.repositories.external.ConfigFileRepository
+import com.came.parkare.dashboardapp.domain.repositories.local.ConfigTemplateRepository
 import com.came.parkare.dashboardapp.domain.repositories.local.DashboardDevicesRepository
 import com.came.parkare.dashboardapp.domain.repositories.local.DashboardElementRepository
 import com.came.parkare.dashboardapp.domain.repositories.remote.ApiServerRepository
@@ -19,6 +22,8 @@ import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.C
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.DeviceDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toModel
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.logs.TrackErrorDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.logs.TrackLogDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toModel
@@ -28,7 +33,9 @@ class ApiServerRepositoryImpl(
     private val serverConnection: IServerConnection,
     private val configFileRepository: ConfigFileRepository,
     private val preferences: SharedPreferencesProvider,
-    private val dashboardDevicesRepository: DashboardDevicesRepository
+    private val templateRepository: ConfigTemplateRepository,
+    private val dashboardDevicesRepository: DashboardDevicesRepository,
+    private val appLogger: AppLogger
 ): ApiServerRepository {
     override suspend fun saveDashboardIp(device: DeviceDto): Int {
         dashboardDevicesRepository.saveDevice(device.toModel())
@@ -97,5 +104,27 @@ class ApiServerRepositoryImpl(
             textSizeScale = textSizeScale,
             files = images.map { it.toDto() }
         )
+    }
+
+    override suspend fun saveScreenConfigType(type: Long): Boolean {
+        preferences.put(CONFIG_TYPE, type)
+        return true
+    }
+
+    override suspend fun getScreenConfigType(): Long {
+        val currentConfig = templateRepository.getAll()
+        return if (currentConfig.isNotEmpty())
+            preferences.get(CONFIG_TYPE, currentConfig.first().id)
+        else 0
+    }
+
+    override suspend fun saveConfiguratorLog(dto: TrackLogDto): Int {
+        appLogger.trackConfiguratorLog(dto.tag, dto.message)
+        return 0
+    }
+
+    override suspend fun saveConfiguratorException(dto: TrackErrorDto): Int {
+        appLogger.trackConfiguratorError(dto.stackTrace,dto.localizedMessage)
+        return 0
     }
 }

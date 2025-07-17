@@ -2,14 +2,26 @@
 
 package com.came.parkare.dashboardapp.ui.screens.settings
 
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.came.parkare.dashboardapp.ui.screens.settings.components.LeftOptionsPanel
 import com.came.parkare.dashboardapp.ui.screens.settings.components.SettingTopBar
 import com.came.parkare.dashboardapp.ui.screens.settings.connection.ConnectionTab
@@ -36,12 +48,22 @@ fun SettingsScreen(onBackClick: () -> Unit){
     val viewModel: SettingViewModel = koinViewModel()
     val refreshState by viewModel.refreshState.collectAsState()
 
+    var offset by remember { mutableStateOf(0f) }
     key(refreshState){
         val selectedOption by viewModel.selectedOption.collectAsState()
 
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.widthIn(min = 1440.dp)
+        .scrollable(
+                orientation = Orientation.Horizontal,
+            // Scrollable state: describes how to consume
+            // scrolling delta and update offset
+            state = rememberScrollableState { delta ->
+                offset += delta
+                delta
+            }
+        )) {
             SettingTopBar(onBackClick)
-            Row {
+            Row(modifier = Modifier.fillMaxSize()) {
                 LeftPanel()
 
                 when(selectedOption.nameRes){
@@ -51,7 +73,7 @@ fun SettingsScreen(onBackClick: () -> Unit){
                     Res.string.export_option -> ExportTab()
                     Res.string.share_config_option -> ShareConfigTab()
                     Res.string.testing_option -> TestingTab()
-                    Res.string.edit_current_config_option -> EditConfigTab()
+                    Res.string.edit_current_config_option -> EditConfigTab(Modifier.sizeIn(minWidth = 1440.dp))
                     else -> {}
                 }
             }

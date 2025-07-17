@@ -7,16 +7,22 @@ import com.came.parkare.dashboardapp.config.utils.WasmAppLoggerImpl
 import com.came.parkare.dashboardapp.config.utils.WasmSharedPreferencesProvider
 import com.came.parkare.dashboardapp.config.utils.WebStoragePreferences
 import com.came.parkare.dashboardapp.domain.repositories.device.DeviceRepository
+import com.came.parkare.dashboardapp.domain.repositories.log.LogRepository
 import com.came.parkare.dashboardapp.domain.repositories.screen.ScreenRepository
+import com.came.parkare.dashboardapp.domain.repositories.template.ConfigTemplateRepository
 import com.came.parkare.dashboardapp.domain.usecases.DeleteDevice
 import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceList
+import com.came.parkare.dashboardapp.domain.usecases.GetDeviceStatus
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
+import com.came.parkare.dashboardapp.domain.usecases.GetDefaultTemplatesConfig
 import com.came.parkare.dashboardapp.domain.usecases.SaveConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.SaveNewDevice
 import com.came.parkare.dashboardapp.domain.usecases.SaveScreenConfig
 import com.came.parkare.dashboardapp.infrastructure.repositories.device.DeviceRepositoryImpl
+import com.came.parkare.dashboardapp.infrastructure.repositories.logs.LogRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.repositories.screen.ScreenRepositoryImpl
+import com.came.parkare.dashboardapp.infrastructure.repositories.template.ConfigTemplateRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.source.services.base.HttpClient
 import com.came.parkare.dashboardapp.ui.components.dialog.AppDialogViewModel
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
@@ -71,6 +77,8 @@ val wasmAppModule = module {
     //repositories
     singleOf(::DeviceRepositoryImpl) { bind<DeviceRepository>() }
     singleOf(::ScreenRepositoryImpl) { bind<ScreenRepository>() }
+    singleOf(::LogRepositoryImpl) { bind<LogRepository>() }
+    singleOf(::ConfigTemplateRepositoryImpl) { bind<ConfigTemplateRepository>() }
 
     //useCases
     single { GetScreensConfig(get(), get()) }
@@ -80,6 +88,8 @@ val wasmAppModule = module {
     single { GetDeviceList(get(), get()) }
     single { SaveNewDevice(get(), get()) }
     single { DeleteDevice(get(), get()) }
+    single { GetDeviceStatus(get(), get()) }
+    single { GetDefaultTemplatesConfig(get(), get(), get()) }
 
 
     single { Navigator() }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -23,6 +24,7 @@ import com.came.parkare.dashboardapp.ui.theme.CameBlueColor
 import com.came.parkare.dashboardapp.ui.theme.HeaderColor
 import com.came.parkare.dashboardapp.ui.theme.WhiteColor
 import dashboardapp.composeapp.generated.resources.Res
+import dashboardapp.composeapp.generated.resources.general_configuration_title
 import dashboardapp.composeapp.generated.resources.settings_button
 import org.jetbrains.compose.resources.stringResource
 import org.koin.mp.KoinPlatform.getKoin
@@ -38,7 +40,7 @@ fun MainTopBar(navigateToSettings: () -> Unit) {
         val devices = listOf("Device 1", "Device 2", "Device 3")
         var selectedDevice by remember { mutableStateOf(devices[0]) }
 
-        Row {
+        Row(modifier = Modifier.size(0.dp)) {
             CustomDropdownSelector(
                 items = devices,
                 selectedItem = selectedDevice,
@@ -70,7 +72,7 @@ fun MainTopBar(navigateToSettings: () -> Unit) {
                 }
             )
         }
-
+        Text(text = stringResource(Res.string.general_configuration_title), color = WhiteColor)
 
         // Settings button
         AppButton(text = stringResource(Res.string.settings_button), onClick = navigateToSettings,

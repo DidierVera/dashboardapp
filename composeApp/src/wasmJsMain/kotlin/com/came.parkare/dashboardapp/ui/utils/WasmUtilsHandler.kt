@@ -14,4 +14,5 @@ interface WasmUtilsHandler {
     fun showToastMessage(stringRes: StringResource?)
     fun showLoading(value: Boolean)
     fun showDialogMessage(model: AppDialogState)
+    fun showDialogRequestPassword(model: AppDialogState)
 }

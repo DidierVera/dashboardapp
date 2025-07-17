@@ -132,4 +132,40 @@ class AppLoggerImpl (
             }
         }
     }
+
+    override fun trackConfiguratorLog(tag: String, message: String?) {
+        cleanupOldLogs()
+        Log.i(tag, message?: "")
+        val currentDate = dateFormat.format(Date())
+        val logFile = File(logDirectory, "$currentDate-configurator.txt")
+
+        try {
+            FileWriter(logFile, true).use { writer ->
+                writer.appendLine("${getTimeStamp()} - TAG: $tag, ${message?.let { "MESSAGE: ${it}" }.orEmpty() }")
+            }
+        } catch (ioe: IOException) {
+            // Manejo de error en caso de fallo en la escritura del archivo
+            ioe.printStackTrace()
+        } catch (e: Exception){
+            e.printStackTrace()
+        }
+    }
+
+    override fun trackConfiguratorError(stackTrace: String, localizedMessage: String) {
+
+        val currentDate = dateFormat.format(Date())
+        val exceptionFile = File(logDirectory, "$currentDate-configurator-exceptions.txt")
+
+        try {
+            FileWriter(exceptionFile, true).use { writer ->
+                writer.appendLine("${getTimeStamp()} - EXCEPTION: $localizedMessage")
+                writer.appendLine(stackTrace)
+            }
+        } catch (ioe: IOException) {
+            ioe.printStackTrace()
+        } catch (e: Exception){
+            FirebaseCrashlytics.getInstance().recordException(e)
+            e.printStackTrace()
+        }
+    }
 }
