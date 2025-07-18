@@ -37,6 +37,7 @@ class AppDialogViewModel(
                 _passwordState.update { "" }
                 _showDialog.update { true }
                 _state.update { model }
+                setButtonActive()
             }
         }.launchIn(viewModelScope)
     }

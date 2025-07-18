@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -59,6 +60,8 @@ import dashboardapp.composeapp.generated.resources.screen_preview_label
 import dashboardapp.composeapp.generated.resources.screens_label
 import dashboardapp.composeapp.generated.resources.select_screen_message
 import dashboardapp.composeapp.generated.resources.send_button
+import dashboardapp.composeapp.generated.resources.update_button
+import dashboardapp.composeapp.generated.resources.update_config_message
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -178,22 +181,21 @@ private fun EditorField() {
 @Composable
 private fun EditorTitle(){
     val viewModel: EditConfigViewModel = koinViewModel()
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically,
+    val state by viewModel.state.collectAsState()
+    Column(horizontalAlignment = Alignment.Start, verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.fillMaxWidth()) {
+        val updateMessage = stringResource(Res.string.update_config_message)
+        AppButton(
+            text = stringResource(Res.string.update_button), onClick = {
+                viewModel.updateConfig(updateMessage)
+            },
+            isEnabled = (!state.screenViewer.isNullOrBlank() && state.contentFile.isNotEmpty())
+        )
+        HorizontalDivider()
         Text(
             text = stringResource(Res.string.element_code_label),
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.titleMedium)
-        AppButton(text = stringResource(Res.string.apply_button),
-            buttonColors = ButtonDefaults.buttonColors().copy(
-                containerColor = Color.LightGray,
-                contentColor = BlackColor),
-            onClick = {
-            viewModel.applyChanges()
-        })
-        AppButton(text = stringResource(Res.string.save_button), onClick = {
-            viewModel.saveChanges()
-        })
     }
 }
 
