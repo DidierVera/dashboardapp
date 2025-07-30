@@ -31,6 +31,11 @@ import com.came.parkare.dashboardapp.ui.components.loading.AppLoadingViewModel
 import com.came.parkare.dashboardapp.ui.components.messages.AppToastViewModel
 import com.came.parkare.dashboardapp.ui.navigation.Navigator
 import com.came.parkare.dashboardapp.ui.screens.home.HomeViewModel
+import com.came.parkare.dashboardapp.ui.screens.home.components.editortab.EditorTabViewModel
+import com.came.parkare.dashboardapp.ui.screens.home.configeditor.ConfigEditorViewModel
+import com.came.parkare.dashboardapp.ui.screens.home.elementlist.ElementListViewModel
+import com.came.parkare.dashboardapp.ui.screens.home.utils.HomeUtils
+import com.came.parkare.dashboardapp.ui.screens.home.utils.HomeUtilsImpl
 import com.came.parkare.dashboardapp.ui.screens.settings.components.viewmodels.FilePickerDialogViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.importfile.ImportViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.SettingViewModel
@@ -58,6 +63,7 @@ val wasmAppModule = module {
     singleOf(::WebStoragePreferences) { bind<WasmSharedPreferencesProvider>() }
     singleOf(::WebStoragePreferences) { bind<SharedPreferencesProvider>() }
     singleOf(::WasmUtilsHandlerImpl) { bind<WasmUtilsHandler>() }
+    singleOf(::HomeUtilsImpl) { bind<HomeUtils>() }
     singleOf(::ErrorValidatorImpl) { bind<ErrorValidator>() }
 
     //viewModels
@@ -73,6 +79,9 @@ val wasmAppModule = module {
     viewModelOf(::AppDialogViewModel)
     viewModelOf(::EditConfigViewModel)
     viewModelOf(::ShareConfigViewModel)
+    viewModelOf(::EditorTabViewModel)
+    viewModelOf(::ConfigEditorViewModel)
+    viewModelOf(::ElementListViewModel)
 
     //repositories
     singleOf(::DeviceRepositoryImpl) { bind<DeviceRepository>() }
