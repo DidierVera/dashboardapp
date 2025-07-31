@@ -16,11 +16,6 @@ import org.koin.core.annotation.KoinExperimentalAPI
 @Composable
 fun ConfigEditorScreen(modifier: Modifier = Modifier,
                        viewModel: ConfigEditorViewModel = koinViewModel()){
-    Scaffold(
-        modifier = modifier,
-        topBar = {  },
-    ) { padding ->
 
-    }
 
 }

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
@@ -36,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import com.came.parkare.dashboardapp.ui.components.MainTopBar
 import com.came.parkare.dashboardapp.ui.screens.home.components.TooltipButton
 import com.came.parkare.dashboardapp.ui.screens.home.configeditor.ConfigEditorScreen
+import com.came.parkare.dashboardapp.ui.screens.home.elementlist.DefaultElementsList
 import com.came.parkare.dashboardapp.ui.screens.home.elementlist.ElementList
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.blank_elements_label
@@ -51,7 +53,6 @@ import org.koin.core.annotation.KoinExperimentalAPI
 fun HomeScreen(onSettingsClick: () -> Unit){
     val viewModel: HomeViewModel = koinViewModel()
     val message = stringResource(Res.string.request_password_message)
-    val state by viewModel.state.collectAsState()
 /*
     viewModel.showRequestLogin(message){
         onSettingsClick.invoke()
@@ -63,34 +64,38 @@ fun HomeScreen(onSettingsClick: () -> Unit){
                 onSettingsClick.invoke()
             }
         }
-        val tooltipState = rememberTooltipState()
-
         Scaffold(
-            bottomBar = {
-                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                    TooltipButton(onClick = {viewModel.displayBlankElement()},
-                        value = state.displayBlankElements, tooltipTextId = Res.string.blank_elements_label){
-                        Icon(if(state.displayBlankElements) Icons.Default.Done else Icons.Default.Create,
-                            contentDescription = null)
-                    }
-                    TooltipButton(onClick = {viewModel.displayProperties()},
-                        value = state.displayProperties, tooltipTextId = Res.string.properties_label){
-                        Icon(if(state.displayProperties) Icons.Default.Done else Icons.Default.Build,
-                            contentDescription = null)
-                    }
-                    TooltipButton(onClick = {viewModel.displayElements()},
-                        value = state.displayDefaultElements, tooltipTextId = Res.string.default_elements_label){
-                        Icon(if(state.displayDefaultElements) Icons.Default.Done else Icons.Default.Favorite,
-                            contentDescription = null)
-                    }
-                }
-        },
+            bottomBar = { BottomBarButtons() },
         ) { padding ->
             Box(modifier = Modifier.padding(padding)) {
                 ConfigEditorScreen(modifier = Modifier.fillMaxSize())
                 ElementList(modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight())
+                DefaultElementsList(modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight())
 
             }
+        }
+    }
+}
+
+@Composable
+fun BottomBarButtons() {
+    val viewModel: HomeViewModel = koinViewModel()
+    val state by viewModel.state.collectAsState()
+    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        TooltipButton(onClick = {viewModel.displayBlankElement()},
+            value = state.displayBlankElements, tooltipTextId = Res.string.blank_elements_label){
+            Icon(if(state.displayBlankElements) Icons.Default.Close else Icons.Default.Create,
+                contentDescription = null)
+        }
+        TooltipButton(onClick = {viewModel.displayProperties()},
+            value = state.displayProperties, tooltipTextId = Res.string.properties_label){
+            Icon(if(state.displayProperties) Icons.Default.Close else Icons.Default.Build,
+                contentDescription = null)
+        }
+        TooltipButton(onClick = {viewModel.displayElements()},
+            value = state.displayDefaultElements, tooltipTextId = Res.string.default_elements_label){
+            Icon(if(state.displayDefaultElements) Icons.Default.Close else Icons.Default.Favorite,
+                contentDescription = null)
         }
     }
 }

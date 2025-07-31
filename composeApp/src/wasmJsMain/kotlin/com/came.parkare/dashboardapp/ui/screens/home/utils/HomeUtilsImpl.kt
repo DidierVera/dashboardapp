@@ -25,18 +25,29 @@ class HomeUtilsImpl(
         get() = _showDefaultScreens.asStateFlow()
 
     override fun showElements(value: Boolean) {
+        hideTabs()
         _isShowingElements.update { value }
     }
 
     override fun showProperties(value: Boolean) {
+        hideTabs()
         _isShowingProperties.update { value }
     }
 
     override fun showBlankElements(value: Boolean) {
+        hideTabs()
         _shoBlankElements.update { value }
     }
 
     override fun showDefaultScreens(value: Boolean) {
+        hideTabs()
         _showDefaultScreens.update { value }
+    }
+
+    private fun hideTabs(){
+        _shoBlankElements.update { false }
+        _showDefaultScreens.update { false }
+        _isShowingElements.update { false }
+        _isShowingProperties.update { false }
     }
 }

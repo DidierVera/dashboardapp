@@ -3,7 +3,6 @@ package com.came.parkare.dashboardapp.ui.screens.home.elementlist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ElementDto
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ElementSerializer
 import com.came.parkare.dashboardapp.infrastructure.source.mocks.ElementListMock
 import com.came.parkare.dashboardapp.ui.screens.home.utils.HomeUtils
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,12 +24,31 @@ class ElementListViewModel(
 
     init {
         loadBlankItems()
-        checkDisplayTab()
+        loadDefaultElements()
+        checkDisplayBlankTab()
+        checkDisplayDefaultTab()
     }
 
-    private fun checkDisplayTab() {
+    private fun loadDefaultElements() {
+        try {
+            val itemsJson = ElementListMock.getDefaultElements()
+            val newItems  = Json.decodeFromString<List<ElementDto>>(itemsJson)
+            _state.update { it.copy(defaultItems = newItems) }
+        }catch (e: Exception){
+            e.printStackTrace()
+            println(e)
+        }
+    }
+
+    private fun checkDisplayDefaultTab() {
+        homeUtils.isShowingElements.onEach { display ->
+            _state.update { it.copy(showDefaultTab = display) }
+        }.launchIn(viewModelScope)
+    }
+
+    private fun checkDisplayBlankTab() {
         homeUtils.blankElements.onEach { display ->
-            _state.update { it.copy(showTab = display) }
+            _state.update { it.copy(showBlankTab = display) }
         }.launchIn(viewModelScope)
     }
 
