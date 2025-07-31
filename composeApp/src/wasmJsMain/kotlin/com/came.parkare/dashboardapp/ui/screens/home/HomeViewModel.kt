@@ -37,19 +37,26 @@ class HomeViewModel(
     }
 
     init {
-        homeUtils.isShowingElements.onEach {
-            showElements(it)
+        homeUtils.isShowingElements.onEach { display ->
+            _state.update { it.copy(displayDefaultElements = display) }
         }.launchIn(viewModelScope)
-        homeUtils.isShowingProperties.onEach {
-            showProperties(it)
+        homeUtils.isShowingProperties.onEach { display ->
+            _state.update { it.copy(displayProperties = display) }
+        }.launchIn(viewModelScope)
+        homeUtils.blankElements.onEach { display ->
+            _state.update { it.copy(displayBlankElements = display) }
         }.launchIn(viewModelScope)
     }
 
-    private fun showProperties(newValue: Boolean){
-        _state.update { it.copy(isShowingProperties = newValue, isShowingElements = false) }
+    fun displayProperties(){
+        homeUtils.showProperties(!_state.value.displayProperties)
     }
 
-    private fun showElements(newValue: Boolean){
-        _state.update { it.copy(isShowingElements = newValue, isShowingProperties = false) }
+    fun displayElements(){
+        homeUtils.showElements(!_state.value.displayDefaultElements)
+    }
+
+    fun displayBlankElement(){
+        homeUtils.showBlankElements(!_state.value.displayBlankElements)
     }
 }

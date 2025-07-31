@@ -1,7 +1,10 @@
 package com.came.parkare.dashboardapp.ui.screens.home
 
 data class HomeState(
-    val isShowingProperties: Boolean = false,
-    val isShowingElements: Boolean = false,
+    val displayProperties: Boolean = false,
+    val displayDefaultElements: Boolean = false,
+    val displayBlankElements: Boolean = false,
+    val displayCurrentConfig: Boolean = false,
+    val displayDefaultScreens: Boolean = false
 
 )

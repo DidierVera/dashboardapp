@@ -63,6 +63,9 @@
     <string name="screens_label">Screens</string>
     <string name="components_label">Components</string>
     <string name="properties_label">Properties</string>
+    <string name="default_elements_label">Default elements</string>
+    <string name="blank_elements_label">Blank elements</string>
+    <string name="default_screens_label">Default screens</string>
 
     <!--  Share Config  -->
     <string name="share_config_title">Share screen config</string>

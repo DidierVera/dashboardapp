@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -38,26 +39,20 @@ import org.koin.core.annotation.KoinExperimentalAPI
 
 @Composable
 fun ElementList(modifier: Modifier = Modifier) {
-    val display = remember{mutableStateOf(false)}
     val viewModel: ElementListViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
 
     Scaffold(
-        modifier = modifier.widthIn(max = 260.dp),
-        floatingActionButtonPosition = FabPosition.EndOverlay,
-
-        floatingActionButton = {
-            FloatingActionButton(onClick = { display.value = !display.value }) {
-                Icon(if(display.value) Icons.Default.Done else Icons.Default.Edit,
-                    contentDescription = "hide")
-            }
-        }
+        modifier = modifier.widthIn(max = 260.dp)
     ) { padding ->
-        if (display.value){
+        if (state.showTab){
             Column(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 modifier = modifier.verticalScroll(ScrollState(0))
-                    .fillMaxSize().padding(padding).floatingButton().padding(8.dp)) {
+                    .fillMaxSize().padding(padding).floatingButton().padding(8.dp).graphicsLayer {
+                        this.scaleX = 1.0f
+                        this.scaleY = 1.0f
+                    }) {
                 Text("Blank Elements", fontWeight = FontWeight.Bold)
                 HorizontalDivider()
                 loadElements(state.blankElements)

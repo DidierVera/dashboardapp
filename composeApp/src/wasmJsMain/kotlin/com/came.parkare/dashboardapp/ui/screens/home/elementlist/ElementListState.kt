@@ -5,5 +5,6 @@ import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.e
 
 data class ElementListState(
     val defaultItems: List<ElementDto> = emptyList(),
-    val blankElements: List<ElementDto> = emptyList()
+    val blankElements: List<ElementDto> = emptyList(),
+    val showTab: Boolean = false
 )
