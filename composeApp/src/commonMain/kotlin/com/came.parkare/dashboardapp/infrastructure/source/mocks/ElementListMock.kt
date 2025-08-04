@@ -130,19 +130,20 @@ object ElementListMock {
                 }
               },
               {
-                "element-type": "image",
+                "element-type": "text",
                 "data": {
-                  "dashboardItemId": "ico-disabled",
-                  "dataKey": null,
-                  "ditTypeCode": null,
-                  "validValue": null,
-                  "fileName": "ico-disabled",
-                  "localFilePath": null,
-                  "intervalTime": null,
-                  "height": 480,
-                  "width": 480
+                 "dashboardItemId": "license-plate-value",
+                 "defaultText": "---- ---",
+                 "textSize": 72,
+                 "textColor": "#000000",
+                 "padding": 4,
+                 "fontWeight": "Bold",
+                 "dataKey": "MainLicensePlate",
+                 "ditTypeCode": 10,
+                 "validValue": null,
+                 "translations": null
                 }
-              },
+               },
               {
                 "element-type": "box",
                 "data": {

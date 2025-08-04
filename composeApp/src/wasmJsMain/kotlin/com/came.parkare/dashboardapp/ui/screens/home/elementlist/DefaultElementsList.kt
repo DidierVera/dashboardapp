@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.verticalScroll
@@ -54,27 +55,78 @@ fun DefaultElementsList(modifier: Modifier = Modifier){
 @Composable
 private fun LoadElements(elements: List<ElementDto>){
     for(mItem in elements){
-        Box(modifier = Modifier.graphicsLayer {
-            this.scaleX = 0.7f
-            this.scaleY = 0.7f
-        }.clickable {
-        }, contentAlignment = Alignment.Center) {
-            when(mItem){
-                is ElementDto.BoxDto -> BuildElement(mItem.data.toModel(),
-                    10, emptyList())
-                is ElementDto.ColumnDto -> BuildElement(mItem.data.toModel(),
-                    10, emptyList())
-                is ElementDto.ImageDto -> BuildElement(mItem.data.toModel(),
-                    10, emptyList())
-                is ElementDto.RowDto -> BuildElement(mItem.data.toModel(),
-                    10, emptyList())
-                is ElementDto.SpacerDto -> BuildElement(mItem.data.toModel(),
-                    10, emptyList())
-                is ElementDto.TextDto -> BuildElement(mItem.data.toModel(),
-                    10, emptyList())
-                is ElementDto.VideoDto -> BuildElement(mItem.data.toModel(),
-                    10, emptyList())
+        var elementType = ""
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally) {
+            Box(modifier = Modifier.floatingButton {
+
+            }.fillMaxWidth().graphicsLayer {
+                this.scaleX = 0.90f
+                this.scaleY = 0.90f
+            }, contentAlignment = Alignment.Center) {
+                when(mItem){
+                    is ElementDto.BoxDto -> {
+                        BuildElement(
+                            mItem.data.toModel(),
+                            10, emptyList()
+                        )
+                        elementType = mItem.elementType
+                    }
+                    is ElementDto.ColumnDto -> {
+                        BuildElement(
+                            mItem.data.toModel(),
+                            10, emptyList()
+                        )
+
+                        elementType = mItem.elementType
+                    }
+                    is ElementDto.ImageDto -> {
+                        BuildElement(
+                            mItem.data.toModel(),
+                            10, emptyList()
+                        )
+
+                        elementType = mItem.elementType
+                    }
+                    is ElementDto.RowDto -> {
+                        BuildElement(
+                            mItem.data.toModel(),
+                            10, emptyList()
+                        )
+
+                        elementType = mItem.elementType
+                    }
+                    is ElementDto.SpacerDto -> {
+                        BuildElement(
+                            mItem.data.toModel(),
+                            10, emptyList()
+                        )
+
+                        elementType = mItem.elementType
+                    }
+                    is ElementDto.TextDto -> {
+                        BuildElement(
+                            mItem.data.toModel(),
+                            10, emptyList()
+                        )
+
+                        elementType = mItem.elementType
+                    }
+                    is ElementDto.VideoDto -> {
+                        BuildElement(
+                            mItem.data.toModel(),
+                            10, emptyList()
+                        )
+
+                        elementType = mItem.elementType
+                    }
+                }
             }
+
+            Text(text = elementType, fontWeight = FontWeight.SemiBold)
+
+            HorizontalDivider()
         }
+
     }
 }
