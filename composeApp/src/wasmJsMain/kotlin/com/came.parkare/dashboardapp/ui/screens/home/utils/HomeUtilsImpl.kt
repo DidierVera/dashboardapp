@@ -11,6 +11,7 @@ class HomeUtilsImpl(
     private val _isShowingElements: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val _shoBlankElements: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val _showDefaultScreens: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val _displayControls: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     override val isShowingProperties: StateFlow<Boolean>
         get() = _isShowingProperties.asStateFlow()
@@ -23,6 +24,9 @@ class HomeUtilsImpl(
 
     override val defaultScreens: StateFlow<Boolean>
         get() = _showDefaultScreens.asStateFlow()
+
+    override val displayControls: StateFlow<Boolean>
+        get() = _displayControls.asStateFlow()
 
     override fun showElements(value: Boolean) {
         hideTabs()

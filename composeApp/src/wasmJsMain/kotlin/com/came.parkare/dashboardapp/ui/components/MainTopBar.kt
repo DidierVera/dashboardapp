@@ -37,41 +37,7 @@ fun MainTopBar(navigateToSettings: () -> Unit) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val devices = listOf("Device 1", "Device 2", "Device 3")
-        var selectedDevice by remember { mutableStateOf(devices[0]) }
 
-        Row(modifier = Modifier.size(0.dp)) {
-            CustomDropdownSelector(
-                items = devices,
-                selectedItem = selectedDevice,
-                onItemSelected = { selectedDevice = it },
-                itemContent = { device ->
-                    Row {
-                        Icon(Icons.Default.Add, contentDescription = "Device")
-                        Spacer(Modifier.width(8.dp))
-                        Text(device)
-                    }
-                },
-                selectedItemContent = { device ->
-                    Text("Selected: $device", fontWeight = FontWeight.Bold)
-                }
-            )
-            CustomDropdownSelector(
-                items = devices,
-                selectedItem = selectedDevice,
-                onItemSelected = { selectedDevice = it },
-                itemContent = { device ->
-                    Row {
-                        Icon(Icons.Default.Add, contentDescription = "Device")
-                        Spacer(Modifier.width(8.dp))
-                        Text(device)
-                    }
-                },
-                selectedItemContent = { device ->
-                    Text("Selected: $device", fontWeight = FontWeight.Bold)
-                }
-            )
-        }
         Text(text = stringResource(Res.string.general_configuration_title), color = WhiteColor)
 
         // Settings button

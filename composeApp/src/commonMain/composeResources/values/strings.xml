@@ -67,6 +67,12 @@
     <string name="blank_elements_label">Blank elements</string>
     <string name="default_screens_label">Default screens</string>
 
+    <!-- Tooltips -->
+    <string name="blank_screen_tooltip">Add blank screen</string>
+    <string name="import_config_tooltip">Import config from local file</string>
+    <string name="save_config_tooltip">Save and apply config</string>
+
+
     <!--  Share Config  -->
     <string name="share_config_title">Share screen config</string>
     <string name="device_list_label">Device list</string>

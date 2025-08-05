@@ -9,6 +9,7 @@ interface HomeUtils {
     val isShowingElements: StateFlow<Boolean>
     val blankElements: StateFlow<Boolean>
     val defaultScreens: StateFlow<Boolean>
+    val displayControls: StateFlow<Boolean>
 
     fun showElements(value: Boolean)
     fun showProperties(value: Boolean)

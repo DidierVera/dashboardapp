@@ -59,4 +59,20 @@ class HomeViewModel(
     fun displayBlankElement(){
         homeUtils.showBlankElements(!_state.value.displayBlankElements)
     }
+
+    fun addDefaultScreen() {
+
+    }
+
+    fun addBlankScreen() {
+
+    }
+
+    fun importConfig() {
+
+    }
+
+    fun saveConfig() {
+
+    }
 }
