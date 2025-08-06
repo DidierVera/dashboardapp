@@ -27,6 +27,16 @@ class ElementListViewModel(
         loadDefaultElements()
         checkDisplayBlankTab()
         checkDisplayDefaultTab()
+        loadImages()
+    }
+
+    private fun loadImages() {
+        homeUtils.imagesSource.onEach { images ->
+            _state.update { it.copy(imagesSource = images) }
+        }.launchIn(viewModelScope)
+        homeUtils.textSizeScale.onEach { size ->
+            _state.update { it.copy(textSizeScale = size) }
+        }.launchIn(viewModelScope)
     }
 
     private fun loadDefaultElements() {

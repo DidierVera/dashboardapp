@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.came.parkare.dashboardapp.domain.models.ImagesFileModel
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ElementDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.toModel
 import com.came.parkare.dashboardapp.ui.screens.settings.components.BuildElement
@@ -47,13 +48,14 @@ fun DefaultElementsList(modifier: Modifier = Modifier){
                 }) {
             Text(stringResource(Res.string.default_elements_label), fontWeight = FontWeight.Bold)
             HorizontalDivider()
-            LoadElements(state.defaultItems)
+            LoadElements(state.defaultItems, state.imagesSource, state.textSizeScale)
         }
     }
 }
 
 @Composable
-private fun LoadElements(elements: List<ElementDto>){
+private fun LoadElements(elements: List<ElementDto>,
+                         images: List<ImagesFileModel>, textSizeScale: Int){
     for(mItem in elements){
         var elementType = ""
         Column(verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -68,14 +70,14 @@ private fun LoadElements(elements: List<ElementDto>){
                     is ElementDto.BoxDto -> {
                         BuildElement(
                             mItem.data.toModel(),
-                            10, emptyList()
+                            textSizeScale, images
                         )
                         elementType = mItem.elementType
                     }
                     is ElementDto.ColumnDto -> {
                         BuildElement(
                             mItem.data.toModel(),
-                            10, emptyList()
+                            textSizeScale, images
                         )
 
                         elementType = mItem.elementType
@@ -83,7 +85,7 @@ private fun LoadElements(elements: List<ElementDto>){
                     is ElementDto.ImageDto -> {
                         BuildElement(
                             mItem.data.toModel(),
-                            10, emptyList()
+                            textSizeScale, images
                         )
 
                         elementType = mItem.elementType
@@ -91,7 +93,7 @@ private fun LoadElements(elements: List<ElementDto>){
                     is ElementDto.RowDto -> {
                         BuildElement(
                             mItem.data.toModel(),
-                            10, emptyList()
+                            textSizeScale, images
                         )
 
                         elementType = mItem.elementType
@@ -99,7 +101,7 @@ private fun LoadElements(elements: List<ElementDto>){
                     is ElementDto.SpacerDto -> {
                         BuildElement(
                             mItem.data.toModel(),
-                            10, emptyList()
+                            textSizeScale, images
                         )
 
                         elementType = mItem.elementType
@@ -107,7 +109,7 @@ private fun LoadElements(elements: List<ElementDto>){
                     is ElementDto.TextDto -> {
                         BuildElement(
                             mItem.data.toModel(),
-                            10, emptyList()
+                            textSizeScale, images
                         )
 
                         elementType = mItem.elementType
@@ -115,7 +117,7 @@ private fun LoadElements(elements: List<ElementDto>){
                     is ElementDto.VideoDto -> {
                         BuildElement(
                             mItem.data.toModel(),
-                            10, emptyList()
+                            textSizeScale, images
                         )
 
                         elementType = mItem.elementType

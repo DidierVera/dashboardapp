@@ -1,5 +1,6 @@
 package com.came.parkare.dashboardapp.ui.screens.home.utils
 
+import com.came.parkare.dashboardapp.domain.models.ImagesFileModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,6 +13,10 @@ class HomeUtilsImpl(
     private val _shoBlankElements: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val _showDefaultScreens: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val _displayControls: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val _textSizeScale: MutableStateFlow<Int> = MutableStateFlow(10)
+    private val _imagesResource: MutableStateFlow<List<ImagesFileModel>> = MutableStateFlow(
+        emptyList())
+
 
     override val isShowingProperties: StateFlow<Boolean>
         get() = _isShowingProperties.asStateFlow()
@@ -27,6 +32,12 @@ class HomeUtilsImpl(
 
     override val displayControls: StateFlow<Boolean>
         get() = _displayControls.asStateFlow()
+
+    override val imagesSource: StateFlow<List<ImagesFileModel>>
+        get() = _imagesResource.asStateFlow()
+
+    override val textSizeScale: StateFlow<Int>
+        get() = _textSizeScale.asStateFlow()
 
     override fun showElements(value: Boolean) {
         hideTabs()
@@ -46,6 +57,14 @@ class HomeUtilsImpl(
     override fun showDefaultScreens(value: Boolean) {
         hideTabs()
         _showDefaultScreens.update { value }
+    }
+
+    override fun setImagesSource(images: List<ImagesFileModel>) {
+        _imagesResource.update { images }
+    }
+
+    override fun setTextSizeScale(value: Int) {
+        _textSizeScale.update { value }
     }
 
     private fun hideTabs(){

@@ -1,15 +1,10 @@
-package com.came.parkare.dashboardapp.ui.screens.home.configeditor
+package com.came.parkare.dashboardapp.ui.screens.home.screenlist
 
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.ErrorValidator
-import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toModel
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
 import com.came.parkare.dashboardapp.ui.screens.home.utils.HomeUtils
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,33 +15,28 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class ConfigEditorViewModel(
+class ScreenListViewModel(
     private val wasmUtilsHandler: WasmUtilsHandler,
-    private val validator: ErrorValidator,
     private val getScreensConfig: GetScreensConfig,
+    private val validator: ErrorValidator,
     private val homeUtils: HomeUtils
+):ViewModel() {
 
-): ViewModel() {
-
-    private val _state = MutableStateFlow(ConfigEditorUiState())
-    val state: StateFlow<ConfigEditorUiState>
+    private val _state = MutableStateFlow(ScreenListState())
+    val state: StateFlow<ScreenListState>
         get() = _state.asStateFlow()
-
 
     fun initConfig(){
         viewModelScope.launch {
-            clearForm()
+            //clearForm()
+            //loadConfigImages()
             getCurrentScreenConfig()
         }
     }
 
     init {
-        homeUtils.imagesSource.onEach { images ->
-            _state.update { it.copy(imagesSource = images) }
-        }.launchIn(viewModelScope)
-
-        homeUtils.textSizeScale.onEach { size ->
-            _state.update { it.copy(textSizeScale = size) }
+        homeUtils.defaultScreens.onEach { display ->
+            _state.update { it.copy(showTab = display) }
         }.launchIn(viewModelScope)
     }
 
@@ -59,15 +49,8 @@ class ConfigEditorViewModel(
             }
             is ServiceResult.Success -> {
                 wasmUtilsHandler.showLoading(false)
-                //_state.update { it.copy(screens = result.data.orEmpty()) }
+                _state.update { it.copy(defaultScreens = result.data.orEmpty()) }
             }
         }
     }
-    private fun clearForm(){
-        _state.update { it.copy(
-            imagesSource = emptyList(),
-            elementsByScreen = emptyList()
-        ) }
-    }
-
 }
