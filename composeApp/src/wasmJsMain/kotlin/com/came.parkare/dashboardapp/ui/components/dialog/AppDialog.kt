@@ -3,6 +3,7 @@
 package com.came.parkare.dashboardapp.ui.components.dialog
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -66,10 +67,11 @@ fun AppDialog(modifier: Modifier = Modifier){
 @Composable
 fun ShowDialog(modifier: Modifier = Modifier, model: AppDialogState) {
     val viewModel: AppDialogViewModel = koinViewModel()
-    Box(
-        modifier = modifier.fillMaxSize().background(LightBlackColor.copy(alpha = 0.8f)),
-        contentAlignment = Alignment.Center
-    ) {
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Box(
+            modifier = modifier.fillMaxSize().background(LightBlackColor.copy(alpha = 0.8f))
+                .clickable(enabled = false){}
+        )
         Column(modifier = Modifier.floatingButton().width(280.dp).heightIn(min = 80.dp).padding(4.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)) {
 

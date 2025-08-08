@@ -3,6 +3,7 @@
 package com.came.parkare.dashboardapp.ui.components.loading
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,15 +28,18 @@ fun AppLoading() {
     val viewModel: AppLoadingViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
     if(state) {
-        Box(
-            modifier = Modifier.fillMaxSize().background(LightBlackColor.copy(alpha = 0.8f)),
-            contentAlignment = Alignment.Center
-        ) {
+        Box(modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center){
+            Box(
+                modifier = Modifier.fillMaxSize().background(LightBlackColor.copy(alpha = 0.8f))
+                    .clickable(enabled = false) {}
+            )
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 CircularProgressIndicator(color = CameBlueColor)
                 Spacer(Modifier.height(8.dp))
                 Text("Loading...", color = WhiteColor)
             }
+
         }
     }
 }

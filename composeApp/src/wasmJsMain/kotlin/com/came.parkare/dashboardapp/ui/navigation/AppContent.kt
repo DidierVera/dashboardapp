@@ -12,6 +12,7 @@ import com.came.parkare.dashboardapp.ui.components.dialog.AppDialog
 import com.came.parkare.dashboardapp.ui.components.loading.AppLoading
 import com.came.parkare.dashboardapp.ui.components.messages.AppToast
 import com.came.parkare.dashboardapp.ui.screens.home.HomeScreen
+import com.came.parkare.dashboardapp.ui.screens.home.initmodal.InitModalView
 import com.came.parkare.dashboardapp.ui.screens.settings.SettingsScreen
 import kotlinx.browser.window
 import org.koin.mp.KoinPlatform.getKoin
@@ -21,7 +22,7 @@ import org.w3c.dom.events.Event
 fun AppContent(modifier: Modifier = Modifier) {
     val navigator: Navigator = remember { getKoin().get() }
     Box(modifier = modifier.fillMaxSize()) {
-        when (val currentScreen = navigator.screens.lastOrNull() ?: WasmScreen.Home) {
+        when (val currentScreen = navigator.screens.lastOrNull() ?: WasmScreen.InitModal) {
             is WasmScreen.Home -> HomeScreen(
                 onSettingsClick = {
                     navigator.navigateTo(WasmScreen.Settings)
@@ -32,6 +33,12 @@ fun AppContent(modifier: Modifier = Modifier) {
                     navigator.goBack()
                 }
             )
+
+            WasmScreen.InitModal -> InitModalView(modifier = Modifier.fillMaxSize(), onSettingsClick = {
+                navigator.navigateTo(WasmScreen.Settings)
+            }, onEditConfig = {
+                navigator.navigateTo(WasmScreen.Home)
+            })
         }
         AppLoading()
         AppDialog(modifier = Modifier.align(Alignment.Center))

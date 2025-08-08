@@ -44,5 +44,4 @@ fun HomeScreen(onSettingsClick: () -> Unit){
 
         }
     }
-    InitModalView(modifier = Modifier.fillMaxSize())
 }
