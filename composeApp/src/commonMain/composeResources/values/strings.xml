@@ -66,6 +66,10 @@
     <string name="default_elements_label">Default elements</string>
     <string name="blank_elements_label">Blank elements</string>
     <string name="default_screens_label">Default screens</string>
+    <string name="modal_initial_label">Choose what do you wanna do</string>
+    <string name="edit_existing_config_label">Edit an existing config</string>
+    <string name="create_new_config_label">Create a new config</string>
+    <string name="go_to_setting_panel_label">Go to dashboard setting panel</string>
 
     <!-- Tooltips -->
     <string name="blank_screen_tooltip">Add blank screen</string>

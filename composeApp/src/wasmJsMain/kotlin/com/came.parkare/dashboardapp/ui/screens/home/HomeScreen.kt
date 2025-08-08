@@ -17,6 +17,7 @@ import com.came.parkare.dashboardapp.ui.screens.home.actionbars.MainTopBar
 import com.came.parkare.dashboardapp.ui.screens.home.configeditor.ConfigEditorScreen
 import com.came.parkare.dashboardapp.ui.screens.home.elementlist.DefaultElementsList
 import com.came.parkare.dashboardapp.ui.screens.home.elementlist.ElementList
+import com.came.parkare.dashboardapp.ui.screens.home.initmodal.InitModalView
 import com.came.parkare.dashboardapp.ui.screens.home.properties.PropertiesEditor
 import com.came.parkare.dashboardapp.ui.screens.home.screenlist.ScreenListTab
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -28,22 +29,20 @@ fun HomeScreen(onSettingsClick: () -> Unit){
         onSettingsClick.invoke()
     }
 */
-    Column(modifier = Modifier.fillMaxSize()) {
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = { MainTopBar(onSettingsClick) },
+        bottomBar = { BottomBarButtons() },
+    ) { padding ->
+        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
+            ConfigEditorScreen(modifier = Modifier.align(Alignment.Center))
+            ElementList(modifier = Modifier.align(Alignment.CenterStart).fillMaxHeight())
+            ScreenListTab(modifier = Modifier.align(Alignment.CenterStart).fillMaxHeight())
+            DefaultElementsList(modifier = Modifier.align(Alignment.CenterStart).fillMaxHeight())
+            PropertiesEditor(modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight())
+            //DefaultScreens(modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight())
 
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            topBar = { MainTopBar(onSettingsClick) },
-            bottomBar = { BottomBarButtons() },
-        ) { padding ->
-            Box(modifier = Modifier.fillMaxSize().padding(padding)) {
-                ConfigEditorScreen(modifier = Modifier.align(Alignment.Center))
-                ElementList(modifier = Modifier.align(Alignment.CenterStart).fillMaxHeight())
-                ScreenListTab(modifier = Modifier.align(Alignment.CenterStart).fillMaxHeight())
-                DefaultElementsList(modifier = Modifier.align(Alignment.CenterStart).fillMaxHeight())
-                PropertiesEditor(modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight())
-                //DefaultScreens(modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight())
-
-            }
         }
     }
+    InitModalView(modifier = Modifier.fillMaxSize())
 }
