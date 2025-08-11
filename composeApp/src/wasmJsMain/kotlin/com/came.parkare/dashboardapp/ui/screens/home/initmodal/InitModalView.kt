@@ -17,6 +17,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,6 +26,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.came.parkare.dashboardapp.ui.screens.home.HomeViewModel
+import com.came.parkare.dashboardapp.ui.screens.home.templates.TemplateScreen
 import com.came.parkare.dashboardapp.ui.theme.style.floatingButton
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.create_new_config_label
@@ -83,8 +86,14 @@ private fun InitialOption(textId: StringResource,
 
 @Composable
 private fun InitExistingConfig(onEditConfig: () -> Unit) {
+    val showTemplates = remember { mutableStateOf(false) }
     InitialOption(Res.string.edit_existing_config_label, Icons.Default.Add){
-        onEditConfig.invoke()
+        showTemplates.value = !showTemplates.value
+        //onEditConfig.invoke()
+    }
+
+    if (showTemplates.value){
+        TemplateScreen()
     }
 }
 

@@ -11,13 +11,16 @@ import com.came.parkare.dashboardapp.domain.repositories.log.LogRepository
 import com.came.parkare.dashboardapp.domain.repositories.screen.ScreenRepository
 import com.came.parkare.dashboardapp.domain.repositories.template.ConfigTemplateRepository
 import com.came.parkare.dashboardapp.domain.usecases.DeleteDevice
+import com.came.parkare.dashboardapp.domain.usecases.DeleteTemplate
 import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceList
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceStatus
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
 import com.came.parkare.dashboardapp.domain.usecases.GetDefaultTemplatesConfig
+import com.came.parkare.dashboardapp.domain.usecases.GetTemplates
 import com.came.parkare.dashboardapp.domain.usecases.SaveConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.SaveNewDevice
+import com.came.parkare.dashboardapp.domain.usecases.SaveNewTemplate
 import com.came.parkare.dashboardapp.domain.usecases.SaveScreenConfig
 import com.came.parkare.dashboardapp.infrastructure.repositories.device.DeviceRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.repositories.logs.LogRepositoryImpl
@@ -36,6 +39,7 @@ import com.came.parkare.dashboardapp.ui.screens.home.configeditor.ConfigEditorVi
 import com.came.parkare.dashboardapp.ui.screens.home.elementlist.ElementListViewModel
 import com.came.parkare.dashboardapp.ui.screens.home.properties.PropertiesViewModel
 import com.came.parkare.dashboardapp.ui.screens.home.screenlist.ScreenListViewModel
+import com.came.parkare.dashboardapp.ui.screens.home.templates.TemplateViewModel
 import com.came.parkare.dashboardapp.ui.screens.home.utils.HomeUtils
 import com.came.parkare.dashboardapp.ui.screens.home.utils.HomeUtilsImpl
 import com.came.parkare.dashboardapp.ui.screens.settings.components.viewmodels.FilePickerDialogViewModel
@@ -86,6 +90,7 @@ val wasmAppModule = module {
     viewModelOf(::ElementListViewModel)
     viewModelOf(::PropertiesViewModel)
     viewModelOf(::ScreenListViewModel)
+    viewModelOf(::TemplateViewModel)
 
     //repositories
     singleOf(::DeviceRepositoryImpl) { bind<DeviceRepository>() }
@@ -102,6 +107,9 @@ val wasmAppModule = module {
     single { SaveNewDevice(get(), get()) }
     single { DeleteDevice(get(), get()) }
     single { GetDeviceStatus(get(), get()) }
+    single { GetTemplates(get(), get()) }
+    single { SaveNewTemplate(get(), get()) }
+    single { DeleteTemplate(get(), get()) }
     single { GetDefaultTemplatesConfig(get(), get(), get()) }
 
 
