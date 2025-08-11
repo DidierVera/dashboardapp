@@ -75,6 +75,7 @@
     <string name="blank_screen_tooltip">Add blank screen</string>
     <string name="import_config_tooltip">Import config from local file</string>
     <string name="save_config_tooltip">Save and apply config</string>
+    <string name="go_back_tooltip">Go back</string>
 
 
     <!--  Share Config  -->

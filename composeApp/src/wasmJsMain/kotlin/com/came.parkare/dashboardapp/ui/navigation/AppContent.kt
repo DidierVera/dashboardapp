@@ -26,6 +26,9 @@ fun AppContent(modifier: Modifier = Modifier) {
             is WasmScreen.Home -> HomeScreen(
                 onSettingsClick = {
                     navigator.navigateTo(WasmScreen.Settings)
+                },
+                onBackClick = {
+                    navigator.goBack()
                 }
             )
             is WasmScreen.Settings -> SettingsScreen(

@@ -20,4 +20,5 @@ interface HomeUtils {
     fun showDefaultScreens(value: Boolean)
     fun setImagesSource(images: List<ImagesFileModel>)
     fun setTextSizeScale(value: Int)
+    fun hideAllTabs()
 }

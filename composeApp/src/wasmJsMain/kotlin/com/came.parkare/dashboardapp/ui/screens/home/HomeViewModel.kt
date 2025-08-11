@@ -102,6 +102,10 @@ class HomeViewModel(
 
     }
 
+    fun onCloseEditor(){
+        homeUtils.hideAllTabs()
+    }
+
 
     private suspend fun loadConfigImages() {
         wasmUtilsHandler.showLoading(true)

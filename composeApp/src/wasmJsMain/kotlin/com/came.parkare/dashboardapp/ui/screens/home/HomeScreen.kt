@@ -23,7 +23,7 @@ import com.came.parkare.dashboardapp.ui.screens.home.screenlist.ScreenListTab
 import org.koin.core.annotation.KoinExperimentalAPI
 
 @Composable
-fun HomeScreen(onSettingsClick: () -> Unit){
+fun HomeScreen(onSettingsClick: () -> Unit, onBackClick: () -> Unit ){
 /*
     viewModel.showRequestLogin(message){
         onSettingsClick.invoke()
@@ -31,7 +31,7 @@ fun HomeScreen(onSettingsClick: () -> Unit){
 */
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { MainTopBar(onSettingsClick) },
+        topBar = { MainTopBar(onSettingsClick, onBackClick) },
         bottomBar = { BottomBarButtons() },
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {

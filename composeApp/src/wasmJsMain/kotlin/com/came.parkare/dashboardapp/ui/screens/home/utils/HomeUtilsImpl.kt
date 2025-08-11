@@ -67,10 +67,15 @@ class HomeUtilsImpl(
         _textSizeScale.update { value }
     }
 
+    override fun hideAllTabs() {
+        hideTabs()
+    }
+
     private fun hideTabs(){
         _shoBlankElements.update { false }
         _showDefaultScreens.update { false }
         _isShowingElements.update { false }
         _isShowingProperties.update { false }
+        _displayControls.update { false }
     }
 }
