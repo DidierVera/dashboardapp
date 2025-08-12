@@ -91,6 +91,11 @@
     <string name="screen_preview_label">Screen preview</string>
     <string name="screen_list_label">Screen list</string>
 
+    <!--  Templates  -->
+    <string name="template_name_label">Template name</string>
+    <string name="screen_count_label">Screen count</string>
+    <string name="actions_label">Actions</string>
+
     <!--  Messages  -->
     <string name="request_password_message">Entry the password for access to the way monitor config.</string>
     <string name="screen_config_saved_message">The new screens configuration has been saved successfully.</string>

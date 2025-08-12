@@ -13,10 +13,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -43,17 +51,26 @@ import org.koin.core.annotation.KoinExperimentalAPI
 fun InitModalView(modifier: Modifier = Modifier,
                   onEditConfig: () -> Unit,
                   onSettingsClick: () -> Unit){
+    val viewModel: InitialModalViewModel = koinViewModel()
+    val state by viewModel.state.collectAsState()
+
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Box(modifier = modifier.background(Color.DarkGray.copy(alpha = 0.8f)).clickable(enabled = false){})
-
-        Column(modifier = Modifier.widthIn(max = 400.dp).floatingButton().padding(8.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(text = stringResource(Res.string.modal_initial_label), fontWeight =
-            FontWeight.SemiBold, modifier = Modifier)
-            InitBlankConfig(onEditConfig)
-            InitExistingConfig(onEditConfig)
-            InitDirectSetting(onSettingsClick)
+            Column(modifier = Modifier.floatingButton().padding(8.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(text = stringResource(Res.string.modal_initial_label), fontWeight =
+                    FontWeight.SemiBold, modifier = Modifier)
+                if (!state.showTemplates){
+                    InitDirectSetting(onSettingsClick)
+                    InitBlankConfig(onEditConfig)
+                }
+                InitExistingConfig()
+            }
+
+            ShowTemplates(onEditConfig)
         }
     }
 }
@@ -62,7 +79,9 @@ fun InitModalView(modifier: Modifier = Modifier,
 private fun InitDirectSetting(onSettingsClick: () -> Unit) {
     val viewModel: HomeViewModel = koinViewModel()
     val message = stringResource(Res.string.request_password_message)
-    InitialOption(Res.string.go_to_setting_panel_label, Icons.Default.Add){
+    InitialOption(Res.string.go_to_setting_panel_label,
+        Icons.AutoMirrored.Filled.KeyboardArrowRight
+    ){
         viewModel.showRequestLogin(message){
             onSettingsClick.invoke()
         }
@@ -75,31 +94,39 @@ private fun InitialOption(textId: StringResource,
     onItemClicked: () -> Unit){
     Row(horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth().floatingButton{
+        modifier = Modifier.widthIn(max = 400.dp).fillMaxWidth().floatingButton{
             onItemClicked.invoke()
         }.padding(8.dp)) {
         Text(text = stringResource(textId))
 
-        Icon( icon, contentDescription = "Add")
+        Icon( icon, contentDescription = "continues")
     }
 }
 
 @Composable
-private fun InitExistingConfig(onEditConfig: () -> Unit) {
-    val showTemplates = remember { mutableStateOf(false) }
-    InitialOption(Res.string.edit_existing_config_label, Icons.Default.Add){
-        showTemplates.value = !showTemplates.value
-        //onEditConfig.invoke()
+private fun InitExistingConfig() {
+    val viewModel: InitialModalViewModel = koinViewModel()
+    val state by viewModel.state.collectAsState()
+    InitialOption(Res.string.edit_existing_config_label,
+        if(state.showTemplates) Icons.Default.KeyboardArrowUp else Icons.AutoMirrored.Filled.KeyboardArrowRight){
+        viewModel.onEditExistingConfig()
     }
+}
 
-    if (showTemplates.value){
-        TemplateScreen()
+@Composable
+private fun ShowTemplates(onEditConfig: () -> Unit){
+    val viewModel: InitialModalViewModel = koinViewModel()
+    val state by viewModel.state.collectAsState()
+    if (state.showTemplates){
+        TemplateScreen(){
+            onEditConfig.invoke()
+        }
     }
 }
 
 @Composable
 private fun InitBlankConfig(onEditConfig: () -> Unit) {
-    InitialOption(Res.string.create_new_config_label, Icons.Default.Add){
+    InitialOption(Res.string.create_new_config_label, Icons.AutoMirrored.Filled.KeyboardArrowRight){
         onEditConfig.invoke()
     }
 }
