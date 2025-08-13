@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.ErrorValidator
+import com.came.parkare.dashboardapp.domain.usecases.GetDefaultTemplatesConfig
 import com.came.parkare.dashboardapp.domain.usecases.GetTemplates
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +16,8 @@ import kotlinx.coroutines.launch
 class TemplateViewModel(
     private val getTemplates: GetTemplates,
     private val validator: ErrorValidator,
-    private val wasmUtilsHandler: WasmUtilsHandler
+    private val wasmUtilsHandler: WasmUtilsHandler,
+    private val getDefaultTemplatesConfig: GetDefaultTemplatesConfig
 ): ViewModel() {
     private val _state = MutableStateFlow(TemplateState())
     val state: StateFlow<TemplateState>
@@ -23,16 +25,35 @@ class TemplateViewModel(
 
     fun initScreen(){
         viewModelScope.launch {
-            wasmUtilsHandler.showLoading(true)
-            when(val result = getTemplates.invoke()){
-                is ServiceResult.Error -> {
-                    validator.validate(result.error)
-                    wasmUtilsHandler.showLoading(false)
-                }
-                is ServiceResult.Success -> {
-                    _state.update { it.copy(items = result.data.orEmpty()) }
-                    wasmUtilsHandler.showLoading(false)
-                }
+            loadExistingItems()
+            loadDefaultTemplates()
+        }
+    }
+
+    private suspend fun loadDefaultTemplates() {
+        wasmUtilsHandler.showLoading(true)
+        when(val result = getDefaultTemplatesConfig.invoke()){
+            is ServiceResult.Error ->  {
+                validator.validate(result.error)
+                wasmUtilsHandler.showLoading(false)
+            }
+            is ServiceResult.Success -> {
+                _state.update { it.copy(defaultTemplates = result.data.orEmpty()) }
+                wasmUtilsHandler.showLoading(false)
+            }
+        }
+    }
+
+    private suspend fun loadExistingItems() {
+        wasmUtilsHandler.showLoading(true)
+        when(val result = getTemplates.invoke()){
+            is ServiceResult.Error -> {
+                validator.validate(result.error)
+                wasmUtilsHandler.showLoading(false)
+            }
+            is ServiceResult.Success -> {
+                _state.update { it.copy(existingItems = result.data.orEmpty()) }
+                wasmUtilsHandler.showLoading(false)
             }
         }
     }

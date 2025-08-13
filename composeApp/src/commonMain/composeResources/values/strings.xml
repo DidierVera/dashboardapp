@@ -95,6 +95,8 @@
     <string name="template_name_label">Template name</string>
     <string name="screen_count_label">Screen count</string>
     <string name="actions_label">Actions</string>
+    <string name="saved_templates_label">Saved templates</string>
+
 
     <!--  Messages  -->
     <string name="request_password_message">Entry the password for access to the way monitor config.</string>
