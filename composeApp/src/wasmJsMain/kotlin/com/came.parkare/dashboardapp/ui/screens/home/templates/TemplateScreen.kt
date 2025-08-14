@@ -33,6 +33,9 @@ import com.came.parkare.dashboardapp.ui.theme.style.floatingButton
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.actions_label
 import dashboardapp.composeapp.generated.resources.default_template_label
+import dashboardapp.composeapp.generated.resources.delete_device_dialog_message
+import dashboardapp.composeapp.generated.resources.delete_template_dialog_message
+import dashboardapp.composeapp.generated.resources.delete_template_successful_message
 import dashboardapp.composeapp.generated.resources.edit_existing_config_label
 import dashboardapp.composeapp.generated.resources.no_items_to_show_message
 import dashboardapp.composeapp.generated.resources.saved_templates_label
@@ -73,7 +76,7 @@ fun LoadTemplates(onEditConfig: () -> Unit) {
         }
 
         items(state.defaultTemplates){ template ->
-            TemplateItem(modifier = Modifier.fillMaxWidth(), template, onEditConfig)
+            TemplateItem(modifier = Modifier.fillMaxWidth(), template, onEditConfig, false)
         }
 
         item { HorizontalDivider() }
@@ -111,25 +114,30 @@ private fun HeaderItem(textId: StringResource, modifier: Modifier){
 
 @Composable
 private fun TemplateItem(modifier: Modifier, template: ConfigTemplateModel,
-                         onEditConfig: () -> Unit){
+                         onEditConfig: () -> Unit, remove: Boolean = true){
+    val viewModel: TemplateViewModel = koinViewModel()
+
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+        val deleteMessage = stringResource(Res.string.delete_template_dialog_message)
         Text(text = template.templateName, modifier = Modifier.weight(1f))
         Text(text = "${ template.screens.size }", modifier = Modifier.weight(1f))
         Row(
             horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.End),
             modifier = Modifier.weight(0.2f)) {
-            IconButton(onClick = {}){
-                Icon(Icons.Default.Delete, contentDescription = null)
+            if (remove){
+                IconButton(onClick = {
+                    viewModel.deleteTemplate(deleteMessage, template = template)
+                }){
+                    Icon(Icons.Default.Delete, contentDescription = null)
+                }
             }
             IconButton(onClick = {
-                onEditConfig.invoke()
+                viewModel.setEditableTemplate(template) { onEditConfig.invoke() }
             }){
                 Icon(Icons.Default.Edit, contentDescription = null)
             }
-
         }
     }
-
 }
 
 @Composable

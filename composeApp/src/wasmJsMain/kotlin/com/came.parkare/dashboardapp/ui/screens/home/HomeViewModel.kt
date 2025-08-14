@@ -11,6 +11,7 @@ import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toModel
 import com.came.parkare.dashboardapp.ui.components.dialog.AppDialogState
 import com.came.parkare.dashboardapp.ui.screens.home.utils.HomeUtils
+import com.came.parkare.dashboardapp.ui.screens.home.utils.ResourceUtils
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import kotlinx.browser.window
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +28,8 @@ class HomeViewModel(
     private val getConnectionConfig: GetConnectionConfig,
     private val wasmUtilsHandler: WasmUtilsHandler,
     private val validator: ErrorValidator,
-    private val homeUtils: HomeUtils
+    private val homeUtils: HomeUtils,
+    private val resourceUtils: ResourceUtils
 ): ViewModel() {
 
     private val _state = MutableStateFlow(HomeState())
@@ -115,8 +117,8 @@ class HomeViewModel(
                 wasmUtilsHandler.showLoading(false)
             }
             is ServiceResult.Success -> {
-                homeUtils.setImagesSource(config.data?.files?.map { dto -> dto.toModel() }.orEmpty())
-                homeUtils.setTextSizeScale(config.data?.textSizeScale ?: 10)
+                resourceUtils.setImagesSource(config.data?.files?.map { dto -> dto.toModel() }.orEmpty())
+                resourceUtils.setTextSizeScale(config.data?.textSizeScale ?: 10)
                 wasmUtilsHandler.showLoading(false)
             }
         }

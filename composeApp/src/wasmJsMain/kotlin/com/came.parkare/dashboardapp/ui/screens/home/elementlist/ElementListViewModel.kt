@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ElementDto
 import com.came.parkare.dashboardapp.infrastructure.source.mocks.ElementListMock
 import com.came.parkare.dashboardapp.ui.screens.home.utils.HomeUtils
+import com.came.parkare.dashboardapp.ui.screens.home.utils.ResourceUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +15,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.serialization.json.Json
 
 class ElementListViewModel(
-    private val homeUtils: HomeUtils
+    private val homeUtils: HomeUtils,
+    private val resourceUtils: ResourceUtils
 
 ): ViewModel() {
 
@@ -31,10 +33,10 @@ class ElementListViewModel(
     }
 
     private fun loadImages() {
-        homeUtils.imagesSource.onEach { images ->
+        resourceUtils.imagesSource.onEach { images ->
             _state.update { it.copy(imagesSource = images) }
         }.launchIn(viewModelScope)
-        homeUtils.textSizeScale.onEach { size ->
+        resourceUtils.textSizeScale.onEach { size ->
             _state.update { it.copy(textSizeScale = size) }
         }.launchIn(viewModelScope)
     }

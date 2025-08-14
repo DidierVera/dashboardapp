@@ -43,6 +43,8 @@ import com.came.parkare.dashboardapp.ui.screens.home.screenlist.ScreenListViewMo
 import com.came.parkare.dashboardapp.ui.screens.home.templates.TemplateViewModel
 import com.came.parkare.dashboardapp.ui.screens.home.utils.HomeUtils
 import com.came.parkare.dashboardapp.ui.screens.home.utils.HomeUtilsImpl
+import com.came.parkare.dashboardapp.ui.screens.home.utils.ResourceUtils
+import com.came.parkare.dashboardapp.ui.screens.home.utils.ResourceUtilsImpl
 import com.came.parkare.dashboardapp.ui.screens.settings.components.viewmodels.FilePickerDialogViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.importfile.ImportViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.SettingViewModel
@@ -72,6 +74,7 @@ val wasmAppModule = module {
     singleOf(::WasmUtilsHandlerImpl) { bind<WasmUtilsHandler>() }
     singleOf(::HomeUtilsImpl) { bind<HomeUtils>() }
     singleOf(::ErrorValidatorImpl) { bind<ErrorValidator>() }
+    singleOf(::ResourceUtilsImpl) { bind<ResourceUtils>() }
 
     //viewModels
     viewModelOf(::SettingViewModel)

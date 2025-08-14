@@ -11,6 +11,7 @@ import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toModel
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
 import com.came.parkare.dashboardapp.ui.screens.home.utils.HomeUtils
+import com.came.parkare.dashboardapp.ui.screens.home.utils.ResourceUtils
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,7 +25,7 @@ class ConfigEditorViewModel(
     private val wasmUtilsHandler: WasmUtilsHandler,
     private val validator: ErrorValidator,
     private val getScreensConfig: GetScreensConfig,
-    private val homeUtils: HomeUtils
+    private val resourceUtils: ResourceUtils
 
 ): ViewModel() {
 
@@ -41,11 +42,11 @@ class ConfigEditorViewModel(
     }
 
     init {
-        homeUtils.imagesSource.onEach { images ->
+        resourceUtils.imagesSource.onEach { images ->
             _state.update { it.copy(imagesSource = images) }
         }.launchIn(viewModelScope)
 
-        homeUtils.textSizeScale.onEach { size ->
+        resourceUtils.textSizeScale.onEach { size ->
             _state.update { it.copy(textSizeScale = size) }
         }.launchIn(viewModelScope)
     }
