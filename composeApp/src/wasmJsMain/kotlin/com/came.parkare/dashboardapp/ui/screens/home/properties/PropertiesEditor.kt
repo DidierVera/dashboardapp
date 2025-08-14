@@ -41,13 +41,25 @@ fun PropertiesEditor(
             is ElementDto.BoxDto -> BoxProperties(item.data){
 
             }
-            is ElementDto.ColumnDto -> TODO()
-            is ElementDto.ImageDto -> TODO()
-            is ElementDto.RowDto -> TODO()
-            is ElementDto.SpacerDto -> TODO()
-            is ElementDto.TextDto -> TODO()
-            is ElementDto.VideoDto -> TODO()
-            null -> TODO()
+            is ElementDto.ColumnDto -> ColumnProperties(item.data){
+
+            }
+            is ElementDto.ImageDto -> ImageProperties(item.data){
+
+            }
+            is ElementDto.RowDto -> RowProperties(item.data){
+
+            }
+            is ElementDto.SpacerDto -> SpacerProperties(item.data){
+
+            }
+            is ElementDto.TextDto -> TextProperties(item.data){
+
+            }
+            is ElementDto.VideoDto -> VideoProperties(item.data){
+
+            }
+            null -> {}
         }
     }
 }
