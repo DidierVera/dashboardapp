@@ -49,6 +49,10 @@ class ConfigEditorViewModel(
         resourceUtils.textSizeScale.onEach { size ->
             _state.update { it.copy(textSizeScale = size) }
         }.launchIn(viewModelScope)
+
+        resourceUtils.editableTemplate.onEach { template ->
+            _state.update { it.copy(editingTemplate = template) }
+        }.launchIn(viewModelScope)
     }
 
     private suspend fun getCurrentScreenConfig() {

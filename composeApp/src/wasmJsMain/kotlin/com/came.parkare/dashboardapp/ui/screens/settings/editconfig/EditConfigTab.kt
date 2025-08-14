@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -42,24 +41,16 @@ import com.came.parkare.dashboardapp.ui.components.AppButton
 import com.came.parkare.dashboardapp.ui.components.Base64Image
 import com.came.parkare.dashboardapp.ui.screens.settings.components.BuildElement
 import com.came.parkare.dashboardapp.ui.screens.settings.components.TabTitle
-import com.came.parkare.dashboardapp.ui.screens.settings.shareconfig.ShareConfigViewModel
-import com.came.parkare.dashboardapp.ui.theme.BlackColor
 import com.came.parkare.dashboardapp.ui.theme.style.floatingButton
 import com.came.parkare.dashboardapp.ui.theme.style.shadowContainer
 import dashboardapp.composeapp.generated.resources.Res
-import dashboardapp.composeapp.generated.resources.apply_button
 import dashboardapp.composeapp.generated.resources.dashboard_backgroud
 import dashboardapp.composeapp.generated.resources.edit_current_config_option
 import dashboardapp.composeapp.generated.resources.element_code_label
-import dashboardapp.composeapp.generated.resources.file_content_label
 import dashboardapp.composeapp.generated.resources.ic_item_arrow
-import dashboardapp.composeapp.generated.resources.no_items_to_show_message
-import dashboardapp.composeapp.generated.resources.save_button
 import dashboardapp.composeapp.generated.resources.screen_list_label
 import dashboardapp.composeapp.generated.resources.screen_preview_label
-import dashboardapp.composeapp.generated.resources.screens_label
 import dashboardapp.composeapp.generated.resources.select_screen_message
-import dashboardapp.composeapp.generated.resources.send_button
 import dashboardapp.composeapp.generated.resources.update_button
 import dashboardapp.composeapp.generated.resources.update_config_message
 import org.jetbrains.compose.resources.painterResource
@@ -169,7 +160,7 @@ private fun EditorField() {
                 )
                 .padding(4.dp)){
                 TextField(modifier = Modifier.fillMaxWidth(),
-                    value = state.contentFile, onValueChange = {
+                    value = state.elementJsonCode, onValueChange = {
                         viewModel.setValues(it)
                     }
                 )
@@ -189,7 +180,7 @@ private fun EditorTitle(){
             text = stringResource(Res.string.update_button), onClick = {
                 viewModel.updateConfig(updateMessage)
             },
-            isEnabled = (!state.screenViewer.isNullOrBlank() && state.contentFile.isNotEmpty())
+            isEnabled = (!state.screenViewer.isNullOrBlank() && state.elementJsonCode.isNotEmpty())
         )
         HorizontalDivider()
         Text(

@@ -6,7 +6,7 @@ import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.S
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ElementDto
 
 data class EditConfigState(
-    val contentFile: String = "",
+    val elementJsonCode: String = "",
     val screens: List<ScreenDto> = emptyList(),
     val selectedElement: ElementDto? = null,
     val elementPosition: Int? = null,

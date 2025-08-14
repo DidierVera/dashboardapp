@@ -74,7 +74,7 @@ class EditConfigViewModel(
             screenViewer = null,
             screens = emptyList(),
             elementsByScreen = emptyList(),
-            contentFile = ""
+            elementJsonCode = ""
         ) }
     }
 
@@ -94,7 +94,7 @@ class EditConfigViewModel(
 
     fun selectScreen(screen: ScreenModel){
         if (_state.value.screenViewer == screen.screenId){
-            _state.update { it.copy(screenViewer = null, elementsByScreen = emptyList(), contentFile = "") }
+            _state.update { it.copy(screenViewer = null, elementsByScreen = emptyList(), elementJsonCode = "") }
         }else{
             _state.update { it.copy(screenViewer = screen.screenId, elementsByScreen = screen.elements)}
         }
@@ -110,14 +110,14 @@ class EditConfigViewModel(
             }
             val fileContent = prettyJson.encodeToString(element)
             _state.update {
-                it.copy( contentFile = fileContent )
+                it.copy( elementJsonCode = fileContent )
             }
         }
     }
 
     fun setValues(fileContent: String){
         viewModelScope.launch {
-            _state.update { it.copy(contentFile = fileContent) }
+            _state.update { it.copy(elementJsonCode = fileContent) }
         }
     }
 
@@ -212,7 +212,7 @@ class EditConfigViewModel(
 
                 if (selectedElement != null && elementPosition in currentScreenElements.indices) {
 
-                    val newElement = Json.decodeFromString<ElementDto>(state.contentFile)
+                    val newElement = Json.decodeFromString<ElementDto>(state.elementJsonCode)
                     currentScreenElements[elementPosition] = newElement
 
                     val newScreen = selectedScreen.copy(
