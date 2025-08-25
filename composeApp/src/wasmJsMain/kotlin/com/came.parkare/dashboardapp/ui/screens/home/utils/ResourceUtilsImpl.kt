@@ -2,7 +2,7 @@ package com.came.parkare.dashboardapp.ui.screens.home.utils
 
 import com.came.parkare.dashboardapp.domain.models.ConfigTemplateModel
 import com.came.parkare.dashboardapp.domain.models.ImagesFileModel
-import com.came.parkare.dashboardapp.domain.models.components.ElementModel
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toDto
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -39,6 +39,10 @@ class ResourceUtilsImpl: ResourceUtils {
 
     override fun setEditableTemplate(model: ConfigTemplateModel) {
         _editableTemplate.update { model }
+        val firstScreen = model.screens.firstOrNull()?.toDto()
+        val firstElement = firstScreen?.data?.firstOrNull()
+        if (firstElement != null)
+            setEditingElement(Json.encodeToString(firstElement))
     }
 
     override fun setEditingElement(model: String) {

@@ -25,6 +25,7 @@ fun PropertiesEditor(
     modifier: Modifier = Modifier
 ){
     val viewModel: PropertiesViewModel = koinViewModel()
+    viewModel.initTab()
     val state by viewModel.state.collectAsState()
 
     if(state.showTab){

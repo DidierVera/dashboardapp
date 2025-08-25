@@ -6,10 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.ErrorValidator
+import com.came.parkare.dashboardapp.domain.models.components.ElementModel
 import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toModel
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ElementDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.toDto
 import com.came.parkare.dashboardapp.ui.screens.home.utils.HomeUtils
 import com.came.parkare.dashboardapp.ui.screens.home.utils.ResourceUtils
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
@@ -20,6 +23,8 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
 
 class ConfigEditorViewModel(
     private val wasmUtilsHandler: WasmUtilsHandler,
@@ -38,10 +43,11 @@ class ConfigEditorViewModel(
         viewModelScope.launch {
             clearForm()
             getCurrentScreenConfig()
+            initEditor()
         }
     }
 
-    init {
+    private fun initEditor() {
         resourceUtils.imagesSource.onEach { images ->
             _state.update { it.copy(imagesSource = images) }
         }.launchIn(viewModelScope)
@@ -52,7 +58,10 @@ class ConfigEditorViewModel(
 
         resourceUtils.editableTemplate.onEach { template ->
             _state.update { it.copy(editingTemplate = template) }
+            val firstScreen = template.screens.first()
+            _state.update { it.copy(elementsByScreen = firstScreen.elements) }
         }.launchIn(viewModelScope)
+
     }
 
     private suspend fun getCurrentScreenConfig() {
@@ -73,6 +82,66 @@ class ConfigEditorViewModel(
             imagesSource = emptyList(),
             elementsByScreen = emptyList()
         ) }
+    }
+
+    fun selectItemOnScreen(element: ElementModel, position: Int) {
+        when(element){
+            is ElementModel.BoxModel -> {
+                encodeAndSetEditableElement(element.toDto())
+                setElementAndPosition(element.toDto(), position)
+            }
+            is ElementModel.ColumnModel -> {
+                encodeAndSetEditableElement(element.toDto())
+                setElementAndPosition(element.toDto(), position)
+            }
+            is ElementModel.ImageModel -> {
+                encodeAndSetEditableElement(element.toDto())
+                setElementAndPosition(element.toDto(), position)
+            }
+            is ElementModel.RowModel -> {
+                encodeAndSetEditableElement(element.toDto())
+                setElementAndPosition(element.toDto(), position)
+            }
+            is ElementModel.SpacerModel -> {
+                encodeAndSetEditableElement(element.toDto())
+                setElementAndPosition(element.toDto(), position)
+            }
+            is ElementModel.TextModel -> {
+                encodeAndSetEditableElement(element.toDto())
+                setElementAndPosition(element.toDto(), position)
+            }
+            is ElementModel.VideoModel -> {
+                encodeAndSetEditableElement(element.toDto())
+                setElementAndPosition(element.toDto(), position)
+            }
+        }
+    }
+
+    private fun setElementAndPosition(elementDto: ElementDto, position: Int){
+        viewModelScope.launch {
+            resourceUtils.setEditingElement(Json.encodeToString(elementDto))
+//            _state.update {
+//                it.copy(
+//                    selectedElement = elementDto,
+//                    elementPosition = position
+//                )
+//            }
+        }
+    }
+
+    @OptIn(ExperimentalSerializationApi::class)
+    private inline fun<reified T> encodeAndSetEditableElement(element: T) {
+        viewModelScope.launch {
+            val prettyJson = Json {
+                prettyPrint = true
+                prettyPrintIndent = " "
+                encodeDefaults = true
+            }
+            val fileContent = prettyJson.encodeToString(element)
+//            _state.update {
+//                it.copy( elementJsonCode = fileContent )
+//            }
+        }
     }
 
 }

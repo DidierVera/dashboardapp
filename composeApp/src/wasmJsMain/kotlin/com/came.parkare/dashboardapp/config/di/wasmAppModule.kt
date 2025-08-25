@@ -34,11 +34,10 @@ import com.came.parkare.dashboardapp.ui.components.loading.AppLoadingViewModel
 import com.came.parkare.dashboardapp.ui.components.messages.AppToastViewModel
 import com.came.parkare.dashboardapp.ui.navigation.Navigator
 import com.came.parkare.dashboardapp.ui.screens.home.HomeViewModel
-import com.came.parkare.dashboardapp.ui.screens.home.components.editortab.EditorTabViewModel
 import com.came.parkare.dashboardapp.ui.screens.home.components.statusbar.StatusBarViewModel
 import com.came.parkare.dashboardapp.ui.screens.home.configeditor.ConfigEditorViewModel
 import com.came.parkare.dashboardapp.ui.screens.home.elementlist.ElementListViewModel
-import com.came.parkare.dashboardapp.ui.screens.home.initmodal.InitialModalViewModel
+import com.came.parkare.dashboardapp.ui.screens.initmodal.InitialModalViewModel
 import com.came.parkare.dashboardapp.ui.screens.home.properties.PropertiesViewModel
 import com.came.parkare.dashboardapp.ui.screens.home.screenlist.ScreenListViewModel
 import com.came.parkare.dashboardapp.ui.screens.home.templates.TemplateViewModel
@@ -90,7 +89,6 @@ val wasmAppModule = module {
     viewModelOf(::AppDialogViewModel)
     viewModelOf(::EditConfigViewModel)
     viewModelOf(::ShareConfigViewModel)
-    viewModelOf(::EditorTabViewModel)
     viewModelOf(::ConfigEditorViewModel)
     viewModelOf(::ElementListViewModel)
     viewModelOf(::PropertiesViewModel)

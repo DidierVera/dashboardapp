@@ -33,16 +33,22 @@ class StatusBarViewModel(
 
     private fun setElementType() {
         resourceUtils.editingElement.onEach { jsonElement ->
-            val elementType = when(val element = Json.decodeFromString<ElementDto>(jsonElement)){
-                is ElementDto.BoxDto -> element.elementType
-                is ElementDto.ColumnDto -> element.elementType
-                is ElementDto.ImageDto -> element.elementType
-                is ElementDto.RowDto -> element.elementType
-                is ElementDto.SpacerDto -> element.elementType
-                is ElementDto.TextDto -> element.elementType
-                is ElementDto.VideoDto -> element.elementType
+            if (jsonElement.isNotBlank()){
+                try {
+                    val elementType = when(val element = Json.decodeFromString<ElementDto>(jsonElement)){
+                        is ElementDto.BoxDto -> element.elementType
+                        is ElementDto.ColumnDto -> element.elementType
+                        is ElementDto.ImageDto -> element.elementType
+                        is ElementDto.RowDto -> element.elementType
+                        is ElementDto.SpacerDto -> element.elementType
+                        is ElementDto.TextDto -> element.elementType
+                        is ElementDto.VideoDto -> element.elementType
+                    }
+                    _state.update { it.copy(editingElementType = elementType) }
+                }catch (e: Exception){
+                    e.printStackTrace()
+                }
             }
-            _state.update { it.copy(editingElementType = elementType) }
         }.launchIn(viewModelScope)
     }
 }

@@ -18,7 +18,7 @@ import com.came.parkare.dashboardapp.ui.screens.home.components.statusbar.Status
 import com.came.parkare.dashboardapp.ui.screens.home.configeditor.ConfigEditorScreen
 import com.came.parkare.dashboardapp.ui.screens.home.elementlist.DefaultElementsList
 import com.came.parkare.dashboardapp.ui.screens.home.elementlist.ElementList
-import com.came.parkare.dashboardapp.ui.screens.home.initmodal.InitModalView
+import com.came.parkare.dashboardapp.ui.screens.initmodal.InitModalView
 import com.came.parkare.dashboardapp.ui.screens.home.properties.PropertiesEditor
 import com.came.parkare.dashboardapp.ui.screens.home.screenlist.ScreenListTab
 import org.koin.core.annotation.KoinExperimentalAPI

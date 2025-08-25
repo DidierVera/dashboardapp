@@ -12,7 +12,7 @@ import com.came.parkare.dashboardapp.ui.components.dialog.AppDialog
 import com.came.parkare.dashboardapp.ui.components.loading.AppLoading
 import com.came.parkare.dashboardapp.ui.components.messages.AppToast
 import com.came.parkare.dashboardapp.ui.screens.home.HomeScreen
-import com.came.parkare.dashboardapp.ui.screens.home.initmodal.InitModalView
+import com.came.parkare.dashboardapp.ui.screens.initmodal.InitModalView
 import com.came.parkare.dashboardapp.ui.screens.home.templates.TemplateScreen
 import com.came.parkare.dashboardapp.ui.screens.settings.SettingsScreen
 import kotlinx.browser.window

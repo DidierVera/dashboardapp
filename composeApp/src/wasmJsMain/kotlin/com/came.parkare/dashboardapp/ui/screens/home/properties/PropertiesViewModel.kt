@@ -21,13 +21,19 @@ class PropertiesViewModel(
     val state: StateFlow<PropertiesState>
         get() = _state.asStateFlow()
 
-    init {
+    fun initTab() {
         resourceUtils.editingElement.onEach { jsonElement ->
-            val newElement = Json.decodeFromString<ElementDto>(jsonElement)
-            _state.update { it.copy(element = newElement) }
-
+            if (jsonElement.isNotEmpty()){
+                val newElement = try {
+                    Json.decodeFromString<ElementDto>(jsonElement)
+                }catch (e: Exception){
+                    e.printStackTrace()
+                    null
+                }
+                if (newElement != null){
+                    _state.update { it.copy(element = newElement) }
+                }
+            }
         }.launchIn(viewModelScope)
     }
-
-
 }
