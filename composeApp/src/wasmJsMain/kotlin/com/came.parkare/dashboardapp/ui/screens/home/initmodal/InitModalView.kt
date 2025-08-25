@@ -126,7 +126,10 @@ private fun ShowTemplates(onEditConfig: () -> Unit){
 
 @Composable
 private fun InitBlankConfig(onEditConfig: () -> Unit) {
+    val viewModel: InitialModalViewModel = koinViewModel()
     InitialOption(Res.string.create_new_config_label, Icons.AutoMirrored.Filled.KeyboardArrowRight){
-        onEditConfig.invoke()
+        viewModel.onCreateNewConfig {
+            onEditConfig.invoke()
+        }
     }
 }

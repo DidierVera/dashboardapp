@@ -3,6 +3,7 @@
 package com.came.parkare.dashboardapp.ui.screens.home.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
@@ -38,7 +39,7 @@ fun TooltipButton(modifier: Modifier = Modifier,
         tooltip = {
             Text(stringResource(tooltipTextId),
                 modifier = Modifier.clip(CircleShape.copy( CornerSize(4.dp)))
-                    .background(WarningColor .copy(alpha = 0.1f))
+                    .background(WhiteColor).background(WarningColor.copy(alpha = 0.1f))
                     .padding(4.dp))
         },
         state = tooltipState

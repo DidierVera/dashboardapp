@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.came.parkare.dashboardapp.ui.screens.home.actionbars.BottomBarButtons
 import com.came.parkare.dashboardapp.ui.screens.home.actionbars.MainTopBar
+import com.came.parkare.dashboardapp.ui.screens.home.components.statusbar.StatusBarView
 import com.came.parkare.dashboardapp.ui.screens.home.configeditor.ConfigEditorScreen
 import com.came.parkare.dashboardapp.ui.screens.home.elementlist.DefaultElementsList
 import com.came.parkare.dashboardapp.ui.screens.home.elementlist.ElementList

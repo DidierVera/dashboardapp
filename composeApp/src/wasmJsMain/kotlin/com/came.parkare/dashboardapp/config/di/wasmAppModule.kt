@@ -35,6 +35,7 @@ import com.came.parkare.dashboardapp.ui.components.messages.AppToastViewModel
 import com.came.parkare.dashboardapp.ui.navigation.Navigator
 import com.came.parkare.dashboardapp.ui.screens.home.HomeViewModel
 import com.came.parkare.dashboardapp.ui.screens.home.components.editortab.EditorTabViewModel
+import com.came.parkare.dashboardapp.ui.screens.home.components.statusbar.StatusBarViewModel
 import com.came.parkare.dashboardapp.ui.screens.home.configeditor.ConfigEditorViewModel
 import com.came.parkare.dashboardapp.ui.screens.home.elementlist.ElementListViewModel
 import com.came.parkare.dashboardapp.ui.screens.home.initmodal.InitialModalViewModel
@@ -96,6 +97,7 @@ val wasmAppModule = module {
     viewModelOf(::ScreenListViewModel)
     viewModelOf(::TemplateViewModel)
     viewModelOf(::InitialModalViewModel)
+    viewModelOf(::StatusBarViewModel)
 
     //repositories
     singleOf(::DeviceRepositoryImpl) { bind<DeviceRepository>() }
