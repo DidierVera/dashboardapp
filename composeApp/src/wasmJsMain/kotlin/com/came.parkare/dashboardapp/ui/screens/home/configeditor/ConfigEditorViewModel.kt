@@ -30,7 +30,8 @@ class ConfigEditorViewModel(
     private val wasmUtilsHandler: WasmUtilsHandler,
     private val validator: ErrorValidator,
     private val getScreensConfig: GetScreensConfig,
-    private val resourceUtils: ResourceUtils
+    private val resourceUtils: ResourceUtils,
+    private val homeUtils: HomeUtils
 
 ): ViewModel() {
 
@@ -120,6 +121,7 @@ class ConfigEditorViewModel(
     private fun setElementAndPosition(elementDto: ElementDto, position: Int){
         viewModelScope.launch {
             resourceUtils.setEditingElement(Json.encodeToString(elementDto))
+            homeUtils.showProperties(true)
 //            _state.update {
 //                it.copy(
 //                    selectedElement = elementDto,

@@ -1,9 +1,10 @@
-package com.came.parkare.dashboardapp.ui.screens.home.properties
+package com.came.parkare.dashboardapp.ui.screens.home.properties.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.came.parkare.dashboardapp.domain.models.components.ElementModel
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ElementDto
+import com.came.parkare.dashboardapp.ui.screens.home.properties.PropertiesState
+import com.came.parkare.dashboardapp.ui.screens.home.utils.HomeUtils
 import com.came.parkare.dashboardapp.ui.screens.home.utils.ResourceUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +15,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.serialization.json.Json
 
 class PropertiesViewModel(
-    private val resourceUtils: ResourceUtils
+    private val resourceUtils: ResourceUtils,
+    private val homeUtils: HomeUtils
 
 ): ViewModel() {
     private val _state = MutableStateFlow(PropertiesState())
@@ -22,6 +24,9 @@ class PropertiesViewModel(
         get() = _state.asStateFlow()
 
     fun initTab() {
+        homeUtils.isShowingProperties.onEach { show ->
+            _state.update { it.copy(showTab = show) }
+        }.launchIn(viewModelScope)
         resourceUtils.editingElement.onEach { jsonElement ->
             if (jsonElement.isNotEmpty()){
                 val newElement = try {
@@ -35,5 +40,9 @@ class PropertiesViewModel(
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun setNewValues(){
+
     }
 }

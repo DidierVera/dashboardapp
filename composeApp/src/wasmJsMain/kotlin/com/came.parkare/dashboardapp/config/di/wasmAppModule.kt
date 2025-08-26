@@ -38,7 +38,7 @@ import com.came.parkare.dashboardapp.ui.screens.home.components.statusbar.Status
 import com.came.parkare.dashboardapp.ui.screens.home.configeditor.ConfigEditorViewModel
 import com.came.parkare.dashboardapp.ui.screens.home.elementlist.ElementListViewModel
 import com.came.parkare.dashboardapp.ui.screens.initmodal.InitialModalViewModel
-import com.came.parkare.dashboardapp.ui.screens.home.properties.PropertiesViewModel
+import com.came.parkare.dashboardapp.ui.screens.home.properties.viewmodels.PropertiesViewModel
 import com.came.parkare.dashboardapp.ui.screens.home.screenlist.ScreenListViewModel
 import com.came.parkare.dashboardapp.ui.screens.home.templates.TemplateViewModel
 import com.came.parkare.dashboardapp.ui.screens.home.utils.HomeUtils

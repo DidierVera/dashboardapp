@@ -23,6 +23,7 @@
     <string name="share_file_button">SHARE TO</string>
     <string name="share_button">SHARE</string>
     <string name="apply_button">APPLY</string>
+    <string name="apply_changes_button">APPLY CHANGES</string>
     <string name="update_button">UPDATE</string>
 
     <!--Testing screen-->
@@ -76,6 +77,32 @@
     <string name="import_config_tooltip">Import config from local file</string>
     <string name="save_config_tooltip">Save and apply config</string>
     <string name="go_back_tooltip">Go back</string>
+
+    <!--  Properties  -->
+    <string name="background_color_label">Background color</string>
+    <string name="density_label">Density</string>
+    <string name="border_radius_label">Border radius</string>
+    <string name="shadow_label">Shadow</string>
+    <string name="spacing_label">Spacing</string>
+    <string name="padding_label">Padding</string>
+    <string name="data_key_label">Data key</string>
+    <string name="dit_type_code_label">DIT type code</string>
+    <string name="valid_value_label">Valid value</string>
+    <string name="item_id_label">Item ID</string>
+    <string name="default_text_label">Default text</string>
+    <string name="text_size_label">Text size</string>
+    <string name="text_color_label">Text color</string>
+    <string name="font_weight_label">Font Weight</string>
+    <string name="translations_label">Translations</string>
+    <string name="lang_label">Lang</string>
+    <string name="value_label">Value</string>
+    <string name="height_label">Height</string>
+    <string name="width_label">Width</string>
+    <string name="margin_label">Margin</string>
+    <string name="file_name_label">File name</string>
+    <string name="local_file_path_label">Local file path</string>
+    <string name="interval_time_label">Interval time</string>
+
 
 
     <!--  Share Config  -->

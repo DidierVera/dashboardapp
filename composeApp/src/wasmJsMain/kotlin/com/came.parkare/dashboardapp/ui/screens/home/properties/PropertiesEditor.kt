@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ElementDto
+import com.came.parkare.dashboardapp.ui.screens.home.properties.viewmodels.PropertiesViewModel
 import com.came.parkare.dashboardapp.ui.theme.style.floatingButton
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -37,30 +38,30 @@ fun PropertiesEditor(
                     this.scaleY = 1.0f
                 }) {
 
-        }
-        when(val item = state.element){
-            is ElementDto.BoxDto -> BoxProperties(item.data){
+            when(val item = state.element){
+                is ElementDto.BoxDto -> BoxProperties(item.data){
 
-            }
-            is ElementDto.ColumnDto -> ColumnProperties(item.data){
+                }
+                is ElementDto.ColumnDto -> ColumnProperties(item.data){
 
-            }
-            is ElementDto.ImageDto -> ImageProperties(item.data){
+                }
+                is ElementDto.ImageDto -> ImageProperties(item.data){
 
-            }
-            is ElementDto.RowDto -> RowProperties(item.data){
+                }
+                is ElementDto.RowDto -> RowProperties(item.data){
 
-            }
-            is ElementDto.SpacerDto -> SpacerProperties(item.data){
+                }
+                is ElementDto.SpacerDto -> SpacerProperties(item.data){
 
-            }
-            is ElementDto.TextDto -> TextProperties(item.data){
+                }
+                is ElementDto.TextDto -> TextProperties(item.data){
 
-            }
-            is ElementDto.VideoDto -> VideoProperties(item.data){
+                }
+                is ElementDto.VideoDto -> VideoProperties(item.data){
 
+                }
+                null -> {}
             }
-            null -> {}
         }
     }
 }

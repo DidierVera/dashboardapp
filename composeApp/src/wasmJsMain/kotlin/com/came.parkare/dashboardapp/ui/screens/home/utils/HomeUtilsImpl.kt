@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.update
 
 class HomeUtilsImpl(
 ): HomeUtils {
-    private val _isShowingProperties: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val _isShowingProperties: MutableStateFlow<Boolean> = MutableStateFlow(true)
     private val _isShowingElements: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val _shoBlankElements: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val _showDefaultScreens: MutableStateFlow<Boolean> = MutableStateFlow(false)

@@ -1,4 +1,4 @@
-@file:OptIn(KoinExperimentalAPI::class)
+@file:OptIn(KoinExperimentalAPI::class, KoinExperimentalAPI::class)
 
 package com.came.parkare.dashboardapp.ui.screens.home.properties
 
@@ -12,6 +12,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,6 +23,18 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.BoxDataDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ElementDto
+import com.came.parkare.dashboardapp.ui.screens.home.properties.viewmodels.PropertiesViewModel
+import dashboardapp.composeapp.generated.resources.Res
+import dashboardapp.composeapp.generated.resources.apply_changes_button
+import dashboardapp.composeapp.generated.resources.background_color_label
+import dashboardapp.composeapp.generated.resources.border_radius_label
+import dashboardapp.composeapp.generated.resources.density_label
+import dashboardapp.composeapp.generated.resources.height_label
+import dashboardapp.composeapp.generated.resources.margin_label
+import dashboardapp.composeapp.generated.resources.padding_label
+import dashboardapp.composeapp.generated.resources.shadow_label
+import dashboardapp.composeapp.generated.resources.width_label
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 
@@ -31,7 +44,8 @@ fun BoxProperties(
     onUpdate: (ElementDto) -> Unit
 ) {
 
-val viewModel: PropertiesViewModel = koinViewModel()
+    val viewModel: PropertiesViewModel = koinViewModel()
+    val state by viewModel.state.collectAsState()
 
     var backgroundColor by remember { mutableStateOf(box.backgroundColor ?: "") }
     var density by remember { mutableStateOf(box.density.toString()) }
@@ -42,20 +56,44 @@ val viewModel: PropertiesViewModel = koinViewModel()
         OutlinedTextField(
             value = backgroundColor,
             onValueChange = { backgroundColor = it },
-            label = { Text("Background Color") }
+            label = { Text(stringResource(Res.string.background_color_label)) }
         )
 
         OutlinedTextField(
             value = density,
             onValueChange = { density = it },
-            label = { Text("Density") },
+            label = { Text(stringResource(Res.string.density_label)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )
 
         OutlinedTextField(
             value = roundBorder,
             onValueChange = { roundBorder = it },
-            label = { Text("Round Border") },
+            label = { Text(stringResource(Res.string.border_radius_label)) },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+        )
+        OutlinedTextField(
+            value = roundBorder,
+            onValueChange = { roundBorder = it },
+            label = { Text(stringResource(Res.string.width_label)) },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+        )
+        OutlinedTextField(
+            value = roundBorder,
+            onValueChange = { roundBorder = it },
+            label = { Text(stringResource(Res.string.height_label)) },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+        )
+        OutlinedTextField(
+            value = roundBorder,
+            onValueChange = { roundBorder = it },
+            label = { Text(stringResource(Res.string.padding_label)) },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
+        )
+        OutlinedTextField(
+            value = roundBorder,
+            onValueChange = { roundBorder = it },
+            label = { Text(stringResource(Res.string.margin_label)) },
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )
 
@@ -64,7 +102,7 @@ val viewModel: PropertiesViewModel = koinViewModel()
                 checked = hasShadow,
                 onCheckedChange = { hasShadow = it }
             )
-            Text("Has Shadow")
+            Text(stringResource(Res.string.shadow_label))
         }
 
         Button(
@@ -81,7 +119,7 @@ val viewModel: PropertiesViewModel = koinViewModel()
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Apply Changes")
+            Text(stringResource(Res.string.apply_changes_button))
         }
     }
 }
