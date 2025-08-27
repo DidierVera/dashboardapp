@@ -100,7 +100,7 @@
     <string name="width_label">Width</string>
     <string name="margin_label">Margin</string>
     <string name="file_name_label">File name</string>
-    <string name="local_file_path_label">Local file path</string>
+    <string name="local_file_path_label">Local folder path</string>
     <string name="interval_time_label">Interval time</string>
 
 

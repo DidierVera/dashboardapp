@@ -46,6 +46,7 @@ import com.came.parkare.dashboardapp.ui.components.AppButton
 import com.came.parkare.dashboardapp.ui.components.AppLabel
 import com.came.parkare.dashboardapp.ui.components.Base64Image
 import com.came.parkare.dashboardapp.ui.components.CustomDropdownSelector
+import com.came.parkare.dashboardapp.ui.components.DropDownControl
 import com.came.parkare.dashboardapp.ui.screens.settings.components.DialogPickerDialog
 import com.came.parkare.dashboardapp.ui.screens.settings.components.TabTitle
 import com.came.parkare.dashboardapp.ui.theme.CameBlueColor
@@ -81,8 +82,10 @@ fun ConnectionTab() {
         item {
             Column {
                 AppLabel(Res.string.connection_way_label)
-                ConnectionWayControl(state.connectionWayOptions.map { it.second },
-                    state.connectionWay.second)//connection way
+                DropDownControl(state.connectionWayOptions.map { it.second },
+                    state.connectionWay.second){ selected ->
+                    viewModel.setConnectionWay(selected)
+                }
             }
         }
 
@@ -217,25 +220,6 @@ private fun SaveButton(modifier: Modifier = Modifier) {
             containerColor = CameBlueColor,
             contentColor = WhiteColor
         ), modifier = modifier
-    )
-}
-
-@Composable
-fun ConnectionWayControl(options: List<String>, connectionWay: String) {
-    val viewModel: ConnectionViewModel = koinViewModel()
-    CustomDropdownSelector(
-        items = options,
-        selectedItem = connectionWay,
-        onItemSelected = { viewModel.setConnectionWay(it) },
-        itemContent = { item ->
-            Text(
-                text = item,
-                fontWeight = if (connectionWay == item) FontWeight.SemiBold else FontWeight.Normal,
-                modifier = Modifier.padding(4.dp))
-        },
-        selectedItemContent = { device ->
-            Text(device, fontWeight = FontWeight.Bold)
-        }
     )
 }
 

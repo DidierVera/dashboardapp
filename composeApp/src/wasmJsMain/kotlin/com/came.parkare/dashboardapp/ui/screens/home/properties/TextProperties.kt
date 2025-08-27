@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
@@ -19,12 +20,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ElementDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.TextDataDto
 import com.came.parkare.dashboardapp.ui.components.CustomDropdownSelector
+import com.came.parkare.dashboardapp.ui.components.DropDownControl
 import com.came.parkare.dashboardapp.ui.screens.home.properties.viewmodels.PropertiesViewModel
+import com.came.parkare.dashboardapp.ui.screens.settings.connection.ConnectionViewModel
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.apply_changes_button
 import dashboardapp.composeapp.generated.resources.background_color_label
@@ -89,15 +93,10 @@ fun TextProperties(
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
         )
 
-        CustomDropdownSelector(
-            items = fontWeightList,
-            onItemSelected = { fontWeightSelected = it },
-            selectedItemContent = {Text(fontWeightSelected)},
-            label = stringResource(Res.string.font_weight_label),
-            itemContent = { fontWeightSelected = it },
-            modifier = Modifier,
-            selectedItem = fontWeightSelected
-        )
+        DropDownControl(fontWeightList, fontWeightSelected, label = stringResource(Res.string.font_weight_label)){
+            fontWeightSelected =  it
+        }
+
         OutlinedTextField(
             value = padding,
             onValueChange = { padding = it },
