@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.ErrorValidator
+import com.came.parkare.dashboardapp.domain.models.ScreenModel
 import com.came.parkare.dashboardapp.domain.models.components.ElementModel
 import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
@@ -146,4 +147,12 @@ class ConfigEditorViewModel(
         }
     }
 
+
+    fun selectScreen(screen: ScreenModel){
+        if (_state.value.screenViewer == screen.screenId){
+            _state.update { it.copy(screenViewer = null, elementsByScreen = emptyList()) }
+        }else{
+            _state.update { it.copy(screenViewer = screen.screenId, elementsByScreen = screen.elements)}
+        }
+    }
 }

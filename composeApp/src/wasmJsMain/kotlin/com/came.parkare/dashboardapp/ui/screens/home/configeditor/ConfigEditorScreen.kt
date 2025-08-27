@@ -1,4 +1,6 @@
-@file:OptIn(KoinExperimentalAPI::class, ExperimentalFoundationApi::class)
+@file:OptIn(KoinExperimentalAPI::class, ExperimentalFoundationApi::class,
+    KoinExperimentalAPI::class
+)
 
 package com.came.parkare.dashboardapp.ui.screens.home.configeditor
 
@@ -10,12 +12,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -38,8 +45,10 @@ import com.came.parkare.dashboardapp.ui.screens.settings.editconfig.EditConfigVi
 import com.came.parkare.dashboardapp.ui.screens.settings.shareconfig.ShareConfigViewModel
 import com.came.parkare.dashboardapp.ui.theme.style.floatingButton
 import dashboardapp.composeapp.generated.resources.Res
+import dashboardapp.composeapp.generated.resources.ic_item_arrow
 import dashboardapp.composeapp.generated.resources.screen_preview_label
 import dashboardapp.composeapp.generated.resources.select_screen_message
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -49,11 +58,47 @@ fun ConfigEditorScreen(modifier: Modifier = Modifier,
        viewModel: ConfigEditorViewModel = koinViewModel()){
     viewModel.initConfig()
 
+    Row(modifier = modifier.fillMaxWidth(0.8f),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)){
+        Spacer(modifier = Modifier.weight(0.1f))
+        Box(modifier = Modifier.weight(0.3f).floatingButton()) {
+            ScreenList()
 
-    Box(modifier = modifier.size(750.dp).floatingButton()
-        ){
-        ElementsList()
+        }
+        Box(modifier = Modifier.weight(0.5f).floatingButton()){
+            ElementsList()
+        }
+        Spacer(modifier = Modifier.weight(0.1f))
+    }
+}
 
+@Composable
+private fun ScreenList() {
+    val viewModel: ConfigEditorViewModel = koinViewModel()
+    val state by viewModel.state.collectAsState()
+    LazyColumn(modifier = Modifier.heightIn(max = 600.dp)) {
+        items(state.editingTemplate.screens){ screen ->
+            Row(modifier = Modifier
+                .widthIn(min = 450.dp)
+                .floatingButton(
+                    isSelected = screen.screenId == state.screenViewer,
+                    onSelectClick = {
+                        viewModel.selectScreen(screen) })
+                .padding(8.dp)
+                ,
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Icon(
+                    painter = painterResource(Res.drawable.ic_item_arrow),
+                    contentDescription = null,
+                    modifier = Modifier.padding(8.dp).size(20.dp)
+                )
+                Text(text = screen.screenId, fontWeight =
+                    if(state.screenViewer == screen.screenId) FontWeight.Bold
+                    else FontWeight.Normal
+                )
+            }
+        }
     }
 }
 
