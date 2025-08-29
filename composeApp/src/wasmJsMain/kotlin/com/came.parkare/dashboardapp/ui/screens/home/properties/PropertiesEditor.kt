@@ -54,8 +54,10 @@ fun PropertiesEditor(
                 is ElementDto.SpacerDto -> SpacerProperties(item.data){
 
                 }
-                is ElementDto.TextDto -> TextProperties(item.data){
+                is ElementDto.TextDto -> {
+                    TextProperties(item.data) {
 
+                    }
                 }
                 is ElementDto.VideoDto -> VideoProperties(item.data){
 

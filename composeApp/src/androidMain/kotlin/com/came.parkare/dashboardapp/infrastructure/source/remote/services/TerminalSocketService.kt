@@ -33,7 +33,7 @@ class TerminalSocketService(
     fun startConnection(onSocketResult: (ServiceResult<TerminalResponseDto>) -> Unit) {
         //cleanup() // Clean up any existing connection
 
-        val serverIp = preferences.get(SOCKET_URL, "192.168.209.62")
+        val serverIp = preferences.get(SOCKET_URL, "192.168.209.105")
         val serverPort = preferences.get(TERMINAL_PORT, 9010)
 
         socketScope.launch {

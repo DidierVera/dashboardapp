@@ -48,12 +48,12 @@ fun ColumnProperties(
     val viewModel: PropertiesViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
 
-    var backgroundColor by remember { mutableStateOf(column.backgroundColor ?: "") }
-    var density by remember { mutableStateOf(column.density.toString()) }
-    var spacing by remember { mutableStateOf(column.spacing.toString()) }
-    var padding by remember { mutableStateOf(column.padding.toString()) }
-    var roundBorder by remember { mutableStateOf(column.roundBorder.toString()) }
-    var hasShadow by remember { mutableStateOf(column.hasShadow) }
+    var backgroundColor by mutableStateOf(column.backgroundColor ?: "")
+    var density by mutableStateOf(column.density.toString())
+    var spacing by mutableStateOf(column.spacing.toString())
+    var padding by mutableStateOf(column.padding.toString())
+    var roundBorder by mutableStateOf(column.roundBorder.toString())
+    var hasShadow by mutableStateOf(column.hasShadow)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedTextField(

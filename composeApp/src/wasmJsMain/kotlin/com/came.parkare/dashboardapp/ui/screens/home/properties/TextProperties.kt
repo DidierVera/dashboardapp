@@ -58,13 +58,13 @@ fun TextProperties(
     val viewModel: PropertiesViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
 
-    var textColor by remember { mutableStateOf(text.textColor) }
-    var textSize by remember { mutableStateOf(text.textSize.toString()) }
-    var padding by remember { mutableStateOf(text.padding.toString()) }
-    val fontWeightList by remember { mutableStateOf(listOf("Bold", "Medium", "Regular")) }
-    var fontWeightSelected by remember { mutableStateOf("Regular") }
-    var defaultText by remember { mutableStateOf(text.defaultText) }
-    var itemId by remember { mutableStateOf(text.dashboardItemId) }
+    var textColor by mutableStateOf(text.textColor)
+    var textSize by mutableStateOf(text.textSize.toString())
+    var padding by mutableStateOf(text.padding.toString())
+    val fontWeightList by mutableStateOf(listOf("Bold", "Medium", "Regular"))
+    var fontWeightSelected by mutableStateOf(text.fontWeight)
+    var defaultText by mutableStateOf(text.defaultText)
+    var itemId by mutableStateOf(text.dashboardItemId)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedTextField(

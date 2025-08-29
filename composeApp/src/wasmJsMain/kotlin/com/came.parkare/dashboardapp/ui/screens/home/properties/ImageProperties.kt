@@ -52,13 +52,13 @@ fun ImageProperties(
     val viewModel: PropertiesViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
 
-    var height by remember { mutableStateOf(image.height.toString()) }
-    var width by remember { mutableStateOf(image.width.toString()) }
-    var fileName by remember { mutableStateOf(image.fileName.orEmpty()) }
-    var folderPath by remember { mutableStateOf(image.localFilePath.orEmpty()) }
-    var interval by remember { mutableStateOf((image.intervalTime ?: 3).toString()) }
-    var itemId by remember { mutableStateOf(image.dashboardItemId) }
-    var multipleItems by remember { mutableStateOf(false) }
+    var height by mutableStateOf(image.height.toString())
+    var width by mutableStateOf(image.width.toString())
+    var fileName by mutableStateOf(image.fileName.orEmpty())
+    var folderPath by mutableStateOf(image.localFilePath.orEmpty())
+    var interval by mutableStateOf((image.intervalTime ?: 3).toString())
+    var itemId by mutableStateOf(image.dashboardItemId)
+    var multipleItems by mutableStateOf(false)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedTextField(

@@ -44,7 +44,7 @@ fun SpacerProperties(
     val viewModel: PropertiesViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
 
-    var value by remember { mutableStateOf(spacer.value.toString()) }
+    var value by mutableStateOf(spacer.value.toString())
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedTextField(

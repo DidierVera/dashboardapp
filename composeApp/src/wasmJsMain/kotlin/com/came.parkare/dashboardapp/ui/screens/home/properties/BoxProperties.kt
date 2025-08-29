@@ -47,10 +47,10 @@ fun BoxProperties(
     val viewModel: PropertiesViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
 
-    var backgroundColor by remember { mutableStateOf(box.backgroundColor ?: "") }
-    var density by remember { mutableStateOf(box.density.toString()) }
-    var roundBorder by remember { mutableStateOf(box.roundBorder.toString()) }
-    var hasShadow by remember { mutableStateOf(box.hasShadow) }
+    var backgroundColor by mutableStateOf(box.backgroundColor ?: "")
+    var density by mutableStateOf(box.density.toString())
+    var roundBorder by mutableStateOf(box.roundBorder.toString())
+    var hasShadow by mutableStateOf(box.hasShadow)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedTextField(
