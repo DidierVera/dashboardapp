@@ -11,6 +11,8 @@ data class ConnectionState(
     val delayTime: Int = 5,
     val textSizeScale: Int = 10,
     val showVideoFrame: Boolean = false,
+    val showBrightnessMode: Boolean = false,
+    val brightnessDelay: Int = 2,
     val clearSelectedFiles: Boolean = false,
     val imagesResources: List<FilePickerDialogState> = emptyList()
 )

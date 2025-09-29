@@ -3,6 +3,7 @@ string|accept_button|QUNDRVBU
 string|api_label|QVBJ
 string|app_name|RGFzaGJvYXJkIGFwcA==
 string|apply_button|QVBQTFk=
+string|auto_brightness_label|U2V0IGF1dG8gYnJpZ2h0bmVzcyBjaGFuZ2U=
 string|back_button_alt|QmFjayBidXR0b24=
 string|cancel_button|Q0FOQ0VM
 string|components_label|Q29tcG9uZW50cw==
@@ -21,6 +22,7 @@ string|custom_name_label|Q3VzdG9tIG5hbWU=
 string|dashboard_ip_label|RGFzaGJvYXJkIElQ
 string|dashboard_list_option|RGFzaGJvYXJkIGxpc3Q=
 string|default_template_label|RGVmYXVsdCB0ZW1wbGF0ZXM=
+string|delay_brightness_label|QWN0aXZlIGxvdyBicmlnaHRuZXNzIGFmdGVyKHMp
 string|delay_time_label|RGVsYXkgdGltZShzKQ==
 string|delete_device_dialog_message|QXJlIHlvdSBzdXJlIHlvdSB3YW50IHRvIGRlbGV0ZSB0aGUgaXRlbTogJTEkcz8=
 string|device_deleted_message|RGV2aWNlOiBoYXMgYmVlbiBkZWxldGVkIHN1Y2Nlc3NmdWxseS4=

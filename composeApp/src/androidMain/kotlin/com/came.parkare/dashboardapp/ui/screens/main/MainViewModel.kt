@@ -6,6 +6,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.came.parkare.dashboardapp.config.DefaultDits
+import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS
+import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS_DELAY_TIME
 import com.came.parkare.dashboardapp.config.constants.Constants.TEXT_SIZE_SCALE
 import com.came.parkare.dashboardapp.config.constants.Constants.TIME_DELAY
 import com.came.parkare.dashboardapp.config.constants.Constants.VIDEO_FRAME
@@ -64,6 +66,18 @@ class MainViewModel (
     val showVideoFrame: StateFlow<Boolean>
         get() = _showVideoFrame.asStateFlow()
 
+    private val _activeBrightnessMode = MutableStateFlow(false)
+    val activeBrightnessMode: StateFlow<Boolean>
+        get() = _activeBrightnessMode.asStateFlow()
+
+    private val _startBrightnessMode = MutableStateFlow(false)
+    val startBrightnessMode: StateFlow<Boolean>
+        get() = _startBrightnessMode.asStateFlow()
+
+    private val _delayBrightnessTimeout = MutableStateFlow(2)
+    val delayBrightnessTimeout: StateFlow<Int>
+        get() = _delayBrightnessTimeout.asStateFlow()
+
     private var loopJob: Job? = null
     init {
         try {
@@ -92,7 +106,33 @@ class MainViewModel (
         checkVideoFrame()
         checkBackgroundImage()
         checkTextSizeScale()
+        checkBrightnessMode()
+        startPeriodicChecking()
         setTerminalConnection(serverConnection.typeConnection.value)
+    }
+
+    fun checkBrightnessMode() {
+        viewModelScope.launch {
+            val autoBrightness = preferences.get(AUTO_BRIGHTNESS, false)
+            val autoBrightnessDelay = preferences.get(AUTO_BRIGHTNESS_DELAY_TIME, 2)
+
+            // Only update if values actually changed to avoid unnecessary recompositions
+            if (_activeBrightnessMode.value != autoBrightness) {
+                _activeBrightnessMode.update { autoBrightness }
+            }
+            if (_delayBrightnessTimeout.value != autoBrightnessDelay) {
+                _delayBrightnessTimeout.update { autoBrightnessDelay }
+            }
+        }
+    }
+
+    private fun startPeriodicChecking() {
+        viewModelScope.launch {
+            while (true) {
+                delay(5000) // Check every 5 seconds (adjust as needed)
+                checkBrightnessMode()
+            }
+        }
     }
 
     private fun registerTerminalListener() {
@@ -218,6 +258,9 @@ class MainViewModel (
         viewModelScope.launch {
             val screen = getScreenByDispatcher.invoke(data.dispatcherCode)
             if (screen != null){
+                val shouldStartBrightness = screen.dispatcherCode == 5L && activeBrightnessMode.value
+                _startBrightnessMode.update { shouldStartBrightness }
+
                 checkContentMargin(screen.marginLeft, screen.marginTop, screen.marginRight, screen.marginBottom)
                 _itemsState.update { it.copy(ditsUI = data.ditsTUI) }
                 val buildElements = ditsUtils.buildDashboardItem(screen.elements, data.ditsTUI, lang)

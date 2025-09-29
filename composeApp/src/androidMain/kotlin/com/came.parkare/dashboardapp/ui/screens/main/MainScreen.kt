@@ -1,6 +1,9 @@
 package com.came.parkare.dashboardapp.ui.screens.main
 
+import android.app.Activity
+import android.content.Context
 import android.util.Log
+import android.view.WindowManager
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -10,12 +13,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
@@ -26,7 +32,13 @@ import com.came.parkare.dashboardapp.ui.components.BuildComposable
 import com.came.parkare.dashboardapp.ui.components.NetworkIndicatorView
 import com.came.parkare.dashboardapp.ui.components.isBase64
 import com.came.parkare.dashboardapp.ui.components.videos.VideoExoPlayer
+import com.came.parkare.dashboardapp.ui.screens.activity.MainActivity
 import com.came.parkare.dashboardapp.ui.theme.BlackColor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -44,6 +56,7 @@ fun MainScreen(
             LoadDashboardItems(modifier = Modifier.weight(0.7f))
             if(showVideoFrame) VideoExoPlayer(modifier = Modifier.weight(0.3f))
         }
+        StartBrightnessTimeout()
     }
 }
 
@@ -115,5 +128,48 @@ private fun LoadDashboardItems(
                 BuildComposable(elementModel = mItem, textSizeScale = textSizeScale)
             }
         }
+    }
+}
+@Composable
+private fun StartBrightnessTimeout() {
+    val viewModel: MainViewModel = koinViewModel()
+    val isActiveBrightnessMode by viewModel.startBrightnessMode.collectAsState()
+    val brightnessWaitDelay by viewModel.delayBrightnessTimeout.collectAsState()
+    val activity = (LocalContext.current as MainActivity)
+
+    LaunchedEffect(key1 = isActiveBrightnessMode, key2 = brightnessWaitDelay) {
+        if (isActiveBrightnessMode) {
+            // Start the brightness timeout
+            println("delay time: $brightnessWaitDelay")
+            delay(brightnessWaitDelay * 60 * 1000L)
+            setLowBrightness(activity)
+        } else {
+            // If mode is disabled, restore high brightness immediately
+            brightnessBackHigh(activity)
+        }
+    }
+}
+
+private fun setLowBrightness(activity: Activity) {
+    try {
+        println("Start bright low down")
+        val layout: WindowManager.LayoutParams? = activity.window?.attributes
+        layout?.screenBrightness = 0.1f
+        activity.window?.attributes = layout
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
+private fun brightnessBackHigh(activity: Activity) {
+    try {
+        println("Bright high back")
+        val layout: WindowManager.LayoutParams? = activity.window?.attributes
+        layout?.screenBrightness = -1f // -1 means use system default brightness
+        // OR set to your desired high brightness:
+        // layout?.screenBrightness = 1.0f
+        activity.window?.attributes = layout
+    } catch (e: Exception) {
+        e.printStackTrace()
     }
 }
