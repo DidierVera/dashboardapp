@@ -1,6 +1,9 @@
 package com.came.parkare.dashboardapp.ui.screens.main
 
+import android.app.Activity
 import android.os.Environment
+import android.provider.Settings
+import android.util.Log
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
@@ -23,6 +26,7 @@ import com.came.parkare.dashboardapp.domain.usecases.GetScreenByDispatcher
 import com.came.parkare.dashboardapp.domain.usecases.InitConfiguration
 import com.came.parkare.dashboardapp.domain.usecases.StartSocketConnection
 import com.came.parkare.dashboardapp.ui.utils.FilesUtils
+import com.came.parkare.dashboardapp.ui.utils.SystemBrightnessManager
 import com.came.parkare.dashboardapp.ui.utils.UiUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -50,6 +54,7 @@ class MainViewModel (
     private val filesUtils: FilesUtils,
     private val serverConnection: IServerConnection
 ): ViewModel() {
+    private lateinit var brightnessManager: SystemBrightnessManager
 
     private val _itemsState = MutableStateFlow(MainState())
     val itemsState: StateFlow<MainState>
@@ -329,5 +334,46 @@ class MainViewModel (
                 serverConnection.setRestartApp(false)
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun setBrightnessViaSettings(activity: Activity, brightness: Float) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (Settings.System.canWrite(activity)) {
+                    val brightnessValue = (brightness * 255).toInt()
+
+                    Settings.System.putInt(
+                        activity.contentResolver,
+                        Settings.System.SCREEN_BRIGHTNESS_MODE,
+                        Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL
+                    )
+
+                    Settings.System.putInt(
+                        activity.contentResolver,
+                        Settings.System.SCREEN_BRIGHTNESS,
+                        brightnessValue.coerceIn(0, 255)
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e("Brightness", "Settings approach failed", e)
+            }
+        }
+    }
+
+    fun setBrightnessByCommand(activity: Activity, brightness: Int){
+        brightnessManager = SystemBrightnessManager(activity)
+
+        // Cambiar brillo a 150 (de 0-255)
+        val success = brightnessManager.setBrightness(brightness)
+
+        if (success) {
+            println("Brillo ajustado exitosamente")
+        } else {
+            println("Error al ajustar brillo")
+        }
+
+        // Obtener brillo actual
+        val currentBrightness = brightnessManager.getCurrentBrightness()
+        println("Brillo actual: $currentBrightness")
     }
 }

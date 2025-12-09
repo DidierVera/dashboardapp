@@ -1,9 +1,11 @@
 package com.came.parkare.dashboardapp.ui.screens.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,6 +15,7 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.net.toUri
 import com.came.parkare.dashboardapp.infrastructure.source.remote.services.WebAppServer
 import com.came.parkare.dashboardapp.ui.screens.main.MainScreen
 import com.came.parkare.dashboardapp.ui.theme.DashboardAppTheme
@@ -34,7 +37,20 @@ class MainActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
         ConfigUI.hideSystemUI(this)
+        checkPermission()
         startServices()
+    }
+
+    private fun checkPermission() {
+        if (!Settings.System.canWrite(this)) {
+            try {
+                val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
+                intent.data = ("package:$packageName").toUri()
+                startActivity(intent)
+            }catch (e: Exception){
+                println(e.stackTrace)
+            }
+        }
     }
 
     private fun startAndroidApiServer() {

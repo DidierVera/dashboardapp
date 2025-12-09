@@ -151,12 +151,6 @@ class SplashActivity: ComponentActivity() {
     private fun checkPermission(permissions: Array<String>, requestCode: Int) {
         val permissionsDenied : MutableList<String> = mutableListOf()
 
-        if (!Settings.System.canWrite(this)) {
-            val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
-            intent.data = ("package:$packageName").toUri()
-            startActivity(intent)
-        }
-
         permissions.forEach { perm ->
             if(ContextCompat.checkSelfPermission(this, perm) != PackageManager.PERMISSION_GRANTED)
                 permissionsDenied.add(perm)

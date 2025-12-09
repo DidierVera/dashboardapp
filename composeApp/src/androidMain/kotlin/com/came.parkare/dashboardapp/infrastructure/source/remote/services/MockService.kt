@@ -34,7 +34,7 @@ class MockService (
                     logger.trackLog("com.came.parkare.dashboardapp.Mock", "Inicio de aplicación conexión MOCK")
                     while (!Thread.currentThread().isInterrupted) {
                         serverConnection.setStatusConnection(true)
-                        Thread.sleep((120000..130000).random().toLong())
+                        Thread.sleep((8000..10000).random().toLong())
 
                         for(screenToShow in screens.indices){
                             val code = screens[screenToShow].dispatcherCode
@@ -57,7 +57,7 @@ class MockService (
                                 else -> result = getTerminalLockedDit()//DLG_LOCKED
                             }
                             onSocketResult.invoke(ServiceResult.Success(result))
-                            Thread.sleep((40000L..80000).random())
+                            Thread.sleep((4000..6000).random().toLong())
                         }
                     }
 

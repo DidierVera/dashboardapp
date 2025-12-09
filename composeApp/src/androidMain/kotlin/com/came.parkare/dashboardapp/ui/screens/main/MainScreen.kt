@@ -139,13 +139,11 @@ private fun StartBrightnessTimeout() {
 
     LaunchedEffect(key1 = isActiveBrightnessMode, key2 = brightnessWaitDelay) {
         if (isActiveBrightnessMode) {
-            // Start the brightness timeout
             println("delay time: $brightnessWaitDelay")
-            delay(brightnessWaitDelay * 60 * 1000L)
-            setLowBrightness(activity)
+            delay(brightnessWaitDelay * 1000L)
+            viewModel.setBrightnessByCommand(activity, 1)
         } else {
-            // If mode is disabled, restore high brightness immediately
-            brightnessBackHigh(activity)
+            viewModel.setBrightnessByCommand(activity, 255)
         }
     }
 }
@@ -154,7 +152,7 @@ private fun setLowBrightness(activity: Activity) {
     try {
         println("Start bright low down")
         val layout: WindowManager.LayoutParams? = activity.window?.attributes
-        layout?.screenBrightness = 0.1f
+        layout?.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF
         activity.window?.attributes = layout
     } catch (e: Exception) {
         e.printStackTrace()
@@ -165,9 +163,8 @@ private fun brightnessBackHigh(activity: Activity) {
     try {
         println("Bright high back")
         val layout: WindowManager.LayoutParams? = activity.window?.attributes
-        layout?.screenBrightness = -1f // -1 means use system default brightness
+        layout?.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
         // OR set to your desired high brightness:
-        // layout?.screenBrightness = 1.0f
         activity.window?.attributes = layout
     } catch (e: Exception) {
         e.printStackTrace()
