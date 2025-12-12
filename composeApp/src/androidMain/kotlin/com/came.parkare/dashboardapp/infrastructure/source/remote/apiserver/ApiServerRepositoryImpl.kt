@@ -4,6 +4,8 @@ import com.came.parkare.dashboardapp.config.constants.Constants.API_PORT
 import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS
 import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS_DELAY_TIME
 import com.came.parkare.dashboardapp.config.constants.Constants.CONFIG_TYPE
+import com.came.parkare.dashboardapp.config.constants.Constants.RESET_COUNTER_DELAY_TIME
+import com.came.parkare.dashboardapp.config.constants.Constants.SHOW_COUNTER
 import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_API
 import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_IP
 import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_PORT
@@ -89,6 +91,8 @@ class ApiServerRepositoryImpl(
         val textSizeScale = preferences.get(TEXT_SIZE_SCALE, 10)
         val autoBrightness = preferences.get(AUTO_BRIGHTNESS, false)
         val autoBrightnessDelayTime = preferences.get(AUTO_BRIGHTNESS_DELAY_TIME, 120)
+        val showCarCounter = preferences.get(SHOW_COUNTER, false)
+        val carCounterDelay = preferences.get(RESET_COUNTER_DELAY_TIME, 1)
 
         val connectionWay = when (serverConnection.typeConnection.value){
             TypeConnectionEnum.SIGNAL_R -> 1
@@ -110,6 +114,8 @@ class ApiServerRepositoryImpl(
             textSizeScale = textSizeScale,
             autoBrightness = autoBrightness,
             activeLowBrightnessTime = autoBrightnessDelayTime,
+            carCounterReset = carCounterDelay,
+            showCarCounter = showCarCounter,
             files = images.map { it.toDto() }
         )
     }
