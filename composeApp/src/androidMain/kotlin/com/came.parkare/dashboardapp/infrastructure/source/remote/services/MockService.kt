@@ -1,8 +1,10 @@
 package com.came.parkare.dashboardapp.infrastructure.source.remote.services
 
+import com.came.parkare.dashboardapp.config.dataclasses.ErrorTypeClass
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.IServerConnection
+import com.came.parkare.dashboardapp.domain.models.ScreenModel
 import com.came.parkare.dashboardapp.domain.repositories.local.DashboardElementRepository
 import com.came.parkare.dashboardapp.infrastructure.source.remote.dto.common.DialogResponseDto
 import com.came.parkare.dashboardapp.infrastructure.source.remote.dto.TerminalResponseDto
@@ -10,9 +12,11 @@ import com.came.parkare.dashboardapp.infrastructure.source.remote.dto.common.Typ
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
+import kotlin.coroutines.cancellation.CancellationException
 
 
 class MockService (
@@ -22,58 +26,150 @@ class MockService (
 ) {
     private var mockThread: Thread? = null
     private val mockScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private var isRunning = false
 
     fun startConnection(onSocketResult: (ServiceResult<TerminalResponseDto>) -> Unit) {
-        //cleanup() // Clean up any existing connection
+        // Limpiar completamente antes de empezar
+        cleanup()
 
+        // Marcar como en ejecución
+        isRunning = true
         mockScope.launch {
-            val screens = dashboardElementRepository.getAllScreens()
+            try {
+                println("DEBUG: Starting connection - isRunning: $isRunning")
+                val screens = dashboardElementRepository.getAllScreens()
+                println("Screens count: ${screens.size}")
 
-            mockThread = Thread {
-                try {
-                    logger.trackLog("com.came.parkare.dashboardapp.Mock", "Inicio de aplicación conexión MOCK")
-                    while (!Thread.currentThread().isInterrupted) {
-                        serverConnection.setStatusConnection(true)
-                        Thread.sleep((8000..10000).random().toLong())
-
-                        for(screenToShow in screens.indices){
-                            val code = screens[screenToShow].dispatcherCode
-                            if (Thread.currentThread().isInterrupted) break
-
-                            println("Code Screen to show: $screenToShow")
-                            var result = getBootDit()
-                            when(code){
-                                0L -> result = getBootDit()//DLG_BOOT (restart screen)
-                                5L -> result = getIdleDit()//DLG_IDLE (rest screen)
-                                1005L -> setOfflineMode()//MOCK DISCONNECTED(rest screen)
-                                6L -> result = getOutServiceDit()//DLG_OUT_SERVICE
-                                7L -> result = getParkingCompleteDit()//DLG_PARKING_COMPLETED
-                                9L -> result = getReadingPlateDit()//DLG_READING_PLATE
-                                12L -> result = getPleaseProceedDit()//DLG_PLEASE_PROCEED
-                                8L -> result = getUserDit()//USER (rest screen)
-                                18L -> result = getCardErrorDit()//DLG_CARD_ERROR (rest screen)
-                                36L -> result = getPaymentRequiredDit()//DLG_PAYMENT_REQUIRED (pendiente de pago)
-                                89L -> result = getStartCurrentBillDit()//DLG_InicioCobroActual (pendiente de pago)
-                                else -> result = getTerminalLockedDit()//DLG_LOCKED
-                            }
-                            onSocketResult.invoke(ServiceResult.Success(result))
-                            Thread.sleep((4000..6000).random().toLong())
-                        }
+                if (screens.isEmpty()) {
+                    delay(1000)
+                    val retryScreens = dashboardElementRepository.getAllScreens()
+                    println("Retry screens count: ${retryScreens.size}")
+                    if (retryScreens.isEmpty()) {
+                        onSocketResult.invoke(ServiceResult.Error(ErrorTypeClass.GeneralException("No screens available")))
+                        return@launch
                     }
-
-                }catch (e: Exception){
-                    if (!Thread.currentThread().isInterrupted) {
-                        logger.trackError(e)
-                        e.printStackTrace()
+                    if (isRunning) {
+                        processScreens(retryScreens, onSocketResult)
+                    }
+                } else {
+                    if (isRunning) {
+                        processScreens(screens, onSocketResult)
                     }
                 }
-            }.apply { start() }
+            } catch (e: CancellationException) {
+                println("DEBUG: Coroutine cancelled normally")
+            } catch (e: Exception) {
+                logger.trackError(e)
+                println("DEBUG: Error in startConnection: ${e.message}")
+            }
+        }
+    }
+
+    private fun processScreens(
+        screens: List<ScreenModel>,
+        onSocketResult: (ServiceResult<TerminalResponseDto>) -> Unit
+    ) {
+        // Verificar que no haya ya un hilo en ejecución
+        if (mockThread?.isAlive == true) {
+            println("DEBUG: Thread already running, skipping new thread creation")
+            return
+        }
+
+        mockThread = Thread {
+            try {
+                logger.trackLog("com.came.parkare.dashboardapp.Mock", "Inicio de aplicación conexión MOCK")
+                println("DEBUG: Mock thread started - Thread ID: ${Thread.currentThread().id}")
+
+                // Usar una copia local para evitar problemas de concurrencia
+                val localScreens = screens.toList()
+
+                while (!Thread.currentThread().isInterrupted && isRunning) {
+                    serverConnection.setStatusConnection(true)
+                    Thread.sleep((8000..10000).random().toLong())
+
+                    for(screenToShow in localScreens.indices) {
+                        if (Thread.currentThread().isInterrupted || !isRunning) {
+                            println("DEBUG: Thread interrupted or not running, breaking loop")
+                            break
+                        }
+
+                        val code = localScreens[screenToShow].dispatcherCode
+                        println("Code Screen to show: $screenToShow - Code: $code - Thread ID: ${Thread.currentThread().id}")
+
+                        var result = getBootDit()
+                        when(code){
+                            0L -> result = getBootDit()
+                            5L -> result = getIdleDit()
+                            1005L -> setOfflineMode()
+                            6L -> result = getOutServiceDit()
+                            7L -> result = getParkingCompleteDit()
+                            9L -> result = getReadingPlateDit()
+                            12L -> result = getPleaseProceedDit()
+                            8L -> result = getUserDit()
+                            18L -> result = getCardErrorDit()
+                            36L -> result = getPaymentRequiredDit()
+                            89L -> result = getStartCurrentBillDit()
+                            else -> result = getTerminalLockedDit()
+                        }
+
+                        onSocketResult.invoke(ServiceResult.Success(result))
+
+                        if (Thread.currentThread().isInterrupted || !isRunning) break
+                        Thread.sleep((4000..6000).random().toLong())
+                    }
+
+                    // Verificar nuevamente antes de continuar con el siguiente ciclo
+                    if (Thread.currentThread().isInterrupted || !isRunning) {
+                        println("DEBUG: Exiting main while loop")
+                        break
+                    }
+                }
+            } catch (e: InterruptedException) {
+                println("DEBUG: Thread interrupted normally")
+                Thread.currentThread().interrupt()
+            } catch (e: Exception) {
+                if (!Thread.currentThread().isInterrupted && isRunning) {
+                    logger.trackError(e)
+                    e.printStackTrace()
+                }
+            } finally {
+                println("DEBUG: Thread finished - Thread ID: ${Thread.currentThread().id}")
+            }
+        }.apply {
+            name = "MockService-Thread-${System.currentTimeMillis()}"
+            start()
         }
     }
 
     fun cleanup() {
-        mockThread?.interrupt()
+        println("DEBUG: Cleaning up - isRunning was: $isRunning")
+
+        // 1. Cambiar el estado primero
+        isRunning = false
+
+        // 2. Interrumpir el hilo
+        mockThread?.let { thread ->
+            if (thread.isAlive) {
+                thread.interrupt()
+                try {
+                    // Esperar un tiempo razonable para que termine
+                    thread.join(1000)
+                    if (thread.isAlive) {
+                        println("DEBUG: Thread did not stop gracefully")
+                    }
+                } catch (e: InterruptedException) {
+                    println("DEBUG: Join interrupted")
+                }
+            }
+        }
+
+        // 3. Limpiar referencia
         mockThread = null
+
+        // 4. Cancelar corrutinas del scope (opcional, solo las nuevas)
+        // mockScope.coroutineContext.cancelChildren()
+
+        println("DEBUG: Cleanup completed")
     }
 
     private fun getTerminalLockedDit(): TerminalResponseDto {

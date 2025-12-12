@@ -8,6 +8,8 @@ import com.came.parkare.dashboardapp.infrastructure.source.local.dao.ImagesDao
 import com.came.parkare.dashboardapp.infrastructure.source.local.dao.ScreenDao
 import com.came.parkare.dashboardapp.infrastructure.source.local.entities.toEntity
 import com.came.parkare.dashboardapp.infrastructure.source.local.entities.toModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class DashboardElementRepositoryImpl(
     private val screenDao: ScreenDao,
@@ -43,12 +45,16 @@ class DashboardElementRepositoryImpl(
     }
 
     override suspend fun getAllScreens(): List<ScreenModel> {
-        return try {
-            val entities = screenDao.getAll()
-            entities.map { it.toModel() }
-        }catch (e: Exception){
-            appLogger.trackError(e)
-            emptyList()
+        return withContext(Dispatchers.IO) {
+            try {
+                val entities = screenDao.getAll()
+                appLogger.trackLog("Repository", "Obtained ${entities.size} screens from DB")
+                entities.map { it.toModel() }
+            } catch (e: Exception) {
+                appLogger.trackError(e)
+                appLogger.trackLog("Repository", "Error getting screens: ${e.message}")
+                emptyList()
+            }
         }
     }
 

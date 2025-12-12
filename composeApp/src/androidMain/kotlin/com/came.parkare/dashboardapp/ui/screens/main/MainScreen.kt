@@ -143,26 +143,3 @@ private fun StartBrightnessTimeout() {
         }
     }
 }
-
-private fun setLowBrightness(activity: Activity) {
-    try {
-        println("Start bright low down")
-        val layout: WindowManager.LayoutParams? = activity.window?.attributes
-        layout?.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF
-        activity.window?.attributes = layout
-    } catch (e: Exception) {
-        e.printStackTrace()
-    }
-}
-
-private fun brightnessBackHigh(activity: Activity) {
-    try {
-        println("Bright high back")
-        val layout: WindowManager.LayoutParams? = activity.window?.attributes
-        layout?.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
-        // OR set to your desired high brightness:
-        activity.window?.attributes = layout
-    } catch (e: Exception) {
-        e.printStackTrace()
-    }
-}

@@ -94,6 +94,7 @@ class SignalRService(
 
     fun cleanup() {
         try {
+            if(hubConnection == null) return
             if(signalRJob != null){
                 signalRJob?.cancel(cancellationMessage)
                 signalRJob = null
