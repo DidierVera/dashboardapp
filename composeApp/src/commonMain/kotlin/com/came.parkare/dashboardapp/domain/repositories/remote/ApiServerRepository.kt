@@ -20,4 +20,5 @@ interface ApiServerRepository {
     suspend fun getScreenConfigType(): Long
     suspend fun saveConfiguratorLog(dto: TrackLogDto): Int
     suspend fun saveConfiguratorException(dto: TrackErrorDto): Int
+    suspend fun getAppVersion(): String
 }

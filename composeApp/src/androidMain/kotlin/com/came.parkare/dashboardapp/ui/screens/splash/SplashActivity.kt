@@ -20,9 +20,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProgressIndicatorDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,6 +47,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.KoinContext
 import androidx.core.net.toUri
+import com.came.parkare.dashboardapp.ui.theme.WhiteColor
+import org.koin.androidx.compose.koinViewModel
 
 
 class SplashActivity: ComponentActivity() {
@@ -66,6 +71,10 @@ class SplashActivity: ComponentActivity() {
     private fun SplashScreen() {
         val scope = rememberCoroutineScope() // Create a coroutine scope
         var progress by remember { mutableStateOf(0.1f) }
+
+        val viewModel: SplashViewModel = koinViewModel()
+        val version by viewModel.appVersion.collectAsState()
+
         val animatedProgress = animateFloatAsState(
             targetValue = progress,
             animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec, label = "loading"
@@ -93,6 +102,8 @@ class SplashActivity: ComponentActivity() {
             LinearProgressIndicator(modifier = Modifier.width(300.dp)
                 ,color = CameBlueColor
                 , progress = animatedProgress)
+            Spacer(modifier = Modifier.height(55.dp))
+            Text(text = version, color = WhiteColor, style = MaterialTheme.typography.labelMedium)
         }
     }
 
@@ -137,6 +148,7 @@ class SplashActivity: ComponentActivity() {
     private fun requestStoragePermissions() {
         Log.i("REQUEST_PERMI", "All Permissions")
         val permissionsToRequest: MutableList<String> = mutableListOf(
+            "android.permission.READ_PRIVILEGED_PHONE_STATE",
             Manifest.permission.READ_MEDIA_VIDEO,
             Manifest.permission.READ_MEDIA_IMAGES
         )

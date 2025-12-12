@@ -12,6 +12,7 @@ import com.came.parkare.dashboardapp.config.constants.Constants.TIME_DELAY
 import com.came.parkare.dashboardapp.config.constants.Constants.VIDEO_FRAME
 import com.came.parkare.dashboardapp.config.dataclasses.TypeConnectionEnum
 import com.came.parkare.dashboardapp.config.utils.AppLogger
+import com.came.parkare.dashboardapp.config.utils.DeviceUtils
 import com.came.parkare.dashboardapp.config.utils.IServerConnection
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.came.parkare.dashboardapp.domain.models.toDto
@@ -37,6 +38,7 @@ class ApiServerRepositoryImpl(
     private val preferences: SharedPreferencesProvider,
     private val templateRepository: ConfigTemplateRepository,
     private val dashboardDevicesRepository: DashboardDevicesRepository,
+    private val deviceUtils: DeviceUtils,
     private val appLogger: AppLogger
 ): ApiServerRepository {
     override suspend fun saveDashboardIp(device: DeviceDto): Int {
@@ -132,5 +134,10 @@ class ApiServerRepositoryImpl(
     override suspend fun saveConfiguratorException(dto: TrackErrorDto): Int {
         appLogger.trackConfiguratorError(dto.stackTrace,dto.localizedMessage)
         return 0
+    }
+
+    override suspend fun getAppVersion(): String {
+        val version = deviceUtils.getAppVersion()
+        return version?.versionName ?: "1.0"
     }
 }

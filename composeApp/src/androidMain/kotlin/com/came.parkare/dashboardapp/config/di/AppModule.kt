@@ -7,6 +7,8 @@ import com.came.parkare.dashboardapp.config.database.migrations.Migration_3_4
 import com.came.parkare.dashboardapp.config.database.migrations.Migration_4_5
 import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.AppLoggerImpl
+import com.came.parkare.dashboardapp.config.utils.DeviceUtils
+import com.came.parkare.dashboardapp.config.utils.DeviceUtilsImpl
 import com.came.parkare.dashboardapp.config.utils.IServerConnection
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesWrapper
@@ -44,6 +46,7 @@ import com.came.parkare.dashboardapp.ui.components.carcounter.CarCounterManagerI
 import com.came.parkare.dashboardapp.ui.components.carcounter.CarCounterViewModel
 import com.came.parkare.dashboardapp.ui.screens.activity.MainActivityViewModel
 import com.came.parkare.dashboardapp.ui.screens.main.MainViewModel
+import com.came.parkare.dashboardapp.ui.screens.splash.SplashViewModel
 import com.came.parkare.dashboardapp.ui.utils.FTPServer
 import com.came.parkare.dashboardapp.ui.utils.FilesUtils
 import com.came.parkare.dashboardapp.ui.utils.FilesUtilsImpl
@@ -63,6 +66,7 @@ val utilsModule = module {
     singleOf(::AppLoggerImpl) { bind<AppLogger>() }
     singleOf(::ServerConnectionImpl) { bind<IServerConnection>() }
     singleOf(::CarCounterManagerImpl) { bind<CarCounterManager>() }
+    singleOf(::DeviceUtilsImpl) { bind<DeviceUtils>() }
     factory { getPlatform() }
     factory { FTPServer() }
     factory { AndroidApiServer(get(),get(),get(),get()) }
@@ -75,6 +79,7 @@ val viewModelModule = module {
     viewModelOf(::MainActivityViewModel)
     viewModelOf(::MainViewModel)
     viewModelOf(::CarCounterViewModel)
+    viewModelOf(::SplashViewModel)
 }
 
 val useCasesModule = module {
