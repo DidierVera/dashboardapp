@@ -6,6 +6,7 @@ import com.came.parkare.dashboardapp.config.constants.Constants.SELECTED_IP_ADDR
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.ErrorValidator
 import com.came.parkare.dashboardapp.config.utils.WasmSharedPreferencesProvider
+import com.came.parkare.dashboardapp.domain.usecases.GetAppVersion
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceList
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.connection_option
@@ -33,7 +34,8 @@ import kotlinx.coroutines.launch
 class SettingViewModel(
     private val preferences: WasmSharedPreferencesProvider,
     private val getDeviceList: GetDeviceList,
-    private val validator: ErrorValidator
+    private val validator: ErrorValidator,
+    private val getAppVersion: GetAppVersion
 ): ViewModel() {
 
     private val _optionsState = MutableStateFlow<List<MenuOptionState>>(listOf())
@@ -52,6 +54,10 @@ class SettingViewModel(
     val ipAddresses: StateFlow<List<String>>
         get() = _ipAddresses.asStateFlow()
 
+    private val _appVersion = MutableStateFlow("1.0.0")
+    val appVersion: StateFlow<String>
+        get() = _appVersion.asStateFlow()
+
     private val _refreshState = MutableStateFlow(0)
     val refreshState: StateFlow<Int>
         get() = _refreshState.asStateFlow()
@@ -63,11 +69,25 @@ class SettingViewModel(
         loadLeftPanelOptions()
         loadIpAddress()
         getIpAddress()
+        getVersion()
+    }
+
+    private fun getVersion(){
+        viewModelScope.launch {
+            println(_settingsState.value.ipSelected)
+            when (val result = getAppVersion.invoke(_settingsState.value.ipSelected)){
+                is ServiceResult.Error -> validator.validate(result.error)
+                is ServiceResult.Success -> {
+                    println(result.data)
+                    _appVersion.update { result.data ?: "1.0.0" }
+                }
+            }
+        }
     }
 
     private fun loadIpAddress() {
         val ip = window.location.hostname
-        val currentIp = "192.168.209.37"//preferences.get(SELECTED_IP_ADDRESS, ip)
+        val currentIp = "192.168.101.85"//preferences.get(SELECTED_IP_ADDRESS, ip)
         setIpAddress(currentIp)
     }
 
@@ -140,16 +160,12 @@ class SettingViewModel(
     }
 
     private fun getIpAddress(){
-        val resultData = mutableListOf("")
-        resultData.add("192.168.209.37")
 
         viewModelScope.launch {
             when(val result = getDeviceList.invoke()){
                 is ServiceResult.Error -> validator.validate(result.error)
                 is ServiceResult.Success -> {
-                    resultData.addAll(result.data.orEmpty().map { it.deviceIp })
-
-                    _ipAddresses.update { resultData }
+                    _ipAddresses.update { result.data.orEmpty().map { it.deviceIp } }
                 }
             }
         }

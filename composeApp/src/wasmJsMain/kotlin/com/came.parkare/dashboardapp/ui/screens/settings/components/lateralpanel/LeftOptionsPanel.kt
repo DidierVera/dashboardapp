@@ -36,6 +36,7 @@ import org.koin.core.annotation.KoinExperimentalAPI
 @Composable
 fun LeftOptionsPanel(
     ipAddress: String,
+    appVersion: String,
     options : List<MenuOptionState>,
     onIpAddressClicked: (String) -> Unit,
     onSelectClick: (MenuOptionState) -> Unit){
@@ -68,21 +69,25 @@ fun LeftOptionsPanel(
                 }
             }
         }
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally) {
+            CustomDropdownSelector(
+                items = ipAddresses,
+                selectedItem = ipAddress,
+                onItemSelected = {
+                    viewModel.setIpAddress(it)
+                },
+                itemContent = {
+                    IpText(it)
+                },
+                selectedItemContent = { device ->
+                    onIpAddressClicked.invoke(device)
+                    IpText(device)
+                }
+            )
+            Text(text = "Version: $appVersion", style = MaterialTheme.typography.titleMedium)
+        }
 
-        CustomDropdownSelector(
-            items = ipAddresses,
-            selectedItem = ipAddress,
-            onItemSelected = {
-                viewModel.setIpAddress(it)
-            },
-            itemContent = {
-                IpText(it)
-            },
-            selectedItemContent = { device ->
-                onIpAddressClicked.invoke(device)
-                IpText(device)
-            }
-        )
     }
 }
 

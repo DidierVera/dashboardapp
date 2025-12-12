@@ -69,7 +69,7 @@ val utilsModule = module {
     singleOf(::DeviceUtilsImpl) { bind<DeviceUtils>() }
     factory { getPlatform() }
     factory { FTPServer() }
-    factory { AndroidApiServer(get(),get(),get(),get()) }
+    factory { AndroidApiServer(get(),get(),get(),get(),get()) }
     single<FirebaseAnalytics> {
         FirebaseAnalytics.getInstance(get())
     }

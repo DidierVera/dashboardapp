@@ -13,4 +13,5 @@ interface DeviceRepository {
     suspend fun saveDeviceInfo(ipAddress: String, device: DeviceDto): ServiceResult<ResponseStatusDto>
     suspend fun deleteDevice(ipAddress: String, deviceModel: DeviceDto): ServiceResult<ResponseStatusDto>
     suspend fun getDeviceStatus(ipAddress: String): ServiceResult<Boolean>
+    suspend fun getAppVersion(ipAddress: String): ServiceResult<String>
 }

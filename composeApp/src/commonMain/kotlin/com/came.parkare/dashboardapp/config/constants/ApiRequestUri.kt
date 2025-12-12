@@ -19,4 +19,5 @@ object ApiRequestUri {
     const val TRACK_ERROR = "/api/configurator/error"
     const val TRACK_LOG = "/api/configurator/log"
     const val CHECK_STATUS = "/api/device/status"
+    const val GET_VERSION = "/api/device/version"
 }

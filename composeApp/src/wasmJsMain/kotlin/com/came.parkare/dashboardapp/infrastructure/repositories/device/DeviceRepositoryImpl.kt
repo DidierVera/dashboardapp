@@ -4,6 +4,7 @@ import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.CHECK_STATUS
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.DELETE_DEVICE
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_CONNECTION_CONFIG
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_DEVICE_LIST
+import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_VERSION
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_CONNECTION_CONFIG
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_DEVICE
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SSL_PROTOCOL
@@ -85,6 +86,16 @@ class DeviceRepositoryImpl(
         return try {
             val result = httpClient.get<ResponseStatusDto>("$SSL_PROTOCOL$ipAddress:$apiPort$CHECK_STATUS")
             ServiceResult.Success(result.status)
+        }catch (e: Exception){
+            appLogger.trackError(e)
+            ServiceResult.Error(ErrorTypeClass.GeneralException(e.message))
+        }
+    }
+
+    override suspend fun getAppVersion(ipAddress: String): ServiceResult<String> {
+        return try {
+            val result = httpClient.get<String>("$SSL_PROTOCOL$ipAddress:$apiPort$GET_VERSION")
+            ServiceResult.Success(result)
         }catch (e: Exception){
             appLogger.trackError(e)
             ServiceResult.Error(ErrorTypeClass.GeneralException(e.message))

@@ -4,6 +4,7 @@ import android.util.Log
 import com.came.parkare.dashboardapp.config.constants.Constants.API_PORT
 import com.came.parkare.dashboardapp.config.dataclasses.ResponseStatusDto
 import com.came.parkare.dashboardapp.config.utils.AppLogger
+import com.came.parkare.dashboardapp.config.utils.DeviceUtils
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.came.parkare.dashboardapp.domain.models.toDto
 import com.came.parkare.dashboardapp.domain.repositories.local.ConfigTemplateRepository
@@ -24,6 +25,7 @@ import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiR
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetCurrentConnectionConfig
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetDashboardListRequest
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetDefaultConfigTemplate
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetVersion
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveConfigTemplate
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveConfiguratorError
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveConfiguratorLog
@@ -42,6 +44,7 @@ class AndroidApiServer(
     private val apiServerRepository: ApiServerRepository,
     private val configTemplateRepository: ConfigTemplateRepository,
     private val appLogger: AppLogger,
+    private val deviceUtils: DeviceUtils,
     port: Int = preferences.get(API_PORT, 2023)
 ): NanoHTTPD(port) {
     private val TAG = "AndroidApiServer"
@@ -72,7 +75,7 @@ class AndroidApiServer(
             session.isUpdateConfigTemplate() -> handleUpdateConfigTemplate(session)
             session.isSaveConfiguratorLog() -> handleTrackLog(session)
             session.isSaveConfiguratorError() -> handleTrackError(session)
-            session.isCheckStatus() -> handleCheckStatus()
+            session.isGetVersion() -> handleGetAppVersion()
             else -> createNotFoundResponse()
         }
     }
@@ -150,6 +153,13 @@ class AndroidApiServer(
     private fun handleGetConfigType(): Response {
         return processAsyncRequest<Unit, Long>(
             operation = { apiServerRepository.getScreenConfigType() },
+            successTransform = { result -> Json.encodeToString(result) }
+        )
+    }
+
+    private fun handleGetAppVersion(): Response {
+        return processAsyncRequest<Unit, String>(
+            operation = { deviceUtils.getAppVersion()?.versionName ?: "1.0.0" },
             successTransform = { result -> Json.encodeToString(result) }
         )
     }

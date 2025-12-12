@@ -83,8 +83,10 @@ fun LeftPanel() {
     val viewModel: SettingViewModel  = koinViewModel()
     val optionsState by viewModel.optionsState.collectAsState()
     val settingsState by viewModel.settingsState.collectAsState()
+    val version by viewModel.appVersion.collectAsState()
     Column {
-        LeftOptionsPanel(settingsState.ipSelected, optionsState, onIpAddressClicked = {
+        LeftOptionsPanel(ipAddress =  settingsState.ipSelected, appVersion =  version,
+            options =  optionsState, onIpAddressClicked = {
         }){ option ->
             viewModel.selectItem(option)
         }
