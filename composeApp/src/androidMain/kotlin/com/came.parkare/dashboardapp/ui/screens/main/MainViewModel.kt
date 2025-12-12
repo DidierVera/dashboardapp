@@ -298,6 +298,11 @@ class MainViewModel (
                 loopJob?.cancel()
                 //loopJob?.join() // Wait for the coroutine to finish cancellation
                 loopJob = customLoop() // Start a new loop
+
+                //count new entry when is dispatched 12 code
+                if (screen.dispatcherCode == 12L){
+                    carCounterManager.newCarEntered()
+                }
             }
         }
     }

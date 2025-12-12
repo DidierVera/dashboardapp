@@ -3,9 +3,10 @@ package com.came.parkare.dashboardapp.ui.components.carcounter
 import kotlinx.coroutines.flow.StateFlow
 
 interface CarCounterManager {
-    fun setCounter(counter: Int)
+    fun newCarEntered()
     fun showCarCounter(show: Boolean)
     fun setResetDelay(delay: Int)
+    fun resetCarCounter()
 
     val counter: StateFlow<Int>
     val showCounter: StateFlow<Boolean>
