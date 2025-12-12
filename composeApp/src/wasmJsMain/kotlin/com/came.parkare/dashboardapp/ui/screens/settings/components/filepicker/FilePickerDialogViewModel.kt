@@ -1,10 +1,8 @@
-package com.came.parkare.dashboardapp.ui.screens.settings.components.viewmodels
+package com.came.parkare.dashboardapp.ui.screens.settings.components.filepicker
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.came.parkare.dashboardapp.ui.components.PlatformFile
 import com.came.parkare.dashboardapp.ui.components.readFileAsByteArray
-import com.came.parkare.dashboardapp.ui.screens.settings.components.states.FilePickerDialogState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

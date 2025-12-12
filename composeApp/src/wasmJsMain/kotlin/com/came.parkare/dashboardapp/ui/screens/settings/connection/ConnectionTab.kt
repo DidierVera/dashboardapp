@@ -3,6 +3,7 @@
 package com.came.parkare.dashboardapp.ui.screens.settings.connection
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.IconButton
@@ -40,8 +42,8 @@ import com.came.parkare.dashboardapp.ui.components.AppButton
 import com.came.parkare.dashboardapp.ui.components.AppLabel
 import com.came.parkare.dashboardapp.ui.components.Base64Image
 import com.came.parkare.dashboardapp.ui.components.CustomDropdownSelector
-import com.came.parkare.dashboardapp.ui.screens.settings.components.DialogPickerDialog
-import com.came.parkare.dashboardapp.ui.screens.settings.components.TabTitle
+import com.came.parkare.dashboardapp.ui.screens.settings.components.filepicker.DialogPickerDialog
+import com.came.parkare.dashboardapp.ui.screens.settings.components.tabtitle.TabTitle
 import com.came.parkare.dashboardapp.ui.theme.CameBlueColor
 import com.came.parkare.dashboardapp.ui.theme.WhiteColor
 import com.came.parkare.dashboardapp.ui.theme.style.floatingButton
@@ -52,10 +54,13 @@ import dashboardapp.composeapp.generated.resources.connection_title
 import dashboardapp.composeapp.generated.resources.connection_way_label
 import dashboardapp.composeapp.generated.resources.delay_brightness_label
 import dashboardapp.composeapp.generated.resources.delay_time_label
+import dashboardapp.composeapp.generated.resources.discard_button
 import dashboardapp.composeapp.generated.resources.ic_close
 import dashboardapp.composeapp.generated.resources.image_resources_label
 import dashboardapp.composeapp.generated.resources.port_label
+import dashboardapp.composeapp.generated.resources.reset_counter_label
 import dashboardapp.composeapp.generated.resources.save_button
+import dashboardapp.composeapp.generated.resources.show_car_counter_label
 import dashboardapp.composeapp.generated.resources.show_video_frame_label
 import dashboardapp.composeapp.generated.resources.terminal_ip_label
 import dashboardapp.composeapp.generated.resources.text_size_scale_label
@@ -69,90 +74,119 @@ import org.koin.core.annotation.KoinExperimentalAPI
 fun ConnectionTab() {
     val viewModel: ConnectionViewModel = koinViewModel()
     viewModel.initTab()
-    val state by viewModel.state.collectAsState()
-
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.padding(8.dp)) {
-        item { TabTitle(Res.string.connection_title) }
-        item {
-            Column {
-                AppLabel(Res.string.connection_way_label)
-                ConnectionWayControl(state.connectionWayOptions.map { it.second },
-                    state.connectionWay.second)//connection way
-            }
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.padding(8.dp).verticalScroll(ScrollState(0))) {
+        TabTitle(Res.string.connection_title)
+        Column {
+            AppLabel(Res.string.connection_way_label)
+            ConnectionWayControl()//connection way
         }
-
-        item {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-
-                TextField(//terminal ip
-                    value = state.terminalIp,
-                    onValueChange = { viewModel.setTerminalIp(it) },
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    singleLine = true,
-                    label = { AppLabel(Res.string.terminal_ip_label) }
-                )
-                TextField(//port
-                    value = "${state.port}",
-                    onValueChange ={
-                        val newValue = if(it.isBlank()) 0 else it.toInt()
-                        viewModel.setPort(newValue) },
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    singleLine = true,
-                    label = { AppLabel(Res.string.port_label) }
-                )
-            }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            TerminalIpField()
+            PortField()
         }
-        item {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                TextField(//api
-                    value = state.api,
-                    onValueChange ={ viewModel.setApi(it) },
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    singleLine = true,
-                    label = { AppLabel(Res.string.api_label) }
-                )
-                TextField(//delay
-                    value = "${state.delayTime}",
-                    onValueChange ={
-                        val newValue = if(it.isBlank()) 0 else it.toInt()
-                        viewModel.setDelayTime(newValue = newValue) },
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    singleLine = true,
-                    label = { AppLabel(Res.string.delay_time_label) }
-                )
-            }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            ApiField()
+            DelayField()
         }
-        item {
-            TextField(//text size scale
-                value = "${state.textSizeScale}",
-                onValueChange ={
-                    val newValue = if(it.isBlank()) 0 else it.toInt()
-                    viewModel.textSizeScale(newValue)
-                },
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                singleLine = true,
-                label = { AppLabel(Res.string.text_size_scale_label) }
-            )
-        }
-
-        item { ShowBrightnessMode(state.showBrightnessMode, state.brightnessDelay) }
-        item { ShowVideoFrame(state.showVideoFrame) }
-        item { UploadImages() }
-
-        item { LoadPreviousImages() }
-        item { Spacer(modifier = Modifier.height(4.dp)) }
-        item {
-            Box(modifier = Modifier) {
-                SaveButton(modifier = Modifier.align(Alignment.BottomEnd))
-            }
+        TextSizeScaleField()
+        ShowBrightnessMode()
+        ShowCarCounter()
+        ShowVideoFrame()
+        UploadImages()
+        LoadPreviousImages()
+        Spacer(modifier = Modifier.height(4.dp))
+        Box(modifier = Modifier) {
+            SaveButton(modifier = Modifier.align(Alignment.BottomEnd))
         }
     }
+
 }
 
 @Composable
-private fun ShowBrightnessMode(brightnessMode: Boolean, brightnessDelay: Int) {
+private fun TextSizeScaleField() {
     val viewModel: ConnectionViewModel = koinViewModel()
+    val state by viewModel.state.collectAsState()
+
+    TextField(//text size scale
+        value = "${state.textSizeScale}",
+        onValueChange ={
+            val newValue = if(it.isBlank()) 0 else it.toInt()
+            viewModel.textSizeScale(newValue)
+        },
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+        singleLine = true,
+        label = { AppLabel(Res.string.text_size_scale_label) }
+    )
+}
+
+@Composable
+private fun DelayField() {
+    val viewModel: ConnectionViewModel = koinViewModel()
+    val state by viewModel.state.collectAsState()
+
+    TextField(//delay
+        value = "${state.delayTime}",
+        onValueChange ={
+            val newValue = if(it.isBlank()) 0 else it.toInt()
+            viewModel.setDelayTime(newValue = newValue) },
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+        singleLine = true,
+        label = { AppLabel(Res.string.delay_time_label) }
+    )
+}
+
+@Composable
+private fun ApiField() {
+    val viewModel: ConnectionViewModel = koinViewModel()
+    val state by viewModel.state.collectAsState()
+
+    TextField(//api
+        value = state.api,
+        onValueChange ={ viewModel.setApi(it) },
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+        singleLine = true,
+        label = { AppLabel(Res.string.api_label) }
+    )
+}
+
+@Composable
+private fun PortField() {
+    val viewModel: ConnectionViewModel = koinViewModel()
+    val state by viewModel.state.collectAsState()
+
+    TextField(//port
+        value = "${state.port}",
+        onValueChange ={
+            val newValue = if(it.isBlank()) 0 else it.toInt()
+            viewModel.setPort(newValue) },
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+        singleLine = true,
+        label = { AppLabel(Res.string.port_label) }
+    )
+}
+
+@Composable
+private fun TerminalIpField() {
+    val viewModel: ConnectionViewModel = koinViewModel()
+    val state by viewModel.state.collectAsState()
+
+    TextField(//terminal ip
+        value = state.terminalIp,
+        onValueChange = { viewModel.setTerminalIp(it) },
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+        singleLine = true,
+        label = { AppLabel(Res.string.terminal_ip_label) }
+    )
+}
+
+@Composable
+private fun ShowBrightnessMode() {
+    val viewModel: ConnectionViewModel = koinViewModel()
+    val state by viewModel.state.collectAsState()
+
+    val brightnessMode: Boolean = state.showBrightnessMode
+    val brightnessDelay: Int = state.brightnessDelay
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -173,6 +207,38 @@ private fun ShowBrightnessMode(brightnessMode: Boolean, brightnessDelay: Int) {
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 singleLine = true,
                 label = { AppLabel(Res.string.delay_brightness_label) }
+            )
+        }
+    }
+}
+
+@Composable
+private fun ShowCarCounter() {
+    val viewModel: ConnectionViewModel = koinViewModel()
+    val state by viewModel.state.collectAsState()
+
+    val show: Boolean = state.showCarCounter
+    val counter: Int = state.carCounterReset
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            stringResource(Res.string.show_car_counter_label)
+        )
+        Checkbox(
+            checked = show,
+            onCheckedChange = { viewModel.setShowCarCounter(it) }
+        )
+        if (show){
+            TextField(//delay
+                value = "$counter",
+                onValueChange ={
+                    val newValue = if(it.isBlank()) 0 else it.toInt()
+                    viewModel.setCarCounterReset(newValue)
+                },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                singleLine = true,
+                label = { AppLabel(Res.string.reset_counter_label) }
             )
         }
     }
@@ -253,8 +319,12 @@ private fun SaveButton(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ConnectionWayControl(options: List<String>, connectionWay: String) {
+fun ConnectionWayControl() {
     val viewModel: ConnectionViewModel = koinViewModel()
+    val state by viewModel.state.collectAsState()
+    val options: List<String> = state.connectionWayOptions.map { it.second }
+    val connectionWay: String = state.connectionWay.second
+
     CustomDropdownSelector(
         items = options,
         selectedItem = connectionWay,
@@ -272,8 +342,10 @@ fun ConnectionWayControl(options: List<String>, connectionWay: String) {
 }
 
 @Composable
-private fun ShowVideoFrame(showVideo: Boolean) {
+private fun ShowVideoFrame() {
     val viewModel: ConnectionViewModel = koinViewModel()
+    val state by viewModel.state.collectAsState()
+    val showVideo: Boolean = state.showVideoFrame
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {

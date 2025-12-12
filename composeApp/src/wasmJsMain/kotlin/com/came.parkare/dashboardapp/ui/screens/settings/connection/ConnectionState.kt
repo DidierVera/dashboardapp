@@ -1,6 +1,6 @@
 package com.came.parkare.dashboardapp.ui.screens.settings.connection
 
-import com.came.parkare.dashboardapp.ui.screens.settings.components.states.FilePickerDialogState
+import com.came.parkare.dashboardapp.ui.screens.settings.components.filepicker.FilePickerDialogState
 
 data class ConnectionState(
     val connectionWay: Pair<Int, String> = Pair(-1, "Select one"),
@@ -12,7 +12,9 @@ data class ConnectionState(
     val textSizeScale: Int = 10,
     val showVideoFrame: Boolean = false,
     val showBrightnessMode: Boolean = false,
+    val showCarCounter: Boolean = false,
     val brightnessDelay: Int = 2,
+    val carCounterReset: Int = 1,
     val clearSelectedFiles: Boolean = false,
     val imagesResources: List<FilePickerDialogState> = emptyList()
 )

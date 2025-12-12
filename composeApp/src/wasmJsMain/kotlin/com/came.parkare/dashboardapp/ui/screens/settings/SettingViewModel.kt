@@ -67,7 +67,7 @@ class SettingViewModel(
 
     private fun loadIpAddress() {
         val ip = window.location.hostname
-        val currentIp = preferences.get(SELECTED_IP_ADDRESS, ip)
+        val currentIp = "192.168.209.37"//preferences.get(SELECTED_IP_ADDRESS, ip)
         setIpAddress(currentIp)
     }
 
@@ -140,11 +140,16 @@ class SettingViewModel(
     }
 
     private fun getIpAddress(){
+        val resultData = mutableListOf("")
+        resultData.add("192.168.209.37")
+
         viewModelScope.launch {
             when(val result = getDeviceList.invoke()){
                 is ServiceResult.Error -> validator.validate(result.error)
                 is ServiceResult.Success -> {
-                    _ipAddresses.update { result.data.orEmpty().map { it.deviceIp } }
+                    resultData.addAll(result.data.orEmpty().map { it.deviceIp })
+
+                    _ipAddresses.update { resultData }
                 }
             }
         }

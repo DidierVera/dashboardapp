@@ -3,6 +3,8 @@ package com.came.parkare.dashboardapp.infrastructure.repositories.external
 import com.came.parkare.dashboardapp.config.constants.Constants.API_PORT
 import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS
 import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS_DELAY_TIME
+import com.came.parkare.dashboardapp.config.constants.Constants.RESET_COUNTER_DELAY_TIME
+import com.came.parkare.dashboardapp.config.constants.Constants.SHOW_COUNTER
 import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_API
 import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_IP
 import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_PORT
@@ -65,6 +67,8 @@ class ConfigFileRepositoryImpl(
         preferences.put(TEXT_SIZE_SCALE, data.textSizeScale)
         preferences.put(AUTO_BRIGHTNESS, data.autoBrightness)
         preferences.put(AUTO_BRIGHTNESS_DELAY_TIME, data.activeLowBrightnessTime)
+        preferences.put(SHOW_COUNTER, data.showCarCounter)
+        preferences.put(RESET_COUNTER_DELAY_TIME, data.carCounterReset)
 
         when (data.connectionWay){
             1 -> serverConnection.setTypeConnection(TypeConnectionEnum.SIGNAL_R)

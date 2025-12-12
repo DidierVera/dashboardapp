@@ -1,10 +1,10 @@
 package com.came.parkare.dashboardapp.ui.screens.main
 
 import android.app.Activity
-import android.content.Context
 import android.util.Log
 import android.view.WindowManager
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,11 +12,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
@@ -30,15 +30,12 @@ import com.came.parkare.dashboardapp.domain.models.components.ElementModel
 import com.came.parkare.dashboardapp.ui.components.Base64Image
 import com.came.parkare.dashboardapp.ui.components.BuildComposable
 import com.came.parkare.dashboardapp.ui.components.NetworkIndicatorView
+import com.came.parkare.dashboardapp.ui.components.carcounter.CarCounterView
 import com.came.parkare.dashboardapp.ui.components.isBase64
 import com.came.parkare.dashboardapp.ui.components.videos.VideoExoPlayer
 import com.came.parkare.dashboardapp.ui.screens.activity.MainActivity
 import com.came.parkare.dashboardapp.ui.theme.BlackColor
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -48,6 +45,7 @@ fun MainScreen(
     Box(Modifier.fillMaxSize()) {
         LoadBackground()
         NetworkIndicatorView(Modifier.padding(4.dp))
+        CarCounterView(modifier = Modifier.align(Alignment.TopEnd))
         UpdateDataByLang()
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.Bottom),
@@ -114,19 +112,17 @@ private fun LoadDashboardItems(
 ){
     val state by viewModel.itemsState.collectAsState()
     val showVideoFrame by viewModel.showVideoFrame.collectAsState()
-    val items: List<ElementModel> = state.newItems
-    if (items.isEmpty()) return
+    val elements: List<ElementModel> = state.newItems
+    if (elements.isEmpty()) return
     val boxMargin = state.contentPadding
 
-    LazyColumn(modifier = modifier.padding(boxMargin),
+    Column(modifier = modifier.padding(boxMargin).verticalScroll(ScrollState(0)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = if(showVideoFrame) Arrangement.Bottom else Arrangement.Center
     ){
-        items.forEach { mItem ->
-            item {
-                val textSizeScale = state.textSizeScale
-                BuildComposable(elementModel = mItem, textSizeScale = textSizeScale)
-            }
+        elements.forEach { mItem ->
+            val textSizeScale = state.textSizeScale
+            BuildComposable(elementModel = mItem, textSizeScale = textSizeScale)
         }
     }
 }

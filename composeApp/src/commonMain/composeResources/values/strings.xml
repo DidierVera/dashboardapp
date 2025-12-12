@@ -59,7 +59,10 @@
     <string name="image_resources_label">Images resources</string>
     <string name="text_size_scale_label">Text size scale</string>
     <string name="auto_brightness_label">Set auto brightness change</string>
+    <string name="show_car_counter_label">Show car counter</string>
     <string name="delay_brightness_label">Active low brightness after(s)</string>
+    <string name="reset_counter_label">Reset counter each (minutes)</string>
+
 
     <!--canvas screen-->
     <string name="screens_label">Screens</string>

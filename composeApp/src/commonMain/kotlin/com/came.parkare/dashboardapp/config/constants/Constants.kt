@@ -15,6 +15,8 @@ object Constants {
     const val CONFIG_TYPE = "templateConfigType"
     const val AUTO_BRIGHTNESS = "autoBrightness"
     const val AUTO_BRIGHTNESS_DELAY_TIME = "autoBrightnessDelayTime"
+    const val SHOW_COUNTER = "showCarCounter"
+    const val RESET_COUNTER_DELAY_TIME = "resetCounterDelayTime"
 
 
     //Ftp

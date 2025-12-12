@@ -39,6 +39,9 @@ import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiS
 import com.came.parkare.dashboardapp.infrastructure.source.remote.services.MockService
 import com.came.parkare.dashboardapp.infrastructure.source.remote.services.SignalRService
 import com.came.parkare.dashboardapp.infrastructure.source.remote.services.TerminalSocketService
+import com.came.parkare.dashboardapp.ui.components.carcounter.CarCounterManager
+import com.came.parkare.dashboardapp.ui.components.carcounter.CarCounterManagerImpl
+import com.came.parkare.dashboardapp.ui.components.carcounter.CarCounterViewModel
 import com.came.parkare.dashboardapp.ui.screens.activity.MainActivityViewModel
 import com.came.parkare.dashboardapp.ui.screens.main.MainViewModel
 import com.came.parkare.dashboardapp.ui.utils.FTPServer
@@ -59,6 +62,7 @@ val utilsModule = module {
     singleOf(::SharedPreferencesWrapper) { bind<SharedPreferencesProvider>() }
     singleOf(::AppLoggerImpl) { bind<AppLogger>() }
     singleOf(::ServerConnectionImpl) { bind<IServerConnection>() }
+    singleOf(::CarCounterManagerImpl) { bind<CarCounterManager>() }
     factory { getPlatform() }
     factory { FTPServer() }
     factory { AndroidApiServer(get(),get(),get(),get()) }
@@ -70,6 +74,7 @@ val utilsModule = module {
 val viewModelModule = module {
     viewModelOf(::MainActivityViewModel)
     viewModelOf(::MainViewModel)
+    viewModelOf(::CarCounterViewModel)
 }
 
 val useCasesModule = module {

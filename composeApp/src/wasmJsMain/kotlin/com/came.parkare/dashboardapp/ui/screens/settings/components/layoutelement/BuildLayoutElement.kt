@@ -1,4 +1,4 @@
-package com.came.parkare.dashboardapp.ui.screens.settings.components
+package com.came.parkare.dashboardapp.ui.screens.settings.components.layoutelement
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size

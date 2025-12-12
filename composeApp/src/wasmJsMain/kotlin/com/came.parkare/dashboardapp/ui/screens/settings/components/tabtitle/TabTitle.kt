@@ -1,4 +1,4 @@
-package com.came.parkare.dashboardapp.ui.screens.settings.components
+package com.came.parkare.dashboardapp.ui.screens.settings.components.tabtitle
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme

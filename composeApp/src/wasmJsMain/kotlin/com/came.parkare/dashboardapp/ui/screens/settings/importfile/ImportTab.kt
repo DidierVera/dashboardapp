@@ -16,7 +16,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -26,8 +25,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.came.parkare.dashboardapp.ui.components.AppButton
 import com.came.parkare.dashboardapp.ui.components.CustomDropdownSelector
-import com.came.parkare.dashboardapp.ui.screens.settings.components.DialogPickerDialog
-import com.came.parkare.dashboardapp.ui.screens.settings.components.TabTitle
+import com.came.parkare.dashboardapp.ui.screens.settings.components.filepicker.DialogPickerDialog
+import com.came.parkare.dashboardapp.ui.screens.settings.components.tabtitle.TabTitle
 import com.came.parkare.dashboardapp.ui.theme.CameBlueColor
 import com.came.parkare.dashboardapp.ui.theme.WhiteColor
 import dashboardapp.composeapp.generated.resources.Res
@@ -37,7 +36,6 @@ import dashboardapp.composeapp.generated.resources.ic_upload
 import dashboardapp.composeapp.generated.resources.import_title
 import dashboardapp.composeapp.generated.resources.save_button
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 

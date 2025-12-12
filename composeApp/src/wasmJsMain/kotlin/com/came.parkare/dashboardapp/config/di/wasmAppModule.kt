@@ -31,7 +31,7 @@ import com.came.parkare.dashboardapp.ui.components.loading.AppLoadingViewModel
 import com.came.parkare.dashboardapp.ui.components.messages.AppToastViewModel
 import com.came.parkare.dashboardapp.ui.navigation.Navigator
 import com.came.parkare.dashboardapp.ui.screens.home.HomeViewModel
-import com.came.parkare.dashboardapp.ui.screens.settings.components.viewmodels.FilePickerDialogViewModel
+import com.came.parkare.dashboardapp.ui.screens.settings.components.filepicker.FilePickerDialogViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.importfile.ImportViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.SettingViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.connection.ConnectionViewModel

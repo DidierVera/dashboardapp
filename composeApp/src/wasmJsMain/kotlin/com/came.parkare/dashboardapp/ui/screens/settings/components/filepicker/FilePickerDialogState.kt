@@ -1,4 +1,4 @@
-package com.came.parkare.dashboardapp.ui.screens.settings.components.states
+package com.came.parkare.dashboardapp.ui.screens.settings.components.filepicker
 
 data class FilePickerDialogState(
     val id: Long = 0,

@@ -52,6 +52,7 @@ string|password_label|UGFzc3dvcmQ=
 string|port_label|UG9ydA==
 string|properties_label|UHJvcGVydGllcw==
 string|request_password_message|RW50cnkgdGhlIHBhc3N3b3JkIGZvciBhY2Nlc3MgdG8gdGhlIHdheSBtb25pdG9yIGNvbmZpZy4=
+string|reset_counter_label|UmVzZXQgY291bnRlciBlYWNoIChtaW51dGVzKQ==
 string|save_button|U0FWRQ==
 string|screen_config_saved_message|VGhlIG5ldyBzY3JlZW5zIGNvbmZpZ3VyYXRpb24gaGFzIGJlZW4gc2F2ZWQgc3VjY2Vzc2Z1bGx5Lg==
 string|screen_list_label|U2NyZWVuIGxpc3Q=
@@ -65,6 +66,7 @@ string|share_config_option|U2hhcmUgY29uZmln
 string|share_config_title|U2hhcmUgc2NyZWVuIGNvbmZpZw==
 string|share_configuration_message|QXJlIHlvdSBzdXJlIHlvdSB3YW50IHRvIHNoYXJlIHRoaXMgY29uZmlndXJhdGlvbiB3aXRoIHRoZSBzZWxlY3RlZCBkZXZpY2VzPyAKIFBsZWFzZSBlbnRlciB0aGUgcGFzc3dvcmQgdG8gY29uZmlybSBpdA==
 string|share_file_button|U0hBUkUgVE8=
+string|show_car_counter_label|U2hvdyBjYXIgY291bnRlcg==
 string|show_video_frame_label|U2hvdyB2aWRlbyBmcmFtZQ==
 string|terminal_ip_label|VGVybWluYWwgSVA=
 string|testing_option|VGVzdGluZw==

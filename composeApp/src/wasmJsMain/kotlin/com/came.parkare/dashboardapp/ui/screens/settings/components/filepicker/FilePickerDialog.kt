@@ -1,14 +1,9 @@
-package com.came.parkare.dashboardapp.ui.screens.settings.components
+package com.came.parkare.dashboardapp.ui.screens.settings.components.filepicker
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -20,11 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.min
 import com.came.parkare.dashboardapp.ui.components.FilePicker
 import com.came.parkare.dashboardapp.ui.components.MultipleFilePicker
-import com.came.parkare.dashboardapp.ui.screens.settings.components.states.FilePickerDialogState
-import com.came.parkare.dashboardapp.ui.screens.settings.components.viewmodels.FilePickerDialogViewModel
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.ic_import_export
 import dashboardapp.composeapp.generated.resources.upload_file_button

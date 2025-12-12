@@ -11,6 +11,8 @@ import androidx.lifecycle.viewModelScope
 import com.came.parkare.dashboardapp.config.DefaultDits
 import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS
 import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS_DELAY_TIME
+import com.came.parkare.dashboardapp.config.constants.Constants.RESET_COUNTER_DELAY_TIME
+import com.came.parkare.dashboardapp.config.constants.Constants.SHOW_COUNTER
 import com.came.parkare.dashboardapp.config.constants.Constants.TEXT_SIZE_SCALE
 import com.came.parkare.dashboardapp.config.constants.Constants.TIME_DELAY
 import com.came.parkare.dashboardapp.config.constants.Constants.VIDEO_FRAME
@@ -25,6 +27,7 @@ import com.came.parkare.dashboardapp.domain.models.terminal.TerminalResponseMode
 import com.came.parkare.dashboardapp.domain.usecases.GetScreenByDispatcher
 import com.came.parkare.dashboardapp.domain.usecases.InitConfiguration
 import com.came.parkare.dashboardapp.domain.usecases.StartSocketConnection
+import com.came.parkare.dashboardapp.ui.components.carcounter.CarCounterManager
 import com.came.parkare.dashboardapp.ui.utils.FilesUtils
 import com.came.parkare.dashboardapp.ui.utils.SystemBrightnessManager
 import com.came.parkare.dashboardapp.ui.utils.UiUtils
@@ -52,6 +55,7 @@ class MainViewModel (
     private val preferences: SharedPreferencesProvider,
     private val appLogger: AppLogger,
     private val filesUtils: FilesUtils,
+    private val carCounterManager: CarCounterManager,
     private val serverConnection: IServerConnection
 ): ViewModel() {
     private lateinit var brightnessManager: SystemBrightnessManager
@@ -112,11 +116,30 @@ class MainViewModel (
         checkBackgroundImage()
         checkTextSizeScale()
         checkBrightnessMode()
+        checkCarCounter()
         startPeriodicChecking()
         setTerminalConnection(serverConnection.typeConnection.value)
     }
 
-    fun checkBrightnessMode() {
+    private fun checkCarCounter() {
+        viewModelScope.launch {
+            val showCounter  = preferences.get(SHOW_COUNTER, false)
+            val resetDelay = preferences.get(RESET_COUNTER_DELAY_TIME, 1)
+
+            val currentDelay = carCounterManager.resetDelay.value
+            val currentShow = carCounterManager.showCounter.value
+
+            if (currentDelay != resetDelay){
+                carCounterManager.setResetDelay(resetDelay)
+            }
+
+            if (currentShow != showCounter){
+                carCounterManager.showCarCounter(showCounter)
+            }
+        }
+    }
+
+    private fun checkBrightnessMode() {
         viewModelScope.launch {
             val autoBrightness = preferences.get(AUTO_BRIGHTNESS, false)
             val autoBrightnessDelay = preferences.get(AUTO_BRIGHTNESS_DELAY_TIME, 2)
@@ -279,7 +302,6 @@ class MainViewModel (
         }
     }
 
-
     private fun registerConnectionSignal() {
         serverConnection.statusConnection.onEach { status ->
             appLogger.trackLog("Is Connected to terminal: ", "$status")
@@ -334,30 +356,6 @@ class MainViewModel (
                 serverConnection.setRestartApp(false)
             }
         }.launchIn(viewModelScope)
-    }
-
-    fun setBrightnessViaSettings(activity: Activity, brightness: Float) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                if (Settings.System.canWrite(activity)) {
-                    val brightnessValue = (brightness * 255).toInt()
-
-                    Settings.System.putInt(
-                        activity.contentResolver,
-                        Settings.System.SCREEN_BRIGHTNESS_MODE,
-                        Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL
-                    )
-
-                    Settings.System.putInt(
-                        activity.contentResolver,
-                        Settings.System.SCREEN_BRIGHTNESS,
-                        brightnessValue.coerceIn(0, 255)
-                    )
-                }
-            } catch (e: Exception) {
-                Log.e("Brightness", "Settings approach failed", e)
-            }
-        }
     }
 
     fun setBrightnessByCommand(activity: Activity, brightness: Int){

@@ -9,7 +9,7 @@ import com.came.parkare.dashboardapp.domain.usecases.SaveConnectionConfig
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ImageFileDto
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
-import com.came.parkare.dashboardapp.ui.screens.settings.components.states.FilePickerDialogState
+import com.came.parkare.dashboardapp.ui.screens.settings.components.filepicker.FilePickerDialogState
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.config_saved_message
 import kotlinx.coroutines.Dispatchers
@@ -63,6 +63,8 @@ class ConnectionViewModel(
                                 delayTime = timeDelay,
                                 brightnessDelay = activeLowBrightnessTime ?: 2,
                                 showBrightnessMode = autoBrightness == true,
+                                carCounterReset = carCounterReset ?: 1,
+                                showCarCounter = showCarCounter == true,
                                 imagesResources = files?.map {
                                     FilePickerDialogState(
                                         fileNames = it.fileName,
@@ -96,8 +98,16 @@ class ConnectionViewModel(
         _state.update { it.copy(showBrightnessMode = newValue) }
     }
 
+    fun setShowCarCounter(newValue: Boolean) {
+        _state.update { it.copy(showCarCounter = newValue) }
+    }
+
     fun setBrightnessDelay(newValue: Int){
         _state.update { it.copy(brightnessDelay = newValue) }
+    }
+
+    fun setCarCounterReset(newValue: Int){
+        _state.update { it.copy(carCounterReset = newValue) }
     }
 
     fun setTerminalIp(newValue: String) {
@@ -169,6 +179,8 @@ class ConnectionViewModel(
             terminalIp = terminalIp, videoFrame = showVideoFrame, port = port,
             terminalApi = api, timeDelay = delayTime, apiPort = 2023,
             activeLowBrightnessTime = brightnessDelay, autoBrightness = showBrightnessMode,
+            carCounterReset = carCounterReset, showCarCounter = showCarCounter,
+
             files = imagesResources.map { ImageFileDto(
                 fileName = it.fileNames,
                 fileContent = it.fileContentsRaw
