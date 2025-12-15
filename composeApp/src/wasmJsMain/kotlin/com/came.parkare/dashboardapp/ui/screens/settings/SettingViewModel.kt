@@ -87,7 +87,7 @@ class SettingViewModel(
 
     private fun loadIpAddress() {
         val ip = window.location.hostname
-        val currentIp = "192.168.101.85"//preferences.get(SELECTED_IP_ADDRESS, ip)
+        val currentIp = preferences.get(SELECTED_IP_ADDRESS, ip)
         setIpAddress(currentIp)
     }
 
