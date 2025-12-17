@@ -32,11 +32,13 @@ class CarCounterManagerImpl(): CarCounterManager {
 
     override fun showCarCounter(show: Boolean) {
         _showCounter.update { show }
+        resetCarCounter()
         startResetTimer()
     }
 
     override fun setResetDelay(delay: Int) {
         _resetDelay.update { delay }
+        resetCarCounter()
         startResetTimer()
     }
 

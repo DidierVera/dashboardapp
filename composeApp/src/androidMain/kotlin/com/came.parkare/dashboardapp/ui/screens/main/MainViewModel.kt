@@ -126,8 +126,14 @@ class MainViewModel (
             val showCounter  = preferences.get(SHOW_COUNTER, false)
             val resetDelay = preferences.get(RESET_COUNTER_DELAY_TIME, 1)
 
-            val currentDelay = carCounterManager.resetDelay.value
+            println("new showCounter: $showCounter")
+            println("new resetDelay: $resetDelay")
+
             val currentShow = carCounterManager.showCounter.value
+            val currentDelay = carCounterManager.resetDelay.value
+
+            println("old showCounter: $currentShow")
+            println("old resetDelay: $currentDelay")
 
             if (currentDelay != resetDelay){
                 carCounterManager.setResetDelay(resetDelay)
