@@ -36,27 +36,14 @@ fun CarCounterView(modifier: Modifier = Modifier)  {
     val finalDate by viewModel.finalDate.collectAsState()
 
     if (show) {
-        Box(
-            modifier = modifier
-                .border(1.dp, Color.White, RoundedCornerShape(4.dp))
-                .background(Color.Transparent)
-                .padding(12.dp)
-        ) {
-            Column(
-                modifier = Modifier.align(Alignment.Center),
-                horizontalAlignment = Alignment.CenterHorizontally
+        Box(modifier = modifier){
+            Box(
+                modifier = Modifier
+                    .border(1.dp, Color.LightGray, RoundedCornerShape(4.dp))
+                    .background(Color.Transparent)
+                    .padding(12.dp)
             ) {
-
-                ShadowText("Initial Date: ${viewModel.formatDate(initialDate)}")
-                ShadowText("Final Date: ${viewModel.formatDate(finalDate)}")
-                ShadowText("Timer Interval: $timerInterval minutes")
-                ShadowText("Entered cars: $counter")
-
-                Text(
-                    text = "Next update in: ${calculateTimeRemaining(finalDate)}",
-                    color = Color.LightGray,
-                    fontSize = 12.sp
-                )
+                ShadowText("Entered cars: $counter/min")
             }
         }
     }
@@ -66,26 +53,14 @@ fun CarCounterView(modifier: Modifier = Modifier)  {
 private fun ShadowText(text: String) {
     Text(
         text = text,
-        color = Color.White,
+        color = Color.Black,
         style = TextStyle(
-            fontSize = 20.sp,
+            fontSize = 24.sp,
             shadow = Shadow(
-                color = Color.Black,
+                color = Color.White,
                 offset = Offset(2f, 2f),
                 blurRadius = 4f
             )
         )
     )
-}
-
-private fun calculateTimeRemaining(final: Date): String {
-    val now = Date()
-    val remaining = final.time - now.time
-
-    return if (remaining > 0) {
-        val minutes = (remaining / (1000 * 60)).toInt()
-        "$minutes min"
-    } else {
-        "Ready to reset"
-    }
 }

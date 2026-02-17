@@ -75,6 +75,10 @@ class MainViewModel (
     val showVideoFrame: StateFlow<Boolean>
         get() = _showVideoFrame.asStateFlow()
 
+    private val _showCarCounter = MutableStateFlow(false)
+    val showCarCounter: StateFlow<Boolean>
+        get() = _showCarCounter.asStateFlow()
+
     private val _activeBrightnessMode = MutableStateFlow(false)
     val activeBrightnessMode: StateFlow<Boolean>
         get() = _activeBrightnessMode.asStateFlow()
@@ -141,6 +145,7 @@ class MainViewModel (
 
             if (currentShow != showCounter){
                 carCounterManager.showCarCounter(showCounter)
+                _showCarCounter.update { showCounter }
             }
         }
     }
