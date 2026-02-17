@@ -1,15 +1,18 @@
 package com.came.parkare.dashboardapp.ui.screens.splash
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -50,26 +53,46 @@ import androidx.core.net.toUri
 import com.came.parkare.dashboardapp.ui.theme.WhiteColor
 import org.koin.androidx.compose.koinViewModel
 
+class SplashActivity : ComponentActivity() {
 
-class SplashActivity: ComponentActivity() {
+    // ✅ Launcher para el permiso WRITE_SETTINGS (brillo)
+    private val brightnessLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        // Al regresar de la pantalla de WRITE_SETTINGS, solicita los demás permisos
+        requestRuntimePermissions()
+    }
 
-    override fun onStart() {
-        super.onStart()
-        setContent{
+    // ✅ Launcher para permisos en runtime (reemplaza onRequestPermissionsResult)
+    private val permissionsLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val allGranted = permissions.values.all { it }
+        if (allGranted) {
+            redirectToMain()
+        } else {
+            showToast("Some permissions have not been allowed")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                requestRuntimePermissions() // Reintenta en Android 13+
+            } else {
+                redirectToMain()
+            }
+        }
+    }
+
+    // ✅ setContent en onCreate, no en onStart
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
             KoinContext() {
                 SplashScreen()
             }
         }
     }
 
-    private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-
     @Preview
     @Composable
     private fun SplashScreen() {
-        val scope = rememberCoroutineScope() // Create a coroutine scope
         var progress by remember { mutableStateOf(0.1f) }
 
         val viewModel: SplashViewModel = koinViewModel()
@@ -77,102 +100,94 @@ class SplashActivity: ComponentActivity() {
 
         val animatedProgress = animateFloatAsState(
             targetValue = progress,
-            animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec, label = "loading"
+            animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
+            label = "loading"
         ).value
 
-        LaunchedEffect(key1 = true){
-            scope.launch {
-                for (i in 1..100) {
-                    progress = i.toFloat() / 100
-                    delay(10)
-                }
-                Log.i("LOG_TAG", "Request permissions end progress bar")
-                requestStoragePermissions()
+        // ✅ Sin scope.launch redundante dentro de LaunchedEffect
+        LaunchedEffect(key1 = true) {
+            for (i in 1..100) {
+                progress = i.toFloat() / 100
+                delay(10)
             }
+            Log.i("LOG_TAG", "Progress bar finished, requesting permissions")
+            requestBrightnessPermission()
         }
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .background(BlackColor),
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(BlackColor),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center) {
-            Image(painter = painterResource(id = R.drawable.came_logotipo),
-                contentDescription = null, contentScale = ContentScale.FillWidth,
-                modifier = Modifier.width(300.dp))
+            verticalArrangement = Arrangement.Center
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.came_logotipo),
+                contentDescription = null,
+                contentScale = ContentScale.FillWidth,
+                modifier = Modifier.width(300.dp)
+            )
             Spacer(modifier = Modifier.height(55.dp))
-            LinearProgressIndicator(modifier = Modifier.width(300.dp)
-                ,color = CameBlueColor
-                , progress = animatedProgress)
+            LinearProgressIndicator(
+                modifier = Modifier.width(300.dp),
+                color = CameBlueColor,
+                progress = animatedProgress
+            )
             Spacer(modifier = Modifier.height(55.dp))
-            Text(text = version, color = WhiteColor, style = MaterialTheme.typography.labelMedium)
+            Text(
+                text = version,
+                color = WhiteColor,
+                style = MaterialTheme.typography.labelMedium
+            )
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>, grantResults: IntArray,
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        Log.i("LOG_TAG", "Permissions result $requestCode")
-        for (permission in permissions) {
-            Log.i("LOG_TAG", "Permissions result $permission")
-        }
-
-        when (requestCode) {
-            10001 -> {
-                // If request is cancelled, the result arrays are empty.
-                if ((grantResults.isNotEmpty() &&
-                            grantResults.all { it == PackageManager.PERMISSION_GRANTED } )) {
-                    redirectToMain()
-                } else {
-                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU){
-                        requestStoragePermissions()
-                        showToast("Some Permissions have no been allowed")
-                    }else{
-                        redirectToMain()
-                    }
-                }
-                return
+    // ✅ Paso 1: Solicita permiso de brillo y espera respuesta antes de continuar
+    private fun requestBrightnessPermission() {
+        if (!Settings.System.canWrite(this)) {
+            val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
+                data = "package:${packageName}".toUri()
             }
-            else -> {
-                // Ignore all other requests.
-            }
+            brightnessLauncher.launch(intent)
+        } else {
+            // Ya tiene el permiso, continúa con los demás
+            requestRuntimePermissions()
         }
-        showToast("Some permissions are not allowed")
     }
 
-    private fun redirectToMain() {
-        startActivity(Intent(this@SplashActivity, MainActivity::class.java))
-        this@SplashActivity.finish()
-    }
-
-    private fun requestStoragePermissions() {
-        Log.i("REQUEST_PERMI", "All Permissions")
+    // ✅ Paso 2: Solicita los permisos en runtime
+    private fun requestRuntimePermissions() {
         val permissionsToRequest: MutableList<String> = mutableListOf(
-            "android.permission.READ_PRIVILEGED_PHONE_STATE",
+            Manifest.permission.READ_PHONE_STATE,
             Manifest.permission.READ_MEDIA_VIDEO,
             Manifest.permission.READ_MEDIA_IMAGES
         )
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU){
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             permissionsToRequest.add(Manifest.permission.READ_EXTERNAL_STORAGE)
             permissionsToRequest.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
-        checkPermission(permissionsToRequest.toTypedArray() , 10001)
-    }
 
-    // Function to check and request permission.
-    private fun checkPermission(permissions: Array<String>, requestCode: Int) {
-        val permissionsDenied : MutableList<String> = mutableListOf()
-
-        permissions.forEach { perm ->
-            if(ContextCompat.checkSelfPermission(this, perm) != PackageManager.PERMISSION_GRANTED)
-                permissionsDenied.add(perm)
+        val permissionsDenied = permissionsToRequest.filter { perm ->
+            ContextCompat.checkSelfPermission(this, perm) != PackageManager.PERMISSION_GRANTED
+                .also { Log.i("REQUEST_PERMI", "Checking: $perm") }
         }
-        if(permissionsDenied.any()) {
-            // Requesting the permission
-            ActivityCompat.requestPermissions(this, permissionsDenied.toTypedArray(), requestCode)
+
+        if (permissionsDenied.isNotEmpty()) {
+            Log.i("REQUEST_PERMI", "Requesting ${permissionsDenied.size} permissions")
+            permissionsLauncher.launch(permissionsDenied.toTypedArray())
         } else {
-            showToast("Permission already granted")
+            Log.i("REQUEST_PERMI", "All permissions already granted")
+            showToast("Permissions already granted")
             redirectToMain()
         }
+    }
+
+    private fun redirectToMain() {
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

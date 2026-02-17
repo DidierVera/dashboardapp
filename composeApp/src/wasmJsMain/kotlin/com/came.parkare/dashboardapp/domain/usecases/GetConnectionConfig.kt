@@ -13,7 +13,7 @@ class GetConnectionConfig(
     private val deviceRepository: DeviceRepository
 ) {
     suspend fun invoke(): ServiceResult<ConnectionConfigDto> {
-        val ipAddress = "192.168.18.33"//preferences.get(SELECTED_IP_ADDRESS, window.location.hostname)
+        val ipAddress = preferences.get(SELECTED_IP_ADDRESS, window.location.hostname)
         val result = deviceRepository.getCurrentConfiguration(ipAddress)
         when(result){
             is ServiceResult.Error -> {}
