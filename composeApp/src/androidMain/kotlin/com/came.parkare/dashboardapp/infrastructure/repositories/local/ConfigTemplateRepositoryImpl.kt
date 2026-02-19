@@ -9,6 +9,7 @@ import com.came.parkare.dashboardapp.infrastructure.source.local.dao.ConfigTempl
 import com.came.parkare.dashboardapp.infrastructure.source.local.entities.toEntity
 import com.came.parkare.dashboardapp.infrastructure.source.local.entities.toModel
 import com.came.parkare.dashboardapp.infrastructure.source.mocks.EntryWithTicketTemplate
+import com.came.parkare.dashboardapp.infrastructure.source.mocks.IntertrafficTemplate
 import com.came.parkare.dashboardapp.infrastructure.source.mocks.TicketLessEntryTemplate
 import com.came.parkare.dashboardapp.infrastructure.source.mocks.TicketLessExitTemplate
 import kotlinx.serialization.decodeFromString
@@ -61,11 +62,15 @@ class ConfigTemplateRepositoryImpl(
         val entryWithTicketJson = EntryWithTicketTemplate.get()
         val exitTicketLessJson = TicketLessEntryTemplate.get()
         val ticketLessExitJson = TicketLessExitTemplate.get()
+        val intertrafficEntryJson = IntertrafficTemplate.getEntry()
+        val intertrafficExitJson = IntertrafficTemplate.getExit()
         return try {
             return listOf(
                 Json.decodeFromString<ConfigTemplateDto>(entryWithTicketJson).toModel(),
                 Json.decodeFromString<ConfigTemplateDto>(exitTicketLessJson).toModel(),
-                Json.decodeFromString<ConfigTemplateDto>(ticketLessExitJson).toModel()
+                Json.decodeFromString<ConfigTemplateDto>(ticketLessExitJson).toModel(),
+                Json.decodeFromString<ConfigTemplateDto>(intertrafficEntryJson).toModel(),
+                Json.decodeFromString<ConfigTemplateDto>(intertrafficExitJson).toModel()
             )
         }catch (e: Exception){
             appLogger.trackError(e)

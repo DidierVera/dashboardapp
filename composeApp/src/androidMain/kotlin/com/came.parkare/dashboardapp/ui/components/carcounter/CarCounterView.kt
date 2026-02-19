@@ -6,9 +6,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -19,8 +21,14 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.came.parkare.dashboardapp.ui.theme.ArialNarrowFont
+import com.came.parkare.dashboardapp.ui.theme.ArialRoundedFont
+import com.came.parkare.dashboardapp.ui.theme.BlackColor
+import com.came.parkare.dashboardapp.ui.theme.CameBlueColor
+import com.came.parkare.dashboardapp.ui.theme.Rubik
 import com.came.parkare.dashboardapp.ui.theme.WhiteColor
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -39,9 +47,10 @@ fun CarCounterView(modifier: Modifier = Modifier)  {
         Box(modifier = modifier){
             Box(
                 modifier = Modifier
-                    .border(1.dp, Color.LightGray, RoundedCornerShape(4.dp))
-                    .background(Color.Transparent)
-                    .padding(12.dp)
+                    .border(0.4.dp, Color.LightGray, RoundedCornerShape(2.dp))
+                    .background(CameBlueColor.copy(alpha = 0.4f))
+                    .padding(48.dp, 24.dp)
+                    .align(Alignment.Center)
             ) {
                 ShadowText("Entered cars: $counter/min")
             }
@@ -53,14 +62,10 @@ fun CarCounterView(modifier: Modifier = Modifier)  {
 private fun ShadowText(text: String) {
     Text(
         text = text,
-        color = Color.Black,
-        style = TextStyle(
+        color = BlackColor,
+        style = MaterialTheme.typography.labelLarge.copy(
             fontSize = 24.sp,
-            shadow = Shadow(
-                color = Color.White,
-                offset = Offset(2f, 2f),
-                blurRadius = 4f
-            )
+            fontFamily = Rubik
         )
     )
 }
