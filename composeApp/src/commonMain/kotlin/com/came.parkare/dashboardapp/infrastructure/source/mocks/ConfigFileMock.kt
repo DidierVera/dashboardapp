@@ -13,6 +13,8 @@ object ConfigFileMock {
                 "api-port": 2023,
                 "video-frame": false,
                 "text-size-scale": 10,
+                "auto-brightness-mode": true, 
+                "active-low-brightness-time": 2
                 "files": [
                     {
                         "fileName": "ico-arrow-down.png",

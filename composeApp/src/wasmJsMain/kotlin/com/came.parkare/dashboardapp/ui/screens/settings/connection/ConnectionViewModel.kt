@@ -61,6 +61,8 @@ class ConnectionViewModel(
                                 terminalIp = terminalIp,
                                 showVideoFrame = videoFrame,
                                 delayTime = timeDelay,
+                                brightnessDelay = activeLowBrightnessTime ?: 2,
+                                showBrightnessMode = autoBrightness == true,
                                 imagesResources = files?.map {
                                     FilePickerDialogState(
                                         fileNames = it.fileName,
@@ -88,6 +90,14 @@ class ConnectionViewModel(
 
     fun setShowVideoFrame(newValue: Boolean) {
         _state.update { it.copy(showVideoFrame = newValue) }
+    }
+
+    fun setBrightnessMode(newValue: Boolean){
+        _state.update { it.copy(showBrightnessMode = newValue) }
+    }
+
+    fun setBrightnessDelay(newValue: Int){
+        _state.update { it.copy(brightnessDelay = newValue) }
     }
 
     fun setTerminalIp(newValue: String) {
@@ -158,6 +168,7 @@ class ConnectionViewModel(
         ConnectionConfigDto(connectionWay = connectionWay.first, textSizeScale = textSizeScale,
             terminalIp = terminalIp, videoFrame = showVideoFrame, port = port,
             terminalApi = api, timeDelay = delayTime, apiPort = 2023,
+            activeLowBrightnessTime = brightnessDelay, autoBrightness = showBrightnessMode,
             files = imagesResources.map { ImageFileDto(
                 fileName = it.fileNames,
                 fileContent = it.fileContentsRaw

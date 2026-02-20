@@ -146,10 +146,10 @@ class DashboardListViewModel(
         return ipv4Pattern.matches(ip) || ipv6Pattern.matches(ip)
     }
 
-    fun removeItem(deviceModel: DashboardListState){
+    fun removeItem(deviceModel: DashboardListState, message: String){
 
         wasmUtilsHandler.showDialogMessage(model = AppDialogState(
-            message = "Are you sure you want to delete the item: ${deviceModel.dashboardIp}",
+            message = message,
             onAccept = {
                 viewModelScope.launch {
                     callServiceAndDeleteItem(deviceModel)

@@ -1,6 +1,8 @@
 package com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver
 
 import com.came.parkare.dashboardapp.config.constants.Constants.API_PORT
+import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS
+import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS_DELAY_TIME
 import com.came.parkare.dashboardapp.config.constants.Constants.CONFIG_TYPE
 import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_API
 import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_IP
@@ -83,6 +85,8 @@ class ApiServerRepositoryImpl(
         val timeDelay = preferences.get(TIME_DELAY, 4)
         val videoFrame = preferences.get(VIDEO_FRAME, false)
         val textSizeScale = preferences.get(TEXT_SIZE_SCALE, 10)
+        val autoBrightness = preferences.get(AUTO_BRIGHTNESS, false)
+        val autoBrightnessDelayTime = preferences.get(AUTO_BRIGHTNESS_DELAY_TIME, 120)
 
         val connectionWay = when (serverConnection.typeConnection.value){
             TypeConnectionEnum.SIGNAL_R -> 1
@@ -102,6 +106,8 @@ class ApiServerRepositoryImpl(
             timeDelay = timeDelay,
             videoFrame = videoFrame,
             textSizeScale = textSizeScale,
+            autoBrightness = autoBrightness,
+            activeLowBrightnessTime = autoBrightnessDelayTime,
             files = images.map { it.toDto() }
         )
     }

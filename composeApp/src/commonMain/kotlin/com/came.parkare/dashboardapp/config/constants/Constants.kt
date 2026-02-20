@@ -13,6 +13,8 @@ object Constants {
     const val VIDEO_FRAME = "videoFrame"
     const val TEXT_SIZE_SCALE = "textSizeScale"
     const val CONFIG_TYPE = "templateConfigType"
+    const val AUTO_BRIGHTNESS = "autoBrightness"
+    const val AUTO_BRIGHTNESS_DELAY_TIME = "autoBrightnessDelayTime"
 
 
     //Ftp

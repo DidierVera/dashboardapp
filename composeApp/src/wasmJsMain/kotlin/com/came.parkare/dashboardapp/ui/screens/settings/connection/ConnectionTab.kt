@@ -4,21 +4,15 @@ package com.came.parkare.dashboardapp.ui.screens.settings.connection
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.ScrollableState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -53,8 +47,10 @@ import com.came.parkare.dashboardapp.ui.theme.WhiteColor
 import com.came.parkare.dashboardapp.ui.theme.style.floatingButton
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.api_label
+import dashboardapp.composeapp.generated.resources.auto_brightness_label
 import dashboardapp.composeapp.generated.resources.connection_title
 import dashboardapp.composeapp.generated.resources.connection_way_label
+import dashboardapp.composeapp.generated.resources.delay_brightness_label
 import dashboardapp.composeapp.generated.resources.delay_time_label
 import dashboardapp.composeapp.generated.resources.ic_close
 import dashboardapp.composeapp.generated.resources.image_resources_label
@@ -98,7 +94,9 @@ fun ConnectionTab() {
                 )
                 TextField(//port
                     value = "${state.port}",
-                    onValueChange ={ viewModel.setPort(it.toInt()) },
+                    onValueChange ={
+                        val newValue = if(it.isBlank()) 0 else it.toInt()
+                        viewModel.setPort(newValue) },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     singleLine = true,
                     label = { AppLabel(Res.string.port_label) }
@@ -116,7 +114,9 @@ fun ConnectionTab() {
                 )
                 TextField(//delay
                     value = "${state.delayTime}",
-                    onValueChange ={ viewModel.setDelayTime(it.toInt()) },
+                    onValueChange ={
+                        val newValue = if(it.isBlank()) 0 else it.toInt()
+                        viewModel.setDelayTime(newValue = newValue) },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     singleLine = true,
                     label = { AppLabel(Res.string.delay_time_label) }
@@ -126,13 +126,17 @@ fun ConnectionTab() {
         item {
             TextField(//text size scale
                 value = "${state.textSizeScale}",
-                onValueChange ={ viewModel.textSizeScale(it.toInt()) },
+                onValueChange ={
+                    val newValue = if(it.isBlank()) 0 else it.toInt()
+                    viewModel.textSizeScale(newValue)
+                },
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 singleLine = true,
                 label = { AppLabel(Res.string.text_size_scale_label) }
             )
         }
 
+        item { ShowBrightnessMode(state.showBrightnessMode, state.brightnessDelay) }
         item { ShowVideoFrame(state.showVideoFrame) }
         item { UploadImages() }
 
@@ -142,6 +146,34 @@ fun ConnectionTab() {
             Box(modifier = Modifier) {
                 SaveButton(modifier = Modifier.align(Alignment.BottomEnd))
             }
+        }
+    }
+}
+
+@Composable
+private fun ShowBrightnessMode(brightnessMode: Boolean, brightnessDelay: Int) {
+    val viewModel: ConnectionViewModel = koinViewModel()
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            stringResource(Res.string.auto_brightness_label)
+        )
+        Checkbox(
+            checked = brightnessMode,
+            onCheckedChange = { viewModel.setBrightnessMode(it) }
+        )
+        if (brightnessMode){
+            TextField(//delay
+                value = "$brightnessDelay",
+                onValueChange ={
+                    val newValue = if(it.isBlank()) 0 else it.toInt()
+                    viewModel.setBrightnessDelay(newValue)
+                },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                singleLine = true,
+                label = { AppLabel(Res.string.delay_brightness_label) }
+            )
         }
     }
 }

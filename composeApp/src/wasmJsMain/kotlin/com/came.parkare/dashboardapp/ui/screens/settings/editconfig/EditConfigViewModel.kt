@@ -94,18 +94,10 @@ class EditConfigViewModel(
 
     fun selectScreen(screen: ScreenModel){
         if (_state.value.screenViewer == screen.screenId){
-            _state.update { it.copy(screenViewer = null, elementsByScreen = emptyList()) }
+            _state.update { it.copy(screenViewer = null, elementsByScreen = emptyList(), contentFile = "") }
         }else{
             _state.update { it.copy(screenViewer = screen.screenId, elementsByScreen = screen.elements)}
         }
-    }
-
-    fun launchPasswordRequest(message: String, onClick: () -> Unit){
-        wasmUtilsHandler.showDialogMessage(
-            AppDialogState(
-            message = message,
-            onAccept = onClick, requirePassword = true
-        ))
     }
 
     @OptIn(ExperimentalSerializationApi::class)
@@ -168,10 +160,21 @@ class EditConfigViewModel(
                 it.copy(
                     selectedElement = elementDto,
                     elementPosition = position
-
                 )
             }
         }
+    }
+
+    fun updateConfig(message: String){
+        applyChanges()
+        wasmUtilsHandler.showDialogMessage(model = AppDialogState(
+            message = message,
+            onAccept = {
+                viewModelScope.launch {
+                    saveChanges()
+                }
+            }
+        ))
     }
 
     fun saveChanges(){
@@ -197,7 +200,9 @@ class EditConfigViewModel(
             try {
                 val state = _state.value
                 val selectedElement = state.selectedElement
-                val selectedScreen = state.screens.first { it.screenId == state.screenViewer }
+                val selectedScreen = state.screens.firstOrNull { it.screenId == state.screenViewer }
+
+                if(selectedScreen == null) return@launch
 
                 val currentScreenElements = selectedScreen.data.toMutableList()
                 val elementPosition = state.elementPosition ?: run {

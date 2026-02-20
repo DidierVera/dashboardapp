@@ -1,5 +1,7 @@
 package com.came.parkare.dashboardapp.domain.models
 
+import kotlinx.serialization.SerialName
+
 data class ConnectionConfigModel(
     val connectionWay: Int,
     val terminalIp: String,
@@ -9,5 +11,7 @@ data class ConnectionConfigModel(
     val timeDelay: Int,
     val videoFrame: Boolean,
     val textSizeScale: Int,
+    val autoBrightness: Boolean,
+    val activeLowBrightnessTime: Int,
     val files: List<ImagesFileModel>? = null
 )

@@ -37,6 +37,7 @@ import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.custom_name_label
 import dashboardapp.composeapp.generated.resources.dashboard_ip_label
 import dashboardapp.composeapp.generated.resources.dashboard_list_option
+import dashboardapp.composeapp.generated.resources.delete_device_dialog_message
 import dashboardapp.composeapp.generated.resources.ic_trash
 import dashboardapp.composeapp.generated.resources.save_button
 import dashboardapp.composeapp.generated.resources.terminal_ip_label
@@ -108,8 +109,9 @@ fun LastColumn(terminalIp: String?, device: DashboardListState) {
     Row {
         LoadCell(terminalIp)
         if (device.dashboardIp != window.location.hostname){
+            val deleteMessage = stringResource(Res.string.delete_device_dialog_message, device.dashboardIp)
             IconButton(onClick = {
-                viewModel.removeItem(device)
+                viewModel.removeItem(device, message = deleteMessage)
             }){
                 Icon(
                     painter = painterResource(Res.drawable.ic_trash),

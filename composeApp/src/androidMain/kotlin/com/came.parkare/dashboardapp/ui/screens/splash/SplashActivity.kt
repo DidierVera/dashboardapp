@@ -1,10 +1,11 @@
 package com.came.parkare.dashboardapp.ui.screens.splash
 
 import android.Manifest
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -42,6 +43,7 @@ import com.came.parkare.dashboardapp.ui.theme.CameBlueColor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.KoinContext
+import androidx.core.net.toUri
 
 
 class SplashActivity: ComponentActivity() {
@@ -94,8 +96,10 @@ class SplashActivity: ComponentActivity() {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int,
-                                            permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>, grantResults: IntArray,
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         Log.i("LOG_TAG", "Permissions result $requestCode")
         for (permission in permissions) {
@@ -146,6 +150,13 @@ class SplashActivity: ComponentActivity() {
     // Function to check and request permission.
     private fun checkPermission(permissions: Array<String>, requestCode: Int) {
         val permissionsDenied : MutableList<String> = mutableListOf()
+
+        if (!Settings.System.canWrite(this)) {
+            val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
+            intent.data = ("package:$packageName").toUri()
+            startActivity(intent)
+        }
+
         permissions.forEach { perm ->
             if(ContextCompat.checkSelfPermission(this, perm) != PackageManager.PERMISSION_GRANTED)
                 permissionsDenied.add(perm)

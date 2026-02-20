@@ -1,6 +1,8 @@
 package com.came.parkare.dashboardapp.infrastructure.repositories.external
 
 import com.came.parkare.dashboardapp.config.constants.Constants.API_PORT
+import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS
+import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS_DELAY_TIME
 import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_API
 import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_IP
 import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_PORT
@@ -61,6 +63,8 @@ class ConfigFileRepositoryImpl(
         preferences.put(TIME_DELAY, data.timeDelay)
         preferences.put(VIDEO_FRAME, data.videoFrame)
         preferences.put(TEXT_SIZE_SCALE, data.textSizeScale)
+        preferences.put(AUTO_BRIGHTNESS, data.autoBrightness)
+        preferences.put(AUTO_BRIGHTNESS_DELAY_TIME, data.activeLowBrightnessTime)
 
         when (data.connectionWay){
             1 -> serverConnection.setTypeConnection(TypeConnectionEnum.SIGNAL_R)

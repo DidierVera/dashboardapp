@@ -15,6 +15,8 @@ data class ConnectionConfigDto(
     @SerialName("time-delay") val timeDelay: Int,
     @SerialName("video-frame") val videoFrame: Boolean,
     @SerialName("text-size-scale") val textSizeScale: Int,
+    @SerialName("auto-brightness-mode") val autoBrightness: Boolean? = false,
+    @SerialName("active-low-brightness-time") val activeLowBrightnessTime: Int? = 2,
     @SerialName("files") val files: List<ImageFileDto>? = null
 )
 
@@ -23,7 +25,8 @@ fun ConnectionConfigDto.toModel(): ConnectionConfigModel {
         connectionWay=connectionWay,
         files = files?.map { it.toModel() },
         terminalIp=terminalIp, port=port, apiPort=apiPort, terminalApi=terminalApi,
-        timeDelay=timeDelay, videoFrame=videoFrame, textSizeScale=textSizeScale
+        timeDelay=timeDelay, videoFrame=videoFrame, textSizeScale=textSizeScale,
+        autoBrightness = autoBrightness == true, activeLowBrightnessTime = activeLowBrightnessTime ?: 2
     )
 }
 
@@ -32,6 +35,7 @@ fun ConnectionConfigModel.toDto(): ConnectionConfigDto {
         connectionWay=connectionWay,
         files = files?.map { it.toDto() },
         terminalIp=terminalIp, port=port, apiPort=apiPort, terminalApi=terminalApi,
-        timeDelay=timeDelay, videoFrame=videoFrame, textSizeScale=textSizeScale
+        timeDelay=timeDelay, videoFrame=videoFrame, textSizeScale=textSizeScale,
+        autoBrightness = autoBrightness, activeLowBrightnessTime = activeLowBrightnessTime
     )
 }
