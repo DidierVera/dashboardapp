@@ -67,17 +67,19 @@ object ConfigFileMock {
                     "margin-right": 48,
                     "data": [
                         {
-                            "element-type": "column",
+                            "element-type": "box",
                             "data": {
                                 "backgroundColor": "#4c9f14",
                                 "density": 100,
                                 "roundBorder": 0,
                                 "hasShadow": false,
-                                "spacing": 5,
-                                "padding": 4,
                                 "dataKey": null,
                                 "ditTypeCode": null,
                                 "validValue": null,
+                                "width": null,
+                                "height": null,
+                                "margin": null,
+                                "padding": 24,
                                 "content": [
                                     {
                                         "element-type": "text",
@@ -86,7 +88,7 @@ object ConfigFileMock {
                                             "defaultText": "YOU MAY PASS",
                                             "textSize": 52,
                                             "textColor": "#FFFFFF",
-                                            "padding": 32,
+                                            "padding": 24,
                                             "fontWeight": "Bold",
                                             "dataKey": null,
                                             "ditTypeCode": null,
@@ -544,7 +546,7 @@ object ConfigFileMock {
                         {
                             "element-type": "spacer",
                             "data": {
-                                "value": 8
+                                "value": 20
                             }
                         },
                         {
@@ -676,7 +678,7 @@ object ConfigFileMock {
                         {
                             "element-type": "spacer",
                             "data": {
-                                "value": 8
+                                "value": 20
                             }
                         },
                         {
@@ -762,7 +764,7 @@ object ConfigFileMock {
                         {
                             "element-type": "spacer",
                             "data": {
-                                "value": 15
+                                "value": 100
                             }
                         },
                         {
@@ -785,7 +787,7 @@ object ConfigFileMock {
                                         "data": {
                                             "dashboardItemId": "cannot-read",
                                             "defaultText": "FOLLOW THE TERMINAL'S\r\nINSTRUCTIONS",
-                                            "textSize": 28,
+                                            "textSize": 36,
                                             "textColor": "#222c32",
                                             "padding": 24,
                                             "fontWeight": "Medium",
@@ -803,7 +805,7 @@ object ConfigFileMock {
                         {
                             "element-type": "spacer",
                             "data": {
-                                "value": 15
+                                "value": 20
                             }
                         },
                         {
@@ -1091,7 +1093,7 @@ object ConfigFileMock {
                         {
                             "element-type": "spacer",
                             "data": {
-                                "value": 60
+                                "value": 100
                             }
                         },
                         {
@@ -1107,7 +1109,7 @@ object ConfigFileMock {
                                 "width": null,
                                 "height": null,
                                 "margin": null,
-                                "padding": 12,
+                                "padding": 24,
                                 "content": [
                                     {
                                         "element-type": "text",
@@ -1132,7 +1134,7 @@ object ConfigFileMock {
                         {
                             "element-type": "spacer",
                             "data": {
-                                "value": 15
+                                "value": 20
                             }
                         },
                         {
