@@ -1,5 +1,6 @@
 package com.came.parkare.dashboardapp.infrastructure.source.remote.services
 
+import android.util.Log
 import com.came.parkare.dashboardapp.config.dataclasses.ErrorTypeClass
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.AppLogger
@@ -46,6 +47,7 @@ class MockService (
                     println("Retry screens count: ${retryScreens.size}")
                     if (retryScreens.isEmpty()) {
                         onSocketResult.invoke(ServiceResult.Error(ErrorTypeClass.GeneralException("No screens available")))
+                        Log.i("NOT_SCREENS", "No screens available")
                         return@launch
                     }
                     if (isRunning) {
@@ -78,8 +80,6 @@ class MockService (
         mockThread = Thread {
             try {
                 logger.trackLog("com.came.parkare.dashboardapp.Mock", "Inicio de aplicación conexión MOCK")
-                println("DEBUG: Mock thread started - Thread ID: ${Thread.currentThread().id}")
-
                 // Usar una copia local para evitar problemas de concurrencia
                 val localScreens = screens.toList()
 
@@ -94,13 +94,13 @@ class MockService (
                         }
 
                         val code = localScreens[screenToShow].dispatcherCode
-                        println("Code Screen to show: $screenToShow - Code: $code - Thread ID: ${Thread.currentThread().id}")
+                        //println("Code Screen to show: $screenToShow - Code: $code - Thread ID: ${Thread.currentThread().id}")
 
-                        var result = getBootDit()
+                        var result: TerminalResponseDto
                         when(code){
                             0L -> result = getBootDit()
                             5L -> result = getIdleDit()
-                            1005L -> setOfflineMode()
+                            1005L -> result = setOfflineMode()
                             6L -> result = getOutServiceDit()
                             7L -> result = getParkingCompleteDit()
                             9L -> result = getReadingPlateDit()
@@ -109,7 +109,9 @@ class MockService (
                             18L -> result = getCardErrorDit()
                             36L -> result = getPaymentRequiredDit()
                             89L -> result = getStartCurrentBillDit()
-                            else -> result = getTerminalLockedDit()
+                            else -> {
+                                result = getTerminalLockedDit()
+                            }
                         }
 
                         onSocketResult.invoke(ServiceResult.Success(result))
@@ -316,10 +318,23 @@ class MockService (
         )
     }
 
-    private fun setOfflineMode() {
+    private fun setOfflineMode() : TerminalResponseDto {
         serverConnection.setStatusConnection(false)
-        Thread.sleep((2000L..8000).random())
+        Thread.sleep((1000L..2500).random())
         serverConnection.setStatusConnection(true)
+        return TerminalResponseDto(
+            dialog = DialogResponseDto(
+                dialogNumber = 1005,
+                dialogName = "IDLE_DISCONNECTED"
+            ),
+            dtoVersion = 0,
+            terminalNr = 2,
+            dtoType = TypeResponseDto(
+                dtoType = 0,
+                dtoName = "DtoDialog"
+            ),
+            ditsTUI = null
+        )
     }
 
     private fun getIdleDit(): TerminalResponseDto {

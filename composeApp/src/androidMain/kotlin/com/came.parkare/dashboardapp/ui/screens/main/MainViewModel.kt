@@ -38,6 +38,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -59,6 +61,7 @@ class MainViewModel (
     private val serverConnection: IServerConnection
 ): ViewModel() {
     private lateinit var brightnessManager: SystemBrightnessManager
+    private val _isInitialized = MutableStateFlow(false)
 
     private val _itemsState = MutableStateFlow(MainState())
     val itemsState: StateFlow<MainState>
@@ -130,14 +133,8 @@ class MainViewModel (
             val showCounter  = preferences.get(SHOW_COUNTER, false)
             val resetDelay = preferences.get(RESET_COUNTER_DELAY_TIME, 1)
 
-            println("new showCounter: $showCounter")
-            println("new resetDelay: $resetDelay")
-
             val currentShow = carCounterManager.showCounter.value
             val currentDelay = carCounterManager.resetDelay.value
-
-            println("old showCounter: $currentShow")
-            println("old resetDelay: $currentDelay")
 
             if (currentDelay != resetDelay){
                 carCounterManager.setResetDelay(resetDelay)
@@ -224,7 +221,7 @@ class MainViewModel (
                 is ServiceResult.Error -> validateError(initConfigResult.error)
                 is ServiceResult.Success -> {
                     loadLanguages()
-
+                    _isInitialized.update { true }
                     if(_itemsState.value.screenList.any { it.dispatcherCode == 5L }){
                         loadScreenInformation(data = TerminalResponseModel(5, DefaultDits.idleConnected()))
                     }
@@ -265,7 +262,7 @@ class MainViewModel (
                         delay(delayTime.toLong() * 1000)
                     }
                 } catch (e: CancellationException){
-                    println("Coroutine cancelled because change screen: ${e.message}")
+                    //e.printStackTrace()
                 }catch (e: Exception){
                     appLogger.trackError(e)
                 }
@@ -296,6 +293,7 @@ class MainViewModel (
     ) {
         viewModelScope.launch {
             val screen = getScreenByDispatcher.invoke(data.dispatcherCode)
+            appLogger.trackLog("LOAD_SCREEN", "dispatcherCode=${data.dispatcherCode}, screen found: ${screen != null}, screenList size: ${_itemsState.value.screenList.size}")
             if (screen != null){
                 val shouldStartBrightness = screen.dispatcherCode == 5L && activeBrightnessMode.value
                 _startBrightnessMode.update { shouldStartBrightness }
@@ -319,19 +317,25 @@ class MainViewModel (
     }
 
     private fun registerConnectionSignal() {
-        serverConnection.statusConnection.onEach { status ->
-            appLogger.trackLog("Is Connected to terminal: ", "$status")
-            if(status != _itemsState.value.statusConnection) {
-                _itemsState.update { it.copy(statusConnection = status) }
+        combine(
+            serverConnection.statusConnection,
+            _isInitialized
+        ) { status, isInitialized ->
+            Pair(status, isInitialized)
+        }
+            .filter { (_, isInitialized) -> isInitialized }
+            .onEach { (status, _) ->
+                appLogger.trackLog("Is Connected to terminal: ", "$status")
+                if (status != _itemsState.value.statusConnection) {
+                    _itemsState.update { it.copy(statusConnection = status) }
+                }
+                if (!status) {
+                    loadScreenInformation(data = TerminalResponseModel(1005L, null))
+                } else {
+                    loadScreenInformation(data = TerminalResponseModel(5L, DefaultDits.idleConnected()))
+                }
             }
-            if (!status){
-                loadScreenInformation(
-                    data = TerminalResponseModel(1005, null)
-                )
-            }else{
-                loadScreenInformation(data = TerminalResponseModel(5, DefaultDits.idleConnected()))
-            }
-        }.launchIn(viewModelScope)
+            .launchIn(viewModelScope)
     }
 
     fun getTranslationText(lang: String){
@@ -369,7 +373,7 @@ class MainViewModel (
         serverConnection.restartApp.onEach { value ->
             if (value){
                 initAllConfig()
-                serverConnection.setRestartApp(false)
+                serverConnection.setRestartApp(true)
             }
         }.launchIn(viewModelScope)
     }

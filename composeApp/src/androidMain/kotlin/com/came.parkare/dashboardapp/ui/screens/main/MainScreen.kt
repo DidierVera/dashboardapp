@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -39,17 +40,23 @@ import org.koin.androidx.compose.koinViewModel
 fun MainScreen(
     viewModel: MainViewModel = koinViewModel()) {
     val showVideoFrame by viewModel.showVideoFrame.collectAsState()
+    val showCarCounter by viewModel.showCarCounter.collectAsState()
     Box(Modifier.fillMaxSize()) {
         LoadBackground()
-        NetworkIndicatorView(Modifier.padding(4.dp))
+        NetworkIndicatorView(
+            Modifier
+                .padding(4.dp)
+                .align(Alignment.TopEnd))
 
         UpdateDataByLang()
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.Bottom),
             modifier = Modifier.fillMaxSize()
         ) {
-            LoadDashboardItems(modifier = Modifier.weight(0.7f))
-            CarCounterView(modifier = Modifier.align(Alignment.CenterHorizontally).weight(0.3f))
+            LoadDashboardItems(modifier = Modifier.weight(1f))
+            if(showCarCounter) CarCounterView(modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .weight(0.1f))
 
             if(showVideoFrame) VideoExoPlayer(modifier = Modifier.weight(0.3f))
         }
@@ -111,15 +118,13 @@ private fun LoadDashboardItems(
 ){
     val state by viewModel.itemsState.collectAsState()
     val showVideoFrame by viewModel.showVideoFrame.collectAsState()
-    val showCarCounter by viewModel.showCarCounter.collectAsState()
     val elements: List<ElementModel> = state.newItems
     if (elements.isEmpty()) return
     val boxMargin = state.contentPadding
 
-    Column(modifier = modifier.padding(boxMargin).verticalScroll(ScrollState(0)),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = if(showVideoFrame || showCarCounter) Arrangement.Bottom else Arrangement.Center
-    ){
+    Column(modifier = modifier
+        .padding(boxMargin)
+        .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = if (showVideoFrame) Arrangement.Bottom else Arrangement.Top){
         elements.forEach { mItem ->
             val textSizeScale = state.textSizeScale
             BuildComposable(elementModel = mItem, textSizeScale = textSizeScale)
