@@ -67,19 +67,17 @@ object ConfigFileMock {
                     "margin-right": 48,
                     "data": [
                         {
-                            "element-type": "box",
+                            "element-type": "column",
                             "data": {
                                 "backgroundColor": "#4c9f14",
                                 "density": 100,
                                 "roundBorder": 0,
                                 "hasShadow": false,
+                                "spacing": 5,
+                                "padding": 4,
                                 "dataKey": null,
                                 "ditTypeCode": null,
                                 "validValue": null,
-                                "width": null,
-                                "height": null,
-                                "margin": null,
-                                "padding": 24,
                                 "content": [
                                     {
                                         "element-type": "text",
@@ -88,7 +86,7 @@ object ConfigFileMock {
                                             "defaultText": "YOU MAY PASS",
                                             "textSize": 52,
                                             "textColor": "#FFFFFF",
-                                            "padding": 24,
+                                            "padding": 32,
                                             "fontWeight": "Bold",
                                             "dataKey": null,
                                             "ditTypeCode": null,
@@ -211,6 +209,23 @@ object ConfigFileMock {
                                     {
                                         "element-type": "text",
                                         "data": {
+                                            "dashboardItemId": "entry-type-value",
+                                            "defaultText": "-------",
+                                            "textSize": 36,
+                                            "textColor": "#FFFFFF",
+                                            "padding": 0,
+                                            "fontWeight": "Medium",
+                                            "dataKey": "CardReader",
+                                            "ditTypeCode": 7,
+                                            "validValue": 4,
+                                            "translations": {
+                                                "lang1": "Via-T"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "element-type": "text",
+                                        "data": {
                                             "dashboardItemId": "thanks-label",
                                             "defaultText": "Thank you for trusting us",
                                             "textSize": 32,
@@ -255,16 +270,16 @@ object ConfigFileMock {
                                         "element-type": "text",
                                         "data": {
                                             "dashboardItemId": "welcome-label",
-                                            "defaultText": " ",
+                                            "defaultText": "Thank you for visiting us",
                                             "textSize": 32,
                                             "textColor": "#009fe3",
                                             "padding": 12,
-                                            "fontWeight": "Medium",
+                                            "fontWeight": "Regular",
                                             "dataKey": null,
                                             "ditTypeCode": null,
                                             "validValue": null,
                                             "translations": {
-                                                "lang1": " "
+                                                "lang1": "Thank you for visiting us"
                                             }
                                         }
                                     },
@@ -372,16 +387,16 @@ object ConfigFileMock {
                                         "element-type": "text",
                                         "data": {
                                             "dashboardItemId": "welcome-label",
-                                            "defaultText": " ",
+                                            "defaultText": "Thank you for visiting us",
                                             "textSize": 32,
                                             "textColor": "#009fe3",
                                             "padding": 12,
-                                            "fontWeight": "Medium",
+                                            "fontWeight": "Regular",
                                             "dataKey": null,
                                             "ditTypeCode": null,
                                             "validValue": null,
                                             "translations": {
-                                                "lang1": " "
+                                                "lang1": "Thank you for visiting us"
                                             }
                                         }
                                     },
@@ -546,7 +561,7 @@ object ConfigFileMock {
                         {
                             "element-type": "spacer",
                             "data": {
-                                "value": 20
+                                "value": 8
                             }
                         },
                         {
@@ -678,7 +693,7 @@ object ConfigFileMock {
                         {
                             "element-type": "spacer",
                             "data": {
-                                "value": 20
+                                "value": 8
                             }
                         },
                         {
@@ -748,7 +763,7 @@ object ConfigFileMock {
                                             "defaultText": "WE'RE SORRY",
                                             "textSize": 52,
                                             "textColor": "#FFFFFF",
-                                            "padding": 24,
+                                            "padding": 4,
                                             "fontWeight": "Bold",
                                             "dataKey": null,
                                             "ditTypeCode": null,
@@ -764,7 +779,7 @@ object ConfigFileMock {
                         {
                             "element-type": "spacer",
                             "data": {
-                                "value": 100
+                                "value": 60
                             }
                         },
                         {
@@ -780,7 +795,7 @@ object ConfigFileMock {
                                 "width": null,
                                 "height": null,
                                 "margin": null,
-                                "padding": 24,
+                                "padding": 12,
                                 "content": [
                                     {
                                         "element-type": "text",
@@ -805,7 +820,7 @@ object ConfigFileMock {
                         {
                             "element-type": "spacer",
                             "data": {
-                                "value": 20
+                                "value": 8
                             }
                         },
                         {
@@ -1077,7 +1092,7 @@ object ConfigFileMock {
                                             "defaultText": "WE'RE SORRY",
                                             "textSize": 52,
                                             "textColor": "#FFFFFF",
-                                            "padding": 24,
+                                            "padding": 4,
                                             "fontWeight": "Bold",
                                             "dataKey": null,
                                             "ditTypeCode": null,
@@ -1093,7 +1108,7 @@ object ConfigFileMock {
                         {
                             "element-type": "spacer",
                             "data": {
-                                "value": 100
+                                "value": 60
                             }
                         },
                         {
@@ -1118,7 +1133,7 @@ object ConfigFileMock {
                                             "defaultText": "VALIDATION\r\nNOT PERFORMED",
                                             "textSize": 36,
                                             "textColor": "#404040",
-                                            "padding": 24,
+                                            "padding": 12,
                                             "fontWeight": "Medium",
                                             "dataKey": null,
                                             "ditTypeCode": null,
@@ -1134,7 +1149,7 @@ object ConfigFileMock {
                         {
                             "element-type": "spacer",
                             "data": {
-                                "value": 20
+                                "value": 15
                             }
                         },
                         {
