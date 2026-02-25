@@ -3,14 +3,21 @@ package com.came.parkare.dashboardapp.ui.utils
 import com.came.parkare.dashboardapp.config.dataclasses.TypeConnectionEnum
 import com.came.parkare.dashboardapp.config.utils.IServerConnection
 import com.came.parkare.dashboardapp.domain.models.ScreenModel
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class ServerConnectionImpl(): IServerConnection {
 
-    private val _statusConnection: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    private val _statusConnection: MutableSharedFlow<Boolean> = MutableSharedFlow(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
     private val _restartApp: MutableStateFlow<Boolean> = MutableStateFlow(true)
     private val _typeConnection = MutableStateFlow(TypeConnectionEnum.SIGNAL_R)
     private val _screensList = MutableStateFlow<List<ScreenModel>>(emptyList())
@@ -18,8 +25,8 @@ class ServerConnectionImpl(): IServerConnection {
     override val typeConnection: StateFlow<TypeConnectionEnum>
         get() = _typeConnection.asStateFlow()
 
-    override val statusConnection: StateFlow<Boolean>
-        get() = _statusConnection.asStateFlow()
+    override val statusConnection: SharedFlow<Boolean>
+        get() = _statusConnection.asSharedFlow()
 
     override val restartApp: StateFlow<Boolean>
         get() = _restartApp.asStateFlow()
@@ -36,7 +43,7 @@ class ServerConnectionImpl(): IServerConnection {
     }
 
     override fun setStatusConnection(status: Boolean) {
-        _statusConnection.update { status }
+        _statusConnection.tryEmit(status)
     }
 
     override fun setScreensList(screens: List<ScreenModel>) {

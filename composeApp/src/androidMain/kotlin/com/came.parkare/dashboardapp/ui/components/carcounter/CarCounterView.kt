@@ -28,6 +28,7 @@ import com.came.parkare.dashboardapp.ui.theme.ArialNarrowFont
 import com.came.parkare.dashboardapp.ui.theme.ArialRoundedFont
 import com.came.parkare.dashboardapp.ui.theme.BlackColor
 import com.came.parkare.dashboardapp.ui.theme.CameBlueColor
+import com.came.parkare.dashboardapp.ui.theme.LightGrayColor
 import com.came.parkare.dashboardapp.ui.theme.Rubik
 import com.came.parkare.dashboardapp.ui.theme.WhiteColor
 import org.koin.compose.viewmodel.koinViewModel
@@ -38,19 +39,15 @@ fun CarCounterView(modifier: Modifier = Modifier)  {
     val viewModel: CarCounterViewModel = koinViewModel()
     val counter by viewModel.counter.collectAsState()
     val show by viewModel.showCounter.collectAsState()
-    val timerInterval by viewModel.timer.collectAsState()
-
-    val initialDate by viewModel.initialDate.collectAsState()
-    val finalDate by viewModel.finalDate.collectAsState()
 
     if (show) {
-        Box(modifier = modifier){
+        Box(modifier = modifier.padding(0.dp, 20.dp)){
             Box(
                 modifier = Modifier
                     .border(0.4.dp, Color.LightGray, RoundedCornerShape(2.dp))
-                    .background(CameBlueColor.copy(alpha = 0.4f))
-                    .padding(48.dp, 24.dp)
-                    .align(Alignment.Center)
+                    .background(LightGrayColor.copy(alpha = 0.8f))
+                    .padding(32.dp, 12.dp)
+                    .align(Alignment.TopCenter)
             ) {
                 ShadowText("Entered cars: $counter/min")
             }
@@ -62,7 +59,7 @@ fun CarCounterView(modifier: Modifier = Modifier)  {
 private fun ShadowText(text: String) {
     Text(
         text = text,
-        color = BlackColor,
+        color = WhiteColor,
         style = MaterialTheme.typography.labelLarge.copy(
             fontSize = 24.sp,
             fontFamily = Rubik

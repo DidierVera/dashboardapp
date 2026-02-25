@@ -26,7 +26,6 @@ fun BuildTextView(text: TextDataModel, scaleFactor: Float, modifier: Modifier = 
     val textSize = (text.textSize.toFloat() * scaleFactor)
         .coerceAtLeast((text.textSize - 8).toFloat())
     if (text.dashboardItemId.contains("license-plate-value")) {
-        println("license-plate-value==== ${text.defaultText}")
         LicensePlateItemStyle(modifier = modifier) { mdf ->
             Text(
                 text = text.defaultText,
