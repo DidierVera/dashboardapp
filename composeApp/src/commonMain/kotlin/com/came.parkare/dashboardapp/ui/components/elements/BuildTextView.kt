@@ -26,19 +26,15 @@ fun BuildTextView(text: TextDataModel, scaleFactor: Float, modifier: Modifier = 
     val textSize = (text.textSize.toFloat() * scaleFactor)
         .coerceAtLeast((text.textSize - 8).toFloat())
     if (text.dashboardItemId.contains("license-plate-value")) {
-        LicensePlateItemStyle(modifier = modifier) { mdf ->
-            Text(
-                text = text.defaultText,
-                fontSize = textSize.sp,
-                fontFamily = LicensePlateFont,
-                letterSpacing = 2.sp,
-                fontWeight = weight,
-                textAlign = TextAlign.Center,
-                color = hexToColor(text.textColor),
-                modifier = mdf.padding(0.dp, 0.dp, 0.dp, 10.dp)
-                    .padding(((text.style.padding ?: 1).toFloat() * scaleFactor).dp)
-            )
-        }
+        LicensePlateItemStyle(
+            plateNumber = text.defaultText,
+            scaleFactor = scaleFactor,
+            modifier = modifier,
+            textSize = textSize,
+            fontWeight = weight,
+            textColor = hexToColor(text.textColor),
+            padding = ((text.style.padding ?: 1).toFloat() * scaleFactor)
+        )
 
     } else {
         val animatedText = animateFloatAsState(targetValue = scaleFactor)

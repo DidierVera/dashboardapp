@@ -12,11 +12,11 @@ object ConfigFileMock {
                 "time-delay": 5,
                 "api-port": 2023,
                 "video-frame": false,
-                "text-size-scale": 9,
+                "text-size-scale": 10,
                 "auto-brightness-mode": false, 
                 "active-low-brightness-time": 60,
-                "car-counter-reset": 2,
-                "show-car-counter": false,
+                "car-counter-reset": 1,
+                "show-car-counter": true,
                 "files": [
                     {
                         "fileName": "ico-arrow-down.png",
@@ -59,12 +59,264 @@ object ConfigFileMock {
         return """
             [
                 {
+                    "dispatch-code": 5,
+                    "screen-id": "IDLE",
+                    "margin-top": 250,
+                    "margin-bottom": 5,
+                    "margin-left": 30,
+                    "margin-right": 30,
+                    "data": [
+                        {
+                            "element-type": "text",
+                            "data": {
+                                "dashboardItemId": "welcome-label",
+                                "defaultText": "Welcome to",
+                                "textSize": 32,
+                                "textColor": "#009fe3",
+                                "padding": 12,
+                                "fontWeight": "Regular",
+                                "dataKey": null,
+                                "ditTypeCode": null,
+                                "validValue": null,
+                                "translations": {
+                                    "lang1": "Welcome to"
+                                }
+                            }
+                        },
+                        {
+                            "element-type": "text",
+                            "data": {
+                                "dashboardItemId": "parking-name",
+                                "defaultText": "CAME Parkare Car Park",
+                                "textSize": 36,
+                                "textColor": "#404040",
+                                "padding": 4,
+                                "fontWeight": "Medium",
+                                "dataKey": null,
+                                "ditTypeCode": null,
+                                "validValue": null,
+                                "translations": {
+                                    "lang1": "CAME Parkare Car Park"
+                                }
+                            }
+                        },
+                        {
+                            "element-type": "spacer",
+                            "data": {
+                                "value": 70
+                            }
+                        },
+                        {
+                            "element-type": "box",
+                            "data": {
+                                "backgroundColor": "#404040",
+                                "density": 100,
+                                "roundBorder": 0,
+                                "hasShadow": true,
+                                "dataKey": null,
+                                "ditTypeCode": null,
+                                "validValue": null,
+                                "width": null,
+                                "height": null,
+                                "margin": null,
+                                "padding": 4,
+                                "content": [
+                                    {
+                                        "element-type": "text",
+                                        "data": {
+                                            "dashboardItemId": "ticket-less-label",
+                                            "defaultText": "TICKETLESS \r\nCAR PARK",
+                                            "textSize": 44,
+                                            "textColor": "#FFFFFF",
+                                            "padding": 24,
+                                            "fontWeight": "Bold",
+                                            "dataKey": null,
+                                            "ditTypeCode": null,
+                                            "validValue": null,
+                                            "translations": {
+                                                "lang1": "TICKETLESS \r\nCAR PARK"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "element-type": "spacer",
+                            "data": {
+                                "value": 15
+                            }
+                        },
+                        {
+                            "element-type": "box",
+                            "data": {
+                                "backgroundColor": "#FFFFFF",
+                                "density": 100,
+                                "roundBorder": 0,
+                                "hasShadow": true,
+                                "dataKey": null,
+                                "ditTypeCode": null,
+                                "validValue": null,
+                                "width": null,
+                                "height": null,
+                                "margin": null,
+                                "padding": 10,
+                                "content": [
+                                    {
+                                        "element-type": "text",
+                                        "data": {
+                                            "dashboardItemId": "license-plate-reader-label",
+                                            "defaultText": "Entry with license \r\nplate reading",
+                                            "textSize": 32,
+                                            "textColor": "#404040",
+                                            "padding": 32,
+                                            "fontWeight": "Medium",
+                                            "dataKey": null,
+                                            "ditTypeCode": null,
+                                            "validValue": null,
+                                            "translations": {
+                                                "lang1": "Entry with license \r\nplate reading"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "dispatch-code": 9,
+                    "screen-id": "READING_PLATE",
+                    "margin-top": 250,
+                    "margin-bottom": 5,
+                    "margin-left": 30,
+                    "margin-right": 30,
+                    "data": [
+                        {
+                            "element-type": "text",
+                            "data": {
+                                "dashboardItemId": "welcome-label",
+                                "defaultText": "Welcome to",
+                                "textSize": 32,
+                                "textColor": "#009fe3",
+                                "padding": 12,
+                                "fontWeight": "Regular",
+                                "dataKey": null,
+                                "ditTypeCode": null,
+                                "validValue": null,
+                                "translations": {
+                                    "lang1": "Welcome to"
+                                }
+                            }
+                        },
+                        {
+                            "element-type": "text",
+                            "data": {
+                                "dashboardItemId": "parking-name",
+                                "defaultText": "CAME Parkare Car Park",
+                                "textSize": 36,
+                                "textColor": "#404040",
+                                "padding": 4,
+                                "fontWeight": "Medium",
+                                "dataKey": null,
+                                "ditTypeCode": null,
+                                "validValue": null,
+                                "translations": {
+                                    "lang1": "CAME Parkare Car Park"
+                                }
+                            }
+                        },
+                        {
+                            "element-type": "spacer",
+                            "data": {
+                                "value": 70
+                            }
+                        },
+                        {
+                            "element-type": "box",
+                            "data": {
+                                "backgroundColor": "#404040",
+                                "density": 100,
+                                "roundBorder": 0,
+                                "hasShadow": true,
+                                "dataKey": null,
+                                "ditTypeCode": null,
+                                "validValue": null,
+                                "width": null,
+                                "height": null,
+                                "margin": null,
+                                "padding": 4,
+                                "content": [
+                                    {
+                                        "element-type": "text",
+                                        "data": {
+                                            "dashboardItemId": "ticket-less-label",
+                                            "defaultText": "TICKETLESS \r\nCAR PARK",
+                                            "textSize": 44,
+                                            "textColor": "#FFFFFF",
+                                            "padding": 24,
+                                            "fontWeight": "Bold",
+                                            "dataKey": null,
+                                            "ditTypeCode": null,
+                                            "validValue": null,
+                                            "translations": {
+                                                "lang1": "TICKETLESS \r\nCAR PARK"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "element-type": "spacer",
+                            "data": {
+                                "value": 15
+                            }
+                        },
+                        {
+                            "element-type": "box",
+                            "data": {
+                                "backgroundColor": "#FFFFFF",
+                                "density": 100,
+                                "roundBorder": 0,
+                                "hasShadow": true,
+                                "dataKey": null,
+                                "ditTypeCode": null,
+                                "validValue": null,
+                                "width": null,
+                                "height": null,
+                                "margin": null,
+                                "padding": 10,
+                                "content": [
+                                    {
+                                        "element-type": "text",
+                                        "data": {
+                                            "dashboardItemId": "license-plate-reader-label",
+                                            "defaultText": "READING \r\n your license plate ...",
+                                            "textSize": 32,
+                                            "textColor": "#009fe3",
+                                            "padding": 32,
+                                            "fontWeight": "Medium",
+                                            "dataKey": null,
+                                            "ditTypeCode": null,
+                                            "validValue": null,
+                                            "translations": {
+                                                "lang1": "READING \r\n your license plate ..."
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
                     "dispatch-code": 12,
                     "screen-id": "PLEASE_PROCEED",
-                    "margin-top": 300,
-                    "margin-bottom": 20,
-                    "margin-left": 48,
-                    "margin-right": 48,
+                    "margin-top": 250,
+                    "margin-bottom": 5,
+                    "margin-left": 30,
+                    "margin-right": 30,
                     "data": [
                         {
                             "element-type": "column",
@@ -72,7 +324,7 @@ object ConfigFileMock {
                                 "backgroundColor": "#4c9f14",
                                 "density": 100,
                                 "roundBorder": 0,
-                                "hasShadow": false,
+                                "hasShadow": true,
                                 "spacing": 5,
                                 "padding": 4,
                                 "dataKey": null,
@@ -84,9 +336,9 @@ object ConfigFileMock {
                                         "data": {
                                             "dashboardItemId": "can-pass",
                                             "defaultText": "YOU MAY PASS",
-                                            "textSize": 52,
+                                            "textSize": 40,
                                             "textColor": "#FFFFFF",
-                                            "padding": 32,
+                                            "padding": 24,
                                             "fontWeight": "Bold",
                                             "dataKey": null,
                                             "ditTypeCode": null,
@@ -102,18 +354,18 @@ object ConfigFileMock {
                         {
                             "element-type": "spacer",
                             "data": {
-                                "value": 100
+                                "value": 70
                             }
                         },
                         {
                             "element-type": "column",
                             "data": {
                                 "backgroundColor": "#FFFFFF",
-                                "density": 70,
+                                "density": 100,
                                 "roundBorder": 0,
-                                "hasShadow": false,
+                                "hasShadow": true,
                                 "spacing": 4,
-                                "padding": 20,
+                                "padding": 12,
                                 "dataKey": null,
                                 "ditTypeCode": null,
                                 "validValue": null,
@@ -125,7 +377,7 @@ object ConfigFileMock {
                                             "defaultText": "YOUR LICENSE PLATE IS",
                                             "textSize": 20,
                                             "textColor": "#404040",
-                                            "padding": 8,
+                                            "padding": 0,
                                             "fontWeight": "Regular",
                                             "dataKey": null,
                                             "ditTypeCode": null,
@@ -165,9 +417,9 @@ object ConfigFileMock {
                                 "backgroundColor": "#404040",
                                 "density": 100,
                                 "roundBorder": 0,
-                                "hasShadow": false,
+                                "hasShadow": true,
                                 "spacing": 8,
-                                "padding": 28,
+                                "padding": 24,
                                 "dataKey": null,
                                 "ditTypeCode": null,
                                 "validValue": null,
@@ -175,9 +427,26 @@ object ConfigFileMock {
                                     {
                                         "element-type": "text",
                                         "data": {
+                                            "dashboardItemId": "via-t-value",
+                                            "defaultText": "-------",
+                                            "textSize": 32,
+                                            "textColor": "#FFFFFF",
+                                            "padding": 0,
+                                            "fontWeight": "Medium",
+                                            "dataKey": "CardReader",
+                                            "ditTypeCode": 7,
+                                            "validValue": 4,
+                                            "translations": {
+                                                "lang1": "Via-T"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "element-type": "text",
+                                        "data": {
                                             "dashboardItemId": "entry-type-value",
                                             "defaultText": "TICKET",
-                                            "textSize": 48,
+                                            "textSize": 36,
                                             "textColor": "#009fe3",
                                             "padding": 0,
                                             "fontWeight": "Bold",
@@ -194,7 +463,7 @@ object ConfigFileMock {
                                         "data": {
                                             "dashboardItemId": "entry-type-value",
                                             "defaultText": "SUBSCRIBER",
-                                            "textSize": 48,
+                                            "textSize": 36,
                                             "textColor": "#009fe3",
                                             "padding": 0,
                                             "fontWeight": "Bold",
@@ -203,23 +472,6 @@ object ConfigFileMock {
                                             "validValue": 1,
                                             "translations": {
                                                 "lang1": "SUBSCRIBER"
-                                            }
-                                        }
-                                    },
-                                    {
-                                        "element-type": "text",
-                                        "data": {
-                                            "dashboardItemId": "entry-type-value",
-                                            "defaultText": "-------",
-                                            "textSize": 36,
-                                            "textColor": "#FFFFFF",
-                                            "padding": 0,
-                                            "fontWeight": "Medium",
-                                            "dataKey": "CardReader",
-                                            "ditTypeCode": 7,
-                                            "validValue": 4,
-                                            "translations": {
-                                                "lang1": "Via-T"
                                             }
                                         }
                                     },
@@ -246,901 +498,93 @@ object ConfigFileMock {
                     ]
                 },
                 {
-                    "dispatch-code": 36,
-                    "screen-id": "DLG_PAYMENT_REQUIRED",
-                    "margin-top": 300,
-                    "margin-bottom": 20,
-                    "margin-left": 48,
-                    "margin-right": 48,
-                    "data": [
-                        {
-                            "element-type": "column",
-                            "data": {
-                                "backgroundColor": "#404040",
-                                "density": 0,
-                                "roundBorder": 0,
-                                "hasShadow": false,
-                                "spacing": 0,
-                                "padding": 0,
-                                "dataKey": null,
-                                "ditTypeCode": null,
-                                "validValue": null,
-                                "content": [
-                                    {
-                                        "element-type": "text",
-                                        "data": {
-                                            "dashboardItemId": "welcome-label",
-                                            "defaultText": "Thank you for visiting us",
-                                            "textSize": 32,
-                                            "textColor": "#009fe3",
-                                            "padding": 12,
-                                            "fontWeight": "Regular",
-                                            "dataKey": null,
-                                            "ditTypeCode": null,
-                                            "validValue": null,
-                                            "translations": {
-                                                "lang1": "Thank you for visiting us"
-                                            }
-                                        }
-                                    },
-                                    {
-                                        "element-type": "text",
-                                        "data": {
-                                            "dashboardItemId": "parking-name",
-                                            "defaultText": "CAME Parkare Car Park",
-                                            "textSize": 40,
-                                            "textColor": "#404040",
-                                            "padding": 4,
-                                            "fontWeight": "Medium",
-                                            "dataKey": null,
-                                            "ditTypeCode": null,
-                                            "validValue": null,
-                                            "translations": {
-                                                "lang1": "CAME Parkare Car Park"
-                                            }
-                                        }
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            "element-type": "spacer",
-                            "data": {
-                                "value": 100
-                            }
-                        },
-                        {
-                            "element-type": "column",
-                            "data": {
-                                "backgroundColor": "#da0025",
-                                "density": 100,
-                                "roundBorder": 0,
-                                "hasShadow": false,
-                                "spacing": 0,
-                                "padding": 0,
-                                "dataKey": null,
-                                "ditTypeCode": null,
-                                "validValue": null,
-                                "content": [
-                                    {
-                                        "element-type": "spacer",
-                                        "data": {
-                                            "value": 30
-                                        }
-                                    },
-                                    {
-                                        "element-type": "text",
-                                        "data": {
-                                            "dashboardItemId": "cannot-read",
-                                            "defaultText": "AMOUNT\r\nOUTSTANDING TO PAY",
-                                            "textSize": 40,
-                                            "textColor": "#FFFFFF",
-                                            "padding": 12,
-                                            "fontWeight": "Bold",
-                                            "dataKey": null,
-                                            "ditTypeCode": null,
-                                            "validValue": null,
-                                            "translations": {
-                                                "lang1": "AMOUNT\r\nOUTSTANDING TO PAY"
-                                            }
-                                        }
-                                    },
-                                    {
-                                        "element-type": "spacer",
-                                        "data": {
-                                            "value": 30
-                                        }
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            "element-type": "spacer",
-                            "data": {
-                                "value": 10
-                            }
-                        }
-                    ]
-                },
-                {
-                    "dispatch-code": 89,
-                    "screen-id": "DLG_InicioCobroActual",
-                    "margin-top": 300,
-                    "margin-bottom": 20,
-                    "margin-left": 48,
-                    "margin-right": 48,
-                    "data": [
-                        {
-                            "element-type": "column",
-                            "data": {
-                                "backgroundColor": "#404040",
-                                "density": 0,
-                                "roundBorder": 0,
-                                "hasShadow": false,
-                                "spacing": 0,
-                                "padding": 0,
-                                "dataKey": null,
-                                "ditTypeCode": null,
-                                "validValue": null,
-                                "content": [
-                                    {
-                                        "element-type": "text",
-                                        "data": {
-                                            "dashboardItemId": "welcome-label",
-                                            "defaultText": "Thank you for visiting us",
-                                            "textSize": 32,
-                                            "textColor": "#009fe3",
-                                            "padding": 12,
-                                            "fontWeight": "Regular",
-                                            "dataKey": null,
-                                            "ditTypeCode": null,
-                                            "validValue": null,
-                                            "translations": {
-                                                "lang1": "Thank you for visiting us"
-                                            }
-                                        }
-                                    },
-                                    {
-                                        "element-type": "text",
-                                        "data": {
-                                            "dashboardItemId": "parking-name",
-                                            "defaultText": "CAME Parkare Car Park",
-                                            "textSize": 40,
-                                            "textColor": "#404040",
-                                            "padding": 4,
-                                            "fontWeight": "Medium",
-                                            "dataKey": null,
-                                            "ditTypeCode": null,
-                                            "validValue": null,
-                                            "translations": {
-                                                "lang1": "CAME Parkare Car Park"
-                                            }
-                                        }
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            "element-type": "spacer",
-                            "data": {
-                                "value": 100
-                            }
-                        },
-                        {
-                            "element-type": "box",
-                            "data": {
-                                "backgroundColor": "#009fe3",
-                                "density": 100,
-                                "roundBorder": 0,
-                                "hasShadow": false,
-                                "dataKey": null,
-                                "ditTypeCode": null,
-                                "validValue": null,
-                                "width": null,
-                                "height": null,
-                                "margin": null,
-                                "padding": 30,
-                                "content": [
-                                    {
-                                        "element-type": "text",
-                                        "data": {
-                                            "dashboardItemId": "cannot-read",
-                                            "defaultText": "PAYMENT\r\nIN PROGRESS",
-                                            "textSize": 40,
-                                            "textColor": "#FFFFFF",
-                                            "padding": 12,
-                                            "fontWeight": "Bold",
-                                            "dataKey": null,
-                                            "ditTypeCode": null,
-                                            "validValue": null,
-                                            "translations": {
-                                                "lang1": "PAYMENT\r\nIN PROGRESS"
-                                            }
-                                        }
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            "element-type": "spacer",
-                            "data": {
-                                "value": 10
-                            }
-                        }
-                    ]
-                },
-                {
-                    "dispatch-code": 5,
-                    "screen-id": "IDLE",
-                    "margin-top": 300,
-                    "margin-bottom": 20,
-                    "margin-left": 48,
-                    "margin-right": 48,
-                    "data": [
-                        {
-                            "element-type": "text",
-                            "data": {
-                                "dashboardItemId": "welcome-label",
-                                "defaultText": "Thank you for visiting us",
-                                "textSize": 32,
-                                "textColor": "#009fe3",
-                                "padding": 12,
-                                "fontWeight": "Regular",
-                                "dataKey": null,
-                                "ditTypeCode": null,
-                                "validValue": null,
-                                "translations": {
-                                    "lang1": "Thank you for visiting us"
-                                }
-                            }
-                        },
-                        {
-                            "element-type": "spacer",
-                            "data": {
-                                "value": 0
-                            }
-                        },
-                        {
-                            "element-type": "text",
-                            "data": {
-                                "dashboardItemId": "parking-name",
-                                "defaultText": "CAME Parkare Car Park",
-                                "textSize": 40,
-                                "textColor": "#404040",
-                                "padding": 4,
-                                "fontWeight": "Medium",
-                                "dataKey": null,
-                                "ditTypeCode": null,
-                                "validValue": null,
-                                "translations": {
-                                    "lang1": "CAME Parkare Car Park"
-                                }
-                            }
-                        },
-                        {
-                            "element-type": "spacer",
-                            "data": {
-                                "value": 100
-                            }
-                        },
-                        {
-                            "element-type": "box",
-                            "data": {
-                                "backgroundColor": "#404040",
-                                "density": 100,
-                                "roundBorder": 0,
-                                "hasShadow": false,
-                                "dataKey": null,
-                                "ditTypeCode": null,
-                                "validValue": null,
-                                "width": null,
-                                "height": null,
-                                "margin": null,
-                                "padding": 4,
-                                "content": [
-                                    {
-                                        "element-type": "text",
-                                        "data": {
-                                            "dashboardItemId": "ticket-less-label",
-                                            "defaultText": "EXIT \r\nTICKETLESS",
-                                            "textSize": 52,
-                                            "textColor": "#FFFFFF",
-                                            "padding": 24,
-                                            "fontWeight": "Bold",
-                                            "dataKey": null,
-                                            "ditTypeCode": null,
-                                            "validValue": null,
-                                            "translations": {
-                                                "lang1": "EXIT\r\n TICKETLESS"
-                                            }
-                                        }
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            "element-type": "spacer",
-                            "data": {
-                                "value": 8
-                            }
-                        },
-                        {
-                            "element-type": "box",
-                            "data": {
-                                "backgroundColor": "#FFFFFF",
-                                "density": 70,
-                                "roundBorder": 0,
-                                "hasShadow": false,
-                                "dataKey": null,
-                                "ditTypeCode": null,
-                                "validValue": null,
-                                "width": null,
-                                "height": null,
-                                "margin": null,
-                                "padding": 10,
-                                "content": [
-                                    {
-                                        "element-type": "text",
-                                        "data": {
-                                            "dashboardItemId": "license-plate-reader-label",
-                                            "defaultText": "Exit with license \r\nplate reading",
-                                            "textSize": 40,
-                                            "textColor": "#404040",
-                                            "padding": 24,
-                                            "fontWeight": "Medium",
-                                            "dataKey": null,
-                                            "ditTypeCode": null,
-                                            "validValue": null,
-                                            "translations": {
-                                                "lang1": "Exit with license \r\nplate reading"
-                                            }
-                                        }
-                                    }
-                                ]
-                            }
-                        }
-                    ]
-                },
-                {
-                    "dispatch-code": 9,
-                    "screen-id": "READING_PLATE",
-                    "margin-top": 300,
-                    "margin-bottom": 20,
-                    "margin-left": 48,
-                    "margin-right": 48,
-                    "data": [
-                        {
-                            "element-type": "text",
-                            "data": {
-                                "dashboardItemId": "welcome-label",
-                                "defaultText": "Thank you for visiting us",
-                                "textSize": 32,
-                                "textColor": "#009fe3",
-                                "padding": 12,
-                                "fontWeight": "Regular",
-                                "dataKey": null,
-                                "ditTypeCode": null,
-                                "validValue": null,
-                                "translations": {
-                                    "lang1": "Thank you for visiting us"
-                                }
-                            }
-                        },
-                        {
-                            "element-type": "spacer",
-                            "data": {
-                                "value": 0
-                            }
-                        },
-                        {
-                            "element-type": "text",
-                            "data": {
-                                "dashboardItemId": "parking-name",
-                                "defaultText": "CAME Parkare Car Park",
-                                "textSize": 40,
-                                "textColor": "#404040",
-                                "padding": 4,
-                                "fontWeight": "Medium",
-                                "dataKey": null,
-                                "ditTypeCode": null,
-                                "validValue": null,
-                                "translations": {
-                                    "lang1": "CAME Parkare Car Park"
-                                }
-                            }
-                        },
-                        {
-                            "element-type": "spacer",
-                            "data": {
-                                "value": 100
-                            }
-                        },
-                        {
-                            "element-type": "box",
-                            "data": {
-                                "backgroundColor": "#404040",
-                                "density": 100,
-                                "roundBorder": 0,
-                                "hasShadow": false,
-                                "dataKey": null,
-                                "ditTypeCode": null,
-                                "validValue": null,
-                                "width": null,
-                                "height": null,
-                                "margin": null,
-                                "padding": 4,
-                                "content": [
-                                    {
-                                        "element-type": "text",
-                                        "data": {
-                                            "dashboardItemId": "ticket-less-label",
-                                            "defaultText": "EXIT \r\nTICKETLESS",
-                                            "textSize": 52,
-                                            "textColor": "#FFFFFF",
-                                            "padding": 24,
-                                            "fontWeight": "Bold",
-                                            "dataKey": null,
-                                            "ditTypeCode": null,
-                                            "validValue": null,
-                                            "translations": {
-                                                "lang1": "EXIT\r\n TICKETLESS"
-                                            }
-                                        }
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            "element-type": "spacer",
-                            "data": {
-                                "value": 8
-                            }
-                        },
-                        {
-                            "element-type": "box",
-                            "data": {
-                                "backgroundColor": "#FFFFFF",
-                                "density": 70,
-                                "roundBorder": 0,
-                                "hasShadow": false,
-                                "dataKey": null,
-                                "ditTypeCode": null,
-                                "validValue": null,
-                                "width": null,
-                                "height": null,
-                                "margin": null,
-                                "padding": 10,
-                                "content": [
-                                    {
-                                        "element-type": "text",
-                                        "data": {
-                                            "dashboardItemId": "license-plate-reader-label",
-                                            "defaultText": "READING \r\n your license plate ...",
-                                            "textSize": 40,
-                                            "textColor": "#009fe3",
-                                            "padding": 24,
-                                            "fontWeight": "Medium",
-                                            "dataKey": null,
-                                            "ditTypeCode": null,
-                                            "validValue": null,
-                                            "translations": {
-                                                "lang1": "READING \r\n your license plate ..."
-                                            }
-                                        }
-                                    }
-                                ]
-                            }
-                        }
-                    ]
-                },
-                {
                     "dispatch-code": 8,
                     "screen-id": "USER",
-                    "margin-top": 300,
-                    "margin-bottom": 20,
-                    "margin-left": 48,
-                    "margin-right": 48,
+                    "margin-top": 250,
+                    "margin-bottom": 5,
+                    "margin-left": 30,
+                    "margin-right": 30,
                     "data": [
                         {
-                            "element-type": "box",
+                            "element-type": "text",
                             "data": {
-                                "backgroundColor": "#da0025",
-                                "density": 100,
-                                "roundBorder": 0,
-                                "hasShadow": false,
+                                "dashboardItemId": "welcome-label",
+                                "defaultText": "Welcome to",
+                                "textSize": 32,
+                                "textColor": "#009fe3",
+                                "padding": 12,
+                                "fontWeight": "Regular",
                                 "dataKey": null,
                                 "ditTypeCode": null,
                                 "validValue": null,
-                                "width": null,
-                                "height": null,
-                                "margin": null,
+                                "translations": {
+                                    "lang1": "Welcome to"
+                                }
+                            }
+                        },
+                        {
+                            "element-type": "text",
+                            "data": {
+                                "dashboardItemId": "parking-name",
+                                "defaultText": "CAME Parkare Car Park",
+                                "textSize": 36,
+                                "textColor": "#404040",
+                                "padding": 4,
+                                "fontWeight": "Medium",
+                                "dataKey": null,
+                                "ditTypeCode": null,
+                                "validValue": null,
+                                "translations": {
+                                    "lang1": "CAME Parkare Car Park"
+                                }
+                            }
+                        },
+                        {
+                            "element-type": "spacer",
+                            "data": {
+                                "value": 70
+                            }
+                        },
+                        {
+                            "element-type": "column",
+                            "data": {
+                                "backgroundColor": "#404040",
+                                "density": 100,
+                                "roundBorder": 0,
+                                "hasShadow": true,
+                                "spacing": 0,
                                 "padding": 24,
+                                "dataKey": null,
+                                "ditTypeCode": null,
+                                "validValue": null,
                                 "content": [
+                                    {
+                                        "element-type": "spacer",
+                                        "data": {
+                                            "value": 15
+                                        }
+                                    },
                                     {
                                         "element-type": "text",
                                         "data": {
                                             "dashboardItemId": "fail-sorry",
-                                            "defaultText": "WE'RE SORRY",
-                                            "textSize": 52,
+                                            "defaultText": "TAKE A TICKET\r\nPRESS BUTTON",
+                                            "textSize": 40,
                                             "textColor": "#FFFFFF",
-                                            "padding": 4,
+                                            "padding": 0,
                                             "fontWeight": "Bold",
                                             "dataKey": null,
                                             "ditTypeCode": null,
                                             "validValue": null,
                                             "translations": {
-                                                "lang1": "WE'RE SORRY"
-                                            }
-                                        }
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            "element-type": "spacer",
-                            "data": {
-                                "value": 60
-                            }
-                        },
-                        {
-                            "element-type": "box",
-                            "data": {
-                                "backgroundColor": "#FFFFFF",
-                                "density": 50,
-                                "roundBorder": 0,
-                                "hasShadow": false,
-                                "dataKey": null,
-                                "ditTypeCode": null,
-                                "validValue": null,
-                                "width": null,
-                                "height": null,
-                                "margin": null,
-                                "padding": 12,
-                                "content": [
-                                    {
-                                        "element-type": "text",
-                                        "data": {
-                                            "dashboardItemId": "cannot-read",
-                                            "defaultText": "FOLLOW THE TERMINAL'S\r\nINSTRUCTIONS",
-                                            "textSize": 36,
-                                            "textColor": "#222c32",
-                                            "padding": 24,
-                                            "fontWeight": "Medium",
-                                            "dataKey": null,
-                                            "ditTypeCode": null,
-                                            "validValue": null,
-                                            "translations": {
-                                                "lang1": "FOLLOW THE TERMINAL'S\r\nINSTRUCTIONS"
-                                            }
-                                        }
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            "element-type": "spacer",
-                            "data": {
-                                "value": 8
-                            }
-                        },
-                        {
-                            "element-type": "column",
-                            "data": {
-                                "backgroundColor": "#FFFFFF",
-                                "density": 70,
-                                "roundBorder": 0,
-                                "hasShadow": false,
-                                "spacing": 4,
-                                "padding": 20,
-                                "dataKey": null,
-                                "ditTypeCode": null,
-                                "validValue": null,
-                                "content": [
-                                    {
-                                        "element-type": "text",
-                                        "data": {
-                                            "dashboardItemId": "thanks-label",
-                                            "defaultText": "YOUR LICENSE PLATE IS",
-                                            "textSize": 20,
-                                            "textColor": "#404040",
-                                            "padding": 8,
-                                            "fontWeight": "Regular",
-                                            "dataKey": null,
-                                            "ditTypeCode": null,
-                                            "validValue": null,
-                                            "translations": {
-                                                "lang1": "YOUR LICENSE PLATE IS"
+                                                "lang1": "TAKE A TICKET\r\nPRESS BUTTON"
                                             }
                                         }
                                     },
-                                    {
-                                        "element-type": "text",
-                                        "data": {
-                                            "dashboardItemId": "license-plate-value",
-                                            "defaultText": "3003 ABC",
-                                            "textSize": 72,
-                                            "textColor": "#000000",
-                                            "padding": 4,
-                                            "fontWeight": "Bold",
-                                            "dataKey": "MainLicensePlate",
-                                            "ditTypeCode": 10,
-                                            "validValue": null,
-                                            "translations": null
-                                        }
-                                    }
-                                ]
-                            }
-                        }
-                    ]
-                },
-                {
-                    "dispatch-code": 6,
-                    "screen-id": "DLG_OUT_SERVICE",
-                    "margin-top": 300,
-                    "margin-bottom": 20,
-                    "margin-left": 48,
-                    "margin-right": 48,
-                    "data": [
-                        {
-                            "element-type": "column",
-                            "data": {
-                                "backgroundColor": "#FFFFFF",
-                                "density": 0,
-                                "roundBorder": 0,
-                                "hasShadow": false,
-                                "spacing": 30,
-                                "padding": 12,
-                                "dataKey": null,
-                                "ditTypeCode": null,
-                                "validValue": null,
-                                "content": [
                                     {
                                         "element-type": "spacer",
                                         "data": {
-                                            "value": 170
-                                        }
-                                    },
-                                    {
-                                        "element-type": "image",
-                                        "data": {
-                                            "dashboardItemId": "out-of-service",
-                                            "dataKey": null,
-                                            "ditTypeCode": null,
-                                            "validValue": null,
-                                            "fileName": "Out-of-service",
-                                            "localFilePath": null,
-                                            "intervalTime": null,
-                                            "height": 350,
-                                            "width": 400
-                                        }
-                                    },
-                                    {
-                                        "element-type": "text",
-                                        "data": {
-                                            "dashboardItemId": "parking-name",
-                                            "defaultText": "OUT OF SERVICE",
-                                            "textSize": 30,
-                                            "textColor": "#404040",
-                                            "padding": 4,
-                                            "fontWeight": "Regular",
-                                            "dataKey": null,
-                                            "ditTypeCode": null,
-                                            "validValue": null,
-                                            "translations": {
-                                                "lang1": "OUT OF SERVICE"
-                                            }
-                                        }
-                                    }
-                                ]
-                            }
-                        }
-                    ]
-                },
-                {
-                    "dispatch-code": 96,
-                    "screen-id": "DLG_BLOCKED",
-                    "margin-top": 300,
-                    "margin-bottom": 20,
-                    "margin-left": 48,
-                    "margin-right": 48,
-                    "data": [
-                        {
-                            "element-type": "column",
-                            "data": {
-                                "backgroundColor": "#FFFFFF",
-                                "density": 0,
-                                "roundBorder": 0,
-                                "hasShadow": false,
-                                "spacing": 30,
-                                "padding": 12,
-                                "dataKey": null,
-                                "ditTypeCode": null,
-                                "validValue": null,
-                                "content": [
-                                    {
-                                        "element-type": "spacer",
-                                        "data": {
-                                            "value": 170
-                                        }
-                                    },
-                                    {
-                                        "element-type": "image",
-                                        "data": {
-                                            "dashboardItemId": "ico-disabled",
-                                            "dataKey": null,
-                                            "ditTypeCode": null,
-                                            "validValue": null,
-                                            "fileName": "Blocked",
-                                            "localFilePath": null,
-                                            "intervalTime": null,
-                                            "height": 350,
-                                            "width": 350
-                                        }
-                                    },
-                                    {
-                                        "element-type": "text",
-                                        "data": {
-                                            "dashboardItemId": "parking-name",
-                                            "defaultText": "BLOCKED",
-                                            "textSize": 30,
-                                            "textColor": "#404040",
-                                            "padding": 4,
-                                            "fontWeight": "Regular",
-                                            "dataKey": null,
-                                            "ditTypeCode": null,
-                                            "validValue": null,
-                                            "translations": {
-                                                "lang1": "BLOCKED"
-                                            }
-                                        }
-                                    }
-                                ]
-                            }
-                        }
-                    ]
-                },
-                {
-                    "dispatch-code": 0,
-                    "screen-id": "DLG_BOOT",
-                    "margin-top": 300,
-                    "margin-bottom": 20,
-                    "margin-left": 48,
-                    "margin-right": 48,
-                    "data": [
-                        {
-                            "element-type": "column",
-                            "data": {
-                                "backgroundColor": "#FFFFFF",
-                                "density": 0,
-                                "roundBorder": 0,
-                                "hasShadow": false,
-                                "spacing": 30,
-                                "padding": 12,
-                                "dataKey": null,
-                                "ditTypeCode": null,
-                                "validValue": null,
-                                "content": [
-                                    {
-                                        "element-type": "spacer",
-                                        "data": {
-                                            "value": 170
-                                        }
-                                    },
-                                    {
-                                        "element-type": "image",
-                                        "data": {
-                                            "dashboardItemId": "ico-disabled",
-                                            "dataKey": null,
-                                            "ditTypeCode": null,
-                                            "validValue": null,
-                                            "fileName": "Starting",
-                                            "localFilePath": null,
-                                            "intervalTime": null,
-                                            "height": 350,
-                                            "width": 350
-                                        }
-                                    },
-                                    {
-                                        "element-type": "text",
-                                        "data": {
-                                            "dashboardItemId": "parking-name",
-                                            "defaultText": "STARTING",
-                                            "textSize": 30,
-                                            "textColor": "#404040",
-                                            "padding": 4,
-                                            "fontWeight": "Regular",
-                                            "dataKey": null,
-                                            "ditTypeCode": null,
-                                            "validValue": null,
-                                            "translations": {
-                                                "lang1": "STARTING"
-                                            }
-                                        }
-                                    }
-                                ]
-                            }
-                        }
-                    ]
-                },
-                {
-                    "dispatch-code": 18,
-                    "screen-id": "DLG_CARD_ERROR",
-                    "margin-top": 300,
-                    "margin-bottom": 20,
-                    "margin-left": 48,
-                    "margin-right": 48,
-                    "data": [
-                        {
-                            "element-type": "box",
-                            "data": {
-                                "backgroundColor": "#da0025",
-                                "density": 100,
-                                "roundBorder": 0,
-                                "hasShadow": false,
-                                "dataKey": null,
-                                "ditTypeCode": null,
-                                "validValue": null,
-                                "width": null,
-                                "height": null,
-                                "margin": null,
-                                "padding": 24,
-                                "content": [
-                                    {
-                                        "element-type": "text",
-                                        "data": {
-                                            "dashboardItemId": "fail-sorry",
-                                            "defaultText": "WE'RE SORRY",
-                                            "textSize": 52,
-                                            "textColor": "#FFFFFF",
-                                            "padding": 4,
-                                            "fontWeight": "Bold",
-                                            "dataKey": null,
-                                            "ditTypeCode": null,
-                                            "validValue": null,
-                                            "translations": {
-                                                "lang1": "WE'RE SORRY"
-                                            }
-                                        }
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            "element-type": "spacer",
-                            "data": {
-                                "value": 60
-                            }
-                        },
-                        {
-                            "element-type": "box",
-                            "data": {
-                                "backgroundColor": "#FFFFFF",
-                                "density": 70,
-                                "roundBorder": 0,
-                                "hasShadow": false,
-                                "dataKey": null,
-                                "ditTypeCode": null,
-                                "validValue": null,
-                                "width": null,
-                                "height": null,
-                                "margin": null,
-                                "padding": 24,
-                                "content": [
-                                    {
-                                        "element-type": "text",
-                                        "data": {
-                                            "dashboardItemId": "has-an-error",
-                                            "defaultText": "VALIDATION\r\nNOT PERFORMED",
-                                            "textSize": 36,
-                                            "textColor": "#404040",
-                                            "padding": 12,
-                                            "fontWeight": "Medium",
-                                            "dataKey": null,
-                                            "ditTypeCode": null,
-                                            "validValue": null,
-                                            "translations": {
-                                                "lang1": "VALIDATION\r\nNOT PERFORMED"
-                                            }
+                                            "value": 15
                                         }
                                     }
                                 ]
@@ -1155,69 +599,12 @@ object ConfigFileMock {
                         {
                             "element-type": "column",
                             "data": {
-                                "backgroundColor": "#404040",
+                                "backgroundColor": "#FFFFFF",
                                 "density": 100,
                                 "roundBorder": 0,
-                                "hasShadow": false,
-                                "spacing": 12,
-                                "padding": 24,
-                                "dataKey": null,
-                                "ditTypeCode": null,
-                                "validValue": null,
-                                "content": [
-                                    {
-                                        "element-type": "image",
-                                        "data": {
-                                            "dashboardItemId": "arrow-down",
-                                            "dataKey": null,
-                                            "ditTypeCode": null,
-                                            "validValue": null,
-                                            "fileName": "ico-arrow-down",
-                                            "localFilePath": null,
-                                            "intervalTime": null,
-                                            "height": 40,
-                                            "width": 40
-                                        }
-                                    },
-                                    {
-                                        "element-type": "text",
-                                        "data": {
-                                            "dashboardItemId": "contact-customer-service",
-                                            "defaultText": "Please go to customer service\r\nto resolve this issue",
-                                            "textSize": 32,
-                                            "textColor": "#FFFFFF",
-                                            "padding": 4,
-                                            "fontWeight": "Medium",
-                                            "dataKey": null,
-                                            "ditTypeCode": null,
-                                            "validValue": null,
-                                            "translations": {
-                                                "lang1": "Please go to customer service\r\nto resolve this issue"
-                                            }
-                                        }
-                                    }
-                                ]
-                            }
-                        }
-                    ]
-                },
-                {
-                    "dispatch-code": 1005,
-                    "screen-id": "IDLE_DISCONNECTED",
-                    "margin-top": 300,
-                    "margin-bottom": 20,
-                    "margin-left": 48,
-                    "margin-right": 48,
-                    "data": [
-                        {
-                            "element-type": "column",
-                            "data": {
-                                "backgroundColor": "#404040",
-                                "density": 0,
-                                "roundBorder": 0,
-                                "hasShadow": false,
-                                "spacing": 0,
-                                "padding": 0,
+                                "hasShadow": true,
+                                "spacing": 4,
+                                "padding": 12,
                                 "dataKey": null,
                                 "ditTypeCode": null,
                                 "validValue": null,
@@ -1225,55 +612,33 @@ object ConfigFileMock {
                                     {
                                         "element-type": "text",
                                         "data": {
-                                            "dashboardItemId": "welcome-label",
-                                            "defaultText": "Thank you for visiting us",
-                                            "textSize": 32,
-                                            "textColor": "#009fe3",
-                                            "padding": 12,
+                                            "dashboardItemId": "thanks-label",
+                                            "defaultText": "YOUR LICENSE PLATE IS",
+                                            "textSize": 20,
+                                            "textColor": "#404040",
+                                            "padding": 0,
                                             "fontWeight": "Regular",
                                             "dataKey": null,
                                             "ditTypeCode": null,
                                             "validValue": null,
                                             "translations": {
-                                                "lang1": "Thank you for visiting us"
+                                                "lang1": "YOUR LICENSE PLATE IS"
                                             }
                                         }
                                     },
                                     {
                                         "element-type": "text",
                                         "data": {
-                                            "dashboardItemId": "parking-name",
-                                            "defaultText": "CAME Parkare Car Park",
-                                            "textSize": 40,
-                                            "textColor": "#404040",
+                                            "dashboardItemId": "license-plate-value",
+                                            "defaultText": "---- ---",
+                                            "textSize": 72,
+                                            "textColor": "#000000",
                                             "padding": 4,
-                                            "fontWeight": "Medium",
-                                            "dataKey": null,
-                                            "ditTypeCode": null,
+                                            "fontWeight": "Bold",
+                                            "dataKey": "MainLicensePlate",
+                                            "ditTypeCode": 10,
                                             "validValue": null,
-                                            "translations": {
-                                                "lang1": "CAME Parkare Car Park"
-                                            }
-                                        }
-                                    },
-                                    {
-                                        "element-type": "spacer",
-                                        "data": {
-                                            "value": 100
-                                        }
-                                    },
-                                    {
-                                        "element-type": "image",
-                                        "data": {
-                                            "dashboardItemId": "arrow-down",
-                                            "dataKey": null,
-                                            "ditTypeCode": null,
-                                            "validValue": null,
-                                            "fileName": "disconnected",
-                                            "localFilePath": null,
-                                            "intervalTime": null,
-                                            "height": 350,
-                                            "width": 350
+                                            "translations": null
                                         }
                                     }
                                 ]
