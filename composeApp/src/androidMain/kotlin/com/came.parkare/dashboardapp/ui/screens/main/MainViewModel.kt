@@ -350,9 +350,10 @@ class MainViewModel (
     }
 
     private fun checkContentMargin(marginLeft: Int, marginTop: Int, marginRight: Int, marginBottom: Int) {
+        val scaleFactor = (_itemsState.value.textSizeScale / 10f).coerceIn(0.5f, 3f)
         _itemsState.update { it.copy(contentPadding = PaddingValues(
-            marginLeft.dp, marginTop.dp,
-            marginRight.dp, marginBottom.dp))
+            (marginLeft.toFloat() * scaleFactor).dp, (marginTop.toFloat() * scaleFactor).dp,
+            (marginRight.toFloat() * scaleFactor).dp, (marginBottom.toFloat() * scaleFactor).dp))
         }
     }
 
@@ -369,11 +370,14 @@ class MainViewModel (
         _itemsState.update { it.copy(newItems = dashboardItems) }
     }
 
+    // *This method permit to refresh the screen each change from
+    // *The web configurator
+    // *On each change, the restarApp value change to true, and is why call initAllConfig
     private fun onRestartApp(){
         serverConnection.restartApp.onEach { value ->
             if (value){
                 initAllConfig()
-                serverConnection.setRestartApp(true)
+                serverConnection.setRestartApp(false)
             }
         }.launchIn(viewModelScope)
     }

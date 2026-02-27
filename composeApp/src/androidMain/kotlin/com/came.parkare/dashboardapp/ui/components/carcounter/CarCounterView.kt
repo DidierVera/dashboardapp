@@ -35,33 +35,33 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 import java.util.Date
 @Composable
-fun CarCounterView(modifier: Modifier = Modifier)  {
+fun CarCounterView(modifier: Modifier = Modifier, textSizeScale: Int = 10)  {
     val viewModel: CarCounterViewModel = koinViewModel()
     val counter by viewModel.counter.collectAsState()
     val show by viewModel.showCounter.collectAsState()
-
+    val scaleFactor = (textSizeScale / 10f).coerceIn(0.5f, 3f)
     if (show) {
-        Box(modifier = modifier.padding(0.dp, 20.dp)){
+        Box(modifier = modifier.padding(0.dp, (20 * scaleFactor).dp)){
             Box(
                 modifier = Modifier
                     .border(0.4.dp, Color.LightGray, RoundedCornerShape(2.dp))
                     .background(LightGrayColor.copy(alpha = 0.8f))
-                    .padding(32.dp, 12.dp)
+                    .padding((32 * scaleFactor).dp, (12 * scaleFactor).dp)
                     .align(Alignment.TopCenter)
             ) {
-                ShadowText("Entered cars: $counter/min")
+                ShadowText("Entered cars: $counter/min", scaleFactor)
             }
         }
     }
 }
 
 @Composable
-private fun ShadowText(text: String) {
+private fun ShadowText(text: String, scaleFactor: Float) {
     Text(
         text = text,
         color = WhiteColor,
         style = MaterialTheme.typography.labelLarge.copy(
-            fontSize = 24.sp,
+            fontSize = (24 * scaleFactor).sp,
             fontFamily = Rubik
         )
     )

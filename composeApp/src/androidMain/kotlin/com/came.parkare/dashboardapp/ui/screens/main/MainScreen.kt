@@ -41,12 +41,13 @@ fun MainScreen(
     viewModel: MainViewModel = koinViewModel()) {
     val showVideoFrame by viewModel.showVideoFrame.collectAsState()
     val showCarCounter by viewModel.showCarCounter.collectAsState()
+    val itemsState by viewModel.itemsState.collectAsState()
     Box(Modifier.fillMaxSize()) {
         LoadBackground()
         NetworkIndicatorView(
             Modifier
                 .padding(4.dp)
-                .align(Alignment.TopEnd))
+                .align(Alignment.TopEnd), sizeScale = itemsState.textSizeScale)
 
         UpdateDataByLang()
         Column(
@@ -56,7 +57,7 @@ fun MainScreen(
             LoadDashboardItems(modifier = Modifier.weight(1f))
             if(showCarCounter) CarCounterView(modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .weight(0.1f))
+                .weight(0.15f), textSizeScale = itemsState.textSizeScale)
 
             if(showVideoFrame) VideoExoPlayer(modifier = Modifier.weight(0.3f))
         }

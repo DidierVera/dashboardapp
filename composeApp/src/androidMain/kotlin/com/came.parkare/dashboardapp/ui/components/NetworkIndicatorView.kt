@@ -26,7 +26,10 @@ import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
-fun NetworkIndicatorView(modifier: Modifier, viewModel: MainViewModel = koinViewModel()){
+fun NetworkIndicatorView(modifier: Modifier,
+                         viewModel: MainViewModel = koinViewModel(),
+                         sizeScale: Int = 10){
+    val scaleFactor = (sizeScale / 10f).coerceIn(0.5f, 3f)
     val state by viewModel.itemsState.collectAsState()
     val isConnected: Boolean = state.statusConnection
     val activity = LocalContext.current as MainActivity
@@ -45,8 +48,7 @@ fun NetworkIndicatorView(modifier: Modifier, viewModel: MainViewModel = koinView
                 contentDescription = null,
                 tint = BlackColor,
                 modifier = modifier
-                    .size(30.dp)
-                //.background(WarningColor)
+                    .size((30 * scaleFactor).dp)
             )
         }
     }
