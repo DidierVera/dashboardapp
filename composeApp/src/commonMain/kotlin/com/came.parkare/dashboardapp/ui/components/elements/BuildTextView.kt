@@ -12,8 +12,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.came.parkare.dashboardapp.domain.models.components.TextDataModel
 import com.came.parkare.dashboardapp.ui.components.itemStyles.LicensePlateItemStyle
-import com.came.parkare.dashboardapp.ui.theme.LicensePlateFont
-import com.came.parkare.dashboardapp.ui.theme.Rubik
+import com.came.parkare.dashboardapp.ui.theme.Acumin
 import com.came.parkare.dashboardapp.ui.theme.hexToColor
 
 @Composable
@@ -41,7 +40,7 @@ fun BuildTextView(text: TextDataModel, scaleFactor: Float, modifier: Modifier = 
         Text(
             text = text.defaultText,
             fontSize = textSize.sp * animatedText.value,
-            fontFamily = Rubik,
+            fontFamily = Acumin,
             fontWeight = weight,
             lineHeight = 1.2.em,
             textAlign = TextAlign.Center,

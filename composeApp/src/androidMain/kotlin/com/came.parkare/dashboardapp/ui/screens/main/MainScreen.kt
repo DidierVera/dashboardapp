@@ -28,6 +28,7 @@ import com.came.parkare.dashboardapp.domain.models.components.ElementModel
 import com.came.parkare.dashboardapp.ui.components.Base64Image
 import com.came.parkare.dashboardapp.ui.components.BuildComposable
 import com.came.parkare.dashboardapp.ui.components.NetworkIndicatorView
+import com.came.parkare.dashboardapp.ui.components.brightness.DimmingOverlay
 import com.came.parkare.dashboardapp.ui.components.carcounter.CarCounterView
 import com.came.parkare.dashboardapp.ui.components.isBase64
 import com.came.parkare.dashboardapp.ui.components.videos.VideoExoPlayer
@@ -42,6 +43,7 @@ fun MainScreen(
     val showVideoFrame by viewModel.showVideoFrame.collectAsState()
     val showCarCounter by viewModel.showCarCounter.collectAsState()
     val itemsState by viewModel.itemsState.collectAsState()
+    val isDimmed by viewModel.startBrightnessMode.collectAsState()
     Box(Modifier.fillMaxSize()) {
         LoadBackground()
         NetworkIndicatorView(
@@ -61,7 +63,9 @@ fun MainScreen(
 
             if(showVideoFrame) VideoExoPlayer(modifier = Modifier.weight(0.3f))
         }
-        StartBrightnessTimeout()
+        //StartBrightnessTimeout()
+        DimmingOverlay(isDimmed)
+
     }
 }
 
@@ -143,9 +147,13 @@ private fun StartBrightnessTimeout() {
         if (isActiveBrightnessMode) {
             println("delay time: $brightnessWaitDelay")
             delay(brightnessWaitDelay * 1000L)
-            viewModel.setBrightnessByCommand(activity, 1)
+
+//            DimmingOverlay(true)
+            //viewModel.setBrightnessByCommand(activity, 1)
         } else {
-            viewModel.setBrightnessByCommand(activity, 255)
+
+//            DimmingOverlay(false)
+            //viewModel.setBrightnessByCommand(activity, 255)
         }
     }
 }

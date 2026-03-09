@@ -241,8 +241,8 @@ class MainViewModel (
 
             _itemsState.update { state ->
                 state.copy(
-                    currentLang = languages?.keys?.first().orEmpty(),
-                    translations = languages?.keys?.toList().orEmpty()
+                    currentLang = languages?.keys?.first() ?: "lang1",
+                    translations = languages?.keys?.toList() ?: listOf("lang1")
                 )
             }
         }

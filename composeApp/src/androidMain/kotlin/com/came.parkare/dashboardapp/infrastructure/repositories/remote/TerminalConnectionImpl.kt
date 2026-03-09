@@ -49,12 +49,18 @@ class TerminalConnectionImpl(
         currentConnectionJob = connectionScope.launch {
             when(connectionType) {
                 TypeConnectionEnum.SOCKET -> {
+                    mockService.cleanup()
+                    signalRService.cleanup()
                     socketService.startConnection { validateResult(it, onResult) }
                 }
                 TypeConnectionEnum.SIGNAL_R -> {
+                    socketService.cleanup()
+                    mockService.cleanup()
                     signalRService.startConnection { validateResult(it, onResult) }
                 }
                 TypeConnectionEnum.MOCK -> {
+                    socketService.cleanup()
+                    signalRService.cleanup()
                     mockService.startConnection { validateResult(it, onResult) }
                 }
             }

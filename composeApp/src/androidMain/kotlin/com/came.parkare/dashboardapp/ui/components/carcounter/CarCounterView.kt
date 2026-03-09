@@ -24,12 +24,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.came.parkare.dashboardapp.ui.theme.ArialNarrowFont
-import com.came.parkare.dashboardapp.ui.theme.ArialRoundedFont
-import com.came.parkare.dashboardapp.ui.theme.BlackColor
-import com.came.parkare.dashboardapp.ui.theme.CameBlueColor
+import com.came.parkare.dashboardapp.ui.theme.Acumin
 import com.came.parkare.dashboardapp.ui.theme.LightGrayColor
-import com.came.parkare.dashboardapp.ui.theme.Rubik
 import com.came.parkare.dashboardapp.ui.theme.WhiteColor
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -62,7 +58,7 @@ private fun ShadowText(text: String, scaleFactor: Float) {
         color = WhiteColor,
         style = MaterialTheme.typography.labelLarge.copy(
             fontSize = (24 * scaleFactor).sp,
-            fontFamily = Rubik
+            fontFamily = Acumin
         )
     )
 }

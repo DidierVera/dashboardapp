@@ -7,6 +7,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import dashboardapp.composeapp.generated.resources.Res
+import dashboardapp.composeapp.generated.resources.acumin_variable_concept
 import dashboardapp.composeapp.generated.resources.arial_narrow_bold
 import dashboardapp.composeapp.generated.resources.arial_rounded_bold
 import dashboardapp.composeapp.generated.resources.mespreg
@@ -26,6 +27,10 @@ actual val ArialNarrowFont: FontFamily
 actual val ArialRoundedFont: FontFamily
     @Composable
     get() = FontFamily(Font(Res.font.arial_rounded_bold, FontWeight.Bold))
+
+actual val Acumin: FontFamily
+    @Composable
+    get() = FontFamily(Font(Res.font.acumin_variable_concept, FontWeight.Bold))
 
 actual val Rubik: FontFamily
     @Composable

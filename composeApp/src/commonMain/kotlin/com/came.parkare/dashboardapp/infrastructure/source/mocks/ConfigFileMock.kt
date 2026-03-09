@@ -16,7 +16,7 @@ object ConfigFileMock {
                 "auto-brightness-mode": false, 
                 "active-low-brightness-time": 60,
                 "car-counter-reset": 1,
-                "show-car-counter": true,
+                "show-car-counter": false,
                 "files": [
                     {
                         "fileName": "ico-arrow-down.png",

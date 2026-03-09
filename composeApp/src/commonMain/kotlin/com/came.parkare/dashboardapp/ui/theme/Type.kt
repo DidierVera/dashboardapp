@@ -8,5 +8,6 @@ expect val LicensePlateFont: FontFamily
 expect val ArialNarrowFont: FontFamily
 expect val ArialRoundedFont: FontFamily
 expect val Rubik: FontFamily
+expect val Acumin: FontFamily
 
 expect val Typography: Typography
