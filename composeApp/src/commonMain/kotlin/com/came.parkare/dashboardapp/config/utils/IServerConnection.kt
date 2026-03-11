@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface IServerConnection {
     val typeConnection: StateFlow<TypeConnectionEnum>
-    val statusConnection: SharedFlow<Boolean>
+    val statusConnection: StateFlow<Boolean>
     val restartApp: StateFlow<Boolean>
     val screensList: StateFlow<List<ScreenModel>>
 

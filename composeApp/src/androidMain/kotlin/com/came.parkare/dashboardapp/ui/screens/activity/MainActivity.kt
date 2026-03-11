@@ -37,20 +37,7 @@ class MainActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
         ConfigUI.hideSystemUI(this)
-        checkPermission()
         startServices()
-    }
-
-    private fun checkPermission() {
-        if (!Settings.System.canWrite(this)) {
-            try {
-                val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
-                intent.data = ("package:$packageName").toUri()
-                startActivity(intent)
-            }catch (e: Exception){
-                println(e.stackTrace)
-            }
-        }
     }
 
     private fun startAndroidApiServer() {

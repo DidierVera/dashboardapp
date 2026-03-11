@@ -39,6 +39,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -60,7 +61,6 @@ class MainViewModel (
     private val carCounterManager: CarCounterManager,
     private val serverConnection: IServerConnection
 ): ViewModel() {
-    private lateinit var brightnessManager: SystemBrightnessManager
     private val _isInitialized = MutableStateFlow(false)
 
     private val _itemsState = MutableStateFlow(MainState())
@@ -324,14 +324,17 @@ class MainViewModel (
             Pair(status, isInitialized)
         }
             .filter { (_, isInitialized) -> isInitialized }
+            .distinctUntilChanged()
             .onEach { (status, _) ->
                 appLogger.trackLog("Is Connected to terminal: ", "$status")
                 if (status != _itemsState.value.statusConnection) {
                     _itemsState.update { it.copy(statusConnection = status) }
                 }
                 if (!status) {
+                    appLogger.trackLog("RECOMPOSICIÓN", "RECOMPOSICIÓN POR PERDIDA DE CONEXIÓN------")
                     loadScreenInformation(data = TerminalResponseModel(1005L, null))
                 } else {
+                    appLogger.trackLog("RECOMPOSICIÓN","RECOMPOSICIÓN POR RECUPERAR LA CONEXIÓN+++++")
                     loadScreenInformation(data = TerminalResponseModel(5L, DefaultDits.idleConnected()))
                 }
             }
@@ -380,22 +383,5 @@ class MainViewModel (
                 serverConnection.setRestartApp(false)
             }
         }.launchIn(viewModelScope)
-    }
-
-    fun setBrightnessByCommand(activity: Activity, brightness: Int){
-        brightnessManager = SystemBrightnessManager(activity)
-
-        // Cambiar brillo a 150 (de 0-255)
-        val success = brightnessManager.setBrightness(brightness)
-
-        if (success) {
-            println("Brillo ajustado exitosamente")
-        } else {
-            println("Error al ajustar brillo")
-        }
-
-        // Obtener brillo actual
-        val currentBrightness = brightnessManager.getCurrentBrightness()
-        println("Brillo actual: $currentBrightness")
     }
 }

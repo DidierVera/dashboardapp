@@ -73,10 +73,11 @@ class SignalRService(
                         appLogger.trackLog("signalR-STATUS", hubConnection?.connectionState?.name)
                         serverConnection.setStatusConnection(false)
                         hubConnection?.start()
+                        delay(5000)
                     } else {
                         serverConnection.setStatusConnection(true)
+                        delay(500)
                     }
-                    delay(500)
                 }
 
                 hubConnection?.onClosed {
@@ -94,10 +95,10 @@ class SignalRService(
 
     fun cleanup() {
         try {
-            if(hubConnection == null) return
             if(signalRJob != null){
                 signalRJob?.cancel(cancellationMessage)
                 signalRJob = null
+                if(hubConnection == null) return
                 if (hubConnection?.connectionState == HubConnectionState.CONNECTED) {
                     hubConnection?.stop()
                 }else {

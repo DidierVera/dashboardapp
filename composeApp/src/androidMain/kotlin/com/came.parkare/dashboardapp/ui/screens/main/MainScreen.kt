@@ -100,7 +100,7 @@ private fun LoadBackground(
             LoadBackgroundImage(rememberAsyncImagePainter(model = customBackground))
         }
     }else{
-        LoadBackgroundImage(painterResource(id = R.drawable.intertraffic_background_image))
+        LoadBackgroundImage(painterResource(id = R.drawable.dashboard_backgroud))
     }
 }
 
@@ -133,27 +133,6 @@ private fun LoadDashboardItems(
         elements.forEach { mItem ->
             val textSizeScale = state.textSizeScale
             BuildComposable(elementModel = mItem, textSizeScale = textSizeScale)
-        }
-    }
-}
-@Composable
-private fun StartBrightnessTimeout() {
-    val viewModel: MainViewModel = koinViewModel()
-    val isActiveBrightnessMode by viewModel.startBrightnessMode.collectAsState()
-    val brightnessWaitDelay by viewModel.delayBrightnessTimeout.collectAsState()
-    val activity = (LocalContext.current as MainActivity)
-
-    LaunchedEffect(key1 = isActiveBrightnessMode, key2 = brightnessWaitDelay) {
-        if (isActiveBrightnessMode) {
-            println("delay time: $brightnessWaitDelay")
-            delay(brightnessWaitDelay * 1000L)
-
-//            DimmingOverlay(true)
-            //viewModel.setBrightnessByCommand(activity, 1)
-        } else {
-
-//            DimmingOverlay(false)
-            //viewModel.setBrightnessByCommand(activity, 255)
         }
     }
 }

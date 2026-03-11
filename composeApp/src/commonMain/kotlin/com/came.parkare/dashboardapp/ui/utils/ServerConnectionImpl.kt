@@ -14,10 +14,7 @@ import kotlinx.coroutines.flow.update
 
 class ServerConnectionImpl(): IServerConnection {
 
-    private val _statusConnection: MutableSharedFlow<Boolean> = MutableSharedFlow(
-        replay = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
+    private val _statusConnection: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val _restartApp: MutableStateFlow<Boolean> = MutableStateFlow(true)
     private val _typeConnection = MutableStateFlow(TypeConnectionEnum.SIGNAL_R)
     private val _screensList = MutableStateFlow<List<ScreenModel>>(emptyList())
@@ -25,8 +22,8 @@ class ServerConnectionImpl(): IServerConnection {
     override val typeConnection: StateFlow<TypeConnectionEnum>
         get() = _typeConnection.asStateFlow()
 
-    override val statusConnection: SharedFlow<Boolean>
-        get() = _statusConnection.asSharedFlow()
+    override val statusConnection: StateFlow<Boolean>
+        get() = _statusConnection.asStateFlow()
 
     override val restartApp: StateFlow<Boolean>
         get() = _restartApp.asStateFlow()
