@@ -5,5 +5,6 @@ import com.came.parkare.dashboardapp.ui.screens.settings.components.filepicker.F
 data class ResourcesState(
     val loading: Boolean = false,
     val clearSelectedFiles: Boolean = false,
-    val imagesResources: List<FilePickerDialogState> = emptyList()
+    val imagesResources: List<FilePickerDialogState> = emptyList(),
+    val fontResources: List<FilePickerDialogState> = emptyList()
 )

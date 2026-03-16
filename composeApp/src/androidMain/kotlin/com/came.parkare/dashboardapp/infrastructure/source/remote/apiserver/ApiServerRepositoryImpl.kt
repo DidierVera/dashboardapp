@@ -17,7 +17,6 @@ import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.DeviceUtils
 import com.came.parkare.dashboardapp.config.utils.IServerConnection
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
-import com.came.parkare.dashboardapp.domain.models.ImagesFileModel
 import com.came.parkare.dashboardapp.domain.models.toDto
 import com.came.parkare.dashboardapp.domain.repositories.external.ConfigFileRepository
 import com.came.parkare.dashboardapp.domain.repositories.local.ConfigTemplateRepository
@@ -26,7 +25,7 @@ import com.came.parkare.dashboardapp.domain.repositories.local.DashboardElementR
 import com.came.parkare.dashboardapp.domain.repositories.remote.ApiServerRepository
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.DeviceDto
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ImageFileDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ResourceFileDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toModel
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.logs.TrackErrorDto
@@ -118,7 +117,7 @@ class ApiServerRepositoryImpl(
         )
     }
 
-    override suspend fun saveImages(data: List<ImageFileDto>?): Int {
+    override suspend fun saveImages(data: List<ResourceFileDto>?): Int {
         val files = data?.map { it.toModel() }
         if (files.isNullOrEmpty()) {
             dashboardElementRepository.deleteAllImages()
@@ -128,6 +127,14 @@ class ApiServerRepositoryImpl(
         // Otherwise, replace all images in a single transaction
         dashboardElementRepository.replaceAllImages(files)
         return 0
+    }
+
+    override suspend fun getFont(): List<ResourceFileDto>? {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun saveFont(data: List<ResourceFileDto>?): Int {
+        TODO("Not yet implemented")
     }
 
 
@@ -158,7 +165,7 @@ class ApiServerRepositoryImpl(
         return version?.versionName ?: "1.0"
     }
 
-    override suspend fun getImages(): List<ImageFileDto>? {
+    override suspend fun getImages(): List<ResourceFileDto>? {
         //get images
         val images = dashboardElementRepository.getImages()
         return images.map { it.toDto() }

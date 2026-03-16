@@ -1,6 +1,6 @@
 package com.came.parkare.dashboardapp.domain.models
 
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ImageFileDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ResourceFileDto
 
 data class ImagesFileModel(
     val id: Long = 0,
@@ -8,8 +8,8 @@ data class ImagesFileModel(
     val fileContent: String?
 )
 
-fun ImagesFileModel.toDto() : ImageFileDto {
-    return ImageFileDto(
+fun ImagesFileModel.toDto() : ResourceFileDto {
+    return ResourceFileDto(
         id = id, fileContent = fileContent.orEmpty(), fileName = fileName.orEmpty()
     )
 }

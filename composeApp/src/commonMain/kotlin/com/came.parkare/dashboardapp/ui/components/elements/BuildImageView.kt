@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.came.parkare.dashboardapp.domain.models.components.ImageDataModel
@@ -17,7 +18,8 @@ fun BuildImageView(modifier: Modifier = Modifier, image: ImageDataModel, scaleFa
         if(image.folderPath.isBase64()){
             Base64Image(image.folderPath,
                 contentScale = ContentScale.FillHeight,
-                modifier = Modifier
+                modifier = modifier
+                    .clipToBounds()
                     .size(((image.style.width ?: 1).toFloat() * scaleFactor).dp,
                         ((image.style.height ?: 1).toFloat() * scaleFactor).dp)
             )
@@ -25,8 +27,9 @@ fun BuildImageView(modifier: Modifier = Modifier, image: ImageDataModel, scaleFa
             Image(
                 painter = imageItemStyle(image.folderPath),
                 contentDescription = null,
-                contentScale = ContentScale.FillHeight,
-                modifier = Modifier
+                contentScale = ContentScale.FillBounds,
+                modifier = modifier
+                    .clipToBounds()
                     .size(((image.style.width ?: 1).toFloat() * scaleFactor).dp,
                         ((image.style.height ?: 1).toFloat() * scaleFactor).dp)
             )

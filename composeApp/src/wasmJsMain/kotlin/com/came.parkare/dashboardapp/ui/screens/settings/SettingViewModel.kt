@@ -65,7 +65,7 @@ class SettingViewModel(
         get() = _refreshState.asStateFlow()
 
     init {
-        val ownIpAddress = "192.168.42.16"//window.location.hostname
+        val ownIpAddress = "192.168.209.94"//window.location.hostname
         preferences.put(SELECTED_IP_ADDRESS, ownIpAddress)
 
         loadLeftPanelOptions()
@@ -88,14 +88,14 @@ class SettingViewModel(
     }
 
     private fun loadIpAddress() {
-        val ip = "192.168.42.16"//window.location.hostname
+        val ip = "192.168.209.94"//window.location.hostname
         val currentIp = preferences.get(SELECTED_IP_ADDRESS, ip)
         setIpAddress(currentIp)
     }
 
     fun setIpAddress(ip: String){
         _settingsState.update { it.copy(ipSelected = ip) }
-        preferences.put(SELECTED_IP_ADDRESS, "192.168.42.16")//ip)
+        preferences.put(SELECTED_IP_ADDRESS, "192.168.209.94")//ip)
         resetComponent()
     }
 

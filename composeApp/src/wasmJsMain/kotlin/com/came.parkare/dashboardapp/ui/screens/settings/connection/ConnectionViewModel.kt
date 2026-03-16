@@ -7,9 +7,7 @@ import com.came.parkare.dashboardapp.config.utils.ErrorValidator
 import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.SaveConnectionConfig
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ImageFileDto
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
-import com.came.parkare.dashboardapp.ui.screens.settings.components.filepicker.FilePickerDialogState
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.config_saved_message
 import kotlinx.coroutines.Dispatchers

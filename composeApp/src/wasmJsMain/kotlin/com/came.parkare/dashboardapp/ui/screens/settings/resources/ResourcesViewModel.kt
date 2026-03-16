@@ -6,9 +6,8 @@ import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.ErrorValidator
 import com.came.parkare.dashboardapp.domain.usecases.GetImages
 import com.came.parkare.dashboardapp.domain.usecases.SaveImages
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ImageFileDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ResourceFileDto
 import com.came.parkare.dashboardapp.ui.screens.settings.components.filepicker.FilePickerDialogState
-import com.came.parkare.dashboardapp.ui.utils.FileDownloader
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.config_saved_message
@@ -67,27 +66,42 @@ class ResourcesViewModel(
         }
     }
 
-    fun setImages(filesSelected: List<FilePickerDialogState>) {
-        _state.update { it.copy(clearSelectedFiles = false) }
+    fun removeFont(file: FilePickerDialogState) {
+        _state.update { it.copy(clearSelectedFiles = true) }
+        _state.update { it.copy(fontResources = it.fontResources.filter { fnt -> fnt != file }) }
+    }
 
-        val currentImages = _state.value.imagesResources.toMutableList()
-
-        filesSelected.forEach { newImage ->
-            // Check if an image with the same fileName exists
-            val existingImageIndex = currentImages.indexOfFirst { it.fileNames == newImage.fileNames }
-
-            if (existingImageIndex != -1) {
-                // If it exists but has different content, REPLACE it
-                if (currentImages[existingImageIndex].fileContentsRaw != newImage.fileContentsRaw) {
-                    currentImages[existingImageIndex] = newImage
-                }
-            } else {
-                // If fileName doesn't exist, ADD it
-                currentImages.add(newImage)
+    private fun upsertFiles(
+        current: List<FilePickerDialogState>,
+        incoming: List<FilePickerDialogState>
+    ): List<FilePickerDialogState> {
+        val result = current.toMutableList()
+        incoming.forEach { newFile ->
+            val index = result.indexOfFirst { it.fileNames == newFile.fileNames }
+            when {
+                index == -1 -> result.add(newFile)
+                result[index].fileContentsRaw != newFile.fileContentsRaw -> result[index] = newFile
             }
         }
+        return result
+    }
 
-        _state.update { it.copy(imagesResources = currentImages) }
+    fun setImages(filesSelected: List<FilePickerDialogState>) {
+        _state.update {
+            it.copy(
+                clearSelectedFiles = false,
+                imagesResources = upsertFiles(it.imagesResources, filesSelected)
+            )
+        }
+    }
+
+    fun setFonts(filesSelected: List<FilePickerDialogState>) {
+        _state.update {
+            it.copy(
+                clearSelectedFiles = false,
+                fontResources = upsertFiles(it.fontResources, filesSelected)
+            )
+        }
     }
 
     fun downloadImage(image: FilePickerDialogState) {
@@ -104,7 +118,7 @@ class ResourcesViewModel(
 
     fun saveChanges() {
 
-        val files = _state.value.imagesResources.map { ImageFileDto(
+        val files = _state.value.imagesResources.map { ResourceFileDto(
             fileName = it.fileNames,
             fileContent = it.fileContentsRaw
         ) }

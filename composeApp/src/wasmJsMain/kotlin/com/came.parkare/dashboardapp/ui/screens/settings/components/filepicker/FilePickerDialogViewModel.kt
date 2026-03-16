@@ -24,27 +24,35 @@ class FilePickerDialogViewModel(
 
     @OptIn(ExperimentalEncodingApi::class)
     suspend fun addFile(file: PlatformFile) {
-        val content = readFileAsByteArray(file.file)
+        try {
+            val content = readFileAsByteArray(file.file)
 
-        _state.update { it.copy(fileNames = file.file.name) }
-        _state.update { it.copy(fileContents = content.decodeToString()) }
-        _state.update { it.copy(fileContentsRaw = Base64.encode(content)) }
+            _state.update { it.copy(fileNames = file.file.name) }
+            _state.update { it.copy(fileContents = content.decodeToString()) }
+            _state.update { it.copy(fileContentsRaw = Base64.encode(content)) }
+        }catch (e: Exception){
+            e.printStackTrace()
+        }
     }
 
     @OptIn(ExperimentalEncodingApi::class)
     suspend fun addFiles(files: List<PlatformFile>) {
-        val stateFiles = mutableListOf<FilePickerDialogState>()
-        for (file in files){
-            val content = readFileAsByteArray(file.file)
-            stateFiles.add(
-                FilePickerDialogState(
-                    fileNames = file.file.name,
-                    fileContents = content.decodeToString(),
-                    fileContentsRaw = Base64.encode(content)
+        try {
+            val stateFiles = mutableListOf<FilePickerDialogState>()
+            for (file in files){
+                val content = readFileAsByteArray(file.file)
+                stateFiles.add(
+                    FilePickerDialogState(
+                        fileNames = file.file.name,
+                        fileContents = content.decodeToString(),
+                        fileContentsRaw = Base64.encode(content)
+                    )
                 )
-            )
+            }
+            _multipleFiles.update { stateFiles }
+        }catch (e: Exception) {
+            e.printStackTrace()
         }
-        _multipleFiles.update { stateFiles }
     }
 
 

@@ -19,7 +19,7 @@ import com.came.parkare.dashboardapp.config.utils.WasmSharedPreferencesProvider
 import com.came.parkare.dashboardapp.domain.repositories.device.DeviceRepository
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.DeviceDto
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ImageFileDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ResourceFileDto
 import com.came.parkare.dashboardapp.infrastructure.source.services.base.HttpClient
 
 class DeviceRepositoryImpl(
@@ -105,9 +105,9 @@ class DeviceRepositoryImpl(
         }
     }
 
-    override suspend fun getImages(ipAddress: String): ServiceResult<List<ImageFileDto>?> {
+    override suspend fun getImages(ipAddress: String): ServiceResult<List<ResourceFileDto>?> {
         return try {
-            val result = httpClient.get<List<ImageFileDto>?>("$SSL_PROTOCOL$ipAddress:$apiPort$GET_IMAGES")
+            val result = httpClient.get<List<ResourceFileDto>?>("$SSL_PROTOCOL$ipAddress:$apiPort$GET_IMAGES")
             ServiceResult.Success(result)
         }catch (e: Exception){
             appLogger.trackError(e)
@@ -117,10 +117,10 @@ class DeviceRepositoryImpl(
 
     override suspend fun saveImages(
         ipAddress: String,
-        data: List<ImageFileDto>
+        data: List<ResourceFileDto>
     ): ServiceResult<ResponseStatusDto> {
         return try {
-            val result = httpClient.post<ResponseStatusDto, List<ImageFileDto>>("$SSL_PROTOCOL$ipAddress:$apiPort$SAVE_IMAGES", data)
+            val result = httpClient.post<ResponseStatusDto, List<ResourceFileDto>>("$SSL_PROTOCOL$ipAddress:$apiPort$SAVE_IMAGES", data)
             ServiceResult.Success(result)
         }catch (e: Exception){
             appLogger.trackError(e)

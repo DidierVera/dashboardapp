@@ -11,12 +11,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,6 +29,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,17 +52,25 @@ import com.came.parkare.dashboardapp.ui.theme.CameBlueColor
 import com.came.parkare.dashboardapp.ui.theme.LightGrayColor
 import com.came.parkare.dashboardapp.ui.theme.WhiteColor
 import com.came.parkare.dashboardapp.ui.theme.style.floatingButton
+import com.came.parkare.dashboardapp.ui.theme.style.shadowContainer
+import com.came.parkare.dashboardapp.ui.utils.FontLoader
 import dashboardapp.composeapp.generated.resources.Res
+import dashboardapp.composeapp.generated.resources.font_resources_label
 import dashboardapp.composeapp.generated.resources.ic_close
 import dashboardapp.composeapp.generated.resources.ic_download
 import dashboardapp.composeapp.generated.resources.ic_import_export
 import dashboardapp.composeapp.generated.resources.image_resources_label
 import dashboardapp.composeapp.generated.resources.save_button
 import dashboardapp.composeapp.generated.resources.upload_file_button
+import kotlinx.coroutines.CoroutineStart
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.skia.Typeface
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 @Composable
 fun ResourcesScreen() {
@@ -90,7 +104,9 @@ private fun ResourcesColumnLayout() {
 @Composable
 private fun ResourcesTabLayout() {
     var selectedTab by remember { mutableStateOf(0) }
-    val tabs = listOf("Imágenes", "Fuentes")
+    val imagesLabel = stringResource(Res.string.image_resources_label)
+    val fontsLabel = stringResource(Res.string.font_resources_label)
+    val tabs = listOf(imagesLabel, fontsLabel)
 
     Column(modifier = Modifier.fillMaxSize()) {
         TabRow(selectedTabIndex = selectedTab) {
@@ -137,7 +153,7 @@ fun ImagesPanel(modifier: Modifier = Modifier) {
             modifier = Modifier.weight(1f)   // <-- ocupa el espacio restante del Column
         ) {
             items(items = state.imagesResources) { image ->
-                ImageGridItem(image = image, viewModel = viewModel)
+                ImageGridItem(image = image)
             }
         }
     }
@@ -145,40 +161,54 @@ fun ImagesPanel(modifier: Modifier = Modifier) {
 
 @Composable
 private fun FontsPanel(modifier: Modifier = Modifier){
+    val viewModel: ResourcesViewModel = koinViewModel()
+    val state by viewModel.state.collectAsState()
 
+    Column(
+        modifier = modifier.fillMaxSize().padding(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        AppLabel(Res.string.font_resources_label)
+
+        DialogPickerDialog(
+            buttonText = Res.string.upload_file_button,
+            multipleFiles = true,
+            clearFiles = state.clearSelectedFiles,
+            onFilesSelected = { items -> viewModel.setFonts(items) }
+        )
+        LazyColumn(
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+            items(items = state.fontResources){ font ->
+                FontRowItem(font) {
+                    viewModel.removeFont(font)
+                }
+            }
+        }
+    }
 }
 
-//@Composable
-//fun ResourcesScreen() {
-//    val viewModel: ResourcesViewModel = koinViewModel()
-//    viewModel.initTab()
-//    val state by viewModel.state.collectAsState()
-//
-//    LazyVerticalGrid(
-//        columns = GridCells.Fixed(5),
-//        horizontalArrangement = Arrangement.spacedBy(4.dp),
-//        verticalArrangement = Arrangement.spacedBy(8.dp),
-//        contentPadding = PaddingValues(4.dp),
-//        modifier = Modifier
-//    ) {
-//        // Header: ocupa las 5 columnas
-//        item(span = { GridItemSpan(5) }) {
-//            UploadImages()
-//        }
-//
-//        // Imágenes en grid
-//        items(items = state.imagesResources) { image ->
-//            ImageGridItem(image = image, viewModel = viewModel)
-//        }
-//
-//        // Botón save: ocupa las 5 columnas
-//        item(span = { GridItemSpan(5) }) {
-//            Box(modifier = Modifier.fillMaxWidth()) {
-//                SaveButton(modifier = Modifier.align(Alignment.BottomEnd))
-//            }
-//        }
-//    }
-//}
+@OptIn(ExperimentalEncodingApi::class)
+@Composable
+private fun FontRowItem(font: FilePickerDialogState, onDelete: () -> Unit) {
+    val fontLoader: FontLoader = koinInject()
+
+    LaunchedEffect(font.fileContentsRaw) {
+        val bytes = Base64.decode(font.fileContentsRaw)
+        val typeface = fontLoader.loadTypeface(font.fileNames, bytes)
+    }
+
+    Row(verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth().padding(8.dp).shadowContainer().padding(4.dp)) {
+
+        Text(text = font.fileNames, style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.weight(1f))
+        DeleteButton(modifier = Modifier.size(24.dp), onClick = onDelete)
+    }
+}
+
 @Composable
 private fun SaveButton(modifier: Modifier = Modifier) {
     val viewModel: ResourcesViewModel = koinViewModel()
@@ -197,7 +227,8 @@ private fun SaveButton(modifier: Modifier = Modifier) {
 
 
 @Composable
-private fun ImageGridItem(image: FilePickerDialogState, viewModel: ResourcesViewModel) {
+private fun ImageGridItem(image: FilePickerDialogState) {
+    val viewModel: ResourcesViewModel = koinViewModel()
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box(modifier = Modifier.size(100.dp)) {
             Base64Image(
@@ -208,19 +239,12 @@ private fun ImageGridItem(image: FilePickerDialogState, viewModel: ResourcesView
                 contentScale = ContentScale.FillBounds
             )
             // Botón eliminar — top end (igual que antes)
-            DeleteButton(
-                modifier = Modifier
-                    .size(24.dp)
-                    .align(Alignment.TopEnd)
-            ) {
+            DeleteButton(modifier = Modifier.size(24.dp).align(Alignment.TopEnd)) {
                 viewModel.removeImage(image)
             }
             // Botón descargar — bottom end
             DownloadButton(
-                modifier = Modifier
-                    .size(24.dp)
-                    .align(Alignment.BottomEnd)
-            ) {
+                modifier = Modifier.size(24.dp).align(Alignment.BottomEnd)) {
                 viewModel.downloadImage(image)
             }
         }

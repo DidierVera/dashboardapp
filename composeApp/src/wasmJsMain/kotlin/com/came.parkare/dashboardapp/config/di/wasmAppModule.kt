@@ -44,8 +44,10 @@ import com.came.parkare.dashboardapp.ui.screens.settings.exportfile.ExportViewMo
 import com.came.parkare.dashboardapp.ui.screens.settings.resources.ResourcesViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.shareconfig.ShareConfigViewModel
 import com.came.parkare.dashboardapp.ui.utils.ErrorValidatorImpl
+import com.came.parkare.dashboardapp.ui.utils.FontLoader
 import com.came.parkare.dashboardapp.ui.utils.UiUtils
 import com.came.parkare.dashboardapp.ui.utils.UiUtilsImpl
+import com.came.parkare.dashboardapp.ui.utils.WasmFontLoader
 import kotlinx.browser.window
 import org.koin.compose.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.bind
@@ -63,6 +65,7 @@ val wasmAppModule = module {
     singleOf(::WebStoragePreferences) { bind<SharedPreferencesProvider>() }
     singleOf(::WasmUtilsHandlerImpl) { bind<WasmUtilsHandler>() }
     singleOf(::ErrorValidatorImpl) { bind<ErrorValidator>() }
+    singleOf(::WasmFontLoader) { bind<FontLoader>() }
 
     //viewModels
     viewModelOf(::SettingViewModel)

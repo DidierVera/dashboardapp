@@ -11,13 +11,12 @@ import com.came.parkare.dashboardapp.domain.repositories.local.ConfigTemplateRep
 import com.came.parkare.dashboardapp.domain.repositories.remote.ApiServerRepository
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.DeviceDto
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ImageFileDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ResourceFileDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.logs.TrackErrorDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.logs.TrackLogDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ConfigTemplateDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toModel
-import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isCheckStatus
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isDeleteConfigTemplate
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isDeleteDevice
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetConfigTemplate
@@ -170,7 +169,7 @@ class AndroidApiServer(
     }
 
     private fun handleGetImages(): Response {
-        return processAsyncRequest<Unit, List<ImageFileDto>?>(
+        return processAsyncRequest<Unit, List<ResourceFileDto>?>(
             operation = { apiServerRepository.getImages() },
             successTransform = { result -> Json.encodeToString(result) }
         )
@@ -185,7 +184,7 @@ class AndroidApiServer(
     }
 
     private fun handleSaveImages(session: IHTTPSession): Response {
-        return processPostRequest<List<ImageFileDto>?>(
+        return processPostRequest<List<ResourceFileDto>?>(
             session = session,
             parseBody = { body -> Json.decodeFromString(body) },
             operation = { dto -> apiServerRepository.saveImages(dto) == 0 }

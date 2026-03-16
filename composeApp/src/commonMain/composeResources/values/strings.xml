@@ -57,13 +57,15 @@
     <string name="api_label">API</string>
     <string name="delay_time_label">Delay time(s)</string>
     <string name="show_video_frame_label">Show video frame</string>
-    <string name="image_resources_label">Images resources</string>
     <string name="text_size_scale_label">Text size scale</string>
     <string name="auto_brightness_label">Set auto brightness change</string>
     <string name="show_car_counter_label">Show car counter</string>
     <string name="delay_brightness_label">Active low brightness after(s)</string>
     <string name="reset_counter_label">Reset counter each (minutes)</string>
 
+    <!--  Resource files  -->
+    <string name="image_resources_label">Image resources</string>
+    <string name="font_resources_label">Font resources</string>
 
     <!--canvas screen-->
     <string name="screens_label">Screens</string>
