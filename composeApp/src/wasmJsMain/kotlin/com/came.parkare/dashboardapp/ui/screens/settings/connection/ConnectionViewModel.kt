@@ -64,14 +64,7 @@ class ConnectionViewModel(
                                 brightnessDelay = activeLowBrightnessTime ?: 2,
                                 showBrightnessMode = autoBrightness == true,
                                 carCounterReset = carCounterReset ?: 1,
-                                showCarCounter = showCarCounter == true,
-                                imagesResources = files?.map {
-                                    FilePickerDialogState(
-                                        fileNames = it.fileName,
-                                        fileContentsRaw = it.fileContent,
-                                        id = it.id
-                                    )
-                                }.orEmpty()
+                                showCarCounter = showCarCounter == true
                             )
                         }
                     }
@@ -130,29 +123,6 @@ class ConnectionViewModel(
         _state.update { it.copy(textSizeScale = newValue) }
     }
 
-    fun setImages(filesSelected: List<FilePickerDialogState>) {
-        _state.update { it.copy(clearSelectedFiles = false) }
-
-        val currentImages = _state.value.imagesResources.toMutableList()
-
-        filesSelected.forEach { newImage ->
-            // Check if an image with the same fileName exists
-            val existingImageIndex = currentImages.indexOfFirst { it.fileNames == newImage.fileNames }
-
-            if (existingImageIndex != -1) {
-                // If it exists but has different content, REPLACE it
-                if (currentImages[existingImageIndex].fileContentsRaw != newImage.fileContentsRaw) {
-                    currentImages[existingImageIndex] = newImage
-                }
-            } else {
-                // If fileName doesn't exist, ADD it
-                currentImages.add(newImage)
-            }
-        }
-
-        _state.update { it.copy(imagesResources = currentImages) }
-    }
-
     fun saveChanges() {
         val model = getConnectionConfigModel()
         viewModelScope.launch {
@@ -179,22 +149,12 @@ class ConnectionViewModel(
             terminalIp = terminalIp, videoFrame = showVideoFrame, port = port,
             terminalApi = api, timeDelay = delayTime, apiPort = 2023,
             activeLowBrightnessTime = brightnessDelay, autoBrightness = showBrightnessMode,
-            carCounterReset = carCounterReset, showCarCounter = showCarCounter,
-
-            files = imagesResources.map { ImageFileDto(
-                fileName = it.fileNames,
-                fileContent = it.fileContentsRaw
-            ) }
+            carCounterReset = carCounterReset, showCarCounter = showCarCounter
         )
     }
 
     fun setConnectionWay(newValue: String) {
         val connectionWay = _state.value.connectionWayOptions.first { it.second == newValue }
         _state.update { it.copy(connectionWay = connectionWay) }
-    }
-
-    fun removeImage(image: FilePickerDialogState) {
-        _state.update { it.copy(clearSelectedFiles = true) }
-        _state.update { it.copy(imagesResources = it.imagesResources.filter { img -> img != image }) }
     }
 }

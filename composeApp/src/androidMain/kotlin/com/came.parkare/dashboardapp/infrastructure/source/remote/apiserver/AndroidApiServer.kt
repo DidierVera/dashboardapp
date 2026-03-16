@@ -11,6 +11,7 @@ import com.came.parkare.dashboardapp.domain.repositories.local.ConfigTemplateRep
 import com.came.parkare.dashboardapp.domain.repositories.remote.ApiServerRepository
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.DeviceDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ImageFileDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.logs.TrackErrorDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.logs.TrackLogDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ConfigTemplateDto
@@ -25,12 +26,14 @@ import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiR
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetCurrentConnectionConfig
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetDashboardListRequest
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetDefaultConfigTemplate
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetImages
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetVersion
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveConfigTemplate
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveConfiguratorError
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveConfiguratorLog
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveConnectionConfig
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveDeviceRequest
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveImages
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveScreenRequest
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSetConfigType
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isUpdateConfigTemplate
@@ -76,6 +79,8 @@ class AndroidApiServer(
             session.isSaveConfiguratorLog() -> handleTrackLog(session)
             session.isSaveConfiguratorError() -> handleTrackError(session)
             session.isGetVersion() -> handleGetAppVersion()
+            session.isGetImages() -> handleGetImages()
+            session.isSaveImages() -> handleSaveImages(session)
             else -> createNotFoundResponse()
         }
     }
@@ -164,11 +169,26 @@ class AndroidApiServer(
         )
     }
 
+    private fun handleGetImages(): Response {
+        return processAsyncRequest<Unit, List<ImageFileDto>?>(
+            operation = { apiServerRepository.getImages() },
+            successTransform = { result -> Json.encodeToString(result) }
+        )
+    }
+
     private fun handleSaveTerminalConnection(session: IHTTPSession): Response {
         return processPostRequest<ConnectionConfigDto>(
             session = session,
             parseBody = { body -> Json.decodeFromString(body) },
             operation = { dto -> apiServerRepository.saveTerminalConnection(dto) == 0 }
+        )
+    }
+
+    private fun handleSaveImages(session: IHTTPSession): Response {
+        return processPostRequest<List<ImageFileDto>?>(
+            session = session,
+            parseBody = { body -> Json.decodeFromString(body) },
+            operation = { dto -> apiServerRepository.saveImages(dto) == 0 }
         )
     }
 

@@ -14,6 +14,5 @@ data class ConnectionConfigModel(
     val autoBrightness: Boolean,
     val activeLowBrightnessTime: Int,
     val showCarCounter: Boolean,
-    val carCounterReset: Int,
-    val files: List<ImagesFileModel>? = null
+    val carCounterReset: Int
 )

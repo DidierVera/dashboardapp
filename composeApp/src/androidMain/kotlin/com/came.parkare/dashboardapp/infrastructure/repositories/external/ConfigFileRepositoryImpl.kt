@@ -75,19 +75,6 @@ class ConfigFileRepositoryImpl(
             2 -> serverConnection.setTypeConnection(TypeConnectionEnum.SOCKET)
             else -> serverConnection.setTypeConnection(TypeConnectionEnum.MOCK)
         }
-
-        //storage images
-        storageImages(data.files?.map { it.toModel() })
-    }
-
-    private suspend fun storageImages(files: List<ImagesFileModel>?) {
-        if (files.isNullOrEmpty()) {
-            dashboardElementRepository.deleteAllImages()
-            return
-        }
-
-        // Otherwise, replace all images in a single transaction
-        dashboardElementRepository.replaceAllImages(files)
     }
 
     override suspend fun getFileConfiguration(): ServiceResult<Boolean> {

@@ -11,6 +11,7 @@
     <string name="export_option">Export</string>
     <string name="edit_current_config_option">Edit current config</string>
     <string name="share_config_option">Share config</string>
+    <string name="resources_file_option">Resources file</string>
 
     <!--Buttons general-->
     <string name="general_configuration_title">GENERAL CONFIGURATION</string>

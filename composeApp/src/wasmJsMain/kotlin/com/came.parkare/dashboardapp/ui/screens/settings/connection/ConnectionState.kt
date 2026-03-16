@@ -14,7 +14,5 @@ data class ConnectionState(
     val showBrightnessMode: Boolean = false,
     val showCarCounter: Boolean = false,
     val brightnessDelay: Int = 2,
-    val carCounterReset: Int = 1,
-    val clearSelectedFiles: Boolean = false,
-    val imagesResources: List<FilePickerDialogState> = emptyList()
+    val carCounterReset: Int = 1
 )

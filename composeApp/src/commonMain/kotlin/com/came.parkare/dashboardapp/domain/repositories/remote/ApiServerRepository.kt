@@ -2,6 +2,7 @@ package com.came.parkare.dashboardapp.domain.repositories.remote
 
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.DeviceDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ImageFileDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.logs.TrackErrorDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.logs.TrackLogDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
@@ -21,4 +22,6 @@ interface ApiServerRepository {
     suspend fun saveConfiguratorLog(dto: TrackLogDto): Int
     suspend fun saveConfiguratorException(dto: TrackErrorDto): Int
     suspend fun getAppVersion(): String
+    suspend fun getImages(): List<ImageFileDto>?
+    suspend fun saveImages(data: List<ImageFileDto>?): Int
 }

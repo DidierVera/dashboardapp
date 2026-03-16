@@ -20,4 +20,6 @@ object ApiRequestUri {
     const val TRACK_LOG = "/api/configurator/log"
     const val CHECK_STATUS = "/api/device/status"
     const val GET_VERSION = "/api/device/version"
+    const val GET_IMAGES = "/api/resources/images/get"
+    const val SAVE_IMAGES = "/api/resources/images/save"
 }

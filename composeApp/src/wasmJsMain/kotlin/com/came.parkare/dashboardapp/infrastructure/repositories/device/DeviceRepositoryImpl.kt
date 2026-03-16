@@ -4,9 +4,11 @@ import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.CHECK_STATUS
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.DELETE_DEVICE
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_CONNECTION_CONFIG
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_DEVICE_LIST
+import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_IMAGES
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_VERSION
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_CONNECTION_CONFIG
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_DEVICE
+import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_IMAGES
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SSL_PROTOCOL
 import com.came.parkare.dashboardapp.config.constants.Constants.API_PORT
 import com.came.parkare.dashboardapp.config.dataclasses.ErrorTypeClass
@@ -17,6 +19,7 @@ import com.came.parkare.dashboardapp.config.utils.WasmSharedPreferencesProvider
 import com.came.parkare.dashboardapp.domain.repositories.device.DeviceRepository
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.DeviceDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ImageFileDto
 import com.came.parkare.dashboardapp.infrastructure.source.services.base.HttpClient
 
 class DeviceRepositoryImpl(
@@ -95,6 +98,29 @@ class DeviceRepositoryImpl(
     override suspend fun getAppVersion(ipAddress: String): ServiceResult<String> {
         return try {
             val result = httpClient.get<String>("$SSL_PROTOCOL$ipAddress:$apiPort$GET_VERSION")
+            ServiceResult.Success(result)
+        }catch (e: Exception){
+            appLogger.trackError(e)
+            ServiceResult.Error(ErrorTypeClass.GeneralException(e.message))
+        }
+    }
+
+    override suspend fun getImages(ipAddress: String): ServiceResult<List<ImageFileDto>?> {
+        return try {
+            val result = httpClient.get<List<ImageFileDto>?>("$SSL_PROTOCOL$ipAddress:$apiPort$GET_IMAGES")
+            ServiceResult.Success(result)
+        }catch (e: Exception){
+            appLogger.trackError(e)
+            ServiceResult.Error(ErrorTypeClass.GeneralException(e.message))
+        }
+    }
+
+    override suspend fun saveImages(
+        ipAddress: String,
+        data: List<ImageFileDto>
+    ): ServiceResult<ResponseStatusDto> {
+        return try {
+            val result = httpClient.post<ResponseStatusDto, List<ImageFileDto>>("$SSL_PROTOCOL$ipAddress:$apiPort$SAVE_IMAGES", data)
             ServiceResult.Success(result)
         }catch (e: Exception){
             appLogger.trackError(e)

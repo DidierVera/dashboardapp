@@ -17,6 +17,7 @@ import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.DeviceUtils
 import com.came.parkare.dashboardapp.config.utils.IServerConnection
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
+import com.came.parkare.dashboardapp.domain.models.ImagesFileModel
 import com.came.parkare.dashboardapp.domain.models.toDto
 import com.came.parkare.dashboardapp.domain.repositories.external.ConfigFileRepository
 import com.came.parkare.dashboardapp.domain.repositories.local.ConfigTemplateRepository
@@ -25,6 +26,7 @@ import com.came.parkare.dashboardapp.domain.repositories.local.DashboardElementR
 import com.came.parkare.dashboardapp.domain.repositories.remote.ApiServerRepository
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.DeviceDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ImageFileDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toModel
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.logs.TrackErrorDto
@@ -100,9 +102,6 @@ class ApiServerRepositoryImpl(
             else -> 0
         }
 
-        //get images
-        val images = dashboardElementRepository.getImages()
-
         return ConnectionConfigDto(
             connectionWay = connectionWay,
             terminalIp = terminalIp,
@@ -115,10 +114,22 @@ class ApiServerRepositoryImpl(
             autoBrightness = autoBrightness,
             activeLowBrightnessTime = autoBrightnessDelayTime,
             carCounterReset = carCounterDelay,
-            showCarCounter = showCarCounter,
-            files = images.map { it.toDto() }
+            showCarCounter = showCarCounter
         )
     }
+
+    override suspend fun saveImages(data: List<ImageFileDto>?): Int {
+        val files = data?.map { it.toModel() }
+        if (files.isNullOrEmpty()) {
+            dashboardElementRepository.deleteAllImages()
+            return -1
+        }
+
+        // Otherwise, replace all images in a single transaction
+        dashboardElementRepository.replaceAllImages(files)
+        return 0
+    }
+
 
     override suspend fun saveScreenConfigType(type: Long): Boolean {
         preferences.put(CONFIG_TYPE, type)
@@ -145,5 +156,11 @@ class ApiServerRepositoryImpl(
     override suspend fun getAppVersion(): String {
         val version = deviceUtils.getAppVersion()
         return version?.versionName ?: "1.0"
+    }
+
+    override suspend fun getImages(): List<ImageFileDto>? {
+        //get images
+        val images = dashboardElementRepository.getImages()
+        return images.map { it.toDto() }
     }
 }

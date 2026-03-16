@@ -16,12 +16,14 @@ import dashboardapp.composeapp.generated.resources.export_option
 import dashboardapp.composeapp.generated.resources.ic_connection
 import dashboardapp.composeapp.generated.resources.ic_download
 import dashboardapp.composeapp.generated.resources.ic_monitor
+import dashboardapp.composeapp.generated.resources.ic_resource_files
 import dashboardapp.composeapp.generated.resources.ic_share
 import dashboardapp.composeapp.generated.resources.ic_testing
 import dashboardapp.composeapp.generated.resources.ic_upload
 import dashboardapp.composeapp.generated.resources.ico_edit_file
 import dashboardapp.composeapp.generated.resources.import_export_option
 import dashboardapp.composeapp.generated.resources.import_option
+import dashboardapp.composeapp.generated.resources.resources_file_option
 import dashboardapp.composeapp.generated.resources.share_config_option
 import dashboardapp.composeapp.generated.resources.testing_option
 import kotlinx.browser.window
@@ -63,7 +65,7 @@ class SettingViewModel(
         get() = _refreshState.asStateFlow()
 
     init {
-        val ownIpAddress = window.location.hostname
+        val ownIpAddress = "192.168.42.16"//window.location.hostname
         preferences.put(SELECTED_IP_ADDRESS, ownIpAddress)
 
         loadLeftPanelOptions()
@@ -86,14 +88,14 @@ class SettingViewModel(
     }
 
     private fun loadIpAddress() {
-        val ip = window.location.hostname
+        val ip = "192.168.42.16"//window.location.hostname
         val currentIp = preferences.get(SELECTED_IP_ADDRESS, ip)
         setIpAddress(currentIp)
     }
 
     fun setIpAddress(ip: String){
         _settingsState.update { it.copy(ipSelected = ip) }
-        preferences.put(SELECTED_IP_ADDRESS, ip)
+        preferences.put(SELECTED_IP_ADDRESS, "192.168.42.16")//ip)
         resetComponent()
     }
 
@@ -130,11 +132,16 @@ class SettingViewModel(
                     nameRes = Res.string.share_config_option,
                     isSelected = false
                 ),
-//                MenuOptionState(
-//                    iconRes = Res.drawable.ic_testing,
-//                    nameRes = Res.string.testing_option,
-//                    isSelected = false
-//                )
+                MenuOptionState(
+                    iconRes = Res.drawable.ic_resource_files,
+                    nameRes = Res.string.resources_file_option,
+                    isSelected = false
+                ),
+                MenuOptionState(
+                    iconRes = Res.drawable.ic_testing,
+                    nameRes = Res.string.testing_option,
+                    isSelected = false
+                )
             )
         }
     }

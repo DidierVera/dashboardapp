@@ -17,7 +17,9 @@ import com.came.parkare.dashboardapp.domain.usecases.GetDeviceList
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceStatus
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
 import com.came.parkare.dashboardapp.domain.usecases.GetDefaultTemplatesConfig
+import com.came.parkare.dashboardapp.domain.usecases.GetImages
 import com.came.parkare.dashboardapp.domain.usecases.SaveConnectionConfig
+import com.came.parkare.dashboardapp.domain.usecases.SaveImages
 import com.came.parkare.dashboardapp.domain.usecases.SaveNewDevice
 import com.came.parkare.dashboardapp.domain.usecases.SaveScreenConfig
 import com.came.parkare.dashboardapp.infrastructure.repositories.device.DeviceRepositoryImpl
@@ -39,6 +41,7 @@ import com.came.parkare.dashboardapp.ui.screens.settings.connection.ConnectionVi
 import com.came.parkare.dashboardapp.ui.screens.settings.dashboardlist.DashboardListViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.editconfig.EditConfigViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.exportfile.ExportViewModel
+import com.came.parkare.dashboardapp.ui.screens.settings.resources.ResourcesViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.shareconfig.ShareConfigViewModel
 import com.came.parkare.dashboardapp.ui.utils.ErrorValidatorImpl
 import com.came.parkare.dashboardapp.ui.utils.UiUtils
@@ -68,6 +71,7 @@ val wasmAppModule = module {
     viewModelOf(::ExportViewModel)
     viewModelOf(::HomeViewModel)
     viewModelOf(::ConnectionViewModel)
+    viewModelOf(::ResourcesViewModel)
     viewModelOf(::AppLoadingViewModel)
     viewModelOf(::AppToastViewModel)
     viewModelOf(::DashboardListViewModel)
@@ -91,6 +95,8 @@ val wasmAppModule = module {
     single { DeleteDevice(get(), get()) }
     single { GetDeviceStatus(get(), get()) }
     single { GetAppVersion(get(), get()) }
+    single { GetImages(get(), get()) }
+    single { SaveImages(get(), get()) }
     single { GetDefaultTemplatesConfig(get(), get(), get()) }
 
 

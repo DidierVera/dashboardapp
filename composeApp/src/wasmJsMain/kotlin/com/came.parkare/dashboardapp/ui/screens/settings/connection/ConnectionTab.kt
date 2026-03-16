@@ -93,8 +93,6 @@ fun ConnectionTab() {
         ShowBrightnessMode()
         ShowCarCounter()
         ShowVideoFrame()
-        UploadImages()
-        LoadPreviousImages()
         Spacer(modifier = Modifier.height(4.dp))
         Box(modifier = Modifier) {
             SaveButton(modifier = Modifier.align(Alignment.BottomEnd))
@@ -241,64 +239,6 @@ private fun ShowCarCounter() {
                 label = { AppLabel(Res.string.reset_counter_label) }
             )
         }
-    }
-}
-
-@Composable
-fun LoadPreviousImages() {
-    val viewModel: ConnectionViewModel = koinViewModel()
-    val state by viewModel.state.collectAsState()
-    LazyRow(modifier = Modifier.fillMaxSize()) {
-        items(items = state.imagesResources){ image ->
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Box(modifier = Modifier.size(100.dp)){
-                    Base64Image(base64String = image.fileContentsRaw,
-                        modifier = Modifier.fillMaxSize().floatingButton(
-                            background = Color.LightGray
-                        ),
-                        contentScale = ContentScale.FillBounds)
-
-                    DeleteButton(modifier = Modifier
-                        .size(24.dp).align(Alignment.TopEnd)){
-                        viewModel.removeImage(image)
-                    }
-                }
-                Text(
-                    text = image.fileNames,
-                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 10.sp),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.align(Alignment.CenterHorizontally).widthIn(max = 80.dp))
-            }
-        }
-    }
-}
-
-@Composable
-fun DeleteButton(modifier: Modifier, onClick: () -> Unit) {
-    IconButton(onClick = { onClick.invoke() },
-        modifier = modifier.fillMaxSize(0.82F)) {
-        Image(painter = painterResource(Res.drawable.ic_close),
-            contentDescription = null,
-            alignment = Alignment.Center,
-            modifier = modifier.background(Color.LightGray).fillMaxSize())
-    }
-}
-
-@Composable
-fun UploadImages() {
-    val viewModel: ConnectionViewModel = koinViewModel()
-    val state by viewModel.state.collectAsState()
-
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        AppLabel(Res.string.image_resources_label)
-        DialogPickerDialog(
-            buttonText = Res.string.upload_file_button,
-            multipleFiles = true,
-            clearFiles = state.clearSelectedFiles,
-            onFilesSelected =  { items ->
-                viewModel.setImages(items)
-            }
-        )
     }
 }
 

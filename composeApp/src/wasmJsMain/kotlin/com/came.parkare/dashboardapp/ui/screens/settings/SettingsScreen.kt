@@ -26,6 +26,7 @@ import com.came.parkare.dashboardapp.ui.screens.settings.dashboardlist.Dashboard
 import com.came.parkare.dashboardapp.ui.screens.settings.editconfig.EditConfigTab
 import com.came.parkare.dashboardapp.ui.screens.settings.exportfile.ExportTab
 import com.came.parkare.dashboardapp.ui.screens.settings.importfile.ImportTab
+import com.came.parkare.dashboardapp.ui.screens.settings.resources.ResourcesScreen
 import com.came.parkare.dashboardapp.ui.screens.settings.shareconfig.ShareConfigTab
 import com.came.parkare.dashboardapp.ui.screens.settings.testing.TestingTab
 import dashboardapp.composeapp.generated.resources.Res
@@ -34,6 +35,7 @@ import dashboardapp.composeapp.generated.resources.dashboard_list_option
 import dashboardapp.composeapp.generated.resources.edit_current_config_option
 import dashboardapp.composeapp.generated.resources.export_option
 import dashboardapp.composeapp.generated.resources.import_option
+import dashboardapp.composeapp.generated.resources.resources_file_option
 import dashboardapp.composeapp.generated.resources.share_config_option
 import dashboardapp.composeapp.generated.resources.testing_option
 import org.koin.compose.viewmodel.koinViewModel
@@ -70,6 +72,7 @@ fun SettingsScreen(onBackClick: () -> Unit){
                     Res.string.share_config_option -> ShareConfigTab()
                     Res.string.testing_option -> TestingTab()
                     Res.string.edit_current_config_option -> EditConfigTab(Modifier.sizeIn(minWidth = 1440.dp))
+                    Res.string.resources_file_option -> ResourcesScreen()
                     else -> {}
                 }
             }
