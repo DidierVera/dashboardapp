@@ -9,4 +9,5 @@ interface ConfigFileRepository {
     suspend fun getFileConfiguration(): ServiceResult<Boolean>
     suspend fun writeConnectionConfig(newData: ConnectionConfigModel): ServiceResult<Boolean>
     suspend fun writeScreensConfig(newData: List<ScreenModel>): ServiceResult<Boolean>
+    suspend fun getDefaultImages(): ServiceResult<Boolean>
 }

@@ -9,6 +9,7 @@ import java.io.FileNotFoundException
 
 class InitConfiguration (
     private val getScreenConfigurations: GetScreenConfigurations,
+    private val getDefaultImages: GetDefaultImages,
     private val connectionConfig: ConnectionConfig,
     private val ftpServerConfiguration: FtpServerConfiguration,
     private val appLogger: AppLogger
@@ -19,6 +20,7 @@ class InitConfiguration (
             getFtpConfig()
             getScreenConfig()
             getConnectionConfig()
+            getDefaultImages()
         } catch (e: Exception){
             appLogger.trackError(e)
             ServiceResult.Error(ErrorTypeClass.GeneralException(messageError = e.message))
@@ -29,6 +31,14 @@ class InitConfiguration (
         //screens config initialization
         return when (val initConfigResult = getScreenConfigurations.invoke()) {
             is ServiceResult.Error -> ServiceResult.Error(initConfigResult.error)
+            is ServiceResult.Success -> ServiceResult.Success(0)
+        }
+    }
+
+    private suspend fun getDefaultImages(): ServiceResult<Int>{
+        //default images initialization
+        return when (val defaultImages = getDefaultImages.invoke()) {
+            is ServiceResult.Error -> ServiceResult.Error(defaultImages.error)
             is ServiceResult.Success -> ServiceResult.Success(0)
         }
     }

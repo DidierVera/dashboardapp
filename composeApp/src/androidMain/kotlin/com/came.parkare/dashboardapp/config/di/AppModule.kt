@@ -22,6 +22,7 @@ import com.came.parkare.dashboardapp.domain.repositories.remote.ApiServerReposit
 import com.came.parkare.dashboardapp.domain.repositories.remote.TerminalConnectionRepository
 import com.came.parkare.dashboardapp.domain.usecases.ConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.FtpServerConfiguration
+import com.came.parkare.dashboardapp.domain.usecases.GetDefaultImages
 import com.came.parkare.dashboardapp.domain.usecases.GetImageFromDbByName
 import com.came.parkare.dashboardapp.domain.usecases.GetScreenByDispatcher
 import com.came.parkare.dashboardapp.domain.usecases.GetScreenConfigurations
@@ -84,11 +85,12 @@ val viewModelModule = module {
 
 val useCasesModule = module {
     factory { ConnectionConfig(get(), get()) }
-    factory { InitConfiguration(get(), get(), get(), get()) }
+    factory { InitConfiguration(get(), get(), get(), get(), get()) }
     factory { StartSocketConnection(get(), get()) }
     factory { FtpServerConfiguration(get(), get()) }
     factory { GetScreenByDispatcher(get(), get()) }
     factory { GetScreenConfigurations(get(), get()) }
+    factory { GetDefaultImages(get(), get()) }
     factory { GetImageFromDbByName(get()) }
 }
 val repositoryModule = module {

@@ -24,6 +24,7 @@ import com.came.parkare.dashboardapp.domain.repositories.external.ConfigFileRepo
 import com.came.parkare.dashboardapp.domain.repositories.local.DashboardElementRepository
 import com.came.parkare.dashboardapp.infrastructure.source.external.ConfigFileDao
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ResourceFileDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toModel
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
@@ -77,6 +78,16 @@ class ConfigFileRepositoryImpl(
         }
     }
 
+    private suspend fun storageImages(files: List<ImagesFileModel>?) {
+        if (files.isNullOrEmpty()) {
+            dashboardElementRepository.deleteAllImages()
+            return
+        }
+
+        // Otherwise, replace all images in a single transaction
+        dashboardElementRepository.replaceAllImages(files)
+    }
+
     override suspend fun getFileConfiguration(): ServiceResult<Boolean> {
         appLogger.trackLog("getFileConfiguration: ", "_________")
         when (val dataFromFile =
@@ -91,6 +102,21 @@ class ConfigFileRepositoryImpl(
                 //delete and storage screens and elements
                 storageScreensAndElements(data)
                 appLogger.trackLog("getFileConfiguration: ", "Success")
+                return ServiceResult.Success(true)
+            }
+        }
+    }
+
+    override suspend fun getDefaultImages(): ServiceResult<Boolean> {
+        appLogger.trackLog("getDefaultImages", "----starting----")
+        when(val images = configFileDao.readJsonFromFile<List<ResourceFileDto>?>(
+            filename = "default_images.json", defaultValues = ConfigFileMock.getDefaultImages()
+        )){
+            is ServiceResult.Error -> return ServiceResult.Error(images.error)
+            is ServiceResult.Success -> {
+                val data = images.data
+                storageImages(data?.map { it.toModel() })
+                appLogger.trackLog("getDefaultImages: ", "----Success----")
                 return ServiceResult.Success(true)
             }
         }
