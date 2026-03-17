@@ -45,7 +45,8 @@ class FilePickerDialogViewModel(
                     FilePickerDialogState(
                         fileNames = file.file.name,
                         fileContents = content.decodeToString(),
-                        fileContentsRaw = Base64.encode(content)
+                        fileContentsRaw = Base64.encode(content),
+                        fileContentByteArray = content
                     )
                 )
             }

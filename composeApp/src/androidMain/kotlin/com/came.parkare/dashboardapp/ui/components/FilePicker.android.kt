@@ -81,21 +81,3 @@ actual fun MultipleFilePicker(
         }
     }
 }
-
-@Composable
-actual fun DirectoryPicker(
-    show: Boolean,
-    initialDirectory: String?,
-    title: String?,
-    onFileSelected: (String?) -> Unit
-) {
-    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocumentTree()) { result ->
-        onFileSelected(result?.toString())
-    }
-
-    LaunchedEffect(show) {
-        if (show) {
-            launcher.launch(null)
-        }
-    }
-}

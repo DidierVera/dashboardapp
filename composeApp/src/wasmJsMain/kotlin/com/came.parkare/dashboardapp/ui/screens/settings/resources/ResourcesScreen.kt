@@ -175,6 +175,7 @@ private fun FontsPanel(modifier: Modifier = Modifier){
         DialogPickerDialog(
             buttonText = Res.string.upload_file_button,
             multipleFiles = true,
+            fileExtensions = listOf("ttf", "otf", "ttc"),
             clearFiles = state.clearSelectedFiles,
             onFilesSelected = { items -> viewModel.setFonts(items) }
         )

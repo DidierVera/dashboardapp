@@ -10,6 +10,7 @@ import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_CONNECT
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_DEVICE
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_IMAGES
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SSL_PROTOCOL
+import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.UPLOAD_FONT
 import com.came.parkare.dashboardapp.config.constants.Constants.API_PORT
 import com.came.parkare.dashboardapp.config.dataclasses.ErrorTypeClass
 import com.came.parkare.dashboardapp.config.dataclasses.ResponseStatusDto
@@ -137,27 +138,12 @@ class DeviceRepositoryImpl(
 
     override suspend fun uploadFont(
         ipAddress: String,
-        fontFile: ByteArray,
-        fileName: String,
-        overwrite: Boolean
+        data: ResourceFileDto
     ): ServiceResult<FontUploadResponseDto> {
         return try {
             val url = "$SSL_PROTOCOL$ipAddress:$apiPort$UPLOAD_FONT"
-
-            // Create multipart form data
-            val formData = org.w3c.files.Blob. .apply {
-                // Create a Blob from the ByteArray
-                val blobArray = js("new Uint8Array(fontFile)").unsafeCast<Uint8Array>()
-                val blob = Blob(arrayOf(blobArray), BlobPropertyBag("application/x-font-ttf"))
-
-                append("font", blob, fileName)
-                append("fileName", fileName)
-                append("overwrite", overwrite.toString())
-            }
-
-            val response = httpClient.uploadMultipart<FontUploadResponseDto>(url, formData)
-            ServiceResult.Success(response)
-
+            val result = httpClient.post<FontUploadResponseDto, ResourceFileDto>(url, data.copy(fileContentArray = null))
+            ServiceResult.Success(result)
         } catch (e: Exception) {
             appLogger.trackError(e)
             ServiceResult.Error(ErrorTypeClass.GeneralException(e.message ?: "Font upload failed"))

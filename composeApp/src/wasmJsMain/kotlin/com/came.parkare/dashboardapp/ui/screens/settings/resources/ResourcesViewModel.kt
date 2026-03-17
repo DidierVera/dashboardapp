@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.ErrorValidator
 import com.came.parkare.dashboardapp.domain.usecases.GetImages
+import com.came.parkare.dashboardapp.domain.usecases.SaveFonts
 import com.came.parkare.dashboardapp.domain.usecases.SaveImages
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ResourceFileDto
 import com.came.parkare.dashboardapp.ui.screens.settings.components.filepicker.FilePickerDialogState
@@ -23,6 +24,7 @@ import kotlinx.coroutines.withContext
 class ResourcesViewModel(
     private val getImages: GetImages,
     private val saveImages: SaveImages,
+    private val saveFonts: SaveFonts,
     private val wasmUtilsHandler: WasmUtilsHandler,
     private val validator: ErrorValidator
 ): ViewModel() {
@@ -101,6 +103,24 @@ class ResourcesViewModel(
                 clearSelectedFiles = false,
                 fontResources = upsertFiles(it.fontResources, filesSelected)
             )
+        }
+        viewModelScope.launch {
+            wasmUtilsHandler.showLoading(true)
+            //upload file
+            val result = saveFonts.invoke(filesSelected.map { ResourceFileDto(
+                fileName = it.fileNames,
+                fileContentArray = it.fileContentByteArray,
+                fileContent = it.fileContentsRaw
+            ) })
+            when(result){
+                is ServiceResult.Error -> {
+                    wasmUtilsHandler.showLoading(false)
+                    validator.validate(result.error)
+                }
+                is ServiceResult.Success -> {
+                    wasmUtilsHandler.showLoading(false)
+                }
+            }
         }
     }
 

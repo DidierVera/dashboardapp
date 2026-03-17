@@ -17,6 +17,7 @@ import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.DeviceUtils
 import com.came.parkare.dashboardapp.config.utils.IServerConnection
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
+import com.came.parkare.dashboardapp.domain.models.ResourceFileModel
 import com.came.parkare.dashboardapp.domain.models.toDto
 import com.came.parkare.dashboardapp.domain.repositories.external.ConfigFileRepository
 import com.came.parkare.dashboardapp.domain.repositories.local.ConfigTemplateRepository
@@ -141,7 +142,8 @@ class ApiServerRepositoryImpl(
         fontData: ByteArray,
         overwrite: Boolean
     ): Boolean {
-        TODO("Not yet implemented")
+        configFileRepository.writeFont(ResourceFileModel(fileName = fileName, fileContent = null, fileContentArray = fontData ))
+        return true
     }
 
 

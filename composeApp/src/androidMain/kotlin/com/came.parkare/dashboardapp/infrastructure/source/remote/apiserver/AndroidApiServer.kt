@@ -36,6 +36,7 @@ import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiR
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveScreenRequest
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSetConfigType
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isUpdateConfigTemplate
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isUploadFont
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.readBodyAsUtf8
 import fi.iki.elonen.NanoHTTPD
 import kotlinx.coroutines.runBlocking
@@ -80,6 +81,7 @@ class AndroidApiServer(
             session.isGetVersion() -> handleGetAppVersion()
             session.isGetImages() -> handleGetImages()
             session.isSaveImages() -> handleSaveImages(session)
+            session.isUploadFont() -> handleUploadFont(session)
             else -> createNotFoundResponse()
         }
     }
@@ -188,6 +190,21 @@ class AndroidApiServer(
             session = session,
             parseBody = { body -> Json.decodeFromString(body) },
             operation = { dto -> apiServerRepository.saveImages(dto) == 0 }
+        )
+    }
+    private fun handleUploadFont(session: IHTTPSession): Response {
+        return processPostRequest<ResourceFileDto>(
+            session = session,
+            parseBody = { body -> Json.decodeFromString(body) },
+            operation = { dto ->
+                // Decodifica Base64 → ByteArray
+                val fontBytes = android.util.Base64.decode(dto.fileContent, android.util.Base64.DEFAULT)
+                apiServerRepository.saveFontFile(
+                    fileName = dto.fileName,
+                    fontData = fontBytes,
+                    overwrite = false
+                )
+            }
         )
     }
 

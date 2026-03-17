@@ -24,6 +24,7 @@ import com.came.parkare.dashboardapp.domain.models.toDto
 import com.came.parkare.dashboardapp.domain.repositories.external.ConfigFileRepository
 import com.came.parkare.dashboardapp.domain.repositories.local.DashboardElementRepository
 import com.came.parkare.dashboardapp.infrastructure.source.external.ConfigFileDao
+import com.came.parkare.dashboardapp.infrastructure.source.external.FontFileDao
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ResourceFileDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toDto
@@ -35,6 +36,7 @@ import com.came.parkare.dashboardapp.infrastructure.source.mocks.ConfigFileMock
 
 class ConfigFileRepositoryImpl(
     private val configFileDao: ConfigFileDao,
+    private val fontFileDao: FontFileDao,
     private val preferences: SharedPreferencesProvider,
     private val dashboardElementRepository: DashboardElementRepository,
     private val serverConnection: IServerConnection,
@@ -145,11 +147,10 @@ class ConfigFileRepositoryImpl(
 
     override suspend fun writeFont(newData: ResourceFileModel): ServiceResult<Boolean> {
         try {
-            val result = configFileDao.writeJsonToFile(filename = "font.ttf",
-                content = newData.toDto())
+            val result = fontFileDao.saveFontFile(fileName = newData.fileName.orEmpty(), fontData = newData.fileContentArray!!, false)
             return when(result){
-                is ServiceResult.Error -> ServiceResult.Error(result.error)
-                is ServiceResult.Success -> {
+                false -> ServiceResult.Error(ErrorTypeClass.GeneralException("Could no storage the file, check it and try again"))
+                true -> {
                     ServiceResult.Success(true)
                 }
             }

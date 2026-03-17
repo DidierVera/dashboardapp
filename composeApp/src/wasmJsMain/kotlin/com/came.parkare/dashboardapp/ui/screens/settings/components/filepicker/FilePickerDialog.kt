@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -42,124 +43,57 @@ fun DialogPickerDialog(
     buttonIcon: DrawableResource = Res.drawable.ic_import_export,
     multipleFiles: Boolean = false,
     clearFiles: Boolean = false,
-    style: PickerButtonStyle = PickerButtonStyle.Outlined,
+    fileExtensions: List<String> = listOf("png", "jpg"),
     onFilesSelected: ((List<FilePickerDialogState>) -> Unit)? = null,
     onFileSelected: ((String, String) -> Unit)? = null
 ) {
-    val filePickerViewModel: FilePickerDialogViewModel = koinInject()
-    val filePickerState = filePickerViewModel.state.collectAsState()
-    val filesState by filePickerViewModel.multipleFiles.collectAsState()
+    val viewModel: FilePickerDialogViewModel = koinInject()
+    val pickerState by viewModel.state.collectAsState()
+    val filesState  by viewModel.multipleFiles.collectAsState()
     val scope = rememberCoroutineScope()
 
-    if (clearFiles) filePickerViewModel.clearPickedValues()
-
-    // Botón mejorado
-    when (style) {
-        PickerButtonStyle.Outlined -> OutlinedButton(
-            onClick = { filePickerViewModel.setPickerVisible(true) },
-            shape = RoundedCornerShape(8.dp),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp)
-        ) {
-            Icon(
-                painter = painterResource(buttonIcon),
-                contentDescription = null,
-                modifier = Modifier.size(iconSize),
-                tint = MaterialTheme.colorScheme.primary
-            )
-            Spacer(Modifier.width(8.dp))
-            Text(
-                text = stringResource(buttonText),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary
-            )
-        }
-
-        PickerButtonStyle.Filled -> Button(
-            onClick = { filePickerViewModel.setPickerVisible(true) },
-            shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
-            elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
-        ) {
-            Icon(
-                painter = painterResource(buttonIcon),
-                contentDescription = null,
-                modifier = Modifier.size(iconSize)
-            )
-            Spacer(Modifier.width(8.dp))
-            Text(
-                text = stringResource(buttonText),
-                style = MaterialTheme.typography.labelLarge
-            )
-        }
-
-        PickerButtonStyle.Tonal -> FilledTonalButton(
-            onClick = { filePickerViewModel.setPickerVisible(true) },
-            shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.filledTonalButtonColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-            ),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
-            elevation = ButtonDefaults.filledTonalButtonElevation(defaultElevation = 0.dp)
-        ) {
-            Icon(
-                painter = painterResource(buttonIcon),
-                contentDescription = null,
-                modifier = Modifier.size(iconSize)
-            )
-            Spacer(Modifier.width(8.dp))
-            Text(
-                text = stringResource(buttonText),
-                style = MaterialTheme.typography.labelLarge
-            )
-        }
+    LaunchedEffect(clearFiles) {
+        if (clearFiles) viewModel.clearPickedValues()
     }
 
-    when (multipleFiles) {
-        true -> MultipleFilePicker(
-            show = filePickerState.value.pickerVisible,
-            fileExtensions = listOf("png", "jpg", "ttf")
-        ) {
-            filePickerViewModel.setPickerVisible(false)
-            filePickerViewModel.clearPickedValues()
-            if (it != null) {
-                filePickerViewModel.setIsFileSelected(true)
-                scope.launch { filePickerViewModel.addFiles(it) }
+    PickerOutlinedButton(
+        icon = buttonIcon,
+        iconSize = iconSize,
+        text = buttonText,
+        onClick = { viewModel.setPickerVisible(true) }
+    )
+
+    FilePickerLauncher(
+        show = pickerState.pickerVisible,
+        multipleFiles = multipleFiles,
+        fileExtensions = fileExtensions,
+        onMultipleResult = { files ->
+            viewModel.setPickerVisible(false)
+            viewModel.clearPickedValues()
+            if (files != null) {
+                viewModel.setIsFileSelected(true)
+                scope.launch { viewModel.addFiles(files) }
             } else {
-                filePickerViewModel.setIsFileSelected(false)
-                filePickerViewModel.setPickerVisible(false)
+                viewModel.setIsFileSelected(false)
+            }
+        },
+        onSingleResult = { file ->
+            viewModel.setPickerVisible(false)
+            viewModel.clearPickedValues()
+            if (file != null) {
+                viewModel.setIsFileSelected(true)
+                scope.launch { viewModel.addFile(file) }
+            } else {
+                viewModel.setIsFileSelected(false)
             }
         }
+    )
 
-        false -> FilePicker(
-            show = filePickerState.value.pickerVisible,
-            fileExtensions = listOf("json")
-        ) {
-            filePickerViewModel.setPickerVisible(false)
-            filePickerViewModel.clearPickedValues()
-            if (it != null) {
-                filePickerViewModel.setIsFileSelected(true)
-                scope.launch { filePickerViewModel.addFile(it) }
-            } else {
-                filePickerViewModel.setIsFileSelected(false)
-                filePickerViewModel.setPickerVisible(false)
-            }
+    LaunchedEffect(filesState, pickerState.fileContents) {
+        if (filesState.isNotEmpty()) {
+            onFilesSelected?.invoke(filesState)
+        } else if (pickerState.fileContents.isNotBlank()) {
+            onFileSelected?.invoke(pickerState.fileNames, pickerState.fileContents)
         }
-    }
-
-    if (filesState.isNotEmpty()) {
-        onFilesSelected?.invoke(filesState)
-    } else if (filePickerState.value.fileContents.isNotBlank()) {
-        onFileSelected?.invoke(
-            filePickerState.value.fileNames,
-            filePickerState.value.fileContents
-        )
     }
 }
-
-enum class PickerButtonStyle { Outlined, Filled, Tonal }

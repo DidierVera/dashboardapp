@@ -20,6 +20,7 @@ import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_SCREEN_
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.TRACK_ERROR
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.TRACK_LOG
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.UPDATE_CONFIG_TEMPLATE
+import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.UPLOAD_FONT
 import fi.iki.elonen.NanoHTTPD
 
 object ApiRequestPredicates {
@@ -99,6 +100,10 @@ object ApiRequestPredicates {
 
     fun NanoHTTPD.IHTTPSession.isSaveImages(): Boolean {
         return uri == SAVE_IMAGES && method == NanoHTTPD.Method.POST
+    }
+
+    fun NanoHTTPD.IHTTPSession.isUploadFont(): Boolean {
+        return uri == UPLOAD_FONT && method == NanoHTTPD.Method.POST
     }
 
     fun NanoHTTPD.IHTTPSession.readBodyAsUtf8(): String {

@@ -19,7 +19,7 @@ interface DeviceRepository {
     suspend fun getAppVersion(ipAddress: String): ServiceResult<String>
     suspend fun getImages(ipAddress: String): ServiceResult<List<ResourceFileDto>?>
     suspend fun saveImages(ipAddress: String, data: List<ResourceFileDto>): ServiceResult<ResponseStatusDto>
-    suspend fun uploadFont(ipAddress: String, fontFile: ByteArray, fileName: String, overwrite: Boolean = false): ServiceResult<FontUploadResponseDto>
+    suspend fun uploadFont(ipAddress: String, data: ResourceFileDto): ServiceResult<FontUploadResponseDto>
     suspend fun listFonts(ipAddress: String): ServiceResult<List<FontInfoDto>>
     suspend fun deleteFont(ipAddress: String, fileName: String): ServiceResult<FontDeleteResponseDto>
     suspend fun downloadFont(ipAddress: String, fileName: String): ServiceResult<ByteArray>

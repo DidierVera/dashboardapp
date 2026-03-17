@@ -19,7 +19,7 @@ class FontFileDao(
 ): FontFileRepository {
 
     private val fontsDirectory: File by lazy {
-        File(context.filesDir, "fonts").apply {
+        File(context.getExternalFilesDir("/media"), "fonts").apply {
             if (!exists()) mkdirs()
         }
     }
