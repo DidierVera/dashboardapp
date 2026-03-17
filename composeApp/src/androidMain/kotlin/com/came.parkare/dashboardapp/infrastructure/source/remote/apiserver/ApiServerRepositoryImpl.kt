@@ -118,6 +118,7 @@ class ApiServerRepositoryImpl(
     }
 
     override suspend fun saveImages(data: List<ResourceFileDto>?): Int {
+
         val files = data?.map { it.toModel() }
         if (files.isNullOrEmpty()) {
             dashboardElementRepository.deleteAllImages()
@@ -125,7 +126,9 @@ class ApiServerRepositoryImpl(
         }
 
         // Otherwise, replace all images in a single transaction
+        configFileRepository.writeImages(data.map { it.toModel() })
         dashboardElementRepository.replaceAllImages(files)
+        serverConnection.setRestartApp(true)
         return 0
     }
 

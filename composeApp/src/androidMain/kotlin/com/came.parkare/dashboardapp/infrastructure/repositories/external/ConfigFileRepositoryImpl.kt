@@ -20,6 +20,7 @@ import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.came.parkare.dashboardapp.domain.models.ConnectionConfigModel
 import com.came.parkare.dashboardapp.domain.models.ImagesFileModel
 import com.came.parkare.dashboardapp.domain.models.ScreenModel
+import com.came.parkare.dashboardapp.domain.models.toDto
 import com.came.parkare.dashboardapp.domain.repositories.external.ConfigFileRepository
 import com.came.parkare.dashboardapp.domain.repositories.local.DashboardElementRepository
 import com.came.parkare.dashboardapp.infrastructure.source.external.ConfigFileDao
@@ -100,7 +101,7 @@ class ConfigFileRepositoryImpl(
                 val data = dataFromFile.data ?: return ServiceResult.Error(ErrorTypeClass.WrongConfigFile)
 
                 //delete and storage screens and elements
-                storageScreensAndElements(data)
+                storageScreensAndElements(data.map { it.toModel() })
                 appLogger.trackLog("getFileConfiguration: ", "Success")
                 return ServiceResult.Success(true)
             }
@@ -122,6 +123,22 @@ class ConfigFileRepositoryImpl(
         }
     }
 
+    override suspend fun writeImages(newData: List<ImagesFileModel>): ServiceResult<Boolean> {
+        try {
+            val result = configFileDao.writeJsonToFile(filename = "default_images.json",
+                content = newData.map { it.toDto() })
+            return when(result){
+                is ServiceResult.Error -> ServiceResult.Error(result.error)
+                is ServiceResult.Success -> {
+                    storageImages(newData)
+                    ServiceResult.Success(true)
+                }
+            }
+        }catch (e: Exception){
+            return ServiceResult.Error(ErrorTypeClass.GeneralException(messageError = e.message))
+        }
+    }
+
     override suspend fun writeScreensConfig(newData: List<ScreenModel>): ServiceResult<Boolean> {
         try {
             val result = configFileDao.writeJsonToFile(filename = "dashboard_screens.json",
@@ -129,7 +146,7 @@ class ConfigFileRepositoryImpl(
             return when(result){
                 is ServiceResult.Error -> ServiceResult.Error(result.error)
                 is ServiceResult.Success -> {
-                    storageScreensAndElements(newData.map { it.toDto() })
+                    storageScreensAndElements(newData)
                     ServiceResult.Success(true)
                 }
             }
@@ -154,9 +171,9 @@ class ConfigFileRepositoryImpl(
         }
     }
 
-    private suspend fun storageScreensAndElements(screens: List<ScreenDto>) {
+    private suspend fun storageScreensAndElements(screens: List<ScreenModel>) {
         dashboardElementRepository.deleteAll()
-        dashboardElementRepository.saveScreens(screens.map { it.toModel() })
+        dashboardElementRepository.saveScreens(screens)
         val storedScreens = dashboardElementRepository.getAllScreens()
         serverConnection.setScreensList(storedScreens)
     }

@@ -28,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -95,6 +96,7 @@ private fun ResourcesColumnLayout() {
         Row(modifier = Modifier.weight(1f),
             horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             ImagesPanel(modifier = Modifier.weight(1f))
+            VerticalDivider()
             FontsPanel(modifier = Modifier.weight(1f))   // <-- nuevo
         }
         SaveButton(modifier = Modifier.align(Alignment.End))
