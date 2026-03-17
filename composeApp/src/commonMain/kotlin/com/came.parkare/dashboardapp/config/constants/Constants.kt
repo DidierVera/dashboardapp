@@ -17,6 +17,7 @@ object Constants {
     const val AUTO_BRIGHTNESS_DELAY_TIME = "autoBrightnessDelayTime"
     const val SHOW_COUNTER = "showCarCounter"
     const val RESET_COUNTER_DELAY_TIME = "resetCounterDelayTime"
+    const val FONT_REGISTRY_KEY = "fontRegistryKey"
 
 
     //Ftp

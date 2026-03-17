@@ -6,7 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.came.parkare.dashboardapp.domain.models.ImagesFileModel
+import com.came.parkare.dashboardapp.domain.models.ResourceFileModel
 import com.came.parkare.dashboardapp.domain.models.components.ElementModel
 import com.came.parkare.dashboardapp.ui.components.elements.BuildBoxView
 import com.came.parkare.dashboardapp.ui.components.elements.BuildColumnView
@@ -16,7 +16,7 @@ import com.came.parkare.dashboardapp.ui.screens.settings.shareconfig.components.
 
 
 @Composable
-fun BuildElement(element: ElementModel, textSizeScale: Int, imageFiles: List<ImagesFileModel>? = null){
+fun BuildElement(element: ElementModel, textSizeScale: Int, imageFiles: List<ResourceFileModel>? = null){
     val scaleFactor = (textSizeScale / 10f).coerceIn(0.5f, 3f)
     when(element){
         is ElementModel.BoxModel -> {

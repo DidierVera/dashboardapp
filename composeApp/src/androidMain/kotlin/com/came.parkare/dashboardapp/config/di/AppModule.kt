@@ -17,6 +17,7 @@ import com.came.parkare.dashboardapp.domain.repositories.external.FtpServerFileR
 import com.came.parkare.dashboardapp.domain.repositories.local.ConfigTemplateRepository
 import com.came.parkare.dashboardapp.domain.repositories.local.DashboardDevicesRepository
 import com.came.parkare.dashboardapp.domain.repositories.local.DashboardElementRepository
+import com.came.parkare.dashboardapp.domain.repositories.local.FontFileRepository
 import com.came.parkare.dashboardapp.domain.repositories.local.ImageRepository
 import com.came.parkare.dashboardapp.domain.repositories.remote.ApiServerRepository
 import com.came.parkare.dashboardapp.domain.repositories.remote.TerminalConnectionRepository
@@ -37,6 +38,7 @@ import com.came.parkare.dashboardapp.infrastructure.repositories.local.Dashboard
 import com.came.parkare.dashboardapp.infrastructure.repositories.local.ImageRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.repositories.remote.TerminalConnectionImpl
 import com.came.parkare.dashboardapp.infrastructure.source.external.ConfigFileDao
+import com.came.parkare.dashboardapp.infrastructure.source.external.FontFileDao
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.AndroidApiServer
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiServerRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.source.remote.services.MockService
@@ -102,6 +104,7 @@ val repositoryModule = module {
     singleOf(::DashboardDeviceRepositoryImpl) { bind<DashboardDevicesRepository>() }
     singleOf(::ImageRepositoryImpl) { bind<ImageRepository>() }
     singleOf(::ConfigTemplateRepositoryImpl) { bind<ConfigTemplateRepository>() }
+    singleOf(::FontFileDao) { bind<FontFileRepository>() }
 }
 
 val servicesModule = module {

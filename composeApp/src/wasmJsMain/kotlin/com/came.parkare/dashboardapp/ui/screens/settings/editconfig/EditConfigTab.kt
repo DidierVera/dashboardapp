@@ -35,7 +35,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.came.parkare.dashboardapp.domain.models.ImagesFileModel
+import com.came.parkare.dashboardapp.domain.models.ResourceFileModel
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toModel
 import com.came.parkare.dashboardapp.ui.components.AppButton
 import com.came.parkare.dashboardapp.ui.components.Base64Image
@@ -124,7 +124,7 @@ private fun ElementsList(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun LoadBackground(background: ImagesFileModel?) {
+private fun LoadBackground(background: ResourceFileModel?) {
     if(background != null){
         Base64Image(background.fileContent.orEmpty(),
             modifier = Modifier.fillMaxSize(),

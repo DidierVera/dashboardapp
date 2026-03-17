@@ -136,7 +136,11 @@ class ApiServerRepositoryImpl(
         TODO("Not yet implemented")
     }
 
-    override suspend fun saveFont(data: List<ResourceFileDto>?): Int {
+    override suspend fun saveFontFile(
+        fileName: String,
+        fontData: ByteArray,
+        overwrite: Boolean
+    ): Boolean {
         TODO("Not yet implemented")
     }
 

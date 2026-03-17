@@ -1,7 +1,7 @@
 package com.came.parkare.dashboardapp.infrastructure.repositories.local
 
 import com.came.parkare.dashboardapp.config.utils.AppLogger
-import com.came.parkare.dashboardapp.domain.models.ImagesFileModel
+import com.came.parkare.dashboardapp.domain.models.ResourceFileModel
 import com.came.parkare.dashboardapp.domain.models.ScreenModel
 import com.came.parkare.dashboardapp.domain.repositories.local.DashboardElementRepository
 import com.came.parkare.dashboardapp.infrastructure.source.local.dao.ImagesDao
@@ -58,7 +58,7 @@ class DashboardElementRepositoryImpl(
         }
     }
 
-    override suspend fun saveImages(images: List<ImagesFileModel>) {
+    override suspend fun saveImages(images: List<ResourceFileModel>) {
         try {
             val ids = imagesDao.insertAll(images.map{it.toEntity()})
             if (ids.isEmpty())
@@ -68,7 +68,7 @@ class DashboardElementRepositoryImpl(
         }
     }
 
-    override suspend fun getImages(): List<ImagesFileModel> {
+    override suspend fun getImages(): List<ResourceFileModel> {
         return try {
             val entities = imagesDao.getAll()
             entities.map { it.toModel() }
@@ -86,7 +86,7 @@ class DashboardElementRepositoryImpl(
         }
     }
 
-    override suspend fun getImageByName(fileName: String): ImagesFileModel? {
+    override suspend fun getImageByName(fileName: String): ResourceFileModel? {
         return try {
             val entity = imagesDao.getByName(fileName)
             entity?.toModel()
@@ -104,7 +104,7 @@ class DashboardElementRepositoryImpl(
         }
     }
 
-    override suspend fun replaceAllImages(images: List<ImagesFileModel>) {
+    override suspend fun replaceAllImages(images: List<ResourceFileModel>) {
         val entities = images.map { it.toEntity() }
         imagesDao.replaceAllImages(entities)
     }

@@ -20,7 +20,14 @@ import com.came.parkare.dashboardapp.domain.repositories.device.DeviceRepository
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.DeviceDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ResourceFileDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.fonts.FontDeleteResponseDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.fonts.FontInfoDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.fonts.FontUploadResponseDto
 import com.came.parkare.dashboardapp.infrastructure.source.services.base.HttpClient
+import kotlinx.atomicfu.TraceBase.None.append
+import org.khronos.webgl.Uint8Array
+import org.w3c.files.Blob
+import org.w3c.files.BlobPropertyBag
 
 class DeviceRepositoryImpl(
     private val httpClient: HttpClient,
@@ -126,5 +133,52 @@ class DeviceRepositoryImpl(
             appLogger.trackError(e)
             ServiceResult.Error(ErrorTypeClass.GeneralException(e.message))
         }
+    }
+
+    override suspend fun uploadFont(
+        ipAddress: String,
+        fontFile: ByteArray,
+        fileName: String,
+        overwrite: Boolean
+    ): ServiceResult<FontUploadResponseDto> {
+        return try {
+            val url = "$SSL_PROTOCOL$ipAddress:$apiPort$UPLOAD_FONT"
+
+            // Create multipart form data
+            val formData = org.w3c.files.Blob. .apply {
+                // Create a Blob from the ByteArray
+                val blobArray = js("new Uint8Array(fontFile)").unsafeCast<Uint8Array>()
+                val blob = Blob(arrayOf(blobArray), BlobPropertyBag("application/x-font-ttf"))
+
+                append("font", blob, fileName)
+                append("fileName", fileName)
+                append("overwrite", overwrite.toString())
+            }
+
+            val response = httpClient.uploadMultipart<FontUploadResponseDto>(url, formData)
+            ServiceResult.Success(response)
+
+        } catch (e: Exception) {
+            appLogger.trackError(e)
+            ServiceResult.Error(ErrorTypeClass.GeneralException(e.message ?: "Font upload failed"))
+        }
+    }
+
+    override suspend fun listFonts(ipAddress: String): ServiceResult<List<FontInfoDto>> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteFont(
+        ipAddress: String,
+        fileName: String
+    ): ServiceResult<FontDeleteResponseDto> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun downloadFont(
+        ipAddress: String,
+        fileName: String
+    ): ServiceResult<ByteArray> {
+        TODO("Not yet implemented")
     }
 }

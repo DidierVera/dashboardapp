@@ -120,7 +120,6 @@ fun DialogPickerDialog(
         }
     }
 
-    // Tu lógica de pickers — sin cambios
     when (multipleFiles) {
         true -> MultipleFilePicker(
             show = filePickerState.value.pickerVisible,

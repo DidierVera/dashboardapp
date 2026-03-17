@@ -18,7 +18,7 @@ import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.IServerConnection
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.came.parkare.dashboardapp.domain.models.ConnectionConfigModel
-import com.came.parkare.dashboardapp.domain.models.ImagesFileModel
+import com.came.parkare.dashboardapp.domain.models.ResourceFileModel
 import com.came.parkare.dashboardapp.domain.models.ScreenModel
 import com.came.parkare.dashboardapp.domain.models.toDto
 import com.came.parkare.dashboardapp.domain.repositories.external.ConfigFileRepository
@@ -79,7 +79,7 @@ class ConfigFileRepositoryImpl(
         }
     }
 
-    private suspend fun storageImages(files: List<ImagesFileModel>?) {
+    private suspend fun storageImages(files: List<ResourceFileModel>?) {
         if (files.isNullOrEmpty()) {
             dashboardElementRepository.deleteAllImages()
             return
@@ -123,7 +123,7 @@ class ConfigFileRepositoryImpl(
         }
     }
 
-    override suspend fun writeImages(newData: List<ImagesFileModel>): ServiceResult<Boolean> {
+    override suspend fun writeImages(newData: List<ResourceFileModel>): ServiceResult<Boolean> {
         try {
             val result = configFileDao.writeJsonToFile(filename = "default_images.json",
                 content = newData.map { it.toDto() })
@@ -131,6 +131,25 @@ class ConfigFileRepositoryImpl(
                 is ServiceResult.Error -> ServiceResult.Error(result.error)
                 is ServiceResult.Success -> {
                     storageImages(newData)
+                    ServiceResult.Success(true)
+                }
+            }
+        }catch (e: Exception){
+            return ServiceResult.Error(ErrorTypeClass.GeneralException(messageError = e.message))
+        }
+    }
+
+    override suspend fun getFont(): ServiceResult<ResourceFileModel> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun writeFont(newData: ResourceFileModel): ServiceResult<Boolean> {
+        try {
+            val result = configFileDao.writeJsonToFile(filename = "font.ttf",
+                content = newData.toDto())
+            return when(result){
+                is ServiceResult.Error -> ServiceResult.Error(result.error)
+                is ServiceResult.Success -> {
                     ServiceResult.Success(true)
                 }
             }
