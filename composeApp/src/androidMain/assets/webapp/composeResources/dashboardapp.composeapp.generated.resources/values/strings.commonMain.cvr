@@ -40,8 +40,10 @@ string|export_option|RXhwb3J0
 string|export_title|RXhwb3J0IENvbmZpZ3VyYXRpb24gZmlsZQ==
 string|file_content_label|RmlsZSBjb250ZW50
 string|file_downloaded_message|RmlsZSBkb3dubG9hZGVkIHN1Y2Nlc3NmdWxseS4=
+string|font_resources_label|Rm9udCByZXNvdXJjZXM=
+string|font_save_correctly_message|Rm9udCBzYXZlZCBhbmQgYXBwbGllZCBjb3JyZWN0bHku
 string|general_configuration_title|R0VORVJBTCBDT05GSUdVUkFUSU9O
-string|image_resources_label|SW1hZ2VzIHJlc291cmNlcw==
+string|image_resources_label|SW1hZ2UgcmVzb3VyY2Vz
 string|import_export_option|SW1wb3J0L0V4cG9ydA==
 string|import_option|SW1wb3J0
 string|import_title|SW1wb3J0IENvbmZpZ3VyYXRpb24=
@@ -53,6 +55,7 @@ string|port_label|UG9ydA==
 string|properties_label|UHJvcGVydGllcw==
 string|request_password_message|RW50cnkgdGhlIHBhc3N3b3JkIGZvciBhY2Nlc3MgdG8gdGhlIHdheSBtb25pdG9yIGNvbmZpZy4=
 string|reset_counter_label|UmVzZXQgY291bnRlciBlYWNoIChtaW51dGVzKQ==
+string|resources_file_option|UmVzb3VyY2VzIGZpbGU=
 string|save_button|U0FWRQ==
 string|screen_config_saved_message|VGhlIG5ldyBzY3JlZW5zIGNvbmZpZ3VyYXRpb24gaGFzIGJlZW4gc2F2ZWQgc3VjY2Vzc2Z1bGx5Lg==
 string|screen_list_label|U2NyZWVuIGxpc3Q=

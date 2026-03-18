@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontSynthesis
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -39,15 +41,21 @@ fun BuildTextView(text: TextDataModel, scaleFactor: Float, modifier: Modifier = 
     } else {
         val animatedText = animateFloatAsState(targetValue = scaleFactor)
         val appFontFamily = LocalAppFontFamily.current
+
+        val condensedStyle = TextStyle(
+            fontFamily = appFontFamily,
+            fontWeight = weight,
+            fontSynthesis = FontSynthesis.Weight
+        )
         Text(
             text = text.defaultText,
             fontSize = textSize.sp * animatedText.value,
-            fontFamily = appFontFamily,
-            fontWeight = weight,
             lineHeight = 1.2.em,
             textAlign = TextAlign.Center,
             color = hexToColor(text.textColor),
-            modifier = modifier.padding(((text.style.padding ?: 1).toFloat() * scaleFactor).dp)
+            fontFamily = appFontFamily,
+            modifier = modifier.padding(((text.style.padding ?: 1).toFloat() * scaleFactor).dp),
+            style = condensedStyle
         )
     }
 }

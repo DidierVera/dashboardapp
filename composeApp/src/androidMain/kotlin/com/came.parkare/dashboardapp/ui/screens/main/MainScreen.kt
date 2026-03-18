@@ -130,17 +130,12 @@ private fun LoadDashboardItems(
     val elements: List<ElementModel> = state.newItems
     if (elements.isEmpty()) return
     val boxMargin = state.contentPadding
-    val fontViewModel: FontViewModel = koinInject() // ← koinInject for singleton
-    val fontFamily by fontViewModel.fontFamily.collectAsState()
-
-    CompositionLocalProvider(LocalAppFontFamily provides fontFamily) {
-        Column(modifier = modifier
-            .padding(boxMargin)
-            .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = if (showVideoFrame) Arrangement.Bottom else Arrangement.Top){
-            elements.forEach { mItem ->
-                val textSizeScale = state.textSizeScale
-                BuildComposable(elementModel = mItem, textSizeScale = textSizeScale)
-            }
+    Column(modifier = modifier
+        .padding(boxMargin)
+        .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = if (showVideoFrame) Arrangement.Bottom else Arrangement.Top){
+        elements.forEach { mItem ->
+            val textSizeScale = state.textSizeScale
+            BuildComposable(elementModel = mItem, textSizeScale = textSizeScale)
         }
     }
 }

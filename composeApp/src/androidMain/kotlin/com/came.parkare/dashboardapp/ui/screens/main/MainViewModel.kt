@@ -117,7 +117,7 @@ class MainViewModel (
     }
 
     private fun registerListeners() {
-        getAllDataFromServices()
+
         registerScreensListener()
         registerConnectionSignal()
         registerTerminalListener()
@@ -131,6 +131,7 @@ class MainViewModel (
         checkBrightnessMode()
         checkCarCounter()
         startPeriodicChecking()
+        getAllDataFromServices()
         setTerminalConnection(serverConnection.typeConnection.value)
     }
 
@@ -231,10 +232,10 @@ class MainViewModel (
                 is ServiceResult.Error -> validateError(initConfigResult.error)
                 is ServiceResult.Success -> {
                     loadLanguages()
-                    _isInitialized.update { true }
                     if(_itemsState.value.screenList.any { it.dispatcherCode == 5L }){
                         loadScreenInformation(data = TerminalResponseModel(5, DefaultDits.idleConnected()))
                     }
+                    _isInitialized.update { true }
 
                     loopJob = customLoop() // Start the initial loop
                 }
