@@ -145,9 +145,9 @@ class ConfigFileRepositoryImpl(
         TODO("Not yet implemented")
     }
 
-    override suspend fun writeFont(newData: ResourceFileModel): ServiceResult<Boolean> {
+    override suspend fun writeFont(fileName: String, contentData: ByteArray): ServiceResult<Boolean> {
         try {
-            val result = fontFileDao.saveFontFile(fileName = newData.fileName.orEmpty(), fontData = newData.fileContentArray!!, false)
+            val result = fontFileDao.saveFontFile(fileName = fileName, fontData = contentData, true)
             return when(result){
                 false -> ServiceResult.Error(ErrorTypeClass.GeneralException("Could no storage the file, check it and try again"))
                 true -> {
@@ -155,6 +155,7 @@ class ConfigFileRepositoryImpl(
                 }
             }
         }catch (e: Exception){
+            appLogger.trackError(e)
             return ServiceResult.Error(ErrorTypeClass.GeneralException(messageError = e.message))
         }
     }

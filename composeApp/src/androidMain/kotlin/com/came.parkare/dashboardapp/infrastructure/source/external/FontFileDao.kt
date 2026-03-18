@@ -2,6 +2,8 @@ package com.came.parkare.dashboardapp.infrastructure.source.external
 
 import android.content.Context
 import android.graphics.Typeface
+import android.os.Build
+import android.os.Environment
 import com.came.parkare.dashboardapp.config.constants.Constants.FONT_REGISTRY_KEY
 import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
@@ -19,7 +21,7 @@ class FontFileDao(
 ): FontFileRepository {
 
     private val fontsDirectory: File by lazy {
-        File(context.getExternalFilesDir("/media"), "fonts").apply {
+        File(context.filesDir, "fonts").apply {  // ← internal storage, no permissions needed
             if (!exists()) mkdirs()
         }
     }
@@ -46,19 +48,17 @@ class FontFileDao(
 
                 // Validate that it's actually a font file
                 if (!isValidFontFile(fontData)) {
-                    appLogger.trackLog(
-                        "Font Save",
-                        "Invalid font file format for $safeFileName"
-                    )
+                    appLogger.trackLog("Font Save", "Invalid font file format for $safeFileName")
                     return@withContext false
+                }
+
+                // Ensure writable if already exists
+                if (fontFile.exists()) {
+                    fontFile.setWritable(true, true)
                 }
 
                 // Write the font data
                 fontFile.writeBytes(fontData)
-
-                // Make file readable (but not executable for security)
-                fontFile.setReadable(true, false)
-                fontFile.setWritable(false, false)  // Make read-only after write
 
                 appLogger.trackLog(
                     "Font Save",
@@ -66,11 +66,11 @@ class FontFileDao(
                 )
 
                 // Optionally update a font registry or shared preferences
-                updateFontRegistry(safeFileName)
-
+                updateFontRegistry(true)
                 true
 
             } catch (e: Exception) {
+                e.printStackTrace()
                 appLogger.trackError(e)
                 appLogger.trackLog(
                     "Font Save Error",
@@ -81,11 +81,8 @@ class FontFileDao(
         }
     }
 
-    private fun updateFontRegistry(fileName: String) {
-        // Optionally maintain a registry of installed fonts in SharedPreferences
-        val currentFonts = preferences.get(FONT_REGISTRY_KEY, emptyList<String>()).toMutableSet()
-        currentFonts.add(fileName)
-        preferences.put(FONT_REGISTRY_KEY, currentFonts)
+    private fun updateFontRegistry(newValue: Boolean) {
+        preferences.put(FONT_REGISTRY_KEY, newValue)
     }
     private fun isValidFontFile(data: ByteArray): Boolean {
         // Check magic numbers for different font formats
@@ -140,13 +137,6 @@ class FontFileDao(
                 }
                 ?: emptyList()
         }
-    }
-
-
-    private fun removeFromFontRegistry(fileName: String) {
-        val currentFonts = preferences.get(FONT_REGISTRY_KEY, emptySet<String>()).toMutableSet()
-        currentFonts.remove(fileName)
-        preferences.put(FONT_REGISTRY_KEY, currentFonts)
     }
 
     private fun isFontFile(extension: String): Boolean {

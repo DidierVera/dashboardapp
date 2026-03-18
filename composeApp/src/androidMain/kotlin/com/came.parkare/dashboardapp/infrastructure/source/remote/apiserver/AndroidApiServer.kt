@@ -201,8 +201,7 @@ class AndroidApiServer(
                 val fontBytes = android.util.Base64.decode(dto.fileContent, android.util.Base64.DEFAULT)
                 apiServerRepository.saveFontFile(
                     fileName = dto.fileName,
-                    fontData = fontBytes,
-                    overwrite = false
+                    fontData = fontBytes
                 )
             }
         )

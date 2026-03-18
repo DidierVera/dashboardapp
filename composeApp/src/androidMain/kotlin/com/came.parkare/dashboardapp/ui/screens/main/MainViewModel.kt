@@ -5,6 +5,8 @@ import android.os.Environment
 import android.provider.Settings
 import android.util.Log
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,6 +31,7 @@ import com.came.parkare.dashboardapp.domain.usecases.InitConfiguration
 import com.came.parkare.dashboardapp.domain.usecases.StartSocketConnection
 import com.came.parkare.dashboardapp.ui.components.carcounter.CarCounterManager
 import com.came.parkare.dashboardapp.ui.utils.FilesUtils
+import com.came.parkare.dashboardapp.ui.utils.FontViewModel
 import com.came.parkare.dashboardapp.ui.utils.SystemBrightnessManager
 import com.came.parkare.dashboardapp.ui.utils.UiUtils
 import kotlinx.coroutines.CoroutineScope
@@ -47,6 +50,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.koin.androidx.compose.koinViewModel
 import java.io.File
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -59,7 +63,8 @@ class MainViewModel (
     private val appLogger: AppLogger,
     private val filesUtils: FilesUtils,
     private val carCounterManager: CarCounterManager,
-    private val serverConnection: IServerConnection
+    private val serverConnection: IServerConnection,
+    private val fontViewModel: FontViewModel
 ): ViewModel() {
     private val _isInitialized = MutableStateFlow(false)
 
@@ -119,6 +124,7 @@ class MainViewModel (
     }
 
     private fun initAllConfig() {
+        reloadFont()
         checkVideoFrame()
         checkBackgroundImage()
         checkTextSizeScale()
@@ -126,6 +132,10 @@ class MainViewModel (
         checkCarCounter()
         startPeriodicChecking()
         setTerminalConnection(serverConnection.typeConnection.value)
+    }
+
+    private fun reloadFont() {
+        fontViewModel.reloadFont()
     }
 
     private fun checkCarCounter() {

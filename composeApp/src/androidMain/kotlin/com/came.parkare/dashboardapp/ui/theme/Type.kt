@@ -3,6 +3,7 @@
 package com.came.parkare.dashboardapp.ui.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -38,6 +39,8 @@ actual val Acumin: FontFamily = FontFamily(
         )
     )
 )
+
+actual val LocalAppFontFamily = compositionLocalOf<FontFamily> { FontFamily.Default }
 
 actual val Typography: Typography = Typography(
     titleMedium = TextStyle(

@@ -13,5 +13,5 @@ interface ConfigFileRepository {
     suspend fun getDefaultImages(): ServiceResult<Boolean>
     suspend fun writeImages(newData: List<ResourceFileModel>): ServiceResult<Boolean>
     suspend fun getFont(): ServiceResult<ResourceFileModel>
-    suspend fun writeFont(newData: ResourceFileModel): ServiceResult<Boolean>
+    suspend fun writeFont(fileName: String, contentData: ByteArray): ServiceResult<Boolean>
 }

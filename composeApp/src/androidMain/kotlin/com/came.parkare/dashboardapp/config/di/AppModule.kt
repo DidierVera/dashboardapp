@@ -53,6 +53,7 @@ import com.came.parkare.dashboardapp.ui.screens.splash.SplashViewModel
 import com.came.parkare.dashboardapp.ui.utils.FTPServer
 import com.came.parkare.dashboardapp.ui.utils.FilesUtils
 import com.came.parkare.dashboardapp.ui.utils.FilesUtilsImpl
+import com.came.parkare.dashboardapp.ui.utils.FontViewModel
 import com.came.parkare.dashboardapp.ui.utils.ServerConnectionImpl
 import com.came.parkare.dashboardapp.ui.utils.UiUtils
 import com.came.parkare.dashboardapp.ui.utils.UiUtilsImpl
@@ -76,6 +77,7 @@ val utilsModule = module {
     single<FirebaseAnalytics> {
         FirebaseAnalytics.getInstance(get())
     }
+    single { FontViewModel(get()) }
 }
 
 val viewModelModule = module {

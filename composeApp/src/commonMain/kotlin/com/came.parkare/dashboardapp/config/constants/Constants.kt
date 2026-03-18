@@ -32,4 +32,5 @@ object Constants {
     const val SELECTED_IP_ADDRESS = "selectedIpAddress"
 
     const val PASSWORD_VALIDATION = "Parking2010"
+    const val FONT_FILE_NAME = "app_font.ttf"
 }

@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.sp
 import com.came.parkare.dashboardapp.domain.models.components.TextDataModel
 import com.came.parkare.dashboardapp.ui.components.itemStyles.LicensePlateItemStyle
 import com.came.parkare.dashboardapp.ui.theme.Acumin
+import com.came.parkare.dashboardapp.ui.theme.LocalAppFontFamily
 import com.came.parkare.dashboardapp.ui.theme.hexToColor
 
 @Composable
@@ -37,10 +38,11 @@ fun BuildTextView(text: TextDataModel, scaleFactor: Float, modifier: Modifier = 
 
     } else {
         val animatedText = animateFloatAsState(targetValue = scaleFactor)
+        val appFontFamily = LocalAppFontFamily.current
         Text(
             text = text.defaultText,
             fontSize = textSize.sp * animatedText.value,
-            fontFamily = Acumin,
+            fontFamily = appFontFamily,
             fontWeight = weight,
             lineHeight = 1.2.em,
             textAlign = TextAlign.Center,

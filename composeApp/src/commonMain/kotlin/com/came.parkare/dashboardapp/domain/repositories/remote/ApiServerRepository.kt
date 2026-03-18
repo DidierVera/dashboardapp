@@ -24,6 +24,6 @@ interface ApiServerRepository {
     suspend fun getImages(): List<ResourceFileDto>?
     suspend fun saveImages(data: List<ResourceFileDto>?): Int
     suspend fun getFont(): List<ResourceFileDto>?
-    suspend fun saveFontFile(fileName: String, fontData: ByteArray, overwrite: Boolean): Boolean
+    suspend fun saveFontFile(fileName: String, fontData: ByteArray): Boolean
 
 }

@@ -109,7 +109,6 @@ class ResourcesViewModel(
             //upload file
             val result = saveFonts.invoke(filesSelected.map { ResourceFileDto(
                 fileName = it.fileNames,
-                fileContentArray = it.fileContentByteArray,
                 fileContent = it.fileContentsRaw
             ) })
             when(result){

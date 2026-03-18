@@ -142,7 +142,7 @@ class DeviceRepositoryImpl(
     ): ServiceResult<FontUploadResponseDto> {
         return try {
             val url = "$SSL_PROTOCOL$ipAddress:$apiPort$UPLOAD_FONT"
-            val result = httpClient.post<FontUploadResponseDto, ResourceFileDto>(url, data.copy(fileContentArray = null))
+            val result = httpClient.post<FontUploadResponseDto, ResourceFileDto>(url, data)
             ServiceResult.Success(result)
         } catch (e: Exception) {
             appLogger.trackError(e)

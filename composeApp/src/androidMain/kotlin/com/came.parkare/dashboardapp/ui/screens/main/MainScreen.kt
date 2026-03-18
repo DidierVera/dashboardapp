@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -34,8 +35,11 @@ import com.came.parkare.dashboardapp.ui.components.isBase64
 import com.came.parkare.dashboardapp.ui.components.videos.VideoExoPlayer
 import com.came.parkare.dashboardapp.ui.screens.activity.MainActivity
 import com.came.parkare.dashboardapp.ui.theme.BlackColor
+import com.came.parkare.dashboardapp.ui.theme.LocalAppFontFamily
+import com.came.parkare.dashboardapp.ui.utils.FontViewModel
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun MainScreen(
@@ -126,13 +130,17 @@ private fun LoadDashboardItems(
     val elements: List<ElementModel> = state.newItems
     if (elements.isEmpty()) return
     val boxMargin = state.contentPadding
+    val fontViewModel: FontViewModel = koinInject() // ← koinInject for singleton
+    val fontFamily by fontViewModel.fontFamily.collectAsState()
 
-    Column(modifier = modifier
-        .padding(boxMargin)
-        .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = if (showVideoFrame) Arrangement.Bottom else Arrangement.Top){
-        elements.forEach { mItem ->
-            val textSizeScale = state.textSizeScale
-            BuildComposable(elementModel = mItem, textSizeScale = textSizeScale)
+    CompositionLocalProvider(LocalAppFontFamily provides fontFamily) {
+        Column(modifier = modifier
+            .padding(boxMargin)
+            .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = if (showVideoFrame) Arrangement.Bottom else Arrangement.Top){
+            elements.forEach { mItem ->
+                val textSizeScale = state.textSizeScale
+                BuildComposable(elementModel = mItem, textSizeScale = textSizeScale)
+            }
         }
     }
 }

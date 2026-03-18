@@ -4,6 +4,7 @@ import com.came.parkare.dashboardapp.config.constants.Constants.API_PORT
 import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS
 import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS_DELAY_TIME
 import com.came.parkare.dashboardapp.config.constants.Constants.CONFIG_TYPE
+import com.came.parkare.dashboardapp.config.constants.Constants.FONT_FILE_NAME
 import com.came.parkare.dashboardapp.config.constants.Constants.RESET_COUNTER_DELAY_TIME
 import com.came.parkare.dashboardapp.config.constants.Constants.SHOW_COUNTER
 import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_API
@@ -12,6 +13,7 @@ import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_PORT
 import com.came.parkare.dashboardapp.config.constants.Constants.TEXT_SIZE_SCALE
 import com.came.parkare.dashboardapp.config.constants.Constants.TIME_DELAY
 import com.came.parkare.dashboardapp.config.constants.Constants.VIDEO_FRAME
+import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.dataclasses.TypeConnectionEnum
 import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.DeviceUtils
@@ -139,11 +141,18 @@ class ApiServerRepositoryImpl(
 
     override suspend fun saveFontFile(
         fileName: String,
-        fontData: ByteArray,
-        overwrite: Boolean
+        fontData: ByteArray
     ): Boolean {
-        configFileRepository.writeFont(ResourceFileModel(fileName = fileName, fileContent = null, fileContentArray = fontData ))
-        return true
+        val result = configFileRepository.writeFont(fileName = FONT_FILE_NAME, contentData = fontData )
+        return when(result){
+            is ServiceResult.Error -> {
+                false
+            }
+            is ServiceResult.Success -> {
+                serverConnection.setRestartApp(true)
+                result.data == true
+            }
+        }
     }
 
 

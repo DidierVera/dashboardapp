@@ -2,6 +2,7 @@ package com.came.parkare.dashboardapp.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -31,6 +32,8 @@ actual val ArialRoundedFont: FontFamily
 actual val Acumin: FontFamily
     @Composable
     get() = FontFamily(Font(Res.font.acumin_variable_concept, FontWeight.Bold))
+
+actual val LocalAppFontFamily = compositionLocalOf<FontFamily> { FontFamily.Default }
 
 actual val Rubik: FontFamily
     @Composable

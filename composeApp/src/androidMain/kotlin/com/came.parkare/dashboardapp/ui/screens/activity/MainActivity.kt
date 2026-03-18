@@ -13,18 +13,25 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.net.toUri
 import com.came.parkare.dashboardapp.infrastructure.source.remote.services.WebAppServer
 import com.came.parkare.dashboardapp.ui.screens.main.MainScreen
 import com.came.parkare.dashboardapp.ui.theme.DashboardAppTheme
+import com.came.parkare.dashboardapp.ui.theme.LocalAppFontFamily
 import com.came.parkare.dashboardapp.ui.utils.ConfigUI
+import com.came.parkare.dashboardapp.ui.utils.FontViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.compose.KoinContext
+import org.koin.compose.koinInject
 import java.io.File
 import java.io.IOException
 
@@ -76,14 +83,12 @@ class MainActivity : ComponentActivity() {
     private fun setContent() {
         setContent {
             DashboardAppTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = colorScheme.background
                 ) {
-
-                    KoinContext() {
-                        MainScreen()
+                    KoinContext {
+                        AppRoot()
                     }
                 }
             }
