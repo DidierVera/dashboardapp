@@ -25,6 +25,7 @@ import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiR
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetCurrentConnectionConfig
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetDashboardListRequest
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetDefaultConfigTemplate
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetFont
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetImages
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetVersion
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveConfigTemplate
@@ -82,6 +83,7 @@ class AndroidApiServer(
             session.isGetImages() -> handleGetImages()
             session.isSaveImages() -> handleSaveImages(session)
             session.isUploadFont() -> handleUploadFont(session)
+            session.isGetFont() -> handleGetFont()
             else -> createNotFoundResponse()
         }
     }
@@ -173,6 +175,12 @@ class AndroidApiServer(
     private fun handleGetImages(): Response {
         return processAsyncRequest<Unit, List<ResourceFileDto>?>(
             operation = { apiServerRepository.getImages() },
+            successTransform = { result -> Json.encodeToString(result) }
+        )
+    }
+    private fun handleGetFont(): Response {
+        return processAsyncRequest<Unit, String?>(
+            operation = { apiServerRepository.getFontName() },
             successTransform = { result -> Json.encodeToString(result) }
         )
     }

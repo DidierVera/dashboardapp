@@ -4,6 +4,7 @@ import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.CHECK_STATUS
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.DELETE_DEVICE
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_CONNECTION_CONFIG
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_DEVICE_LIST
+import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_FONT
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_IMAGES
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_VERSION
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_CONNECTION_CONFIG
@@ -22,7 +23,6 @@ import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.C
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.DeviceDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ResourceFileDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.fonts.FontDeleteResponseDto
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.fonts.FontInfoDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.fonts.FontUploadResponseDto
 import com.came.parkare.dashboardapp.infrastructure.source.services.base.HttpClient
 import kotlinx.atomicfu.TraceBase.None.append
@@ -150,8 +150,15 @@ class DeviceRepositoryImpl(
         }
     }
 
-    override suspend fun listFonts(ipAddress: String): ServiceResult<List<FontInfoDto>> {
-        TODO("Not yet implemented")
+    override suspend fun getFontName(ipAddress: String): ServiceResult<String> {
+        return try {
+            val url = "$SSL_PROTOCOL$ipAddress:$apiPort$GET_FONT"
+            val result = httpClient.get<String>(url)
+            ServiceResult.Success(result)
+        } catch (e: Exception) {
+            appLogger.trackError(e)
+            ServiceResult.Error(ErrorTypeClass.GeneralException(e.message ?: "Font upload failed"))
+        }
     }
 
     override suspend fun deleteFont(

@@ -119,8 +119,8 @@ private fun ButtonOptions() {
 
         DialogPickerDialog(
             buttonIcon = Res.drawable.ic_upload
-        ) { name, content ->
-            viewModel.setValues(name, fileContent = content)
+        ) { file ->
+            viewModel.setValues(file.fileNames, fileContent = file.fileContents)
         }
 
         // Save button

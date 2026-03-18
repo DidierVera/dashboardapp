@@ -6,7 +6,6 @@ import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.C
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.DeviceDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ResourceFileDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.fonts.FontDeleteResponseDto
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.fonts.FontInfoDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.fonts.FontUploadResponseDto
 
 interface DeviceRepository {
@@ -20,7 +19,7 @@ interface DeviceRepository {
     suspend fun getImages(ipAddress: String): ServiceResult<List<ResourceFileDto>?>
     suspend fun saveImages(ipAddress: String, data: List<ResourceFileDto>): ServiceResult<ResponseStatusDto>
     suspend fun uploadFont(ipAddress: String, data: ResourceFileDto): ServiceResult<FontUploadResponseDto>
-    suspend fun listFonts(ipAddress: String): ServiceResult<List<FontInfoDto>>
+    suspend fun getFontName(ipAddress: String): ServiceResult<String>
     suspend fun deleteFont(ipAddress: String, fileName: String): ServiceResult<FontDeleteResponseDto>
     suspend fun downloadFont(ipAddress: String, fileName: String): ServiceResult<ByteArray>
 }

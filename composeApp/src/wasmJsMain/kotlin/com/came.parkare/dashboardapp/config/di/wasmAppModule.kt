@@ -17,6 +17,7 @@ import com.came.parkare.dashboardapp.domain.usecases.GetDeviceList
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceStatus
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
 import com.came.parkare.dashboardapp.domain.usecases.GetDefaultTemplatesConfig
+import com.came.parkare.dashboardapp.domain.usecases.GetFont
 import com.came.parkare.dashboardapp.domain.usecases.GetImages
 import com.came.parkare.dashboardapp.domain.usecases.SaveConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.SaveFonts
@@ -102,6 +103,7 @@ val wasmAppModule = module {
     single { GetImages(get(), get()) }
     single { SaveImages(get(), get()) }
     single { SaveFonts(get(), get()) }
+    single { GetFont(get(), get()) }
     single { GetDefaultTemplatesConfig(get(), get(), get()) }
 
 

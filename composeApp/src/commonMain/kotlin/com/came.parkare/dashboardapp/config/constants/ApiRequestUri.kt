@@ -23,7 +23,6 @@ object ApiRequestUri {
     const val GET_IMAGES = "/api/resources/images/get"
     const val SAVE_IMAGES = "/api/resources/images/save"
     const val UPLOAD_FONT = "/api/fonts/upload/binary"
-    const val LIST_FONTS = "/api/fonts/list"
     const val DELETE_FONT = "/api/fonts/delete"
     const val GET_FONT = "/api/fonts/get"
 }

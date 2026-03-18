@@ -100,6 +100,7 @@
     <string name="share_configuration_message">Are you sure you want to share this configuration with the selected devices? \n Please enter the password to confirm it</string>
     <string name="configuration_shared_successfully">Congratulations... \n Config shared with all the selected devices successfully!</string>
     <string name="configuration_shared_with_errors">Configuration shared with errors.. \n The config has been shared with some of the selected devices, check the log file in the current host to see details.</string>
+    <string name="font_save_correctly_message">Font saved and applied correctly.</string>
 
 
 </resources>

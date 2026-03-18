@@ -45,7 +45,7 @@ fun DialogPickerDialog(
     clearFiles: Boolean = false,
     fileExtensions: List<String> = listOf("png", "jpg"),
     onFilesSelected: ((List<FilePickerDialogState>) -> Unit)? = null,
-    onFileSelected: ((String, String) -> Unit)? = null
+    onFileSelected: ((FilePickerDialogState) -> Unit)? = null
 ) {
     val viewModel: FilePickerDialogViewModel = koinInject()
     val pickerState by viewModel.state.collectAsState()
@@ -93,7 +93,7 @@ fun DialogPickerDialog(
         if (filesState.isNotEmpty()) {
             onFilesSelected?.invoke(filesState)
         } else if (pickerState.fileContents.isNotBlank()) {
-            onFileSelected?.invoke(pickerState.fileNames, pickerState.fileContents)
+            onFileSelected?.invoke(pickerState)
         }
     }
 }

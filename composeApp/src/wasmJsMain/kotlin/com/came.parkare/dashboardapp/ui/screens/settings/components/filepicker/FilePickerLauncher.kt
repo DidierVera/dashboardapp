@@ -24,7 +24,7 @@ fun FilePickerLauncher(
     } else {
         FilePicker(
             show = show,
-            fileExtensions = listOf("json")
+            fileExtensions = fileExtensions
         ) {
             onSingleResult(it)
         }

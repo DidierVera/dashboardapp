@@ -99,7 +99,6 @@ private fun ResourcesColumnLayout() {
             VerticalDivider()
             FontsPanel(modifier = Modifier.weight(1f))   // <-- nuevo
         }
-        SaveButton(modifier = Modifier.align(Alignment.End))
     }
 }
 
@@ -124,7 +123,6 @@ private fun ResourcesTabLayout() {
                 1 -> FontsPanel()
             }
         }
-        SaveButton(modifier = Modifier.align(Alignment.End).padding(8.dp))
     }
 }
 
@@ -158,6 +156,7 @@ fun ImagesPanel(modifier: Modifier = Modifier) {
                 ImageGridItem(image = image)
             }
         }
+        SaveButton(modifier = Modifier.align(Alignment.End).padding(8.dp))
     }
 }
 
@@ -174,27 +173,19 @@ private fun FontsPanel(modifier: Modifier = Modifier){
 
         DialogPickerDialog(
             buttonText = Res.string.upload_file_button,
-            multipleFiles = true,
+            multipleFiles = false,
             fileExtensions = listOf("ttf", "otf", "ttc"),
             clearFiles = state.clearSelectedFiles,
-            onFilesSelected = { items -> viewModel.setFonts(items) }
+            onFileSelected = { file -> viewModel.setFont(file) }
         )
-        LazyColumn(
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-            items(items = state.fontResources){ font ->
-                FontRowItem(font) {
-                    viewModel.removeFont(font)
-                }
-            }
-        }
+
+        FontRowItem(state.fontResources)
     }
 }
 
 @OptIn(ExperimentalEncodingApi::class)
 @Composable
-private fun FontRowItem(font: FilePickerDialogState, onDelete: () -> Unit) {
+private fun FontRowItem(font: FilePickerDialogState) {
     val fontLoader: FontLoader = koinInject()
 
     LaunchedEffect(font.fileContentsRaw) {
@@ -208,7 +199,6 @@ private fun FontRowItem(font: FilePickerDialogState, onDelete: () -> Unit) {
 
         Text(text = font.fileNames, style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.weight(1f))
-        DeleteButton(modifier = Modifier.size(24.dp), onClick = onDelete)
     }
 }
 

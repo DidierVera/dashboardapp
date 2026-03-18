@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.ErrorValidator
+import com.came.parkare.dashboardapp.domain.usecases.GetFont
 import com.came.parkare.dashboardapp.domain.usecases.GetImages
 import com.came.parkare.dashboardapp.domain.usecases.SaveFonts
 import com.came.parkare.dashboardapp.domain.usecases.SaveImages
@@ -12,6 +13,7 @@ import com.came.parkare.dashboardapp.ui.screens.settings.components.filepicker.F
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.config_saved_message
+import dashboardapp.composeapp.generated.resources.font_save_correctly_message
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,6 +26,7 @@ import kotlinx.coroutines.withContext
 class ResourcesViewModel(
     private val getImages: GetImages,
     private val saveImages: SaveImages,
+    private val getFont: GetFont,
     private val saveFonts: SaveFonts,
     private val wasmUtilsHandler: WasmUtilsHandler,
     private val validator: ErrorValidator
@@ -35,6 +38,30 @@ class ResourcesViewModel(
 
     fun initTab() {
         loadImages()
+    }
+
+    private fun loadFont() {
+        viewModelScope.launch {
+            wasmUtilsHandler.showLoading(true)
+            val  result = withContext(Dispatchers.Default) { getFont.invoke() }
+            when(result) {
+                is ServiceResult.Error -> {
+                    wasmUtilsHandler.showLoading(false)
+                    validator.validate(result.error)
+                }
+                is ServiceResult.Success -> {
+                    if (result.data != null){
+                        _state.update { src -> src.copy(
+                            fontResources = FilePickerDialogState(
+                                fileNames = result.data,
+                                fileContentsRaw = "")
+                        ) }
+                    }else _state.update { it.copy(imagesResources = emptyList()) }
+                }
+            }
+
+            wasmUtilsHandler.showLoading(false)
+        }
     }
 
     private fun loadImages() {
@@ -61,16 +88,12 @@ class ResourcesViewModel(
                             }
                         ) }
                     }else _state.update { it.copy(imagesResources = emptyList()) }
+
+                    wasmUtilsHandler.showLoading(false)
+                    loadFont()
                 }
             }
-
-            wasmUtilsHandler.showLoading(false)
         }
-    }
-
-    fun removeFont(file: FilePickerDialogState) {
-        _state.update { it.copy(clearSelectedFiles = true) }
-        _state.update { it.copy(fontResources = it.fontResources.filter { fnt -> fnt != file }) }
     }
 
     private fun upsertFiles(
@@ -97,26 +120,22 @@ class ResourcesViewModel(
         }
     }
 
-    fun setFonts(filesSelected: List<FilePickerDialogState>) {
-        _state.update {
-            it.copy(
-                clearSelectedFiles = false,
-                fontResources = upsertFiles(it.fontResources, filesSelected)
-            )
-        }
+    fun setFont(file: FilePickerDialogState) {
+        _state.update { it.copy(clearSelectedFiles = false, fontResources = file) }
         viewModelScope.launch {
             wasmUtilsHandler.showLoading(true)
             //upload file
-            val result = saveFonts.invoke(filesSelected.map { ResourceFileDto(
-                fileName = it.fileNames,
-                fileContent = it.fileContentsRaw
-            ) })
+            val result = saveFonts.invoke(ResourceFileDto(
+                fileName = file.fileNames,
+                fileContent = file.fileContentsRaw))
+
             when(result){
                 is ServiceResult.Error -> {
                     wasmUtilsHandler.showLoading(false)
                     validator.validate(result.error)
                 }
                 is ServiceResult.Success -> {
+                    wasmUtilsHandler.showToastMessage(Res.string.font_save_correctly_message)
                     wasmUtilsHandler.showLoading(false)
                 }
             }

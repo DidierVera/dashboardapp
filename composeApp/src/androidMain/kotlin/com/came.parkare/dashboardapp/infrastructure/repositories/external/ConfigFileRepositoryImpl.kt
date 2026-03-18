@@ -3,6 +3,7 @@ package com.came.parkare.dashboardapp.infrastructure.repositories.external
 import com.came.parkare.dashboardapp.config.constants.Constants.API_PORT
 import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS
 import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS_DELAY_TIME
+import com.came.parkare.dashboardapp.config.constants.Constants.FONT_FILE_NAME
 import com.came.parkare.dashboardapp.config.constants.Constants.RESET_COUNTER_DELAY_TIME
 import com.came.parkare.dashboardapp.config.constants.Constants.SHOW_COUNTER
 import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_API
@@ -33,6 +34,8 @@ import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.S
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toModel
 import com.came.parkare.dashboardapp.infrastructure.source.mocks.ConfigFileMock
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class ConfigFileRepositoryImpl(
     private val configFileDao: ConfigFileDao,
@@ -139,10 +142,6 @@ class ConfigFileRepositoryImpl(
         }catch (e: Exception){
             return ServiceResult.Error(ErrorTypeClass.GeneralException(messageError = e.message))
         }
-    }
-
-    override suspend fun getFont(): ServiceResult<ResourceFileModel> {
-        TODO("Not yet implemented")
     }
 
     override suspend fun writeFont(fileName: String, contentData: ByteArray): ServiceResult<Boolean> {

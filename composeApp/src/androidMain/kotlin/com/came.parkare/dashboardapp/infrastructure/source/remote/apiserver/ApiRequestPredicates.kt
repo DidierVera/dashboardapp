@@ -7,6 +7,7 @@ import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_CONFIG_T
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_CONNECTION_CONFIG
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_DEFAULT_CONFIG_TEMPLATE
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_DEVICE_LIST
+import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_FONT
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_IMAGES
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_SCREENS_CONFIG
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_SCREEN_CONFIG_TYPE
@@ -104,6 +105,10 @@ object ApiRequestPredicates {
 
     fun NanoHTTPD.IHTTPSession.isUploadFont(): Boolean {
         return uri == UPLOAD_FONT && method == NanoHTTPD.Method.POST
+    }
+
+    fun NanoHTTPD.IHTTPSession.isGetFont(): Boolean {
+        return uri == GET_FONT && method == NanoHTTPD.Method.GET
     }
 
     fun NanoHTTPD.IHTTPSession.readBodyAsUtf8(): String {

@@ -5,6 +5,7 @@ import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS
 import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS_DELAY_TIME
 import com.came.parkare.dashboardapp.config.constants.Constants.CONFIG_TYPE
 import com.came.parkare.dashboardapp.config.constants.Constants.FONT_FILE_NAME
+import com.came.parkare.dashboardapp.config.constants.Constants.FONT_REGISTRY_KEY
 import com.came.parkare.dashboardapp.config.constants.Constants.RESET_COUNTER_DELAY_TIME
 import com.came.parkare.dashboardapp.config.constants.Constants.SHOW_COUNTER
 import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_API
@@ -135,15 +136,16 @@ class ApiServerRepositoryImpl(
         return 0
     }
 
-    override suspend fun getFont(): List<ResourceFileDto>? {
-        TODO("Not yet implemented")
+    override suspend fun getFontName(): String {
+        val originalFontName = preferences.get(FONT_REGISTRY_KEY, FONT_FILE_NAME)
+        return originalFontName
     }
 
     override suspend fun saveFontFile(
         fileName: String,
         fontData: ByteArray
     ): Boolean {
-        val result = configFileRepository.writeFont(fileName = FONT_FILE_NAME, contentData = fontData )
+        val result = configFileRepository.writeFont(fileName = fileName, contentData = fontData )
         return when(result){
             is ServiceResult.Error -> {
                 false
