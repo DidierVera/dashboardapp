@@ -14,16 +14,13 @@ class SaveFonts(
     private val deviceRepository: DeviceRepository
 ) {
 
-    suspend fun invoke(data:List<ResourceFileDto>):  ServiceResult<ResponseStatusDto> {
+    suspend fun invoke(data: ResourceFileDto):  ServiceResult<ResponseStatusDto> {
         val ipAddress = preferences.get(SELECTED_IP_ADDRESS, window.location.hostname)
-        for (font in data){
-            when(val result = deviceRepository.uploadFont(ipAddress, font)){
-                is ServiceResult.Error -> {
-                    return ServiceResult.Error(result.error)
-                }
-                is ServiceResult.Success -> continue
+        return when(val result = deviceRepository.uploadFont(ipAddress, data)){
+            is ServiceResult.Error -> {
+                ServiceResult.Error(result.error)
             }
+            is ServiceResult.Success -> ServiceResult.Success(ResponseStatusDto(true))
         }
-        return ServiceResult.Success(ResponseStatusDto(true))
     }
 }

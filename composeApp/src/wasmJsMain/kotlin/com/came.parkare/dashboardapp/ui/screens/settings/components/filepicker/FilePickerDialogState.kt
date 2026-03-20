@@ -6,6 +6,4 @@ data class FilePickerDialogState(
     val fileSelected: Boolean = false,
     val fileNames: String = "",
     val fileContents: String = "",
-    val fileContentsRaw: String = "",
-    val fileContentByteArray: ByteArray? = null
-)
+    val fileContentsRaw: String = "")

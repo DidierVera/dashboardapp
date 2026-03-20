@@ -11,9 +11,9 @@ class GetFont(
     private val preferences: WasmSharedPreferencesProvider,
     private val deviceRepository: DeviceRepository
 ) {
-    suspend fun invoke(): ServiceResult<String> {
+    suspend fun invoke(): ServiceResult<List<String>> {
         val ipAddress = preferences.get(SELECTED_IP_ADDRESS, window.location.hostname)
-        return when(val result = deviceRepository.getFontName(ipAddress)){
+        return when(val result = deviceRepository.getFontNames(ipAddress)){
             is ServiceResult.Error -> ServiceResult.Error(result.error)
             is ServiceResult.Success -> result
         }

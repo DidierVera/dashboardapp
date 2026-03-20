@@ -9,8 +9,10 @@ data class ResourcesState(
     val loading: Boolean = false,
     val clearSelectedFiles: Boolean = false,
     val imagesResources: List<FilePickerDialogState> = emptyList(),
-    val fontResources: List<FilePickerDialogState> = emptyList(),
+    val fontResources: List<FontResourceState> = emptyList(),
+    val selectedFontWeight: FontWeightType = FontWeightType.REGULAR  // ✅
 )
+
 
 
 enum class FontWeightType(val fileName: String) {
@@ -18,3 +20,10 @@ enum class FontWeightType(val fileName: String) {
     MEDIUM(FONT_MEDIUM),
     BOLD(FONT_BOLD)
 }
+
+data class FontResourceState(
+    val fileName: String = "",
+    val fileContent: String = "",
+    val fileContentRaw: String = "",
+    val fontWeight: FontWeightType = FontWeightType.REGULAR
+)

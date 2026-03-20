@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -159,9 +160,8 @@ fun ImagesPanel(modifier: Modifier = Modifier) {
         SaveButton(modifier = Modifier.align(Alignment.End).padding(8.dp))
     }
 }
-
 @Composable
-private fun FontsPanel(modifier: Modifier = Modifier){
+private fun FontsPanel(modifier: Modifier = Modifier) {
     val viewModel: ResourcesViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
 
@@ -171,38 +171,49 @@ private fun FontsPanel(modifier: Modifier = Modifier){
     ) {
         AppLabel(Res.string.font_resources_label)
 
+        // ✅ Weight selector
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FontWeightType.entries.forEach { weightType ->
+                FilterChip(
+                    selected = state.selectedFontWeight == weightType,
+                    onClick = { viewModel.setFontWeight(weightType) },
+                    label = { Text(weightType.name) }
+                )
+            }
+        }
+
         DialogPickerDialog(
             buttonText = Res.string.upload_file_button,
-            multipleFiles = true,
+            multipleFiles = false,  // ✅ one file per weight
             fileExtensions = listOf("ttf", "otf", "ttc"),
             clearFiles = state.clearSelectedFiles,
-            onFilesSelected = { files -> viewModel.setFont(files) }
+            onFileSelected = { files -> viewModel.setFont(files) }
         )
 
         LazyColumn {
-            items(items = state.fontResources){ item ->
+            items(items = state.fontResources) { item ->
                 FontRowItem(item)
             }
         }
     }
 }
 
-@OptIn(ExperimentalEncodingApi::class)
 @Composable
-private fun FontRowItem(font: FilePickerDialogState) {
-    val fontLoader: FontLoader = koinInject()
-
-    LaunchedEffect(font.fileContentsRaw) {
-        val bytes = Base64.decode(font.fileContentsRaw)
-        val typeface = fontLoader.loadTypeface(font.fileNames, bytes)
-    }
-
-    Row(verticalAlignment = Alignment.CenterVertically,
+private fun FontRowItem(font: FontResourceState) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .fillMaxWidth().padding(8.dp).shadowContainer().padding(4.dp)) {
-
-        Text(text = font.fileNames, style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.weight(1f))
+            .fillMaxWidth().padding(8.dp).shadowContainer().padding(4.dp)
+    ) {
+        Text(
+            text = font.fileName,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.weight(1f)
+        )
+        Text(
+            text = font.fontWeight.name,
+            style = MaterialTheme.typography.labelSmall
+        )
     }
 }
 

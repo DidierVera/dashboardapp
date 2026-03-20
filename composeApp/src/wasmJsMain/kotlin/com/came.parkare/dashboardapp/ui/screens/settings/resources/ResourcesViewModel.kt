@@ -50,13 +50,18 @@ class ResourcesViewModel(
                     validator.validate(result.error)
                 }
                 is ServiceResult.Success -> {
-                    if (result.data != null){
-                        _state.update { src -> src.copy(
-                            fontResources = FilePickerDialogState(
-                                fileNames = result.data,
-                                fileContentsRaw = "")
-                        ) }
-                    }else _state.update { it.copy(imagesResources = emptyList()) }
+                    if (result.data != null) {
+                        _state.update { src ->
+                            src.copy(fontResources = result.data.map { fileName ->
+                                    FontResourceState(fileName = fileName,
+                                        fontWeight = FontWeightType.entries.firstOrNull { it.fileName == fileName }
+                                            ?: FontWeightType.REGULAR)
+                                }
+                            )
+                        }
+                    } else {
+                        _state.update { it.copy(fontResources = emptyList()) }
+                    }
                 }
             }
 
@@ -119,22 +124,32 @@ class ResourcesViewModel(
             )
         }
     }
+    fun setFont(filesSelected: FilePickerDialogState) {
+        val targetWeight = _state.value.selectedFontWeight  // ✅ get selected weight
 
-    fun setFont(filesSelected: List<FilePickerDialogState>) {
+        val parseData =  FontResourceState(
+            fileName = targetWeight.fileName,  // ✅ fixed name, not file.fileNames
+            fileContent = filesSelected.fileContents,
+            fileContentRaw = filesSelected.fileContentsRaw,
+            fontWeight = targetWeight           // ✅ tag with weight
+        )
+
         _state.update {
             it.copy(
                 clearSelectedFiles = false,
-                fontResources = upsertFiles(it.fontResources, filesSelected)
+                fontResources = upsertFontResources(it.fontResources,  listOf(parseData))  // see Issue 2
             )
         }
+
         viewModelScope.launch {
             wasmUtilsHandler.showLoading(true)
-            //upload file
-            val result = saveFonts.invoke( filesSelected.map{ file ->
-                ResourceFileDto (fileName = file.fileNames, fileContent = file.fileContentsRaw)
-            })
-
-            when(result){
+            val result = saveFonts.invoke(
+                ResourceFileDto(
+                    fileName = targetWeight.fileName,  // ✅ fixed name
+                    fileContent = filesSelected.fileContentsRaw
+                )
+            )
+            when (result) {
                 is ServiceResult.Error -> {
                     wasmUtilsHandler.showLoading(false)
                     validator.validate(result.error)
@@ -145,6 +160,25 @@ class ResourcesViewModel(
                 }
             }
         }
+    }
+
+    private fun upsertFontResources(
+        current: List<FontResourceState>,
+        incoming: List<FontResourceState>
+    ): List<FontResourceState> {
+        val result = current.toMutableList()
+        incoming.forEach { newFont ->
+            val index = result.indexOfFirst { it.fontWeight == newFont.fontWeight }  // ✅ key by weight
+            when {
+                index == -1 -> result.add(newFont)
+                else -> result[index] = newFont  // replace same weight
+            }
+        }
+        return result
+    }
+
+    fun setFontWeight(weight: FontWeightType) {
+        _state.update { it.copy(selectedFontWeight = weight) }
     }
 
     fun downloadImage(image: FilePickerDialogState) {

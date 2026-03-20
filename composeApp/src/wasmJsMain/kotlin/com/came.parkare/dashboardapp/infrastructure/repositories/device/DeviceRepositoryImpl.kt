@@ -150,10 +150,10 @@ class DeviceRepositoryImpl(
         }
     }
 
-    override suspend fun getFontName(ipAddress: String): ServiceResult<String> {
+    override suspend fun getFontNames(ipAddress: String): ServiceResult<List<String>> {
         return try {
             val url = "$SSL_PROTOCOL$ipAddress:$apiPort$GET_FONT"
-            val result = httpClient.get<String>(url)
+            val result = httpClient.get<List<String>>(url)
             ServiceResult.Success(result)
         } catch (e: Exception) {
             appLogger.trackError(e)
