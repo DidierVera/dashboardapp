@@ -143,6 +143,16 @@ class ConfigFileRepositoryImpl(
         }
     }
 
+    override suspend fun getFonts(): List<String> {
+        try {
+            val result= fontFileDao.listAvailableFonts()
+            return result.map { it.fileName }
+        }catch (e: Exception){
+            appLogger.trackError(e)
+            return emptyList()
+        }
+    }
+
     override suspend fun writeFont(fileName: String, contentData: ByteArray): ServiceResult<Boolean> {
         try {
             val result = fontFileDao.saveFontFile(fileName = fileName, fontData = contentData, true)

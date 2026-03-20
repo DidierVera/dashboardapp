@@ -11,6 +11,7 @@ interface ConfigFileRepository {
     suspend fun writeConnectionConfig(newData: ConnectionConfigModel): ServiceResult<Boolean>
     suspend fun writeScreensConfig(newData: List<ScreenModel>): ServiceResult<Boolean>
     suspend fun getDefaultImages(): ServiceResult<Boolean>
+    suspend fun getFonts(): List<String>
     suspend fun writeImages(newData: List<ResourceFileModel>): ServiceResult<Boolean>
     suspend fun writeFont(fileName: String, contentData: ByteArray): ServiceResult<Boolean>
 }
