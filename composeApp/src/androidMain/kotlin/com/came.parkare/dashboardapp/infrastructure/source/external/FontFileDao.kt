@@ -2,9 +2,6 @@ package com.came.parkare.dashboardapp.infrastructure.source.external
 
 import android.content.Context
 import android.graphics.Typeface
-import android.os.Build
-import android.os.Environment
-import com.came.parkare.dashboardapp.config.constants.Constants.FONT_FILE_NAME
 import com.came.parkare.dashboardapp.config.constants.Constants.FONT_REGISTRY_KEY
 import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
@@ -36,7 +33,7 @@ class FontFileDao(
             try {
                 // Sanitize filename to prevent path traversal attacks
                 val safeFileName = sanitizeFileName(fileName)
-                val fontFile = File(fontsDirectory, FONT_FILE_NAME)
+                val fontFile = File(fontsDirectory, fileName)
 
                 // Check if file already exists
                 if (fontFile.exists() && !overwrite) {

@@ -4,7 +4,6 @@ import com.came.parkare.dashboardapp.config.constants.Constants.API_PORT
 import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS
 import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS_DELAY_TIME
 import com.came.parkare.dashboardapp.config.constants.Constants.CONFIG_TYPE
-import com.came.parkare.dashboardapp.config.constants.Constants.FONT_FILE_NAME
 import com.came.parkare.dashboardapp.config.constants.Constants.FONT_REGISTRY_KEY
 import com.came.parkare.dashboardapp.config.constants.Constants.RESET_COUNTER_DELAY_TIME
 import com.came.parkare.dashboardapp.config.constants.Constants.SHOW_COUNTER
@@ -136,9 +135,9 @@ class ApiServerRepositoryImpl(
         return 0
     }
 
-    override suspend fun getFontName(): String {
-        val originalFontName = preferences.get(FONT_REGISTRY_KEY, FONT_FILE_NAME)
-        return originalFontName
+    override suspend fun getFontNames(): List<String> {
+        val originalFontName = preferences.get(FONT_REGISTRY_KEY, "")
+        return listOf(originalFontName)
     }
 
     override suspend fun saveFontFile(

@@ -23,7 +23,7 @@ interface ApiServerRepository {
     suspend fun getAppVersion(): String
     suspend fun getImages(): List<ResourceFileDto>?
     suspend fun saveImages(data: List<ResourceFileDto>?): Int
-    suspend fun getFontName(): String
+    suspend fun getFontNames(): List<String>
     suspend fun saveFontFile(fileName: String, fontData: ByteArray): Boolean
 
 }

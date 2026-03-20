@@ -3,7 +3,6 @@ package com.came.parkare.dashboardapp.infrastructure.repositories.external
 import com.came.parkare.dashboardapp.config.constants.Constants.API_PORT
 import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS
 import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS_DELAY_TIME
-import com.came.parkare.dashboardapp.config.constants.Constants.FONT_FILE_NAME
 import com.came.parkare.dashboardapp.config.constants.Constants.RESET_COUNTER_DELAY_TIME
 import com.came.parkare.dashboardapp.config.constants.Constants.SHOW_COUNTER
 import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_API

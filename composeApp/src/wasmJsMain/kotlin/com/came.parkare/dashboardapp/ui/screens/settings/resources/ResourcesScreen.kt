@@ -173,13 +173,17 @@ private fun FontsPanel(modifier: Modifier = Modifier){
 
         DialogPickerDialog(
             buttonText = Res.string.upload_file_button,
-            multipleFiles = false,
+            multipleFiles = true,
             fileExtensions = listOf("ttf", "otf", "ttc"),
             clearFiles = state.clearSelectedFiles,
-            onFileSelected = { file -> viewModel.setFont(file) }
+            onFilesSelected = { files -> viewModel.setFont(files) }
         )
 
-        FontRowItem(state.fontResources)
+        LazyColumn {
+            items(items = state.fontResources){ item ->
+                FontRowItem(item)
+            }
+        }
     }
 }
 

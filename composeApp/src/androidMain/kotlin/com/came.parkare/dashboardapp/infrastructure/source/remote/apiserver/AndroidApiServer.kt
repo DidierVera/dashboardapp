@@ -179,7 +179,7 @@ class AndroidApiServer(
         )
     }
     private fun handleGetFont(): Response {
-        return processAsyncRequest<Unit, String?>(
+        return processAsyncRequest<Unit, List<String>?>(
             operation = { apiServerRepository.getFontName() },
             successTransform = { result -> Json.encodeToString(result) }
         )

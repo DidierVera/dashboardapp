@@ -120,14 +120,19 @@ class ResourcesViewModel(
         }
     }
 
-    fun setFont(file: FilePickerDialogState) {
-        _state.update { it.copy(clearSelectedFiles = false, fontResources = file) }
+    fun setFont(filesSelected: List<FilePickerDialogState>) {
+        _state.update {
+            it.copy(
+                clearSelectedFiles = false,
+                fontResources = upsertFiles(it.fontResources, filesSelected)
+            )
+        }
         viewModelScope.launch {
             wasmUtilsHandler.showLoading(true)
             //upload file
-            val result = saveFonts.invoke(ResourceFileDto(
-                fileName = file.fileNames,
-                fileContent = file.fileContentsRaw))
+            val result = saveFonts.invoke( filesSelected.map{ file ->
+                ResourceFileDto (fileName = file.fileNames, fileContent = file.fileContentsRaw)
+            })
 
             when(result){
                 is ServiceResult.Error -> {
