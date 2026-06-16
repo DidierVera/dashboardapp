@@ -1487,6 +1487,87 @@ object SabaTemplates {
                                                 }
                                             }
                                         },
+                                          {
+                                            "element-type": "row",
+                                            "data": {
+                                              "backgroundColor": "#FF5800",
+                                              "density": 0,
+                                              "roundBorder": 0,
+                                              "hasShadow": false,
+                                              "spacing": 10,
+                                              "padding": 10,
+                                              "dataKey": null,
+                                              "ditTypeCode": null,
+                                              "validValue": null,
+                                              "content": [
+                                                {
+                                                  "element-type": "text",
+                                                  "data": {
+                                                    "dashboardItemId": "cannot-read",
+                                                    "defaultText": "Amount to pay:",
+                                                    "textSize": 36,
+                                                    "textColor": "#FFFFFF",
+                                                    "padding": 12,
+                                                    "fontWeight": "Medium",
+                                                    "dataKey": null,
+                                                    "ditTypeCode": null,
+                                                    "validValue": null,
+                                                    "translations": {
+                                                      "lang1": "Amount to pay:"
+                                                    }
+                                                  }
+                                                },
+                                                {
+                                                  "element-type": "row",
+                                                  "data": {
+                                                    "backgroundColor": "#FF5800",
+                                                    "density": 0,
+                                                    "roundBorder": 0,
+                                                    "hasShadow": false,
+                                                    "spacing": 0,
+                                                    "padding": 0,
+                                                    "dataKey": null,
+                                                    "ditTypeCode": null,
+                                                    "validValue": null,
+                                                    "content": [
+                                                      {
+                                                        "element-type": "text",
+                                                        "data": {
+                                                          "dashboardItemId": "cannot-read",
+                                                          "defaultText": "€",
+                                                          "textSize": 36,
+                                                          "textColor": "#FFFFFF",
+                                                          "padding": 0,
+                                                          "fontWeight": "Bold",
+                                                          "dataKey": null,
+                                                          "ditTypeCode": null,
+                                                          "validValue": null,
+                                                          "translations": {
+                                                            "lang1": "€"
+                                                          }
+                                                        }
+                                                      },
+                                                      {
+                                                        "element-type": "text",
+                                                        "data": {
+                                                          "dashboardItemId": "amount-to-pay-value",
+                                                          "defaultText": "-------",
+                                                          "textSize": 36,
+                                                          "textColor": "#FFFFFF",
+                                                          "padding": 12,
+                                                          "fontWeight": "Bold",
+                                                          "dataKey": "AmountTotal",
+                                                          "ditTypeCode": 3,
+                                                          "validValue": null,
+                                                          "translations": null
+                                                        }
+                                                      }
+                                                    ]
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          },
                                         {
                                             "element-type": "spacer",
                                             "data": {

@@ -202,7 +202,7 @@ class MockService (
                 dtoType = 0,
                 dtoName = "DtoDialog"
             ),
-            ditsTUI = null
+            ditsTUI = getPaymentRequiredJsonDit()
         )
     }
 
@@ -218,7 +218,7 @@ class MockService (
                 dtoType = 0,
                 dtoName = "DtoDialog"
             ),
-            ditsTUI = null
+            ditsTUI = getPaymentRequiredJsonDit()
         )
     }
 
@@ -388,6 +388,23 @@ class MockService (
                     "Version": 0,
                     "Status": ${(0..1).random()}
                 }
+            ]
+        """.trimIndent()
+        return Json.decodeFromString(jsonString)
+    }
+
+    private fun getPaymentRequiredJsonDit(): JsonArray {
+        val jsonString = """
+            [
+                {
+                    "DitType": {
+                        "DitType": 3,
+                        "DitName": "dit_AmountToPay"
+                    },
+                    "Version": 0,
+                    "AmountTotal": ${kotlin.random.Random.nextInt(5, 2998)},
+                    "AmountAlreadyPayed": 0
+                }                
             ]
         """.trimIndent()
         return Json.decodeFromString(jsonString)

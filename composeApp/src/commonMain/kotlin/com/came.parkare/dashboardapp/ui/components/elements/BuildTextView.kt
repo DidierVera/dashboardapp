@@ -27,35 +27,67 @@ fun BuildTextView(text: TextDataModel, scaleFactor: Float, modifier: Modifier = 
     }
     val textSize = (text.textSize.toFloat() * scaleFactor)
         .coerceAtLeast((text.textSize - 8).toFloat())
-    if (text.dashboardItemId.contains("license-plate-value")) {
-        LicensePlateItemStyle(
-            plateNumber = text.defaultText,
-            scaleFactor = scaleFactor,
-            modifier = modifier,
-            textSize = textSize,
-            fontWeight = weight,
-            textColor = hexToColor(text.textColor),
-            padding = ((text.style.padding ?: 1).toFloat() * scaleFactor)
-        )
+    when {
+        text.dashboardItemId.contains("license-plate-value") -> {
+            LicensePlateItemStyle(
+                plateNumber = text.defaultText,
+                scaleFactor = scaleFactor,
+                modifier = modifier,
+                textSize = textSize,
+                fontWeight = weight,
+                textColor = hexToColor(text.textColor),
+                padding = ((text.style.padding ?: 1).toFloat() * scaleFactor)
+            )
+        }
+        text.dashboardItemId.contains("amount-to-pay-value") -> {
+            val animatedText = animateFloatAsState(targetValue = scaleFactor)
+            val appFontFamily = LocalAppFontFamily.current
 
-    } else {
-        val animatedText = animateFloatAsState(targetValue = scaleFactor)
-        val appFontFamily = LocalAppFontFamily.current
+            val condensedStyle = TextStyle(
+                fontFamily = appFontFamily,
+                fontWeight = weight,
+                fontSynthesis = FontSynthesis.Weight
+            )
+            val amountToPay = try {
+                println("AmountToPayPrevious= ${text.defaultText}")
+                text.defaultText.toDouble() / 100
 
-        val condensedStyle = TextStyle(
-            fontFamily = appFontFamily,
-            fontWeight = weight,
-            fontSynthesis = FontSynthesis.Weight
-        )
-        Text(
-            text = text.defaultText,
-            fontSize = textSize.sp * animatedText.value,
-            lineHeight = 1.2.em,
-            textAlign = TextAlign.Center,
-            color = hexToColor(text.textColor),
-            fontFamily = appFontFamily,
-            modifier = modifier.padding(((text.style.padding ?: 1).toFloat() * scaleFactor).dp),
-            style = condensedStyle
-        )
+
+            }catch (e: Exception){
+                text.defaultText
+            }
+            println("AMountToPay= $amountToPay")
+
+            Text(
+                text = amountToPay.toString(),
+                fontSize = textSize.sp * animatedText.value,
+                lineHeight = 1.2.em,
+                textAlign = TextAlign.Center,
+                color = hexToColor(text.textColor),
+                fontFamily = appFontFamily,
+                modifier = modifier.padding(((text.style.padding ?: 1).toFloat() * scaleFactor).dp),
+                style = condensedStyle
+            )
+        }
+        else -> {
+            val animatedText = animateFloatAsState(targetValue = scaleFactor)
+            val appFontFamily = LocalAppFontFamily.current
+
+            val condensedStyle = TextStyle(
+                fontFamily = appFontFamily,
+                fontWeight = weight,
+                fontSynthesis = FontSynthesis.Weight
+            )
+            Text(
+                text = text.defaultText,
+                fontSize = textSize.sp * animatedText.value,
+                lineHeight = 1.2.em,
+                textAlign = TextAlign.Center,
+                color = hexToColor(text.textColor),
+                fontFamily = appFontFamily,
+                modifier = modifier.padding(((text.style.padding ?: 1).toFloat() * scaleFactor).dp),
+                style = condensedStyle
+            )
+        }
     }
 }
