@@ -49,14 +49,13 @@ fun BuildTextView(text: TextDataModel, scaleFactor: Float, modifier: Modifier = 
                 fontSynthesis = FontSynthesis.Weight
             )
             val amountToPay = try {
-                println("AmountToPayPrevious= ${text.defaultText}")
-                text.defaultText.toDouble() / 100
-
-
-            }catch (e: Exception){
+                val cents = text.defaultText.toLong()
+                val whole = cents / 100
+                val frac = (cents % 100).toString().padStart(2, '0')
+                "$whole.$frac"
+            } catch (e: Exception) {
                 text.defaultText
             }
-            println("AMountToPay= $amountToPay")
 
             Text(
                 text = amountToPay.toString(),
