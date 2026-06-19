@@ -55,7 +55,6 @@ fun MainScreen(
                 .padding(4.dp)
                 .align(Alignment.TopEnd), sizeScale = itemsState.textSizeScale)
 
-        UpdateDataByLang()
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.Bottom),
             modifier = Modifier.fillMaxSize()
@@ -72,17 +71,6 @@ fun MainScreen(
 
     }
 }
-
-@Composable
-private fun UpdateDataByLang(
-    viewModel: MainViewModel = koinViewModel()
-){
-    val state by viewModel.itemsState.collectAsState()
-    if (state.currentLang.isNotBlank()){
-        viewModel.getTranslationText(state.currentLang)
-    }
-}
-
 
 @Composable
 private fun LoadBackground(

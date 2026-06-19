@@ -35,7 +35,6 @@ import com.came.parkare.dashboardapp.ui.utils.FilesUtils
 import com.came.parkare.dashboardapp.ui.utils.FontViewModel
 import com.came.parkare.dashboardapp.ui.utils.SystemBrightnessManager
 import com.came.parkare.dashboardapp.ui.utils.UiUtils
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -183,7 +182,7 @@ class MainViewModel (
     private fun startPeriodicChecking() {
         viewModelScope.launch {
             while (true) {
-                delay(5000) // Check every 5 seconds (adjust as needed)
+                delay(50000) // Check every 50 seconds
                 checkBrightnessMode()
             }
         }
@@ -248,51 +247,76 @@ class MainViewModel (
             } else {
                 serverConnection.setScreensList(existingScreens)
             }
-            loadLanguages()
-            if(_itemsState.value.screenList.any { it.dispatcherCode == 5L }){
-                loadScreenInformation(data = TerminalResponseModel(5, DefaultDits.idleConnected()))
-            }
             _isInitialized.update { true }
-
-            loopJob = customLoop() // Start the initial loop
         }
     }
 
-    private fun loadLanguages(){
-        viewModelScope.launch {
-            val languages = _itemsState.value.screenList.firstOrNull {
-                it.dispatcherCode == 5L
-            }?.elements?.filterIsInstance<ElementModel.TextModel>()
-                ?.firstOrNull()?.data?.translations
+    private fun loadLanguages(screenElements: List<ElementModel>) {
+        val allKeys = collectTranslationKeys(screenElements)
+        if (allKeys.isEmpty()) return
+        _itemsState.update { state ->
+            state.copy(
+                currentLang = if (state.currentLang in allKeys) state.currentLang else allKeys.first(),
+                translations = allKeys.toList()
+            )
+        }
+    }
 
-            _itemsState.update { state ->
-                state.copy(
-                    currentLang = languages?.keys?.first() ?: "lang1",
-                    translations = languages?.keys?.toList() ?: listOf("lang1")
-                )
+    private fun collectTranslationKeys(elements: List<ElementModel>): Set<String> {
+        val keys = mutableSetOf<String>()
+        for (element in elements) {
+            when (element) {
+                is ElementModel.TextModel -> {
+                    element.data.translations?.keys?.let { keys.addAll(it) }
+                }
+                is ElementModel.BoxModel -> {
+                    keys.addAll(collectTranslationKeys(element.data.content))
+                }
+                is ElementModel.ColumnModel -> {
+                    keys.addAll(collectTranslationKeys(element.data.content))
+                }
+                is ElementModel.RowModel -> {
+                    keys.addAll(collectTranslationKeys(element.data.content))
+                }
+                else -> { }
             }
         }
+        return keys
     }
 
     private fun customLoop(): Job {
-        val delayTime = preferences.get(TIME_DELAY, 5)
-        return CoroutineScope(Dispatchers.IO).launch {
-            while (isActive) { // Check if the coroutine is still active
+        return viewModelScope.launch {
+            while (isActive) {
                 try {
-                    itemsState.value.translations.forEach { lang ->
+                    val delayTime = preferences.get(TIME_DELAY, 5)
+                    val langs = itemsState.value.translations
+                    if (langs.isEmpty()) return@launch
+                    langs.forEach { lang ->
+                        appLogger.trackLog("LOAD_LANG", "Lang=$lang, lang list: ${langs.size}")
+
                         withContext(Dispatchers.Main) {
-                            if (isActive) { // Check again before updating state
+                            if (isActive) {
                                 _itemsState.update { it.copy(currentLang = lang) }
                             }
                         }
+                        rebuildLanguage(lang)
                         delay(delayTime.toLong() * 1000)
                     }
                 } catch (e: CancellationException){
-                    //e.printStackTrace()
-                }catch (e: Exception){
+                    // normal cancellation
+                } catch (e: Exception){
                     appLogger.trackError(e)
                 }
             }
+        }
+    }
+
+    private suspend fun rebuildLanguage(lang: String) {
+        try {
+            val buildElements = ditsUtils.buildDashboardItem(_itemsState.value.newItems, _itemsState.value.ditsUI, lang)
+            _itemsState.update { it.copy(newItems = buildElements) }
+        } catch (e: Exception){
+            appLogger.trackError(e)
         }
     }
 
@@ -321,6 +345,7 @@ class MainViewModel (
             val screen = getScreenByDispatcher.invoke(data.dispatcherCode)
             appLogger.trackLog("LOAD_SCREEN", "dispatcherCode=${data.dispatcherCode}, screen found: ${screen != null}, screenList size: ${_itemsState.value.screenList.size}")
             if (screen != null){
+                loadLanguages(screen.elements)
                 val shouldStartBrightness = screen.dispatcherCode == 5L && activeBrightnessMode.value
                 _startBrightnessMode.update { shouldStartBrightness }
 
@@ -329,10 +354,9 @@ class MainViewModel (
                 val buildElements = ditsUtils.buildDashboardItem(screen.elements, data.ditsTUI, lang)
                 _itemsState.update { it.copy(newItems = buildElements) }
 
-                // Cancel the existing loop job and wait for it to finish
-                loopJob?.cancel()
-                //loopJob?.join() // Wait for the coroutine to finish cancellation
-                loopJob = customLoop() // Start a new loop
+                if (loopJob == null || !loopJob!!.isActive) {
+                    loopJob = customLoop()
+                }
 
                 //count new entry when is dispatched 12 code
                 if (screen.dispatcherCode == 12L){
@@ -371,7 +395,9 @@ class MainViewModel (
         viewModelScope.launch {
             try {
                 val buildElements = ditsUtils.buildDashboardItem(_itemsState.value.newItems, _itemsState.value.ditsUI, lang)
-                _itemsState.update { it.copy(newItems = buildElements) }
+                if (_itemsState.value.currentLang == lang) {
+                    _itemsState.update { it.copy(newItems = buildElements) }
+                }
             }catch (e: Exception){
                 appLogger.trackError(e)
             }
