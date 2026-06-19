@@ -5,8 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.ErrorValidator
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
+import com.came.parkare.dashboardapp.domain.usecases.SendDitTesting
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ElementDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.testing.DitTestingDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.testing.SendDitTestingDto
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,6 +22,7 @@ class TestingViewModel(
     private val validator: ErrorValidator,
     private val wasmUtilsHandler: WasmUtilsHandler,
     private val getScreensConfig: GetScreensConfig,
+    private val sendDitTesting: SendDitTesting,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(TestingState())
@@ -48,6 +52,38 @@ class TestingViewModel(
                 } else group
             }
             state.copy(ditFormGroups = updatedGroups)
+        }
+    }
+
+    fun sendDitConfig() {
+        val state = _state.value
+        val screen = state.selectedScreen ?: return
+        val groups = state.ditFormGroups
+
+        _state.update { it.copy(isSending = true) }
+        viewModelScope.launch {
+            wasmUtilsHandler.showLoading(true)
+            val dto = SendDitTestingDto(
+                dispatchCode = screen.dispatchCode,
+                screenId = screen.screenId,
+                dits = groups.map { group ->
+                    DitTestingDto(
+                        ditTypeCode = group.ditTypeCode,
+                        ditName = group.ditName,
+                        fields = group.fields.associate { it.key to it.value },
+                    )
+                },
+            )
+            when (val result = sendDitTesting.invoke(dto)) {
+                is ServiceResult.Error -> {
+                    validator.validate(error = result.error)
+                }
+                is ServiceResult.Success -> {
+                    wasmUtilsHandler.showToastMessage("Dit config sent successfully")
+                }
+            }
+            wasmUtilsHandler.showLoading(false)
+            _state.update { it.copy(isSending = false) }
         }
     }
 

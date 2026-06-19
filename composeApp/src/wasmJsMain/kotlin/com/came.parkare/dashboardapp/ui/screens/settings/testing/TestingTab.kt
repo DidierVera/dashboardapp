@@ -30,12 +30,14 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
+import com.came.parkare.dashboardapp.ui.components.AppButton
 import com.came.parkare.dashboardapp.ui.theme.style.floatingButton
 import com.came.parkare.dashboardapp.ui.theme.style.shadowContainer
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.no_items_to_show_message
 import dashboardapp.composeapp.generated.resources.screen_list_label
 import dashboardapp.composeapp.generated.resources.select_screen_message
+import dashboardapp.composeapp.generated.resources.send_button
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -49,6 +51,12 @@ fun TestingTab() {
         viewModel.initConfig()
     }
 
+    val allFieldsFilled = state.selectedScreen != null &&
+        state.ditFormGroups.isNotEmpty() &&
+        state.ditFormGroups.all { group ->
+            group.fields.all { field -> field.value.isNotBlank() }
+        }
+
     Row(modifier = Modifier.fillMaxSize()) {
         ScreenListPanel(
             screens = state.screens,
@@ -60,6 +68,9 @@ fun TestingTab() {
             selectedScreen = state.selectedScreen,
             ditFormGroups = state.ditFormGroups,
             onFieldUpdate = { type, key, value -> viewModel.updateField(type, key, value) },
+            isSending = state.isSending,
+            allFieldsFilled = allFieldsFilled,
+            onSendClick = { viewModel.sendDitConfig() },
         )
     }
 }
@@ -130,6 +141,9 @@ private fun ScreenDetailPanel(
     selectedScreen: ScreenDto?,
     ditFormGroups: List<DitFormGroup>,
     onFieldUpdate: (Int, String, String) -> Unit,
+    isSending: Boolean,
+    allFieldsFilled: Boolean,
+    onSendClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -142,6 +156,12 @@ private fun ScreenDetailPanel(
                     fontWeight = FontWeight.Bold,
                     textDecoration = TextDecoration.Underline,
                 ),
+                modifier = Modifier.padding(bottom = 8.dp),
+            )
+            AppButton(
+                text = stringResource(Res.string.send_button),
+                onClick = onSendClick,
+                isEnabled = allFieldsFilled && !isSending,
                 modifier = Modifier.padding(bottom = 8.dp),
             )
             LazyColumn(

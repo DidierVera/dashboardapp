@@ -6,6 +6,7 @@ data class TestingState(
     val screens: List<ScreenDto> = emptyList(),
     val selectedScreen: ScreenDto? = null,
     val isLoading: Boolean = false,
+    val isSending: Boolean = false,
     val ditFormGroups: List<DitFormGroup> = emptyList(),
 )
 

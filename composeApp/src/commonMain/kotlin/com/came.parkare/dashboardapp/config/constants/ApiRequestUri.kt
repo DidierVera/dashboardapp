@@ -25,4 +25,5 @@ object ApiRequestUri {
     const val UPLOAD_FONT = "/api/fonts/upload/binary"
     const val DELETE_FONT = "/api/fonts/delete"
     const val GET_FONT = "/api/fonts/get"
+    const val SEND_DIT_TESTING = "/api/testing/dit/send"
 }
