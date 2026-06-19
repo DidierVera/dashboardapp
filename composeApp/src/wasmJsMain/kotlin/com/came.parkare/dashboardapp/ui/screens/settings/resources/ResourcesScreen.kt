@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -31,7 +30,6 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,7 +39,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,28 +48,20 @@ import com.came.parkare.dashboardapp.ui.components.Base64Image
 import com.came.parkare.dashboardapp.ui.screens.settings.components.filepicker.DialogPickerDialog
 import com.came.parkare.dashboardapp.ui.screens.settings.components.filepicker.FilePickerDialogState
 import com.came.parkare.dashboardapp.ui.theme.CameBlueColor
-import com.came.parkare.dashboardapp.ui.theme.LightGrayColor
 import com.came.parkare.dashboardapp.ui.theme.WhiteColor
 import com.came.parkare.dashboardapp.ui.theme.style.floatingButton
 import com.came.parkare.dashboardapp.ui.theme.style.shadowContainer
-import com.came.parkare.dashboardapp.ui.utils.FontLoader
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.font_resources_label
 import dashboardapp.composeapp.generated.resources.ic_close
 import dashboardapp.composeapp.generated.resources.ic_download
-import dashboardapp.composeapp.generated.resources.ic_import_export
 import dashboardapp.composeapp.generated.resources.image_resources_label
 import dashboardapp.composeapp.generated.resources.save_button
 import dashboardapp.composeapp.generated.resources.upload_file_button
-import kotlinx.coroutines.CoroutineStart
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.skia.Typeface
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
-import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
 
 @Composable
 fun ResourcesScreen() {
@@ -84,22 +73,18 @@ fun ResourcesScreen() {
         if (isCompact) {
             ResourcesTabLayout()
         } else {
-            ResourcesColumnLayout()
+            ResourcesRowLayout()
         }
     }
 }
 
 @Composable
-private fun ResourcesColumnLayout() {
-    Column(modifier = Modifier.fillMaxSize().padding(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)) {
-
-        Row(modifier = Modifier.weight(1f),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            ImagesPanel(modifier = Modifier.weight(1f))
-            VerticalDivider()
-            FontsPanel(modifier = Modifier.weight(1f))   // <-- nuevo
-        }
+private fun ResourcesRowLayout() {
+    Row(modifier = Modifier.fillMaxSize().padding(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        ImagesPanel(modifier = Modifier.weight(1f))
+        VerticalDivider()
+        FontsPanel(modifier = Modifier.weight(1f))   // <-- nuevo
     }
 }
 

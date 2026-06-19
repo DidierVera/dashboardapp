@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.update
 class ServerConnectionImpl(): IServerConnection {
 
     private val _statusConnection: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    private val _restartApp: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    private val _restartApp: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val _typeConnection = MutableStateFlow(TypeConnectionEnum.SIGNAL_R)
     private val _screensList = MutableStateFlow<List<ScreenModel>>(emptyList())
 

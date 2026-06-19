@@ -19,8 +19,7 @@ class DashboardElementRepositoryImpl(
 ): DashboardElementRepository {
     override suspend fun saveScreens(items: List<ScreenModel>) {
         try {
-            screenDao.deleteAllScreens()
-            screenDao.insertAll(items.map{it.toEntity()})
+            screenDao.replaceAllScreens(items.map{it.toEntity()})
         }catch (e: Exception){
             appLogger.trackError(e)
         }

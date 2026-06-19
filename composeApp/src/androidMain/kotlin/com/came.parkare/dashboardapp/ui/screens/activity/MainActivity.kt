@@ -37,6 +37,8 @@ import java.io.IOException
 
 class MainActivity : ComponentActivity() {
 
+    private var servicesStarted = false
+    private val mainHandler = Handler(Looper.getMainLooper())
     private val mainViewModel: MainActivityViewModel by viewModel()
     private var webAppServer:  WebAppServer? = null
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
@@ -44,7 +46,10 @@ class MainActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
         ConfigUI.hideSystemUI(this)
-        startServices()
+        if (!servicesStarted) {
+            servicesStarted = true
+            startServices()
+        }
     }
 
     private fun startAndroidApiServer() {
@@ -54,15 +59,15 @@ class MainActivity : ComponentActivity() {
     }
     private fun startServices() {
         // Start services in sequence with delays
-        Handler(Looper.getMainLooper()).postDelayed({
+        mainHandler.postDelayed({
             startFTPServer()
         }, 500)
 
-        Handler(Looper.getMainLooper()).postDelayed({
+        mainHandler.postDelayed({
             startAndroidApiServer()
         }, 1000)
 
-        Handler(Looper.getMainLooper()).postDelayed({
+        mainHandler.postDelayed({
             initWebServer()
             copyWebAppFiles()
         }, 1500)
@@ -120,8 +125,23 @@ class MainActivity : ComponentActivity() {
                 webAppServer?.start()
             } catch (e: IOException) {
                 e.printStackTrace()
+                // Retry after delay to let TIME_WAIT expire
+                Thread.sleep(3000)
+                try {
+                    webAppServer?.stop()
+                    webAppServer?.start()
+                } catch (e2: Exception) {
+                    e2.printStackTrace()
+                }
             } catch (e: Exception){
                 e.printStackTrace()
+                Thread.sleep(3000)
+                try {
+                    webAppServer?.stop()
+                    webAppServer?.start()
+                } catch (e2: Exception) {
+                    e2.printStackTrace()
+                }
             }
         }.start()
         val ipAddress = ConfigUI.getEthernetIpAddress() // Utiliza una función para obtener la IP del dispositivo
@@ -134,7 +154,13 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        mainHandler.removeCallbacksAndMessages(null)
+    }
+
     override fun onDestroy() {
+        servicesStarted = false
         webAppServer?.stop()
         mainViewModel.stopServers()
         super.onDestroy()

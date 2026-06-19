@@ -45,6 +45,7 @@ import com.came.parkare.dashboardapp.ui.screens.settings.editconfig.EditConfigVi
 import com.came.parkare.dashboardapp.ui.screens.settings.exportfile.ExportViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.resources.ResourcesViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.shareconfig.ShareConfigViewModel
+import com.came.parkare.dashboardapp.ui.screens.settings.testing.TestingViewModel
 import com.came.parkare.dashboardapp.ui.utils.ErrorValidatorImpl
 import com.came.parkare.dashboardapp.ui.utils.FontLoader
 import com.came.parkare.dashboardapp.ui.utils.UiUtils
@@ -83,6 +84,7 @@ val wasmAppModule = module {
     viewModelOf(::AppDialogViewModel)
     viewModelOf(::EditConfigViewModel)
     viewModelOf(::ShareConfigViewModel)
+    viewModelOf(::TestingViewModel)
 
     //repositories
     singleOf(::DeviceRepositoryImpl) { bind<DeviceRepository>() }

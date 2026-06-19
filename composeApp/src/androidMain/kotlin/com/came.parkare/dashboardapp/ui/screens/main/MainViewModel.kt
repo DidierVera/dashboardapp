@@ -26,6 +26,7 @@ import com.came.parkare.dashboardapp.config.utils.IServerConnection
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.came.parkare.dashboardapp.domain.models.components.ElementModel
 import com.came.parkare.dashboardapp.domain.models.terminal.TerminalResponseModel
+import com.came.parkare.dashboardapp.domain.repositories.local.DashboardElementRepository
 import com.came.parkare.dashboardapp.domain.usecases.GetScreenByDispatcher
 import com.came.parkare.dashboardapp.domain.usecases.InitConfiguration
 import com.came.parkare.dashboardapp.domain.usecases.StartSocketConnection
@@ -59,6 +60,7 @@ class MainViewModel (
     private val startParkingConnection: StartSocketConnection,
     private val getScreenByDispatcher: GetScreenByDispatcher,
     private val ditsUtils: UiUtils,
+    private val dashboardElementRepository: DashboardElementRepository,
     private val preferences: SharedPreferencesProvider,
     private val appLogger: AppLogger,
     private val filesUtils: FilesUtils,
@@ -66,6 +68,8 @@ class MainViewModel (
     private val serverConnection: IServerConnection,
     private val fontViewModel: FontViewModel
 ): ViewModel() {
+    private var isInitializing = false
+
     private val _isInitialized = MutableStateFlow(false)
 
     private val _itemsState = MutableStateFlow(MainState())
@@ -124,6 +128,8 @@ class MainViewModel (
     }
 
     private fun initAllConfig() {
+        if (isInitializing) return
+        isInitializing = true
         reloadFont()
         checkVideoFrame()
         checkBackgroundImage()
@@ -133,6 +139,7 @@ class MainViewModel (
         startPeriodicChecking()
         getAllDataFromServices()
         setTerminalConnection(serverConnection.typeConnection.value)
+        isInitializing = false
     }
 
     private fun reloadFont() {
@@ -227,19 +234,27 @@ class MainViewModel (
 
     private fun getAllDataFromServices() {
         viewModelScope.launch {
-            //screens config initialization
-            when (val initConfigResult = initConfiguration.invoke()){
-                is ServiceResult.Error -> validateError(initConfigResult.error)
-                is ServiceResult.Success -> {
-                    loadLanguages()
-                    if(_itemsState.value.screenList.any { it.dispatcherCode == 5L }){
-                        loadScreenInformation(data = TerminalResponseModel(5, DefaultDits.idleConnected()))
+            // Skip file read if screens already loaded by splash
+            val existingScreens = dashboardElementRepository.getAllScreens()
+            if (existingScreens.isEmpty()) {
+                //screens config initialization
+                when (val initConfigResult = initConfiguration.invoke()){
+                    is ServiceResult.Error -> {
+                        validateError(initConfigResult.error)
+                        return@launch
                     }
-                    _isInitialized.update { true }
-
-                    loopJob = customLoop() // Start the initial loop
+                    is ServiceResult.Success -> { /* continue */ }
                 }
+            } else {
+                serverConnection.setScreensList(existingScreens)
             }
+            loadLanguages()
+            if(_itemsState.value.screenList.any { it.dispatcherCode == 5L }){
+                loadScreenInformation(data = TerminalResponseModel(5, DefaultDits.idleConnected()))
+            }
+            _isInitialized.update { true }
+
+            loopJob = customLoop() // Start the initial loop
         }
     }
 

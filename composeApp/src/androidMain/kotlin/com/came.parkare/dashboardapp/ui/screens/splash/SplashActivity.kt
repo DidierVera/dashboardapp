@@ -32,7 +32,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,30 +39,26 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.came.parkare.dashboardapp.R
 import com.came.parkare.dashboardapp.ui.screens.activity.MainActivity
 import com.came.parkare.dashboardapp.ui.theme.BlackColor
 import com.came.parkare.dashboardapp.ui.theme.CameBlueColor
+import com.came.parkare.dashboardapp.ui.theme.WhiteColor
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.KoinContext
 import androidx.core.net.toUri
-import com.came.parkare.dashboardapp.ui.theme.WhiteColor
-import org.koin.androidx.compose.koinViewModel
 
 class SplashActivity : ComponentActivity() {
+    private var permissionRetryCount = 0
 
-    // ✅ Launcher para el permiso WRITE_SETTINGS (brillo)
     private val brightnessLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
-        // Al regresar de la pantalla de WRITE_SETTINGS, solicita los demás permisos
         requestRuntimePermissions()
     }
 
-    // ✅ Launcher para permisos en runtime (reemplaza onRequestPermissionsResult)
     private val permissionsLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -72,15 +67,15 @@ class SplashActivity : ComponentActivity() {
             redirectToMain()
         } else {
             showToast("Some permissions have not been allowed")
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                requestRuntimePermissions() // Reintenta en Android 13+
+            permissionRetryCount++
+            if (permissionRetryCount < 3 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                requestRuntimePermissions()
             } else {
                 redirectToMain()
             }
         }
     }
 
-    // ✅ setContent en onCreate, no en onStart
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -93,10 +88,12 @@ class SplashActivity : ComponentActivity() {
     @Preview
     @Composable
     private fun SplashScreen() {
-        var progress by remember { mutableStateOf(0.1f) }
+        var progress by remember { mutableStateOf(0f) }
 
         val viewModel: SplashViewModel = koinViewModel()
         val version by viewModel.appVersion.collectAsState()
+        val phase by viewModel.progressPhase.collectAsState()
+        val isReady by viewModel.isReady.collectAsState()
 
         val animatedProgress = animateFloatAsState(
             targetValue = progress,
@@ -104,14 +101,17 @@ class SplashActivity : ComponentActivity() {
             label = "loading"
         ).value
 
-        // ✅ Sin scope.launch redundante dentro de LaunchedEffect
         LaunchedEffect(key1 = true) {
             for (i in 1..100) {
                 progress = i.toFloat() / 100
-                delay(10)
+                delay(150)
             }
-            Log.i("LOG_TAG", "Progress bar finished, requesting permissions")
-            requestBrightnessPermission()
+        }
+
+        LaunchedEffect(key1 = isReady) {
+            if (isReady) {
+                requestBrightnessPermission()
+            }
         }
 
         Column(
@@ -133,6 +133,12 @@ class SplashActivity : ComponentActivity() {
                 color = CameBlueColor,
                 progress = animatedProgress
             )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = phase,
+                color = WhiteColor,
+                style = MaterialTheme.typography.labelSmall
+            )
             Spacer(modifier = Modifier.height(55.dp))
             Text(
                 text = version,
@@ -142,7 +148,6 @@ class SplashActivity : ComponentActivity() {
         }
     }
 
-    // ✅ Paso 1: Solicita permiso de brillo y espera respuesta antes de continuar
     private fun requestBrightnessPermission() {
         if (!Settings.System.canWrite(this)) {
             val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
@@ -150,12 +155,10 @@ class SplashActivity : ComponentActivity() {
             }
             brightnessLauncher.launch(intent)
         } else {
-            // Ya tiene el permiso, continúa con los demás
             requestRuntimePermissions()
         }
     }
 
-    // ✅ Paso 2: Solicita los permisos en runtime
     private fun requestRuntimePermissions() {
         val permissionsToRequest: MutableList<String> = mutableListOf(
             Manifest.permission.READ_PHONE_STATE,

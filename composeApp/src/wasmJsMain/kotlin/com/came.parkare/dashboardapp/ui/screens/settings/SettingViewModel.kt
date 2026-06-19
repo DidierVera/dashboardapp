@@ -65,7 +65,7 @@ class SettingViewModel(
         get() = _refreshState.asStateFlow()
 
     init {
-        val ownIpAddress = window.location.hostname
+        val ownIpAddress = "192.168.101.79"//window.location.hostname
         preferences.put(SELECTED_IP_ADDRESS, ownIpAddress)
 
         loadLeftPanelOptions()
@@ -88,7 +88,7 @@ class SettingViewModel(
     }
 
     private fun loadIpAddress() {
-        val ip = window.location.hostname
+        val ip = "192.168.101.79"//window.location.hostname
         val currentIp = preferences.get(SELECTED_IP_ADDRESS, ip)
         setIpAddress(currentIp)
     }
@@ -137,11 +137,11 @@ class SettingViewModel(
                     nameRes = Res.string.resources_file_option,
                     isSelected = false
                 ),
-//                MenuOptionState(
-//                    iconRes = Res.drawable.ic_testing,
-//                    nameRes = Res.string.testing_option,
-//                    isSelected = false
-//                )
+                MenuOptionState(
+                    iconRes = Res.drawable.ic_testing,
+                    nameRes = Res.string.testing_option,
+                    isSelected = false
+                )
             )
         }
     }

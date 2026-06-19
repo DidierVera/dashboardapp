@@ -15,6 +15,7 @@ import com.came.parkare.dashboardapp.ui.utils.ConfigUI
 import com.came.parkare.dashboardapp.ui.utils.FTPServer
 import fi.iki.elonen.NanoHTTPD
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -42,31 +43,34 @@ class MainActivityViewModel (
     }
 
     fun initAndroidServer(showMessage: (String) -> Unit) {
-        try {
-            // Add small delay to ensure port is released
-            viewModelScope.launch(Dispatchers.IO) {
-                Thread.sleep(500)
+        viewModelScope.launch(Dispatchers.IO) {
+            val port = preferences.get(API_PORT, 2023)
 
-                val port = preferences.get(API_PORT, 2023)
-
-                // Create new instance instead of reusing old one
-                androidApiServer.stop()
-                androidApiServer.start(NanoHTTPD.SOCKET_READ_TIMEOUT, false)
-
-                val ipAddress = ConfigUI.getEthernetIpAddress()
-                val ipByWifi = ConfigUI.getWifiIpAddress()
-                withContext(Dispatchers.Main){
-                    ipAddress?.let {
-                        showMessage("API iniciado en: http://$it:$port")
-                    }
-                    ipByWifi?.let {
-                        showMessage("API iniciado en: http://$it:$port")
-                    }
+            fun tryStart(delayMs: Long = 0): Boolean {
+                if (delayMs > 0) Thread.sleep(delayMs)
+                return try {
+                    androidApiServer.stop()
+                    androidApiServer.start(NanoHTTPD.SOCKET_READ_TIMEOUT, false)
+                    true
+                } catch (e: Exception) {
+                    false
                 }
             }
 
-        } catch (e: Exception) {
-            showMessage("API: ${e.message ?: "Unknown error"}")
+            val started = tryStart(500) || tryStart(3000) || tryStart(5000)
+
+            if (started) {
+                val ipAddress = ConfigUI.getEthernetIpAddress()
+                val ipByWifi = ConfigUI.getWifiIpAddress()
+                withContext(Dispatchers.Main) {
+                    ipAddress?.let { showMessage("API iniciado en: http://$it:$port") }
+                    ipByWifi?.let { showMessage("API iniciado en: http://$it:$port") }
+                }
+            } else {
+                withContext(Dispatchers.Main) {
+                    showMessage("API no disponible (puerto $port en uso)")
+                }
+            }
         }
     }
 

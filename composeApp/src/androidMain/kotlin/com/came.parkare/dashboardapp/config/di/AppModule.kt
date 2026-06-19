@@ -5,6 +5,7 @@ import com.came.parkare.dashboardapp.config.database.AppDatabase
 import com.came.parkare.dashboardapp.config.database.migrations.Migration_2_3
 import com.came.parkare.dashboardapp.config.database.migrations.Migration_3_4
 import com.came.parkare.dashboardapp.config.database.migrations.Migration_4_5
+import com.came.parkare.dashboardapp.config.database.migrations.Migration_5_6
 import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.AppLoggerImpl
 import com.came.parkare.dashboardapp.config.utils.DeviceUtils
@@ -127,7 +128,7 @@ val databaseModules = module {
             "dashboard_db"
         )
             .fallbackToDestructiveMigration()
-            .addMigrations(Migration_2_3, Migration_3_4, Migration_4_5)
+            .addMigrations(Migration_2_3, Migration_3_4, Migration_4_5, Migration_5_6)
             .build()
     }
     single {
