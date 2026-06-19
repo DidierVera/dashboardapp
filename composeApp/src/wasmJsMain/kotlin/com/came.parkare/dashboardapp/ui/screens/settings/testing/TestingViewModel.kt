@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.ErrorValidator
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ElementDto
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,21 +18,97 @@ import kotlin.collections.orEmpty
 class TestingViewModel(
     private val validator: ErrorValidator,
     private val wasmUtilsHandler: WasmUtilsHandler,
-    private val getScreensConfig: GetScreensConfig,): ViewModel() {
+    private val getScreensConfig: GetScreensConfig,
+) : ViewModel() {
 
     private val _state = MutableStateFlow(TestingState())
     val state: StateFlow<TestingState>
         get() = _state.asStateFlow()
 
-    fun initConfig(){
+    fun initConfig() {
         viewModelScope.launch {
             getCurrentScreenConfig()
         }
     }
 
+    fun selectScreen(screen: ScreenDto) {
+        val groups = extractDitGroups(screen)
+        _state.update { it.copy(selectedScreen = screen, ditFormGroups = groups) }
+    }
+
+    fun updateField(ditTypeCode: Int, key: String, value: String) {
+        _state.update { state ->
+            val updatedGroups = state.ditFormGroups.map { group ->
+                if (group.ditTypeCode == ditTypeCode) {
+                    group.copy(
+                        fields = group.fields.map { field ->
+                            if (field.key == key) field.copy(value = value) else field
+                        }
+                    )
+                } else group
+            }
+            state.copy(ditFormGroups = updatedGroups)
+        }
+    }
+
+    private fun extractDitGroups(screen: ScreenDto): List<DitFormGroup> {
+        val ditCodes = mutableSetOf<Int>()
+        collectDitCodes(screen.data, ditCodes)
+        return ditCodes.mapNotNull(::createDitFormGroup)
+    }
+
+    private fun collectDitCodes(elements: List<ElementDto>, codes: MutableSet<Int>) {
+        for (element in elements) {
+            when (element) {
+                is ElementDto.BoxDto -> {
+                    element.data.ditTypeCode?.let { codes.add(it) }
+                    collectDitCodes(element.data.content, codes)
+                }
+                is ElementDto.ColumnDto -> {
+                    element.data.ditTypeCode?.let { codes.add(it) }
+                    collectDitCodes(element.data.content, codes)
+                }
+                is ElementDto.RowDto -> {
+                    element.data.ditTypeCode?.let { codes.add(it) }
+                    collectDitCodes(element.data.content, codes)
+                }
+                is ElementDto.TextDto -> {
+                    element.data.ditTypeCode?.let { codes.add(it) }
+                }
+                is ElementDto.ImageDto -> {
+                    element.data.ditTypeCode?.let { codes.add(it) }
+                }
+                is ElementDto.VideoDto -> {
+                    element.data.ditTypeCode?.let { codes.add(it) }
+                }
+                is ElementDto.SpacerDto -> { }
+            }
+        }
+    }
+
+    private fun createDitFormGroup(ditTypeCode: Int): DitFormGroup? {
+        val info = knownDitFields[ditTypeCode] ?: return null
+        return DitFormGroup(
+            ditTypeCode = ditTypeCode,
+            ditName = info.first,
+            fields = info.second.map { DitFormField(key = it, value = "") },
+        )
+    }
+
+    companion object {
+        private val knownDitFields: Map<Int, Pair<String, List<String>>> = mapOf(
+            3 to ("Amount To Pay" to listOf("AmountTotal", "AmountAlreadyPayed")),
+            7 to ("Current Card Reader" to listOf("CardReader")),
+            9 to ("Current Card Type" to listOf("CardClass", "CardType")),
+            10 to ("Current License Plates" to listOf("MainLicensePlate")),
+            18 to ("Issuer Status" to listOf("Status")),
+            19 to ("Reader Status" to listOf("Status")),
+        )
+    }
+
     private suspend fun getCurrentScreenConfig() {
         wasmUtilsHandler.showLoading(true)
-        when(val result = getScreensConfig.invoke()){
+        when (val result = getScreensConfig.invoke()) {
             is ServiceResult.Error -> {
                 validator.validate(error = result.error)
                 wasmUtilsHandler.showLoading(false)

@@ -292,7 +292,7 @@ class MainViewModel (
                     val langs = itemsState.value.translations
                     if (langs.isEmpty()) return@launch
                     langs.forEach { lang ->
-                        appLogger.trackLog("LOAD_LANG", "Lang=$lang, lang list: ${langs.size}")
+                        //appLogger.trackLog("LOAD_LANG", "Lang=$lang, lang list: ${langs.size}")
 
                         withContext(Dispatchers.Main) {
                             if (isActive) {
@@ -343,7 +343,7 @@ class MainViewModel (
     ) {
         viewModelScope.launch {
             val screen = getScreenByDispatcher.invoke(data.dispatcherCode)
-            appLogger.trackLog("LOAD_SCREEN", "dispatcherCode=${data.dispatcherCode}, screen found: ${screen != null}, screenList size: ${_itemsState.value.screenList.size}")
+            //appLogger.trackLog("LOAD_SCREEN", "dispatcherCode=${data.dispatcherCode}, screen found: ${screen != null}, screenList size: ${_itemsState.value.screenList.size}")
             if (screen != null){
                 loadLanguages(screen.elements)
                 val shouldStartBrightness = screen.dispatcherCode == 5L && activeBrightnessMode.value
