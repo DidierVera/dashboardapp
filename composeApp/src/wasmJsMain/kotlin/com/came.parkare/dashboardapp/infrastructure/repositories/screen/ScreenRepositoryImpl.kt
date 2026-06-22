@@ -58,10 +58,11 @@ class ScreenRepositoryImpl(
         ipAddress: String,
         data: SendDitTestingDto
     ): ServiceResult<ResponseStatusDto> {
+        val url = "$SSL_PROTOCOL$ipAddress:$apiPort$SEND_DIT_TESTING"
+        appLogger.trackLog("HTTP_SEND_DIT", "POST $url, dispatchCode=${data.dispatchCode}, screenId=${data.screenId}, dits=${data.dits.size}")
         return try {
-            val result = httpClient.post<ResponseStatusDto, SendDitTestingDto>(
-                "$SSL_PROTOCOL$ipAddress:$apiPort$SEND_DIT_TESTING", data
-            )
+            val result = httpClient.post<ResponseStatusDto, SendDitTestingDto>(url, data)
+            appLogger.trackLog("HTTP_SEND_DIT", "Success")
             ServiceResult.Success(result)
         } catch (e: Exception) {
             appLogger.trackError(e)

@@ -17,6 +17,7 @@ import com.came.parkare.dashboardapp.infrastructure.source.external.dto.logs.Tra
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ConfigTemplateDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toModel
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.testing.SendDitTestingDto
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isDeleteConfigTemplate
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isDeleteDevice
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetConfigTemplate
@@ -35,10 +36,12 @@ import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiR
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveDeviceRequest
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveImages
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveScreenRequest
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSendDitTesting
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSetConfigType
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isUpdateConfigTemplate
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isUploadFont
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.readBodyAsUtf8
+import com.came.parkare.dashboardapp.infrastructure.source.remote.services.MockService
 import fi.iki.elonen.NanoHTTPD
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
@@ -49,6 +52,7 @@ class AndroidApiServer(
     private val configTemplateRepository: ConfigTemplateRepository,
     private val appLogger: AppLogger,
     private val deviceUtils: DeviceUtils,
+    private val mockService: MockService,
     port: Int = preferences.get(API_PORT, 2023)
 ): NanoHTTPD(port) {
     private val TAG = "AndroidApiServer"
@@ -84,6 +88,7 @@ class AndroidApiServer(
             session.isSaveImages() -> handleSaveImages(session)
             session.isUploadFont() -> handleUploadFont(session)
             session.isGetFont() -> handleGetFont()
+            session.isSendDitTesting() -> handleSendDitTesting(session)
             else -> createNotFoundResponse()
         }
     }
@@ -257,6 +262,18 @@ class AndroidApiServer(
             session = session,
             parseBody = { body -> Json.decodeFromString<List<ScreenDto>>(body) },
             operation = { config -> apiServerRepository.saveScreensConfig(config) == 0 }
+        )
+    }
+
+    private fun handleSendDitTesting(session: IHTTPSession): Response {
+        return processPostRequest<SendDitTestingDto>(
+            session = session,
+            parseBody = { body -> Json.decodeFromString<SendDitTestingDto>(body) },
+            operation = { dto ->
+                Log.d(TAG, "handleSendDitTesting: dispatchCode=${dto.dispatchCode}, screenId=${dto.screenId}, dits=${dto.dits.size}")
+                mockService.dispatchDitTesting(dto)
+                true
+            }
         )
     }
     //endregion

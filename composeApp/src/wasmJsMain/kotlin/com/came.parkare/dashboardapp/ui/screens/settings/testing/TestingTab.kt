@@ -52,10 +52,10 @@ fun TestingTab() {
     }
 
     val allFieldsFilled = state.selectedScreen != null &&
-        state.ditFormGroups.isNotEmpty() &&
+        state.ditFormGroups.isEmpty() || (state.ditFormGroups.isNotEmpty() &&
         state.ditFormGroups.all { group ->
             group.fields.all { field -> field.value.isNotBlank() }
-        }
+        })
 
     Row(modifier = Modifier.fillMaxSize()) {
         ScreenListPanel(

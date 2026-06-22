@@ -129,6 +129,7 @@ class MainViewModel (
     private fun initAllConfig() {
         if (isInitializing) return
         isInitializing = true
+        serverConnection.setStatusConnection(true)
         reloadFont()
         checkVideoFrame()
         checkBackgroundImage()
@@ -137,7 +138,6 @@ class MainViewModel (
         checkCarCounter()
         startPeriodicChecking()
         getAllDataFromServices()
-        setTerminalConnection(serverConnection.typeConnection.value)
         isInitializing = false
     }
 
@@ -199,7 +199,15 @@ class MainViewModel (
             when(result){
                 is ServiceResult.Error -> validateError(result.error)
                 is ServiceResult.Success -> {
-                    loadScreenInformation(result.data!!, _itemsState.value.translations.first())
+                    val data = result.data!!
+                    appLogger.trackLog("TERMINAL_RESULT", "dispatcherCode=${data.dispatcherCode}, ditsTUI=${data.ditsTUI != null}")
+                    val translations = _itemsState.value.translations
+                    if (translations.isEmpty()) {
+                        appLogger.trackLog("TERMINAL_RESULT", "translations empty, using default lang")
+                        loadScreenInformation(data, "en")
+                    } else {
+                        loadScreenInformation(data, translations.first())
+                    }
                 }
             }
         }

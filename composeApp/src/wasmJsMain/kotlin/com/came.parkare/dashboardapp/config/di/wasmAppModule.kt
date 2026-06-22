@@ -108,7 +108,7 @@ val wasmAppModule = module {
     single { SaveFonts(get(), get()) }
     single { GetFont(get(), get()) }
     single { GetDefaultTemplatesConfig(get(), get(), get()) }
-    single { SendDitTesting(get(), get()) }
+    single { SendDitTesting(get(), get(), get()) }
 
 
     single { Navigator() }

@@ -3,6 +3,7 @@ package com.came.parkare.dashboardapp.ui.screens.settings.testing
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
+import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.ErrorValidator
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
 import com.came.parkare.dashboardapp.domain.usecases.SendDitTesting
@@ -23,6 +24,7 @@ class TestingViewModel(
     private val wasmUtilsHandler: WasmUtilsHandler,
     private val getScreensConfig: GetScreensConfig,
     private val sendDitTesting: SendDitTesting,
+    private val appLogger: AppLogger,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(TestingState())
@@ -74,6 +76,7 @@ class TestingViewModel(
                     )
                 },
             )
+            appLogger.trackLog("TESTING_TAB", "Sending DIT config: screenId=${dto.screenId}, dispatchCode=${dto.dispatchCode}, dits=${dto.dits.size}")
             when (val result = sendDitTesting.invoke(dto)) {
                 is ServiceResult.Error -> {
                     validator.validate(error = result.error)

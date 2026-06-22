@@ -18,6 +18,7 @@ import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_DEVICE
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_IMAGES
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_SCREEN_CONFIG
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_SCREEN_CONFIG_TYPE
+import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SEND_DIT_TESTING
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.TRACK_ERROR
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.TRACK_LOG
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.UPDATE_CONFIG_TEMPLATE
@@ -105,6 +106,10 @@ object ApiRequestPredicates {
 
     fun NanoHTTPD.IHTTPSession.isUploadFont(): Boolean {
         return uri == UPLOAD_FONT && method == NanoHTTPD.Method.POST
+    }
+
+    fun NanoHTTPD.IHTTPSession.isSendDitTesting(): Boolean {
+        return uri == SEND_DIT_TESTING && method == NanoHTTPD.Method.POST
     }
 
     fun NanoHTTPD.IHTTPSession.isGetFont(): Boolean {
