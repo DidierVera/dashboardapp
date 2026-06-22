@@ -51,7 +51,6 @@ import org.koin.compose.KoinContext
 import androidx.core.net.toUri
 
 class SplashActivity : ComponentActivity() {
-    private var permissionRetryCount = 0
 
     private val brightnessLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -67,9 +66,8 @@ class SplashActivity : ComponentActivity() {
             redirectToMain()
         } else {
             showToast("Some permissions have not been allowed")
-            permissionRetryCount++
-            if (permissionRetryCount < 3 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                requestRuntimePermissions()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                requestRuntimePermissions() // Reintenta en Android 13+
             } else {
                 redirectToMain()
             }
@@ -88,12 +86,10 @@ class SplashActivity : ComponentActivity() {
     @Preview
     @Composable
     private fun SplashScreen() {
-        var progress by remember { mutableStateOf(0f) }
+        var progress by remember { mutableStateOf(0.1f) }
 
         val viewModel: SplashViewModel = koinViewModel()
         val version by viewModel.appVersion.collectAsState()
-        val phase by viewModel.progressPhase.collectAsState()
-        val isReady by viewModel.isReady.collectAsState()
 
         val animatedProgress = animateFloatAsState(
             targetValue = progress,
@@ -104,14 +100,10 @@ class SplashActivity : ComponentActivity() {
         LaunchedEffect(key1 = true) {
             for (i in 1..100) {
                 progress = i.toFloat() / 100
-                delay(150)
+                delay(10)
             }
-        }
-
-        LaunchedEffect(key1 = isReady) {
-            if (isReady) {
-                requestBrightnessPermission()
-            }
+            Log.i("LOG_TAG", "Progress bar finished, requesting permissions")
+            requestBrightnessPermission()
         }
 
         Column(
@@ -132,12 +124,6 @@ class SplashActivity : ComponentActivity() {
                 modifier = Modifier.width(300.dp),
                 color = CameBlueColor,
                 progress = animatedProgress
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = phase,
-                color = WhiteColor,
-                style = MaterialTheme.typography.labelSmall
             )
             Spacer(modifier = Modifier.height(55.dp))
             Text(
