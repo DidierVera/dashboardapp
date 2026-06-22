@@ -271,7 +271,7 @@ class AndroidApiServer(
             parseBody = { body -> Json.decodeFromString<SendDitTestingDto>(body) },
             operation = { dto ->
                 Log.d(TAG, "handleSendDitTesting: dispatchCode=${dto.dispatchCode}, screenId=${dto.screenId}, dits=${dto.dits.size}")
-                mockService.dispatchDitTesting(dto)
+                //mockService.dispatchDitTesting(dto)
                 true
             }
         )
