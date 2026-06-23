@@ -7,171 +7,160 @@ import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.IServerConnection
 import com.came.parkare.dashboardapp.domain.models.ScreenModel
 import com.came.parkare.dashboardapp.domain.repositories.local.DashboardElementRepository
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.testing.DitTestingDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.testing.SendDitTestingDto
 import com.came.parkare.dashboardapp.infrastructure.source.remote.dto.common.DialogResponseDto
 import com.came.parkare.dashboardapp.infrastructure.source.remote.dto.TerminalResponseDto
 import com.came.parkare.dashboardapp.infrastructure.source.remote.dto.common.TypeResponseDto
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlin.coroutines.cancellation.CancellationException
 
-
-class MockService (
+class MockService(
     private val serverConnection: IServerConnection,
     private val dashboardElementRepository: DashboardElementRepository,
     private val logger: AppLogger
 ) {
-    private var mockThread: Thread? = null
     private val mockScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-    private var isRunning = false
+    private var listenerJob: Job? = null
+
+    private var externalEventFlow = MutableSharedFlow<SendDitTestingDto>(extraBufferCapacity = Channel.UNLIMITED)
+
+    suspend fun dispatchMockEvent(dto: SendDitTestingDto) {
+        logger.trackLog("MOCK_CASS", "try to send event")
+        externalEventFlow.emit(dto)
+    }
 
     fun startConnection(onSocketResult: (ServiceResult<TerminalResponseDto>) -> Unit) {
-        // Limpiar completamente antes de empezar
         cleanup()
 
-        // Marcar como en ejecución
-        isRunning = true
-        mockScope.launch {
+        listenerJob = mockScope.launch {
             try {
-                println("DEBUG: Starting connection - isRunning: $isRunning")
-                val screens = dashboardElementRepository.getAllScreens()
-                println("Screens count: ${screens.size}")
+                serverConnection.setStatusConnection(true)
+                logger.trackLog("MockService", "Modo MOCK activo — esperando eventos del módulo web")
 
-                if (screens.isEmpty()) {
-                    delay(1000)
-                    val retryScreens = dashboardElementRepository.getAllScreens()
-                    println("Retry screens count: ${retryScreens.size}")
-                    if (retryScreens.isEmpty()) {
-                        onSocketResult.invoke(ServiceResult.Error(ErrorTypeClass.GeneralException("No screens available")))
-                        Log.i("NOT_SCREENS", "No screens available")
-                        return@launch
-                    }
-                    if (isRunning) {
-                        processScreens(retryScreens, onSocketResult)
-                    }
+                // Fase 1: bootstrap con la primera pantalla
+                val firstScreen = dashboardElementRepository.getAllScreens().firstOrNull()
+                if (firstScreen != null) {
+                    val bootstrapResponse = buildResponseFromCode(firstScreen.dispatcherCode)
+                    onSocketResult.invoke(ServiceResult.Success(bootstrapResponse))
                 } else {
-                    if (isRunning) {
-                        processScreens(screens, onSocketResult)
-                    }
+                    onSocketResult.invoke(
+                        ServiceResult.Error(ErrorTypeClass.GeneralException("No screens available"))
+                    )
+                    return@launch
                 }
+
+                // Fase 2: escuchar eventos externos indefinidamente
+                externalEventFlow.collect { dto ->
+                    if (!isActive) return@collect
+                    logger.trackLog("MOCK_CASS", "externalEventFlow.collect")
+
+                    val result = buildResponseFromDto(dto)
+                    onSocketResult.invoke(ServiceResult.Success(result))
+                }
+
             } catch (e: CancellationException) {
-                println("DEBUG: Coroutine cancelled normally")
+                // normal al llamar cleanup()
             } catch (e: Exception) {
                 logger.trackError(e)
-                println("DEBUG: Error in startConnection: ${e.message}")
+                onSocketResult.invoke(
+                    ServiceResult.Error(ErrorTypeClass.GeneralException(e.message ?: "MockService error"))
+                )
             }
         }
     }
 
-    private fun processScreens(
-        screens: List<ScreenModel>,
-        onSocketResult: (ServiceResult<TerminalResponseDto>) -> Unit
-    ) {
-        // Verificar que no haya ya un hilo en ejecución
-        if (mockThread?.isAlive == true) {
-            println("DEBUG: Thread already running, skipping new thread creation")
-            return
-        }
+    /**
+     * Convierte un SendDitTestingDto (del módulo web) en un TerminalResponseDto
+     * que el sistema ya sabe procesar.
+     */
 
-        mockThread = Thread {
-            try {
-                logger.trackLog("com.came.parkare.dashboardapp.Mock", "Inicio de aplicación conexión MOCK")
-                // Usar una copia local para evitar problemas de concurrencia
-                val localScreens = screens.toList()
+    private fun buildResponseFromDto(dto: SendDitTestingDto): TerminalResponseDto {
+        val ditsJson = dto.dits.takeIf { it.isNotEmpty() }?.let { buildDitsJsonArray(it) }
+        return TerminalResponseDto(
+            dialog = DialogResponseDto(
+                dialogNumber = dto.dispatchCode.toInt(),
+                dialogName = resolveDialogName(dto.dispatchCode)
+            ),
+            dtoVersion = 0,
+            terminalNr = 2,
+            dtoType = TypeResponseDto(dtoType = 0, dtoName = "DtoDialog"),
+            ditsTUI = ditsJson
+        )
+    }
 
-                while (!Thread.currentThread().isInterrupted && isRunning) {
-                    serverConnection.setStatusConnection(true)
-                    Thread.sleep((8000..10000).random().toLong())
+    private fun buildResponseFromCode(code: Long): TerminalResponseDto = when (code) {
+        0L    -> getBootDit()
+        5L    -> getIdleDit()
+        1005L -> setOfflineMode()
+        6L    -> getOutServiceDit()
+        7L    -> getParkingCompleteDit()
+        9L    -> getReadingPlateDit()
+        12L   -> getPleaseProceedDit()
+        8L    -> getUserDit()
+        18L   -> getCardErrorDit()
+        36L   -> getPaymentRequiredDit()
+        89L   -> getStartCurrentBillDit()
+        else  -> getTerminalLockedDit()
+    }
 
-                    for(screenToShow in localScreens.indices) {
-                        if (Thread.currentThread().isInterrupted || !isRunning) {
-                            println("DEBUG: Thread interrupted or not running, breaking loop")
-                            break
-                        }
+    /**
+     * Convierte la lista de DitTestingDto en un JsonArray compatible
+     * con el formato que ya espera mapDitsJsonToModel().
+     */
 
-                        val code = localScreens[screenToShow].dispatcherCode
-                        //println("Code Screen to show: $screenToShow - Code: $code - Thread ID: ${Thread.currentThread().id}")
-
-                        var result: TerminalResponseDto
-                        when(code){
-                            0L -> result = getBootDit()
-                            5L -> result = getIdleDit()
-                            1005L -> result = setOfflineMode()
-                            6L -> result = getOutServiceDit()
-                            7L -> result = getParkingCompleteDit()
-                            9L -> result = getReadingPlateDit()
-                            12L -> result = getPleaseProceedDit()
-                            8L -> result = getUserDit()
-                            18L -> result = getCardErrorDit()
-                            36L -> result = getPaymentRequiredDit()
-                            89L -> result = getStartCurrentBillDit()
-                            else -> {
-                                result = getTerminalLockedDit()
-                            }
-                        }
-
-                        onSocketResult.invoke(ServiceResult.Success(result))
-
-                        if (Thread.currentThread().isInterrupted || !isRunning) break
-                        Thread.sleep((4000..6000).random().toLong())
-                    }
-
-                    // Verificar nuevamente antes de continuar con el siguiente ciclo
-                    if (Thread.currentThread().isInterrupted || !isRunning) {
-                        println("DEBUG: Exiting main while loop")
-                        break
-                    }
+    private fun buildDitsJsonArray(dits: List<DitTestingDto>): JsonArray {
+        val jsonString = buildString {
+            append("[")
+            dits.forEachIndexed { index, dit ->
+                append("{")
+                append(""""DitType":{"DitType":${dit.ditTypeCode},"DitName":"${dit.ditName}"},""")
+                append(""""Version":0""")
+                dit.fields.forEach { (key, value) ->
+                    append(""","$key":${coerceJsonValue(value)}""")
                 }
-            } catch (e: InterruptedException) {
-                println("DEBUG: Thread interrupted normally")
-                Thread.currentThread().interrupt()
-            } catch (e: Exception) {
-                if (!Thread.currentThread().isInterrupted && isRunning) {
-                    logger.trackError(e)
-                    e.printStackTrace()
-                }
-            } finally {
-                println("DEBUG: Thread finished - Thread ID: ${Thread.currentThread().id}")
+                append("}")
+                if (index < dits.lastIndex) append(",")
             }
-        }.apply {
-            name = "MockService-Thread-${System.currentTimeMillis()}"
-            start()
+            append("]")
         }
+        return Json.decodeFromString(jsonString)
+    }
+
+    private fun coerceJsonValue(value: String): String =
+        value.toBigDecimalOrNull()?.toPlainString() ?: """"$value""""
+
+    private fun resolveDialogName(code: Long): String = when (code) {
+        0L    -> "DLG_BOOT"
+        5L    -> "IDLE"
+        6L    -> "DLG_OUT_SERVICE"
+        7L    -> "DLG_PARKING_COMPLETED"
+        8L    -> "USER"
+        9L    -> "DLG_READING_PLATE"
+        12L   -> "DLG_PLEASE_PROCEED"
+        18L   -> "DLG_CARD_ERROR"
+        36L   -> "DLG_PAYMENT_REQUIRED"
+        89L   -> "DLG_InicioCobroActual"
+        96L   -> "DLG_LOCKED"
+        1005L -> "IDLE_DISCONNECTED"
+        else  -> "DLG_UNKNOWN_$code"
     }
 
     fun cleanup() {
-        println("DEBUG: Cleaning up - isRunning was: $isRunning")
-
-        // 1. Cambiar el estado primero
-        isRunning = false
-
-        // 2. Interrumpir el hilo
-        mockThread?.let { thread ->
-            if (thread.isAlive) {
-                thread.interrupt()
-                try {
-                    // Esperar un tiempo razonable para que termine
-                    thread.join(1000)
-                    if (thread.isAlive) {
-                        println("DEBUG: Thread did not stop gracefully")
-                    }
-                } catch (e: InterruptedException) {
-                    println("DEBUG: Join interrupted")
-                }
-            }
-        }
-
-        // 3. Limpiar referencia
-        mockThread = null
-
-        // 4. Cancelar corrutinas del scope (opcional, solo las nuevas)
-        // mockScope.coroutineContext.cancelChildren()
-
-        println("DEBUG: Cleanup completed")
+        listenerJob?.cancel()
+        listenerJob = null
+        // Reemplazar el flow para descartar eventos de la sesión anterior
+        externalEventFlow = MutableSharedFlow(extraBufferCapacity = Channel.UNLIMITED)
+        serverConnection.setStatusConnection(false)
     }
 
     private fun getTerminalLockedDit(): TerminalResponseDto {

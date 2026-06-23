@@ -112,7 +112,7 @@ val repositoryModule = module {
 
 val servicesModule = module {
     factory { TerminalSocketService(get(), get(), get()) }
-    factory { MockService(get(), get(), get()) }
+    single { MockService(get(), get(), get()) }
     factory { SignalRService(get(), get(), get()) }
 }
 

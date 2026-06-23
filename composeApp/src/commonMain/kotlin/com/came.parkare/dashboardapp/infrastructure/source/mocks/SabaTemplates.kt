@@ -992,6 +992,8 @@ object SabaTemplates {
                         "margin-bottom": 5,
                         "margin-left": 35,
                         "margin-right": 35,
+                        "date-of-creation": 1782166525858,
+                        "last-time-updated": 1782166661977,
                         "data": [
                             {
                                 "element-type": "spacer",
@@ -1092,6 +1094,8 @@ object SabaTemplates {
                         "margin-bottom": 5,
                         "margin-left": 35,
                         "margin-right": 35,
+                        "date-of-creation": 1782166525858,
+                        "last-time-updated": 1782166661977,
                         "data": [
                             {
                                 "element-type": "spacer",
@@ -1168,6 +1172,8 @@ object SabaTemplates {
                         "margin-bottom": 5,
                         "margin-left": 35,
                         "margin-right": 35,
+                        "date-of-creation": 1782166525858,
+                        "last-time-updated": 1782166661978,
                         "data": [
                             {
                                 "element-type": "column",
@@ -1349,6 +1355,8 @@ object SabaTemplates {
                         "margin-bottom": 5,
                         "margin-left": 35,
                         "margin-right": 35,
+                        "date-of-creation": 1782166525859,
+                        "last-time-updated": 1782166661979,
                         "data": [
                             {
                                 "element-type": "text",
@@ -1427,6 +1435,8 @@ object SabaTemplates {
                         "margin-bottom": 5,
                         "margin-left": 35,
                         "margin-right": 35,
+                        "date-of-creation": 1782166525860,
+                        "last-time-updated": 1782166661979,
                         "data": [
                             {
                                 "element-type": "text",
@@ -1487,87 +1497,77 @@ object SabaTemplates {
                                                 }
                                             }
                                         },
-                                          {
+                                        {
                                             "element-type": "row",
                                             "data": {
-                                              "backgroundColor": "#FF5800",
-                                              "density": 0,
-                                              "roundBorder": 0,
-                                              "hasShadow": false,
-                                              "spacing": 10,
-                                              "padding": 10,
-                                              "dataKey": null,
-                                              "ditTypeCode": null,
-                                              "validValue": null,
-                                              "content": [
-                                                {
-                                                  "element-type": "text",
-                                                  "data": {
-                                                    "dashboardItemId": "cannot-read",
-                                                    "defaultText": "Amount to pay:",
-                                                    "textSize": 36,
-                                                    "textColor": "#FFFFFF",
-                                                    "padding": 12,
-                                                    "fontWeight": "Medium",
-                                                    "dataKey": null,
-                                                    "ditTypeCode": null,
-                                                    "validValue": null,
-                                                    "translations": {
-                                                      "lang1": "Amount to pay:"
+                                                "backgroundColor": "#FF5800",
+                                                "density": 0,
+                                                "roundBorder": 0,
+                                                "hasShadow": false,
+                                                "spacing": 4,
+                                                "padding": 4,
+                                                "dataKey": null,
+                                                "ditTypeCode": null,
+                                                "validValue": null,
+                                                "content": [
+                                                    {
+                                                        "element-type": "text",
+                                                        "data": {
+                                                            "dashboardItemId": "cannot-read",
+                                                            "defaultText": "AMOUNT TO PAY:",
+                                                            "textSize": 36,
+                                                            "textColor": "#FFFFFF",
+                                                            "padding": 12,
+                                                            "fontWeight": "Medium",
+                                                            "dataKey": null,
+                                                            "ditTypeCode": null,
+                                                            "validValue": null,
+                                                            "translations": {
+                                                                "lang1": "AMOUNT TO PAY:"
+                                                            }
+                                                        }
+                                                    },
+                                                    {
+                                                        "element-type": "spacer",
+                                                        "data": {
+                                                            "value": 4
+                                                        }
+                                                    },
+                                                    {
+                                                        "element-type": "text",
+                                                        "data": {
+                                                            "dashboardItemId": "amount-to-pay-value",
+                                                            "defaultText": "-------",
+                                                            "textSize": 36,
+                                                            "textColor": "#FFFFFF",
+                                                            "padding": 12,
+                                                            "fontWeight": "Bold",
+                                                            "dataKey": "AmountTotal",
+                                                            "ditTypeCode": 3,
+                                                            "validValue": null,
+                                                            "translations": null
+                                                        }
+                                                    },
+                                                    {
+                                                        "element-type": "text",
+                                                        "data": {
+                                                            "dashboardItemId": "cannot-read",
+                                                            "defaultText": "€",
+                                                            "textSize": 36,
+                                                            "textColor": "#FFFFFF",
+                                                            "padding": 0,
+                                                            "fontWeight": "Bold",
+                                                            "dataKey": null,
+                                                            "ditTypeCode": null,
+                                                            "validValue": null,
+                                                            "translations": {
+                                                                "lang1": "€"
+                                                            }
+                                                        }
                                                     }
-                                                  }
-                                                },
-                                                {
-                                                  "element-type": "row",
-                                                  "data": {
-                                                    "backgroundColor": "#FF5800",
-                                                    "density": 0,
-                                                    "roundBorder": 0,
-                                                    "hasShadow": false,
-                                                    "spacing": 0,
-                                                    "padding": 0,
-                                                    "dataKey": null,
-                                                    "ditTypeCode": null,
-                                                    "validValue": null,
-                                                    "content": [
-                                                      {
-                                                        "element-type": "text",
-                                                        "data": {
-                                                          "dashboardItemId": "cannot-read",
-                                                          "defaultText": "€",
-                                                          "textSize": 36,
-                                                          "textColor": "#FFFFFF",
-                                                          "padding": 0,
-                                                          "fontWeight": "Bold",
-                                                          "dataKey": null,
-                                                          "ditTypeCode": null,
-                                                          "validValue": null,
-                                                          "translations": {
-                                                            "lang1": "€"
-                                                          }
-                                                        }
-                                                      },
-                                                      {
-                                                        "element-type": "text",
-                                                        "data": {
-                                                          "dashboardItemId": "amount-to-pay-value",
-                                                          "defaultText": "-------",
-                                                          "textSize": 36,
-                                                          "textColor": "#FFFFFF",
-                                                          "padding": 12,
-                                                          "fontWeight": "Bold",
-                                                          "dataKey": "AmountTotal",
-                                                          "ditTypeCode": 3,
-                                                          "validValue": null,
-                                                          "translations": null
-                                                        }
-                                                      }
-                                                    ]
-                                                  }
-                                                }
-                                              ]
+                                                ]
                                             }
-                                          },
+                                        },
                                         {
                                             "element-type": "spacer",
                                             "data": {
@@ -1586,6 +1586,8 @@ object SabaTemplates {
                         "margin-bottom": 5,
                         "margin-left": 35,
                         "margin-right": 35,
+                        "date-of-creation": 1782166525861,
+                        "last-time-updated": 1782166661980,
                         "data": [
                             {
                                 "element-type": "spacer",
@@ -1647,6 +1649,8 @@ object SabaTemplates {
                         "margin-bottom": 5,
                         "margin-left": 35,
                         "margin-right": 35,
+                        "date-of-creation": 1782166525861,
+                        "last-time-updated": 1782166661980,
                         "data": [
                             {
                                 "element-type": "column",
@@ -1767,6 +1771,8 @@ object SabaTemplates {
                         "margin-bottom": 5,
                         "margin-left": 35,
                         "margin-right": 35,
+                        "date-of-creation": 1782166525861,
+                        "last-time-updated": 1782166661980,
                         "data": [
                             {
                                 "element-type": "spacer",
@@ -1817,6 +1823,8 @@ object SabaTemplates {
                         "margin-bottom": 5,
                         "margin-left": 35,
                         "margin-right": 35,
+                        "date-of-creation": 1782166525862,
+                        "last-time-updated": 1782166661981,
                         "data": [
                             {
                                 "element-type": "spacer",
@@ -1865,6 +1873,8 @@ object SabaTemplates {
                         "margin-bottom": 5,
                         "margin-left": 35,
                         "margin-right": 35,
+                        "date-of-creation": 1782166525862,
+                        "last-time-updated": 1782166661981,
                         "data": [
                             {
                                 "element-type": "spacer",
@@ -1913,6 +1923,8 @@ object SabaTemplates {
                         "margin-bottom": 5,
                         "margin-left": 35,
                         "margin-right": 35,
+                        "date-of-creation": 1782166525862,
+                        "last-time-updated": 1782166661981,
                         "data": [
                             {
                                 "element-type": "spacer",
