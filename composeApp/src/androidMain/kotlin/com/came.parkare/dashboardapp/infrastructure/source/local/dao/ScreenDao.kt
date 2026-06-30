@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
 import com.came.parkare.dashboardapp.infrastructure.source.local.entities.ScreenEntity
 
 @Dao
@@ -27,4 +28,10 @@ interface ScreenDao {
 
     @Query("DELETE FROM tbl_screen")
     suspend fun deleteAllScreens()
+
+    @Transaction
+    suspend fun replaceAllScreens(screens: List<ScreenEntity>) {
+        deleteAllScreens()
+        insertAll(screens)
+    }
 }

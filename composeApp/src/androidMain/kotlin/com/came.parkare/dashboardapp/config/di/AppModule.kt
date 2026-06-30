@@ -5,8 +5,11 @@ import com.came.parkare.dashboardapp.config.database.AppDatabase
 import com.came.parkare.dashboardapp.config.database.migrations.Migration_2_3
 import com.came.parkare.dashboardapp.config.database.migrations.Migration_3_4
 import com.came.parkare.dashboardapp.config.database.migrations.Migration_4_5
+import com.came.parkare.dashboardapp.config.database.migrations.Migration_5_6
 import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.AppLoggerImpl
+import com.came.parkare.dashboardapp.config.utils.DeviceUtils
+import com.came.parkare.dashboardapp.config.utils.DeviceUtilsImpl
 import com.came.parkare.dashboardapp.config.utils.IServerConnection
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesWrapper
@@ -15,11 +18,13 @@ import com.came.parkare.dashboardapp.domain.repositories.external.FtpServerFileR
 import com.came.parkare.dashboardapp.domain.repositories.local.ConfigTemplateRepository
 import com.came.parkare.dashboardapp.domain.repositories.local.DashboardDevicesRepository
 import com.came.parkare.dashboardapp.domain.repositories.local.DashboardElementRepository
+import com.came.parkare.dashboardapp.domain.repositories.local.FontFileRepository
 import com.came.parkare.dashboardapp.domain.repositories.local.ImageRepository
 import com.came.parkare.dashboardapp.domain.repositories.remote.ApiServerRepository
 import com.came.parkare.dashboardapp.domain.repositories.remote.TerminalConnectionRepository
 import com.came.parkare.dashboardapp.domain.usecases.ConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.FtpServerConfiguration
+import com.came.parkare.dashboardapp.domain.usecases.GetDefaultImages
 import com.came.parkare.dashboardapp.domain.usecases.GetImageFromDbByName
 import com.came.parkare.dashboardapp.domain.usecases.GetScreenByDispatcher
 import com.came.parkare.dashboardapp.domain.usecases.GetScreenConfigurations
@@ -34,16 +39,22 @@ import com.came.parkare.dashboardapp.infrastructure.repositories.local.Dashboard
 import com.came.parkare.dashboardapp.infrastructure.repositories.local.ImageRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.repositories.remote.TerminalConnectionImpl
 import com.came.parkare.dashboardapp.infrastructure.source.external.ConfigFileDao
+import com.came.parkare.dashboardapp.infrastructure.source.external.FontFileDao
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.AndroidApiServer
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiServerRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.source.remote.services.MockService
 import com.came.parkare.dashboardapp.infrastructure.source.remote.services.SignalRService
 import com.came.parkare.dashboardapp.infrastructure.source.remote.services.TerminalSocketService
+import com.came.parkare.dashboardapp.ui.components.carcounter.CarCounterManager
+import com.came.parkare.dashboardapp.ui.components.carcounter.CarCounterManagerImpl
+import com.came.parkare.dashboardapp.ui.components.carcounter.CarCounterViewModel
 import com.came.parkare.dashboardapp.ui.screens.activity.MainActivityViewModel
 import com.came.parkare.dashboardapp.ui.screens.main.MainViewModel
+import com.came.parkare.dashboardapp.ui.screens.splash.SplashViewModel
 import com.came.parkare.dashboardapp.ui.utils.FTPServer
 import com.came.parkare.dashboardapp.ui.utils.FilesUtils
 import com.came.parkare.dashboardapp.ui.utils.FilesUtilsImpl
+import com.came.parkare.dashboardapp.ui.utils.FontViewModel
 import com.came.parkare.dashboardapp.ui.utils.ServerConnectionImpl
 import com.came.parkare.dashboardapp.ui.utils.UiUtils
 import com.came.parkare.dashboardapp.ui.utils.UiUtilsImpl
@@ -59,26 +70,32 @@ val utilsModule = module {
     singleOf(::SharedPreferencesWrapper) { bind<SharedPreferencesProvider>() }
     singleOf(::AppLoggerImpl) { bind<AppLogger>() }
     singleOf(::ServerConnectionImpl) { bind<IServerConnection>() }
+    singleOf(::CarCounterManagerImpl) { bind<CarCounterManager>() }
+    singleOf(::DeviceUtilsImpl) { bind<DeviceUtils>() }
     factory { getPlatform() }
     factory { FTPServer() }
-    factory { AndroidApiServer(get(),get(),get(),get()) }
+    factory { AndroidApiServer(get(),get(),get(),get(),get(),get()) }
     single<FirebaseAnalytics> {
         FirebaseAnalytics.getInstance(get())
     }
+    single { FontViewModel(get()) }
 }
 
 val viewModelModule = module {
     viewModelOf(::MainActivityViewModel)
     viewModelOf(::MainViewModel)
+    viewModelOf(::CarCounterViewModel)
+    viewModelOf(::SplashViewModel)
 }
 
 val useCasesModule = module {
     factory { ConnectionConfig(get(), get()) }
-    factory { InitConfiguration(get(), get(), get(), get()) }
+    factory { InitConfiguration(get(), get(), get(), get(), get()) }
     factory { StartSocketConnection(get(), get()) }
     factory { FtpServerConfiguration(get(), get()) }
     factory { GetScreenByDispatcher(get(), get()) }
     factory { GetScreenConfigurations(get(), get()) }
+    factory { GetDefaultImages(get(), get()) }
     factory { GetImageFromDbByName(get()) }
 }
 val repositoryModule = module {
@@ -90,11 +107,12 @@ val repositoryModule = module {
     singleOf(::DashboardDeviceRepositoryImpl) { bind<DashboardDevicesRepository>() }
     singleOf(::ImageRepositoryImpl) { bind<ImageRepository>() }
     singleOf(::ConfigTemplateRepositoryImpl) { bind<ConfigTemplateRepository>() }
+    singleOf(::FontFileDao) { bind<FontFileRepository>() }
 }
 
 val servicesModule = module {
     factory { TerminalSocketService(get(), get(), get()) }
-    factory { MockService(get(), get(), get()) }
+    single { MockService(get(), get(), get()) }
     factory { SignalRService(get(), get(), get()) }
 }
 
@@ -110,7 +128,7 @@ val databaseModules = module {
             "dashboard_db"
         )
             .fallbackToDestructiveMigration()
-            .addMigrations(Migration_2_3, Migration_3_4, Migration_4_5)
+            .addMigrations(Migration_2_3, Migration_3_4, Migration_4_5, Migration_5_6)
             .build()
     }
     single {

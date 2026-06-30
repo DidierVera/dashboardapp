@@ -9,5 +9,7 @@ data class ScreenModel(
     val marginBottom: Int = 0,
     val marginLeft: Int = 0,
     val marginRight: Int = 0,
-    val elements: List<ElementModel>
+    val elements: List<ElementModel>,
+    val dateOfCreation: Long? = null,
+    val lastTimeUpdated: Long? = null
 )

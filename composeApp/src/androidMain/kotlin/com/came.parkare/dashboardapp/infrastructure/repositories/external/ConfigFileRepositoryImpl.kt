@@ -3,6 +3,8 @@ package com.came.parkare.dashboardapp.infrastructure.repositories.external
 import com.came.parkare.dashboardapp.config.constants.Constants.API_PORT
 import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS
 import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS_DELAY_TIME
+import com.came.parkare.dashboardapp.config.constants.Constants.RESET_COUNTER_DELAY_TIME
+import com.came.parkare.dashboardapp.config.constants.Constants.SHOW_COUNTER
 import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_API
 import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_IP
 import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_PORT
@@ -16,21 +18,27 @@ import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.IServerConnection
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.came.parkare.dashboardapp.domain.models.ConnectionConfigModel
-import com.came.parkare.dashboardapp.domain.models.ImagesFileModel
+import com.came.parkare.dashboardapp.domain.models.ResourceFileModel
 import com.came.parkare.dashboardapp.domain.models.ScreenModel
+import com.came.parkare.dashboardapp.domain.models.toDto
 import com.came.parkare.dashboardapp.domain.repositories.external.ConfigFileRepository
 import com.came.parkare.dashboardapp.domain.repositories.local.DashboardElementRepository
 import com.came.parkare.dashboardapp.infrastructure.source.external.ConfigFileDao
+import com.came.parkare.dashboardapp.infrastructure.source.external.FontFileDao
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ResourceFileDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toModel
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toModel
 import com.came.parkare.dashboardapp.infrastructure.source.mocks.ConfigFileMock
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class ConfigFileRepositoryImpl(
     private val configFileDao: ConfigFileDao,
+    private val fontFileDao: FontFileDao,
     private val preferences: SharedPreferencesProvider,
     private val dashboardElementRepository: DashboardElementRepository,
     private val serverConnection: IServerConnection,
@@ -65,18 +73,17 @@ class ConfigFileRepositoryImpl(
         preferences.put(TEXT_SIZE_SCALE, data.textSizeScale)
         preferences.put(AUTO_BRIGHTNESS, data.autoBrightness)
         preferences.put(AUTO_BRIGHTNESS_DELAY_TIME, data.activeLowBrightnessTime)
+        preferences.put(SHOW_COUNTER, data.showCarCounter)
+        preferences.put(RESET_COUNTER_DELAY_TIME, data.carCounterReset)
 
         when (data.connectionWay){
             1 -> serverConnection.setTypeConnection(TypeConnectionEnum.SIGNAL_R)
             2 -> serverConnection.setTypeConnection(TypeConnectionEnum.SOCKET)
             else -> serverConnection.setTypeConnection(TypeConnectionEnum.MOCK)
         }
-
-        //storage images
-        storageImages(data.files?.map { it.toModel() })
     }
 
-    private suspend fun storageImages(files: List<ImagesFileModel>?) {
+    private suspend fun storageImages(files: List<ResourceFileModel>?) {
         if (files.isNullOrEmpty()) {
             dashboardElementRepository.deleteAllImages()
             return
@@ -98,10 +105,66 @@ class ConfigFileRepositoryImpl(
                 val data = dataFromFile.data ?: return ServiceResult.Error(ErrorTypeClass.WrongConfigFile)
 
                 //delete and storage screens and elements
-                storageScreensAndElements(data)
+                storageScreensAndElements(data.map { it.toModel() })
                 appLogger.trackLog("getFileConfiguration: ", "Success")
                 return ServiceResult.Success(true)
             }
+        }
+    }
+
+    override suspend fun getDefaultImages(): ServiceResult<Boolean> {
+        appLogger.trackLog("getDefaultImages", "----starting----")
+        when(val images = configFileDao.readJsonFromFile<List<ResourceFileDto>?>(
+            filename = "default_images.json", defaultValues = ConfigFileMock.getDefaultImages()
+        )){
+            is ServiceResult.Error -> return ServiceResult.Error(images.error)
+            is ServiceResult.Success -> {
+                val data = images.data
+                storageImages(data?.map { it.toModel() })
+                appLogger.trackLog("getDefaultImages: ", "----Success----")
+                return ServiceResult.Success(true)
+            }
+        }
+    }
+
+    override suspend fun writeImages(newData: List<ResourceFileModel>): ServiceResult<Boolean> {
+        try {
+            val result = configFileDao.writeJsonToFile(filename = "default_images.json",
+                content = newData.map { it.toDto() })
+            return when(result){
+                is ServiceResult.Error -> ServiceResult.Error(result.error)
+                is ServiceResult.Success -> {
+                    storageImages(newData)
+                    ServiceResult.Success(true)
+                }
+            }
+        }catch (e: Exception){
+            return ServiceResult.Error(ErrorTypeClass.GeneralException(messageError = e.message))
+        }
+    }
+
+    override suspend fun getFonts(): List<String> {
+        try {
+            val result= fontFileDao.listAvailableFonts()
+            return result.map { it.fileName }
+        }catch (e: Exception){
+            appLogger.trackError(e)
+            return emptyList()
+        }
+    }
+
+    override suspend fun writeFont(fileName: String, contentData: ByteArray): ServiceResult<Boolean> {
+        try {
+            val result = fontFileDao.saveFontFile(fileName = fileName, fontData = contentData, true)
+            return when(result){
+                false -> ServiceResult.Error(ErrorTypeClass.GeneralException("Could no storage the file, check it and try again"))
+                true -> {
+                    ServiceResult.Success(true)
+                }
+            }
+        }catch (e: Exception){
+            appLogger.trackError(e)
+            return ServiceResult.Error(ErrorTypeClass.GeneralException(messageError = e.message))
         }
     }
 
@@ -112,7 +175,7 @@ class ConfigFileRepositoryImpl(
             return when(result){
                 is ServiceResult.Error -> ServiceResult.Error(result.error)
                 is ServiceResult.Success -> {
-                    storageScreensAndElements(newData.map { it.toDto() })
+                    storageScreensAndElements(newData)
                     ServiceResult.Success(true)
                 }
             }
@@ -137,9 +200,9 @@ class ConfigFileRepositoryImpl(
         }
     }
 
-    private suspend fun storageScreensAndElements(screens: List<ScreenDto>) {
+    private suspend fun storageScreensAndElements(screens: List<ScreenModel>) {
         dashboardElementRepository.deleteAll()
-        dashboardElementRepository.saveScreens(screens.map { it.toModel() })
+        dashboardElementRepository.saveScreens(screens)
         val storedScreens = dashboardElementRepository.getAllScreens()
         serverConnection.setScreensList(storedScreens)
     }

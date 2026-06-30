@@ -7,16 +7,22 @@ import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_CONFIG_T
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_CONNECTION_CONFIG
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_DEFAULT_CONFIG_TEMPLATE
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_DEVICE_LIST
+import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_FONT
+import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_IMAGES
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_SCREENS_CONFIG
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_SCREEN_CONFIG_TYPE
+import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_VERSION
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_CONFIG_TEMPLATE
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_CONNECTION_CONFIG
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_DEVICE
+import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_IMAGES
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_SCREEN_CONFIG
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_SCREEN_CONFIG_TYPE
+import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SEND_DIT_TESTING
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.TRACK_ERROR
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.TRACK_LOG
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.UPDATE_CONFIG_TEMPLATE
+import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.UPLOAD_FONT
 import fi.iki.elonen.NanoHTTPD
 
 object ApiRequestPredicates {
@@ -85,6 +91,29 @@ object ApiRequestPredicates {
 
     fun NanoHTTPD.IHTTPSession.isUpdateConfigTemplate(): Boolean {
         return uri == UPDATE_CONFIG_TEMPLATE && method == NanoHTTPD.Method.POST
+    }
+    fun NanoHTTPD.IHTTPSession.isGetVersion(): Boolean {
+        return uri == GET_VERSION && method == NanoHTTPD.Method.GET
+    }
+
+    fun NanoHTTPD.IHTTPSession.isGetImages(): Boolean {
+        return uri == GET_IMAGES && method == NanoHTTPD.Method.GET
+    }
+
+    fun NanoHTTPD.IHTTPSession.isSaveImages(): Boolean {
+        return uri == SAVE_IMAGES && method == NanoHTTPD.Method.POST
+    }
+
+    fun NanoHTTPD.IHTTPSession.isUploadFont(): Boolean {
+        return uri == UPLOAD_FONT && method == NanoHTTPD.Method.POST
+    }
+
+    fun NanoHTTPD.IHTTPSession.isSendDitTesting(): Boolean {
+        return uri == SEND_DIT_TESTING && method == NanoHTTPD.Method.POST
+    }
+
+    fun NanoHTTPD.IHTTPSession.isGetFont(): Boolean {
+        return uri == GET_FONT && method == NanoHTTPD.Method.GET
     }
 
     fun NanoHTTPD.IHTTPSession.readBodyAsUtf8(): String {

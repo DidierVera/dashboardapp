@@ -1,22 +1,21 @@
 package com.came.parkare.dashboardapp.ui.screens.main
 
-import android.app.Activity
-import android.content.Context
 import android.util.Log
-import android.view.WindowManager
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
@@ -30,46 +29,48 @@ import com.came.parkare.dashboardapp.domain.models.components.ElementModel
 import com.came.parkare.dashboardapp.ui.components.Base64Image
 import com.came.parkare.dashboardapp.ui.components.BuildComposable
 import com.came.parkare.dashboardapp.ui.components.NetworkIndicatorView
+import com.came.parkare.dashboardapp.ui.components.brightness.DimmingOverlay
+import com.came.parkare.dashboardapp.ui.components.carcounter.CarCounterView
 import com.came.parkare.dashboardapp.ui.components.isBase64
 import com.came.parkare.dashboardapp.ui.components.videos.VideoExoPlayer
 import com.came.parkare.dashboardapp.ui.screens.activity.MainActivity
 import com.came.parkare.dashboardapp.ui.theme.BlackColor
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
+import com.came.parkare.dashboardapp.ui.theme.LocalAppFontFamily
+import com.came.parkare.dashboardapp.ui.utils.FontViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun MainScreen(
     viewModel: MainViewModel = koinViewModel()) {
     val showVideoFrame by viewModel.showVideoFrame.collectAsState()
+    val showCarCounter by viewModel.showCarCounter.collectAsState()
+    val itemsState by viewModel.itemsState.collectAsState()
+    val isDimmed by viewModel.startBrightnessMode.collectAsState()
     Box(Modifier.fillMaxSize()) {
         LoadBackground()
-        NetworkIndicatorView(Modifier.padding(4.dp))
-        UpdateDataByLang()
+        NetworkIndicatorView(
+            Modifier
+                .padding(4.dp)
+                .align(Alignment.TopEnd), sizeScale = itemsState.textSizeScale)
+
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.Bottom),
             modifier = Modifier.fillMaxSize()
         ) {
-            LoadDashboardItems(modifier = Modifier.weight(0.7f))
+            LoadDashboardItems(modifier = Modifier.weight(1f))
+            if(showCarCounter) CarCounterView(modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .weight(0.15f), textSizeScale = itemsState.textSizeScale)
+
             if(showVideoFrame) VideoExoPlayer(modifier = Modifier.weight(0.3f))
         }
-        StartBrightnessTimeout()
+        //StartBrightnessTimeout()
+        DimmingOverlay(isDimmed)
+
     }
 }
-
-@Composable
-private fun UpdateDataByLang(
-    viewModel: MainViewModel = koinViewModel()
-){
-    val state by viewModel.itemsState.collectAsState()
-    if (state.currentLang.isNotBlank()){
-        viewModel.getTranslationText(state.currentLang)
-    }
-}
-
 
 @Composable
 private fun LoadBackground(
@@ -114,62 +115,15 @@ private fun LoadDashboardItems(
 ){
     val state by viewModel.itemsState.collectAsState()
     val showVideoFrame by viewModel.showVideoFrame.collectAsState()
-    val items: List<ElementModel> = state.newItems
-    if (items.isEmpty()) return
+    val elements: List<ElementModel> = state.newItems
+    if (elements.isEmpty()) return
     val boxMargin = state.contentPadding
-
-    LazyColumn(modifier = modifier.padding(boxMargin),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = if(showVideoFrame) Arrangement.Bottom else Arrangement.Center
-    ){
-        items.forEach { mItem ->
-            item {
-                val textSizeScale = state.textSizeScale
-                BuildComposable(elementModel = mItem, textSizeScale = textSizeScale)
-            }
+    Column(modifier = modifier
+        .padding(boxMargin)
+        .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = if (showVideoFrame) Arrangement.Bottom else Arrangement.Top){
+        elements.forEach { mItem ->
+            val textSizeScale = state.textSizeScale
+            BuildComposable(elementModel = mItem, textSizeScale = textSizeScale)
         }
-    }
-}
-@Composable
-private fun StartBrightnessTimeout() {
-    val viewModel: MainViewModel = koinViewModel()
-    val isActiveBrightnessMode by viewModel.startBrightnessMode.collectAsState()
-    val brightnessWaitDelay by viewModel.delayBrightnessTimeout.collectAsState()
-    val activity = (LocalContext.current as MainActivity)
-
-    LaunchedEffect(key1 = isActiveBrightnessMode, key2 = brightnessWaitDelay) {
-        if (isActiveBrightnessMode) {
-            // Start the brightness timeout
-            println("delay time: $brightnessWaitDelay")
-            delay(brightnessWaitDelay * 60 * 1000L)
-            setLowBrightness(activity)
-        } else {
-            // If mode is disabled, restore high brightness immediately
-            brightnessBackHigh(activity)
-        }
-    }
-}
-
-private fun setLowBrightness(activity: Activity) {
-    try {
-        println("Start bright low down")
-        val layout: WindowManager.LayoutParams? = activity.window?.attributes
-        layout?.screenBrightness = 0.1f
-        activity.window?.attributes = layout
-    } catch (e: Exception) {
-        e.printStackTrace()
-    }
-}
-
-private fun brightnessBackHigh(activity: Activity) {
-    try {
-        println("Bright high back")
-        val layout: WindowManager.LayoutParams? = activity.window?.attributes
-        layout?.screenBrightness = -1f // -1 means use system default brightness
-        // OR set to your desired high brightness:
-        // layout?.screenBrightness = 1.0f
-        activity.window?.attributes = layout
-    } catch (e: Exception) {
-        e.printStackTrace()
     }
 }
