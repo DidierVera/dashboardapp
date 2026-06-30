@@ -1,79 +1,166 @@
 package com.came.parkare.dashboardapp.infrastructure.source.remote.services
 
+import android.util.Log
+import com.came.parkare.dashboardapp.config.dataclasses.ErrorTypeClass
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.IServerConnection
+import com.came.parkare.dashboardapp.domain.models.ScreenModel
 import com.came.parkare.dashboardapp.domain.repositories.local.DashboardElementRepository
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.testing.DitTestingDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.testing.SendDitTestingDto
 import com.came.parkare.dashboardapp.infrastructure.source.remote.dto.common.DialogResponseDto
 import com.came.parkare.dashboardapp.infrastructure.source.remote.dto.TerminalResponseDto
 import com.came.parkare.dashboardapp.infrastructure.source.remote.dto.common.TypeResponseDto
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
+import kotlin.coroutines.cancellation.CancellationException
 
-
-class MockService (
+class MockService(
     private val serverConnection: IServerConnection,
     private val dashboardElementRepository: DashboardElementRepository,
     private val logger: AppLogger
 ) {
-    private var mockThread: Thread? = null
     private val mockScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private var listenerJob: Job? = null
+
+    private var externalEventFlow = MutableSharedFlow<SendDitTestingDto>(extraBufferCapacity = Channel.UNLIMITED)
+
+    suspend fun dispatchMockEvent(dto: SendDitTestingDto) {
+        logger.trackLog("MOCK_CASS", "try to send event")
+        externalEventFlow.emit(dto)
+    }
 
     fun startConnection(onSocketResult: (ServiceResult<TerminalResponseDto>) -> Unit) {
-        //cleanup() // Clean up any existing connection
+        cleanup()
 
-        mockScope.launch {
-            val screens = dashboardElementRepository.getAllScreens()
+        listenerJob = mockScope.launch {
+            try {
+                serverConnection.setStatusConnection(true)
+                logger.trackLog("MockService", "Modo MOCK activo — esperando eventos del módulo web")
 
-            mockThread = Thread {
-                try {
-                    logger.trackLog("com.came.parkare.dashboardapp.Mock", "Inicio de aplicación conexión MOCK")
-                    while (!Thread.currentThread().isInterrupted) {
-                        serverConnection.setStatusConnection(true)
-                        Thread.sleep((120000..130000).random().toLong())
-
-                        for(screenToShow in screens.indices){
-                            val code = screens[screenToShow].dispatcherCode
-                            if (Thread.currentThread().isInterrupted) break
-
-                            println("Code Screen to show: $screenToShow")
-                            var result = getBootDit()
-                            when(code){
-                                0L -> result = getBootDit()//DLG_BOOT (restart screen)
-                                5L -> result = getIdleDit()//DLG_IDLE (rest screen)
-                                1005L -> setOfflineMode()//MOCK DISCONNECTED(rest screen)
-                                6L -> result = getOutServiceDit()//DLG_OUT_SERVICE
-                                7L -> result = getParkingCompleteDit()//DLG_PARKING_COMPLETED
-                                9L -> result = getReadingPlateDit()//DLG_READING_PLATE
-                                12L -> result = getPleaseProceedDit()//DLG_PLEASE_PROCEED
-                                8L -> result = getUserDit()//USER (rest screen)
-                                18L -> result = getCardErrorDit()//DLG_CARD_ERROR (rest screen)
-                                36L -> result = getPaymentRequiredDit()//DLG_PAYMENT_REQUIRED (pendiente de pago)
-                                89L -> result = getStartCurrentBillDit()//DLG_InicioCobroActual (pendiente de pago)
-                                else -> result = getTerminalLockedDit()//DLG_LOCKED
-                            }
-                            onSocketResult.invoke(ServiceResult.Success(result))
-                            Thread.sleep((40000L..80000).random())
-                        }
-                    }
-
-                }catch (e: Exception){
-                    if (!Thread.currentThread().isInterrupted) {
-                        logger.trackError(e)
-                        e.printStackTrace()
-                    }
+                // Fase 1: bootstrap con la primera pantalla
+                val firstScreen = dashboardElementRepository.getAllScreens().firstOrNull()
+                if (firstScreen != null) {
+                    val bootstrapResponse = buildResponseFromCode(firstScreen.dispatcherCode)
+                    onSocketResult.invoke(ServiceResult.Success(bootstrapResponse))
+                } else {
+                    onSocketResult.invoke(
+                        ServiceResult.Error(ErrorTypeClass.GeneralException("No screens available"))
+                    )
+                    return@launch
                 }
-            }.apply { start() }
+
+                // Fase 2: escuchar eventos externos indefinidamente
+                externalEventFlow.collect { dto ->
+                    if (!isActive) return@collect
+                    logger.trackLog("MOCK_CASS", "externalEventFlow.collect")
+
+                    val result = buildResponseFromDto(dto)
+                    onSocketResult.invoke(ServiceResult.Success(result))
+                }
+
+            } catch (e: CancellationException) {
+                // normal al llamar cleanup()
+            } catch (e: Exception) {
+                logger.trackError(e)
+                onSocketResult.invoke(
+                    ServiceResult.Error(ErrorTypeClass.GeneralException(e.message ?: "MockService error"))
+                )
+            }
         }
     }
 
+    /**
+     * Convierte un SendDitTestingDto (del módulo web) en un TerminalResponseDto
+     * que el sistema ya sabe procesar.
+     */
+
+    private fun buildResponseFromDto(dto: SendDitTestingDto): TerminalResponseDto {
+        val ditsJson = dto.dits.takeIf { it.isNotEmpty() }?.let { buildDitsJsonArray(it) }
+        return TerminalResponseDto(
+            dialog = DialogResponseDto(
+                dialogNumber = dto.dispatchCode.toInt(),
+                dialogName = resolveDialogName(dto.dispatchCode)
+            ),
+            dtoVersion = 0,
+            terminalNr = 2,
+            dtoType = TypeResponseDto(dtoType = 0, dtoName = "DtoDialog"),
+            ditsTUI = ditsJson
+        )
+    }
+
+    private fun buildResponseFromCode(code: Long): TerminalResponseDto = when (code) {
+        0L    -> getBootDit()
+        5L    -> getIdleDit()
+        1005L -> setOfflineMode()
+        6L    -> getOutServiceDit()
+        7L    -> getParkingCompleteDit()
+        9L    -> getReadingPlateDit()
+        12L   -> getPleaseProceedDit()
+        8L    -> getUserDit()
+        18L   -> getCardErrorDit()
+        36L   -> getPaymentRequiredDit()
+        89L   -> getStartCurrentBillDit()
+        else  -> getTerminalLockedDit()
+    }
+
+    /**
+     * Convierte la lista de DitTestingDto en un JsonArray compatible
+     * con el formato que ya espera mapDitsJsonToModel().
+     */
+
+    private fun buildDitsJsonArray(dits: List<DitTestingDto>): JsonArray {
+        val jsonString = buildString {
+            append("[")
+            dits.forEachIndexed { index, dit ->
+                append("{")
+                append(""""DitType":{"DitType":${dit.ditTypeCode},"DitName":"${dit.ditName}"},""")
+                append(""""Version":0""")
+                dit.fields.forEach { (key, value) ->
+                    append(""","$key":${coerceJsonValue(value)}""")
+                }
+                append("}")
+                if (index < dits.lastIndex) append(",")
+            }
+            append("]")
+        }
+        return Json.decodeFromString(jsonString)
+    }
+
+    private fun coerceJsonValue(value: String): String =
+        value.toBigDecimalOrNull()?.toPlainString() ?: """"$value""""
+
+    private fun resolveDialogName(code: Long): String = when (code) {
+        0L    -> "DLG_BOOT"
+        5L    -> "IDLE"
+        6L    -> "DLG_OUT_SERVICE"
+        7L    -> "DLG_PARKING_COMPLETED"
+        8L    -> "USER"
+        9L    -> "DLG_READING_PLATE"
+        12L   -> "DLG_PLEASE_PROCEED"
+        18L   -> "DLG_CARD_ERROR"
+        36L   -> "DLG_PAYMENT_REQUIRED"
+        89L   -> "DLG_InicioCobroActual"
+        96L   -> "DLG_LOCKED"
+        1005L -> "IDLE_DISCONNECTED"
+        else  -> "DLG_UNKNOWN_$code"
+    }
+
     fun cleanup() {
-        mockThread?.interrupt()
-        mockThread = null
+        listenerJob?.cancel()
+        listenerJob = null
+        // Reemplazar el flow para descartar eventos de la sesión anterior
+        externalEventFlow = MutableSharedFlow(extraBufferCapacity = Channel.UNLIMITED)
+        serverConnection.setStatusConnection(false)
     }
 
     private fun getTerminalLockedDit(): TerminalResponseDto {
@@ -104,7 +191,7 @@ class MockService (
                 dtoType = 0,
                 dtoName = "DtoDialog"
             ),
-            ditsTUI = null
+            ditsTUI = getPaymentRequiredJsonDit()
         )
     }
 
@@ -120,7 +207,7 @@ class MockService (
                 dtoType = 0,
                 dtoName = "DtoDialog"
             ),
-            ditsTUI = null
+            ditsTUI = getPaymentRequiredJsonDit()
         )
     }
 
@@ -220,10 +307,23 @@ class MockService (
         )
     }
 
-    private fun setOfflineMode() {
+    private fun setOfflineMode() : TerminalResponseDto {
         serverConnection.setStatusConnection(false)
-        Thread.sleep((2000L..8000).random())
+        Thread.sleep((1000L..2500).random())
         serverConnection.setStatusConnection(true)
+        return TerminalResponseDto(
+            dialog = DialogResponseDto(
+                dialogNumber = 1005,
+                dialogName = "IDLE_DISCONNECTED"
+            ),
+            dtoVersion = 0,
+            terminalNr = 2,
+            dtoType = TypeResponseDto(
+                dtoType = 0,
+                dtoName = "DtoDialog"
+            ),
+            ditsTUI = null
+        )
     }
 
     private fun getIdleDit(): TerminalResponseDto {
@@ -277,6 +377,23 @@ class MockService (
                     "Version": 0,
                     "Status": ${(0..1).random()}
                 }
+            ]
+        """.trimIndent()
+        return Json.decodeFromString(jsonString)
+    }
+
+    private fun getPaymentRequiredJsonDit(): JsonArray {
+        val jsonString = """
+            [
+                {
+                    "DitType": {
+                        "DitType": 3,
+                        "DitName": "dit_AmountToPay"
+                    },
+                    "Version": 0,
+                    "AmountTotal": ${kotlin.random.Random.nextInt(5, 2998)},
+                    "AmountAlreadyPayed": 0
+                }                
             ]
         """.trimIndent()
         return Json.decodeFromString(jsonString)

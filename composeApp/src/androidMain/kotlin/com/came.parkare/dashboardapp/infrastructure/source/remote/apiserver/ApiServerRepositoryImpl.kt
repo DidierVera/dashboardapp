@@ -4,16 +4,23 @@ import com.came.parkare.dashboardapp.config.constants.Constants.API_PORT
 import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS
 import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS_DELAY_TIME
 import com.came.parkare.dashboardapp.config.constants.Constants.CONFIG_TYPE
+import com.came.parkare.dashboardapp.config.constants.Constants.FONT_REGISTRY_KEY
+import com.came.parkare.dashboardapp.config.constants.Constants.FONT_REGULAR
+import com.came.parkare.dashboardapp.config.constants.Constants.RESET_COUNTER_DELAY_TIME
+import com.came.parkare.dashboardapp.config.constants.Constants.SHOW_COUNTER
 import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_API
 import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_IP
 import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_PORT
 import com.came.parkare.dashboardapp.config.constants.Constants.TEXT_SIZE_SCALE
 import com.came.parkare.dashboardapp.config.constants.Constants.TIME_DELAY
 import com.came.parkare.dashboardapp.config.constants.Constants.VIDEO_FRAME
+import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.dataclasses.TypeConnectionEnum
 import com.came.parkare.dashboardapp.config.utils.AppLogger
+import com.came.parkare.dashboardapp.config.utils.DeviceUtils
 import com.came.parkare.dashboardapp.config.utils.IServerConnection
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
+import com.came.parkare.dashboardapp.domain.models.ResourceFileModel
 import com.came.parkare.dashboardapp.domain.models.toDto
 import com.came.parkare.dashboardapp.domain.repositories.external.ConfigFileRepository
 import com.came.parkare.dashboardapp.domain.repositories.local.ConfigTemplateRepository
@@ -22,6 +29,7 @@ import com.came.parkare.dashboardapp.domain.repositories.local.DashboardElementR
 import com.came.parkare.dashboardapp.domain.repositories.remote.ApiServerRepository
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.DeviceDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ResourceFileDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toModel
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.logs.TrackErrorDto
@@ -37,6 +45,7 @@ class ApiServerRepositoryImpl(
     private val preferences: SharedPreferencesProvider,
     private val templateRepository: ConfigTemplateRepository,
     private val dashboardDevicesRepository: DashboardDevicesRepository,
+    private val deviceUtils: DeviceUtils,
     private val appLogger: AppLogger
 ): ApiServerRepository {
     override suspend fun saveDashboardIp(device: DeviceDto): Int {
@@ -87,15 +96,14 @@ class ApiServerRepositoryImpl(
         val textSizeScale = preferences.get(TEXT_SIZE_SCALE, 10)
         val autoBrightness = preferences.get(AUTO_BRIGHTNESS, false)
         val autoBrightnessDelayTime = preferences.get(AUTO_BRIGHTNESS_DELAY_TIME, 120)
+        val showCarCounter = preferences.get(SHOW_COUNTER, false)
+        val carCounterDelay = preferences.get(RESET_COUNTER_DELAY_TIME, 1)
 
         val connectionWay = when (serverConnection.typeConnection.value){
             TypeConnectionEnum.SIGNAL_R -> 1
             TypeConnectionEnum.SOCKET -> 2
             else -> 0
         }
-
-        //get images
-        val images = dashboardElementRepository.getImages()
 
         return ConnectionConfigDto(
             connectionWay = connectionWay,
@@ -108,9 +116,47 @@ class ApiServerRepositoryImpl(
             textSizeScale = textSizeScale,
             autoBrightness = autoBrightness,
             activeLowBrightnessTime = autoBrightnessDelayTime,
-            files = images.map { it.toDto() }
+            carCounterReset = carCounterDelay,
+            showCarCounter = showCarCounter
         )
     }
+
+    override suspend fun saveImages(data: List<ResourceFileDto>?): Int {
+
+        val files = data?.map { it.toModel() }
+        if (files.isNullOrEmpty()) {
+            dashboardElementRepository.deleteAllImages()
+            return -1
+        }
+
+        // Otherwise, replace all images in a single transaction
+        configFileRepository.writeImages(data.map { it.toModel() })
+        dashboardElementRepository.replaceAllImages(files)
+        serverConnection.setRestartApp(true)
+        return 0
+    }
+
+    override suspend fun getFontNames(): List<String> {
+        val fontNames = configFileRepository.getFonts()
+        return fontNames
+    }
+
+    override suspend fun saveFontFile(
+        fileName: String,
+        fontData: ByteArray
+    ): Boolean {
+        val result = configFileRepository.writeFont(fileName = fileName, contentData = fontData )
+        return when(result){
+            is ServiceResult.Error -> {
+                false
+            }
+            is ServiceResult.Success -> {
+                serverConnection.setRestartApp(true)
+                result.data == true
+            }
+        }
+    }
+
 
     override suspend fun saveScreenConfigType(type: Long): Boolean {
         preferences.put(CONFIG_TYPE, type)
@@ -132,5 +178,16 @@ class ApiServerRepositoryImpl(
     override suspend fun saveConfiguratorException(dto: TrackErrorDto): Int {
         appLogger.trackConfiguratorError(dto.stackTrace,dto.localizedMessage)
         return 0
+    }
+
+    override suspend fun getAppVersion(): String {
+        val version = deviceUtils.getAppVersion()
+        return version?.versionName ?: "1.0"
+    }
+
+    override suspend fun getImages(): List<ResourceFileDto>? {
+        //get images
+        val images = dashboardElementRepository.getImages()
+        return images.map { it.toDto() }
     }
 }

@@ -17,25 +17,26 @@ data class ConnectionConfigDto(
     @SerialName("text-size-scale") val textSizeScale: Int,
     @SerialName("auto-brightness-mode") val autoBrightness: Boolean? = false,
     @SerialName("active-low-brightness-time") val activeLowBrightnessTime: Int? = 2,
-    @SerialName("files") val files: List<ImageFileDto>? = null
+    @SerialName("show-car-counter") val showCarCounter: Boolean? = false,
+    @SerialName("car-counter-reset") val carCounterReset: Int? = 1
 )
 
 fun ConnectionConfigDto.toModel(): ConnectionConfigModel {
     return ConnectionConfigModel(
         connectionWay=connectionWay,
-        files = files?.map { it.toModel() },
         terminalIp=terminalIp, port=port, apiPort=apiPort, terminalApi=terminalApi,
         timeDelay=timeDelay, videoFrame=videoFrame, textSizeScale=textSizeScale,
-        autoBrightness = autoBrightness == true, activeLowBrightnessTime = activeLowBrightnessTime ?: 2
+        autoBrightness = autoBrightness == true, activeLowBrightnessTime = activeLowBrightnessTime ?: 2,
+        showCarCounter = showCarCounter == true, carCounterReset = carCounterReset ?: 1
     )
 }
 
 fun ConnectionConfigModel.toDto(): ConnectionConfigDto {
     return ConnectionConfigDto(
         connectionWay=connectionWay,
-        files = files?.map { it.toDto() },
         terminalIp=terminalIp, port=port, apiPort=apiPort, terminalApi=terminalApi,
         timeDelay=timeDelay, videoFrame=videoFrame, textSizeScale=textSizeScale,
-        autoBrightness = autoBrightness, activeLowBrightnessTime = activeLowBrightnessTime
+        autoBrightness = autoBrightness, activeLowBrightnessTime = activeLowBrightnessTime,
+        showCarCounter = showCarCounter, carCounterReset = carCounterReset
     )
 }

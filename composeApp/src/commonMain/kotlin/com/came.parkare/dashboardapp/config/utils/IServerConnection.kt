@@ -2,6 +2,7 @@ package com.came.parkare.dashboardapp.config.utils
 
 import com.came.parkare.dashboardapp.config.dataclasses.TypeConnectionEnum
 import com.came.parkare.dashboardapp.domain.models.ScreenModel
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
 interface IServerConnection {

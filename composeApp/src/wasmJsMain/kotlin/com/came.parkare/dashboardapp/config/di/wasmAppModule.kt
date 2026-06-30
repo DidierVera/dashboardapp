@@ -11,14 +11,20 @@ import com.came.parkare.dashboardapp.domain.repositories.log.LogRepository
 import com.came.parkare.dashboardapp.domain.repositories.screen.ScreenRepository
 import com.came.parkare.dashboardapp.domain.repositories.template.ConfigTemplateRepository
 import com.came.parkare.dashboardapp.domain.usecases.DeleteDevice
+import com.came.parkare.dashboardapp.domain.usecases.GetAppVersion
 import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceList
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceStatus
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
 import com.came.parkare.dashboardapp.domain.usecases.GetDefaultTemplatesConfig
+import com.came.parkare.dashboardapp.domain.usecases.GetFont
+import com.came.parkare.dashboardapp.domain.usecases.GetImages
 import com.came.parkare.dashboardapp.domain.usecases.SaveConnectionConfig
+import com.came.parkare.dashboardapp.domain.usecases.SaveFonts
+import com.came.parkare.dashboardapp.domain.usecases.SaveImages
 import com.came.parkare.dashboardapp.domain.usecases.SaveNewDevice
 import com.came.parkare.dashboardapp.domain.usecases.SaveScreenConfig
+import com.came.parkare.dashboardapp.domain.usecases.SendDitTesting
 import com.came.parkare.dashboardapp.infrastructure.repositories.device.DeviceRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.repositories.logs.LogRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.repositories.screen.ScreenRepositoryImpl
@@ -31,17 +37,21 @@ import com.came.parkare.dashboardapp.ui.components.loading.AppLoadingViewModel
 import com.came.parkare.dashboardapp.ui.components.messages.AppToastViewModel
 import com.came.parkare.dashboardapp.ui.navigation.Navigator
 import com.came.parkare.dashboardapp.ui.screens.home.HomeViewModel
-import com.came.parkare.dashboardapp.ui.screens.settings.components.viewmodels.FilePickerDialogViewModel
+import com.came.parkare.dashboardapp.ui.screens.settings.components.filepicker.FilePickerDialogViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.importfile.ImportViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.SettingViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.connection.ConnectionViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.dashboardlist.DashboardListViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.editconfig.EditConfigViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.exportfile.ExportViewModel
+import com.came.parkare.dashboardapp.ui.screens.settings.resources.ResourcesViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.shareconfig.ShareConfigViewModel
+import com.came.parkare.dashboardapp.ui.screens.settings.testing.TestingViewModel
 import com.came.parkare.dashboardapp.ui.utils.ErrorValidatorImpl
+import com.came.parkare.dashboardapp.ui.utils.FontLoader
 import com.came.parkare.dashboardapp.ui.utils.UiUtils
 import com.came.parkare.dashboardapp.ui.utils.UiUtilsImpl
+import com.came.parkare.dashboardapp.ui.utils.WasmFontLoader
 import kotlinx.browser.window
 import org.koin.compose.viewmodel.dsl.viewModelOf
 import org.koin.core.module.dsl.bind
@@ -59,6 +69,7 @@ val wasmAppModule = module {
     singleOf(::WebStoragePreferences) { bind<SharedPreferencesProvider>() }
     singleOf(::WasmUtilsHandlerImpl) { bind<WasmUtilsHandler>() }
     singleOf(::ErrorValidatorImpl) { bind<ErrorValidator>() }
+    singleOf(::WasmFontLoader) { bind<FontLoader>() }
 
     //viewModels
     viewModelOf(::SettingViewModel)
@@ -67,12 +78,14 @@ val wasmAppModule = module {
     viewModelOf(::ExportViewModel)
     viewModelOf(::HomeViewModel)
     viewModelOf(::ConnectionViewModel)
+    viewModelOf(::ResourcesViewModel)
     viewModelOf(::AppLoadingViewModel)
     viewModelOf(::AppToastViewModel)
     viewModelOf(::DashboardListViewModel)
     viewModelOf(::AppDialogViewModel)
     viewModelOf(::EditConfigViewModel)
     viewModelOf(::ShareConfigViewModel)
+    viewModelOf(::TestingViewModel)
 
     //repositories
     singleOf(::DeviceRepositoryImpl) { bind<DeviceRepository>() }
@@ -89,7 +102,13 @@ val wasmAppModule = module {
     single { SaveNewDevice(get(), get()) }
     single { DeleteDevice(get(), get()) }
     single { GetDeviceStatus(get(), get()) }
+    single { GetAppVersion(get(), get()) }
+    single { GetImages(get(), get()) }
+    single { SaveImages(get(), get()) }
+    single { SaveFonts(get(), get()) }
+    single { GetFont(get(), get()) }
     single { GetDefaultTemplatesConfig(get(), get(), get()) }
+    single { SendDitTesting(get(), get(), get()) }
 
 
     single { Navigator() }

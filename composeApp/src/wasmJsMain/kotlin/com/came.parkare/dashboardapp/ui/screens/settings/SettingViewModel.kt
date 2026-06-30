@@ -6,6 +6,7 @@ import com.came.parkare.dashboardapp.config.constants.Constants.SELECTED_IP_ADDR
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.ErrorValidator
 import com.came.parkare.dashboardapp.config.utils.WasmSharedPreferencesProvider
+import com.came.parkare.dashboardapp.domain.usecases.GetAppVersion
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceList
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.connection_option
@@ -15,12 +16,14 @@ import dashboardapp.composeapp.generated.resources.export_option
 import dashboardapp.composeapp.generated.resources.ic_connection
 import dashboardapp.composeapp.generated.resources.ic_download
 import dashboardapp.composeapp.generated.resources.ic_monitor
+import dashboardapp.composeapp.generated.resources.ic_resource_files
 import dashboardapp.composeapp.generated.resources.ic_share
 import dashboardapp.composeapp.generated.resources.ic_testing
 import dashboardapp.composeapp.generated.resources.ic_upload
 import dashboardapp.composeapp.generated.resources.ico_edit_file
 import dashboardapp.composeapp.generated.resources.import_export_option
 import dashboardapp.composeapp.generated.resources.import_option
+import dashboardapp.composeapp.generated.resources.resources_file_option
 import dashboardapp.composeapp.generated.resources.share_config_option
 import dashboardapp.composeapp.generated.resources.testing_option
 import kotlinx.browser.window
@@ -33,7 +36,8 @@ import kotlinx.coroutines.launch
 class SettingViewModel(
     private val preferences: WasmSharedPreferencesProvider,
     private val getDeviceList: GetDeviceList,
-    private val validator: ErrorValidator
+    private val validator: ErrorValidator,
+    private val getAppVersion: GetAppVersion
 ): ViewModel() {
 
     private val _optionsState = MutableStateFlow<List<MenuOptionState>>(listOf())
@@ -52,6 +56,10 @@ class SettingViewModel(
     val ipAddresses: StateFlow<List<String>>
         get() = _ipAddresses.asStateFlow()
 
+    private val _appVersion = MutableStateFlow("1.0.0")
+    val appVersion: StateFlow<String>
+        get() = _appVersion.asStateFlow()
+
     private val _refreshState = MutableStateFlow(0)
     val refreshState: StateFlow<Int>
         get() = _refreshState.asStateFlow()
@@ -63,6 +71,20 @@ class SettingViewModel(
         loadLeftPanelOptions()
         loadIpAddress()
         getIpAddress()
+        getVersion()
+    }
+
+    private fun getVersion(){
+        viewModelScope.launch {
+            println(_settingsState.value.ipSelected)
+            when (val result = getAppVersion.invoke(_settingsState.value.ipSelected)){
+                is ServiceResult.Error -> validator.validate(result.error)
+                is ServiceResult.Success -> {
+                    println(result.data)
+                    _appVersion.update { result.data ?: "1.0.0" }
+                }
+            }
+        }
     }
 
     private fun loadIpAddress() {
@@ -110,11 +132,16 @@ class SettingViewModel(
                     nameRes = Res.string.share_config_option,
                     isSelected = false
                 ),
-//                MenuOptionState(
-//                    iconRes = Res.drawable.ic_testing,
-//                    nameRes = Res.string.testing_option,
-//                    isSelected = false
-//                )
+                MenuOptionState(
+                    iconRes = Res.drawable.ic_resource_files,
+                    nameRes = Res.string.resources_file_option,
+                    isSelected = false
+                ),
+                MenuOptionState(
+                    iconRes = Res.drawable.ic_testing,
+                    nameRes = Res.string.testing_option,
+                    isSelected = false
+                )
             )
         }
     }
@@ -140,6 +167,7 @@ class SettingViewModel(
     }
 
     private fun getIpAddress(){
+
         viewModelScope.launch {
             when(val result = getDeviceList.invoke()){
                 is ServiceResult.Error -> validator.validate(result.error)

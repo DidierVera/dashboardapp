@@ -15,6 +15,9 @@ object Constants {
     const val CONFIG_TYPE = "templateConfigType"
     const val AUTO_BRIGHTNESS = "autoBrightness"
     const val AUTO_BRIGHTNESS_DELAY_TIME = "autoBrightnessDelayTime"
+    const val SHOW_COUNTER = "showCarCounter"
+    const val RESET_COUNTER_DELAY_TIME = "resetCounterDelayTime"
+    const val FONT_REGISTRY_KEY = "fontRegistryKey"
 
 
     //Ftp
@@ -29,4 +32,8 @@ object Constants {
     const val SELECTED_IP_ADDRESS = "selectedIpAddress"
 
     const val PASSWORD_VALIDATION = "Parking2010"
+
+    const val FONT_REGULAR = "app_font_regular.ttf"
+    const val FONT_BOLD = "app_font_bold.ttf"
+    const val FONT_MEDIUM = "app_font_medium.ttf"
 }

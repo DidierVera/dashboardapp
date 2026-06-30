@@ -13,6 +13,7 @@ import com.came.parkare.dashboardapp.domain.models.ScreenModel
 import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceList
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceStatus
+import com.came.parkare.dashboardapp.domain.usecases.GetImages
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
 import com.came.parkare.dashboardapp.domain.usecases.SaveScreenConfig
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toModel
@@ -33,6 +34,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlin.collections.orEmpty
 
 class ShareConfigViewModel(
     private val getDeviceStatus: GetDeviceStatus,
@@ -41,7 +43,8 @@ class ShareConfigViewModel(
     private val validator: ErrorValidator,
     private val wasmUtils: WasmUtilsHandler,
     private val getConnectionConfig: GetConnectionConfig,
-    private val saveScreenConfig: SaveScreenConfig
+    private val saveScreenConfig: SaveScreenConfig,
+    private val getImages: GetImages
 ): ViewModel() {
 
     private val _state = MutableStateFlow(ShareConfigState())
@@ -60,17 +63,33 @@ class ShareConfigViewModel(
 
     private fun loadConfigImages() {
         viewModelScope.launch {
+            wasmUtils.showLoading(true)
             when(val config = getConnectionConfig.invoke()){
                 is ServiceResult.Error -> {
                     validator.validate(config.error)
+                    wasmUtils.showLoading(false)
                 }
                 is ServiceResult.Success -> {
                     _state.update { it.copy(
                         textSizeScale = config.data?.textSizeScale ?: 10,
-                        imagesSource = config.data?.files?.map { dto -> dto.toModel() }.orEmpty()
                     ) }
+                    wasmUtils.showLoading(false)
                 }
             }
+            wasmUtils.showLoading(true)
+            when(val images = getImages.invoke()){
+                is ServiceResult.Error -> {
+                    validator.validate(images.error)
+                    wasmUtils.showLoading(false)
+                }
+                is ServiceResult.Success -> {
+                    _state.update { it.copy(
+                        imagesSource = images.data?.map { dto -> dto.toModel() }.orEmpty()
+                    ) }
+                    wasmUtils.showLoading(false)
+                }
+            }
+
         }
     }
 

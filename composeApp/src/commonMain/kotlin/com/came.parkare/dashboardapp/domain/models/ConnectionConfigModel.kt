@@ -13,5 +13,6 @@ data class ConnectionConfigModel(
     val textSizeScale: Int,
     val autoBrightness: Boolean,
     val activeLowBrightnessTime: Int,
-    val files: List<ImagesFileModel>? = null
+    val showCarCounter: Boolean,
+    val carCounterReset: Int
 )

@@ -17,6 +17,8 @@ data class ScreenDto(
     @SerialName("margin-bottom") val marginBottom: Int = 20,
     @SerialName("margin-left") val marginLeft: Int = 20,
     @SerialName("margin-right") val marginRight: Int = 20,
+    @SerialName("date-of-creation") val dateOfCreation: Long? = null,
+    @SerialName("last-time-updated") val lastTimeUpdated: Long? = null,
     val data: List<@Serializable(with = ElementSerializer::class)ElementDto>
 )
 
@@ -28,6 +30,8 @@ fun ScreenDto.toModel(): ScreenModel {
         marginBottom = marginBottom,
         marginLeft = marginLeft,
         marginRight = marginRight,
+        dateOfCreation = dateOfCreation,
+        lastTimeUpdated = lastTimeUpdated,
         elements = getElementsDtoToModel(data)
     )
 }
@@ -40,6 +44,8 @@ fun ScreenModel.toDto(): ScreenDto {
         marginBottom = marginBottom,
         marginLeft = marginLeft,
         marginRight = marginRight,
+        dateOfCreation = dateOfCreation,
+        lastTimeUpdated = lastTimeUpdated,
         data = getElementsModelToDto(elements)
     )
 }

@@ -4,18 +4,20 @@ import android.util.Log
 import com.came.parkare.dashboardapp.config.constants.Constants.API_PORT
 import com.came.parkare.dashboardapp.config.dataclasses.ResponseStatusDto
 import com.came.parkare.dashboardapp.config.utils.AppLogger
+import com.came.parkare.dashboardapp.config.utils.DeviceUtils
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.came.parkare.dashboardapp.domain.models.toDto
 import com.came.parkare.dashboardapp.domain.repositories.local.ConfigTemplateRepository
 import com.came.parkare.dashboardapp.domain.repositories.remote.ApiServerRepository
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.DeviceDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ResourceFileDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.logs.TrackErrorDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.logs.TrackLogDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ConfigTemplateDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toModel
-import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isCheckStatus
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.testing.SendDitTestingDto
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isDeleteConfigTemplate
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isDeleteDevice
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetConfigTemplate
@@ -24,15 +26,22 @@ import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiR
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetCurrentConnectionConfig
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetDashboardListRequest
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetDefaultConfigTemplate
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetFont
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetImages
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetVersion
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveConfigTemplate
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveConfiguratorError
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveConfiguratorLog
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveConnectionConfig
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveDeviceRequest
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveImages
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveScreenRequest
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSendDitTesting
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSetConfigType
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isUpdateConfigTemplate
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isUploadFont
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.readBodyAsUtf8
+import com.came.parkare.dashboardapp.infrastructure.source.remote.services.MockService
 import fi.iki.elonen.NanoHTTPD
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
@@ -42,6 +51,8 @@ class AndroidApiServer(
     private val apiServerRepository: ApiServerRepository,
     private val configTemplateRepository: ConfigTemplateRepository,
     private val appLogger: AppLogger,
+    private val deviceUtils: DeviceUtils,
+    private val mockService: MockService,
     port: Int = preferences.get(API_PORT, 2023)
 ): NanoHTTPD(port) {
     private val TAG = "AndroidApiServer"
@@ -72,7 +83,12 @@ class AndroidApiServer(
             session.isUpdateConfigTemplate() -> handleUpdateConfigTemplate(session)
             session.isSaveConfiguratorLog() -> handleTrackLog(session)
             session.isSaveConfiguratorError() -> handleTrackError(session)
-            session.isCheckStatus() -> handleCheckStatus()
+            session.isGetVersion() -> handleGetAppVersion()
+            session.isGetImages() -> handleGetImages()
+            session.isSaveImages() -> handleSaveImages(session)
+            session.isUploadFont() -> handleUploadFont(session)
+            session.isGetFont() -> handleGetFont()
+            session.isSendDitTesting() -> handleSendDitTesting(session)
             else -> createNotFoundResponse()
         }
     }
@@ -154,11 +170,53 @@ class AndroidApiServer(
         )
     }
 
+    private fun handleGetAppVersion(): Response {
+        return processAsyncRequest<Unit, String>(
+            operation = { deviceUtils.getAppVersion()?.versionName ?: "1.0.0" },
+            successTransform = { result -> Json.encodeToString(result) }
+        )
+    }
+
+    private fun handleGetImages(): Response {
+        return processAsyncRequest<Unit, List<ResourceFileDto>?>(
+            operation = { apiServerRepository.getImages() },
+            successTransform = { result -> Json.encodeToString(result) }
+        )
+    }
+    private fun handleGetFont(): Response {
+        return processAsyncRequest<Unit, List<String>?>(
+            operation = { apiServerRepository.getFontNames() },
+            successTransform = { result -> Json.encodeToString(result) }
+        )
+    }
+
     private fun handleSaveTerminalConnection(session: IHTTPSession): Response {
         return processPostRequest<ConnectionConfigDto>(
             session = session,
             parseBody = { body -> Json.decodeFromString(body) },
             operation = { dto -> apiServerRepository.saveTerminalConnection(dto) == 0 }
+        )
+    }
+
+    private fun handleSaveImages(session: IHTTPSession): Response {
+        return processPostRequest<List<ResourceFileDto>?>(
+            session = session,
+            parseBody = { body -> Json.decodeFromString(body) },
+            operation = { dto -> apiServerRepository.saveImages(dto) == 0 }
+        )
+    }
+    private fun handleUploadFont(session: IHTTPSession): Response {
+        return processPostRequest<ResourceFileDto>(
+            session = session,
+            parseBody = { body -> Json.decodeFromString(body) },
+            operation = { dto ->
+                // Decodifica Base64 → ByteArray
+                val fontBytes = android.util.Base64.decode(dto.fileContent, android.util.Base64.DEFAULT)
+                apiServerRepository.saveFontFile(
+                    fileName = dto.fileName,
+                    fontData = fontBytes
+                )
+            }
         )
     }
 
@@ -204,6 +262,18 @@ class AndroidApiServer(
             session = session,
             parseBody = { body -> Json.decodeFromString<List<ScreenDto>>(body) },
             operation = { config -> apiServerRepository.saveScreensConfig(config) == 0 }
+        )
+    }
+
+    private fun handleSendDitTesting(session: IHTTPSession): Response {
+        return processPostRequest<SendDitTestingDto>(
+            session = session,
+            parseBody = { body -> Json.decodeFromString<SendDitTestingDto>(body) },
+            operation = { dto ->
+                Log.d(TAG, "handleSendDitTesting: dispatchCode=${dto.dispatchCode}, screenId=${dto.screenId}, dits=${dto.dits.size}")
+                mockService.dispatchMockEvent(dto)
+                true
+            }
         )
     }
     //endregion

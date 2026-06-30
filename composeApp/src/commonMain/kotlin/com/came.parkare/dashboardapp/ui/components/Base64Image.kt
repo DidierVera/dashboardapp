@@ -22,15 +22,12 @@ fun Base64Image(
     contentDescription: String? = null,
     contentScale: ContentScale = ContentScale.FillBounds
 ) {
-    Box(modifier = modifier) {
-        Image(
-            bitmap = base64String.decodeBase64ToByteArray().toImageBitmap(),
-            contentDescription = contentDescription,
-            contentScale = contentScale,
-            modifier = Modifier.align(Alignment.Center)
-        )
-    }
-
+    Image(
+        bitmap = base64String.decodeBase64ToByteArray().toImageBitmap(),
+        contentDescription = contentDescription,
+        contentScale = contentScale,
+        modifier = modifier
+    )
 }
 
 @OptIn(ExperimentalResourceApi::class)
@@ -51,3 +48,5 @@ private fun String.decodeBase64ToByteArray(): ByteArray {
     val byteArray = encodeToByteArray()
     return Base64.decode(byteArray, 0, byteArray.size)
 }
+
+fun ByteArray.toBase64(): String = Base64.encode(this)
