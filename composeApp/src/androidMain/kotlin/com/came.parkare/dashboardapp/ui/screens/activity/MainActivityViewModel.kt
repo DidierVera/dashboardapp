@@ -41,7 +41,7 @@ class MainActivityViewModel (
         ftpServerRoot.startServer(port, username, password, rootDir)
     }
 
-    fun initAndroidServer(showMessage: (String) -> Unit) {
+    fun initAndroidServer(showMessage: (String) -> Unit){
         try {
             // Add small delay to ensure port is released
             viewModelScope.launch(Dispatchers.IO) {

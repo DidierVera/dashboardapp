@@ -31,7 +31,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.came.parkare.dashboardapp.ui.components.AppButton
 import com.came.parkare.dashboardapp.ui.components.AppLabel
-import com.came.parkare.dashboardapp.ui.screens.settings.components.TabTitle
+import com.came.parkare.dashboardapp.ui.screens.settings.components.tabtitle.TabTitle
 import com.came.parkare.dashboardapp.ui.theme.style.floatingButton
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.custom_name_label

@@ -4,9 +4,14 @@ import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.CHECK_STATUS
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.DELETE_DEVICE
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_CONNECTION_CONFIG
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_DEVICE_LIST
+import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_FONT
+import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_IMAGES
+import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_VERSION
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_CONNECTION_CONFIG
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_DEVICE
+import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_IMAGES
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SSL_PROTOCOL
+import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.UPLOAD_FONT
 import com.came.parkare.dashboardapp.config.constants.Constants.API_PORT
 import com.came.parkare.dashboardapp.config.dataclasses.ErrorTypeClass
 import com.came.parkare.dashboardapp.config.dataclasses.ResponseStatusDto
@@ -16,7 +21,14 @@ import com.came.parkare.dashboardapp.config.utils.WasmSharedPreferencesProvider
 import com.came.parkare.dashboardapp.domain.repositories.device.DeviceRepository
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.DeviceDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ResourceFileDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.fonts.FontDeleteResponseDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.fonts.FontUploadResponseDto
 import com.came.parkare.dashboardapp.infrastructure.source.services.base.HttpClient
+import kotlinx.atomicfu.TraceBase.None.append
+import org.khronos.webgl.Uint8Array
+import org.w3c.files.Blob
+import org.w3c.files.BlobPropertyBag
 
 class DeviceRepositoryImpl(
     private val httpClient: HttpClient,
@@ -89,5 +101,77 @@ class DeviceRepositoryImpl(
             appLogger.trackError(e)
             ServiceResult.Error(ErrorTypeClass.GeneralException(e.message))
         }
+    }
+
+    override suspend fun getAppVersion(ipAddress: String): ServiceResult<String> {
+        return try {
+            val result = httpClient.get<String>("$SSL_PROTOCOL$ipAddress:$apiPort$GET_VERSION")
+            ServiceResult.Success(result)
+        }catch (e: Exception){
+            appLogger.trackError(e)
+            ServiceResult.Error(ErrorTypeClass.GeneralException(e.message))
+        }
+    }
+
+    override suspend fun getImages(ipAddress: String): ServiceResult<List<ResourceFileDto>?> {
+        return try {
+            val result = httpClient.get<List<ResourceFileDto>?>("$SSL_PROTOCOL$ipAddress:$apiPort$GET_IMAGES")
+            ServiceResult.Success(result)
+        }catch (e: Exception){
+            appLogger.trackError(e)
+            ServiceResult.Error(ErrorTypeClass.GeneralException(e.message))
+        }
+    }
+
+    override suspend fun saveImages(
+        ipAddress: String,
+        data: List<ResourceFileDto>
+    ): ServiceResult<ResponseStatusDto> {
+        return try {
+            val result = httpClient.post<ResponseStatusDto, List<ResourceFileDto>>("$SSL_PROTOCOL$ipAddress:$apiPort$SAVE_IMAGES", data)
+            ServiceResult.Success(result)
+        }catch (e: Exception){
+            appLogger.trackError(e)
+            ServiceResult.Error(ErrorTypeClass.GeneralException(e.message))
+        }
+    }
+
+    override suspend fun uploadFont(
+        ipAddress: String,
+        data: ResourceFileDto
+    ): ServiceResult<FontUploadResponseDto> {
+        return try {
+            val url = "$SSL_PROTOCOL$ipAddress:$apiPort$UPLOAD_FONT"
+            val result = httpClient.post<FontUploadResponseDto, ResourceFileDto>(url, data)
+            ServiceResult.Success(result)
+        } catch (e: Exception) {
+            appLogger.trackError(e)
+            ServiceResult.Error(ErrorTypeClass.GeneralException(e.message ?: "Font upload failed"))
+        }
+    }
+
+    override suspend fun getFontNames(ipAddress: String): ServiceResult<List<String>> {
+        return try {
+            val url = "$SSL_PROTOCOL$ipAddress:$apiPort$GET_FONT"
+            val result = httpClient.get<List<String>>(url)
+            ServiceResult.Success(result)
+        } catch (e: Exception) {
+            appLogger.trackError(e)
+            ServiceResult.Error(ErrorTypeClass.GeneralException(e.message ?: "Font upload failed"))
+        }
+    }
+
+    override suspend fun deleteFont(
+        ipAddress: String,
+        fileName: String
+    ): ServiceResult<FontDeleteResponseDto> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun downloadFont(
+        ipAddress: String,
+        fileName: String
+    ): ServiceResult<ByteArray> {
+        TODO("Not yet implemented")
     }
 }

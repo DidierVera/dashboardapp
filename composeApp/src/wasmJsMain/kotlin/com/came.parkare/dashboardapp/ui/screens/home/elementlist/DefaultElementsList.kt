@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.came.parkare.dashboardapp.domain.models.ImagesFileModel
+import com.came.parkare.dashboardapp.domain.models.ResourceFileModel
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ElementDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.toModel
 import com.came.parkare.dashboardapp.ui.screens.settings.components.BuildElement
@@ -55,7 +55,7 @@ fun DefaultElementsList(modifier: Modifier = Modifier){
 
 @Composable
 private fun LoadElements(elements: List<ElementDto>,
-                         images: List<ImagesFileModel>, textSizeScale: Int){
+                         images: List<ResourceFileModel>, textSizeScale: Int){
     for(mItem in elements){
         var elementType = ""
         Column(verticalArrangement = Arrangement.spacedBy(4.dp),

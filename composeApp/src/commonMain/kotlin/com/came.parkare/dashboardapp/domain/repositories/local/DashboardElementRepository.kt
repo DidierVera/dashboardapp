@@ -1,6 +1,6 @@
 package com.came.parkare.dashboardapp.domain.repositories.local
 
-import com.came.parkare.dashboardapp.domain.models.ImagesFileModel
+import com.came.parkare.dashboardapp.domain.models.ResourceFileModel
 import com.came.parkare.dashboardapp.domain.models.ScreenModel
 
 interface DashboardElementRepository {
@@ -8,10 +8,10 @@ interface DashboardElementRepository {
     suspend fun deleteAll()
     suspend fun getScreenByDispatcher(dispatcherCode: Long): ScreenModel?
     suspend fun getAllScreens(): List<ScreenModel>
-    suspend fun saveImages(images: List<ImagesFileModel>)
-    suspend fun getImages(): List<ImagesFileModel>
+    suspend fun saveImages(images: List<ResourceFileModel>)
+    suspend fun getImages(): List<ResourceFileModel>
     suspend fun deleteAllImages()
-    suspend fun getImageByName(fileName: String): ImagesFileModel?
+    suspend fun getImageByName(fileName: String): ResourceFileModel?
     suspend fun deleteImageById(id: Long)
-    suspend fun replaceAllImages(images: List<ImagesFileModel>)
+    suspend fun replaceAllImages(images: List<ResourceFileModel>)
 }

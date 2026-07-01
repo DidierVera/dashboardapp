@@ -7,9 +7,7 @@ import com.came.parkare.dashboardapp.config.utils.ErrorValidator
 import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.SaveConnectionConfig
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ImageFileDto
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
-import com.came.parkare.dashboardapp.ui.screens.settings.components.states.FilePickerDialogState
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.config_saved_message
 import kotlinx.coroutines.Dispatchers
@@ -61,13 +59,10 @@ class ConnectionViewModel(
                                 terminalIp = terminalIp,
                                 showVideoFrame = videoFrame,
                                 delayTime = timeDelay,
-                                imagesResources = files?.map {
-                                    FilePickerDialogState(
-                                        fileNames = it.fileName,
-                                        fileContentsRaw = it.fileContent,
-                                        id = it.id
-                                    )
-                                }.orEmpty()
+                                brightnessDelay = activeLowBrightnessTime ?: 2,
+                                showBrightnessMode = autoBrightness == true,
+                                carCounterReset = carCounterReset ?: 1,
+                                showCarCounter = showCarCounter == true
                             )
                         }
                     }
@@ -90,6 +85,22 @@ class ConnectionViewModel(
         _state.update { it.copy(showVideoFrame = newValue) }
     }
 
+    fun setBrightnessMode(newValue: Boolean){
+        _state.update { it.copy(showBrightnessMode = newValue) }
+    }
+
+    fun setShowCarCounter(newValue: Boolean) {
+        _state.update { it.copy(showCarCounter = newValue) }
+    }
+
+    fun setBrightnessDelay(newValue: Int){
+        _state.update { it.copy(brightnessDelay = newValue) }
+    }
+
+    fun setCarCounterReset(newValue: Int){
+        _state.update { it.copy(carCounterReset = newValue) }
+    }
+
     fun setTerminalIp(newValue: String) {
         _state.update { it.copy(terminalIp = newValue) }
     }
@@ -108,29 +119,6 @@ class ConnectionViewModel(
 
     fun textSizeScale(newValue: Int) {
         _state.update { it.copy(textSizeScale = newValue) }
-    }
-
-    fun setImages(filesSelected: List<FilePickerDialogState>) {
-        _state.update { it.copy(clearSelectedFiles = false) }
-
-        val currentImages = _state.value.imagesResources.toMutableList()
-
-        filesSelected.forEach { newImage ->
-            // Check if an image with the same fileName exists
-            val existingImageIndex = currentImages.indexOfFirst { it.fileNames == newImage.fileNames }
-
-            if (existingImageIndex != -1) {
-                // If it exists but has different content, REPLACE it
-                if (currentImages[existingImageIndex].fileContentsRaw != newImage.fileContentsRaw) {
-                    currentImages[existingImageIndex] = newImage
-                }
-            } else {
-                // If fileName doesn't exist, ADD it
-                currentImages.add(newImage)
-            }
-        }
-
-        _state.update { it.copy(imagesResources = currentImages) }
     }
 
     fun saveChanges() {
@@ -158,20 +146,13 @@ class ConnectionViewModel(
         ConnectionConfigDto(connectionWay = connectionWay.first, textSizeScale = textSizeScale,
             terminalIp = terminalIp, videoFrame = showVideoFrame, port = port,
             terminalApi = api, timeDelay = delayTime, apiPort = 2023,
-            files = imagesResources.map { ImageFileDto(
-                fileName = it.fileNames,
-                fileContent = it.fileContentsRaw
-            ) }
+            activeLowBrightnessTime = brightnessDelay, autoBrightness = showBrightnessMode,
+            carCounterReset = carCounterReset, showCarCounter = showCarCounter
         )
     }
 
     fun setConnectionWay(newValue: String) {
         val connectionWay = _state.value.connectionWayOptions.first { it.second == newValue }
         _state.update { it.copy(connectionWay = connectionWay) }
-    }
-
-    fun removeImage(image: FilePickerDialogState) {
-        _state.update { it.copy(clearSelectedFiles = true) }
-        _state.update { it.copy(imagesResources = it.imagesResources.filter { img -> img != image }) }
     }
 }

@@ -8,12 +8,14 @@ import com.came.parkare.dashboardapp.config.utils.ErrorValidator
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.came.parkare.dashboardapp.config.utils.WasmSharedPreferencesProvider
 import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
+import com.came.parkare.dashboardapp.domain.usecases.GetImages
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toModel
 import com.came.parkare.dashboardapp.ui.components.dialog.AppDialogState
 import com.came.parkare.dashboardapp.ui.screens.home.utils.HomeUtils
 import com.came.parkare.dashboardapp.ui.screens.home.utils.ResourceUtils
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import kotlinx.browser.window
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,6 +23,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HomeViewModel(
     private val preferences: SharedPreferencesProvider,
@@ -29,6 +32,7 @@ class HomeViewModel(
     private val wasmUtilsHandler: WasmUtilsHandler,
     private val validator: ErrorValidator,
     private val homeUtils: HomeUtils,
+    private val getImages: GetImages,
     private val resourceUtils: ResourceUtils
 ): ViewModel() {
 
@@ -37,8 +41,6 @@ class HomeViewModel(
         get() = _state.asStateFlow()
 
     fun showRequestLogin(message: String, onAccept:() -> Unit) {
-        val ownIpAddress = "192.168.209.105"//window.location.hostname
-        preferences.put(SELECTED_IP_ADDRESS, ownIpAddress)
         wasmUtils.showDialogRequestPassword(AppDialogState(
             requirePassword = true,
             onAccept = onAccept,
@@ -47,6 +49,8 @@ class HomeViewModel(
     }
 
     init {
+        val ownIpAddress = "10.178.146.232"//window.location.hostname
+        preferences.put(SELECTED_IP_ADDRESS, ownIpAddress)
         eventTabListener()
         loadImages()
     }
@@ -111,13 +115,23 @@ class HomeViewModel(
 
     private suspend fun loadConfigImages() {
         wasmUtilsHandler.showLoading(true)
+        when(val images = getImages.invoke()){
+            is ServiceResult.Error -> {
+                validator.validate(images.error)
+                wasmUtilsHandler.showLoading(false)
+            }
+            is ServiceResult.Success -> {
+                resourceUtils.setImagesSource( images.data?.map { dto -> dto.toModel() }.orEmpty())
+                wasmUtilsHandler.showLoading(false)
+            }
+        }
+        wasmUtilsHandler.showLoading(true)
         when(val config = getConnectionConfig.invoke()){
             is ServiceResult.Error -> {
                 validator.validate(config.error)
                 wasmUtilsHandler.showLoading(false)
             }
             is ServiceResult.Success -> {
-                resourceUtils.setImagesSource(config.data?.files?.map { dto -> dto.toModel() }.orEmpty())
                 resourceUtils.setTextSizeScale(config.data?.textSizeScale ?: 10)
                 wasmUtilsHandler.showLoading(false)
             }

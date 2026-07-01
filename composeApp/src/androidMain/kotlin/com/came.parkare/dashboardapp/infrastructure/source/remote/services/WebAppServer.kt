@@ -29,7 +29,7 @@ class WebAppServer(
 
         val file = File(webAppDir, uri)
 
-        println("WebAppServer:: serving ${file.absolutePath}")
+        //println("WebAppServer:: serving ${file.absolutePath}")
 
         return when {
             !file.exists() -> notFoundResponse()

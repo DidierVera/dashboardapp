@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontSynthesis
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -12,8 +14,8 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.came.parkare.dashboardapp.domain.models.components.TextDataModel
 import com.came.parkare.dashboardapp.ui.components.itemStyles.LicensePlateItemStyle
-import com.came.parkare.dashboardapp.ui.theme.LicensePlateFont
-import com.came.parkare.dashboardapp.ui.theme.Rubik
+import com.came.parkare.dashboardapp.ui.theme.Acumin
+import com.came.parkare.dashboardapp.ui.theme.LocalAppFontFamily
 import com.came.parkare.dashboardapp.ui.theme.hexToColor
 
 @Composable
@@ -25,33 +27,66 @@ fun BuildTextView(text: TextDataModel, scaleFactor: Float, modifier: Modifier = 
     }
     val textSize = (text.textSize.toFloat() * scaleFactor)
         .coerceAtLeast((text.textSize - 8).toFloat())
-    if (text.dashboardItemId.contains("license-plate-value")) {
-        println("license-plate-value==== ${text.defaultText}")
-        LicensePlateItemStyle(modifier = modifier) { mdf ->
-            Text(
-                text = text.defaultText,
-                fontSize = textSize.sp,
-                fontFamily = LicensePlateFont,
-                letterSpacing = 2.sp,
+    when {
+        text.dashboardItemId.contains("license-plate-value") -> {
+            LicensePlateItemStyle(
+                plateNumber = text.defaultText,
+                scaleFactor = scaleFactor,
+                modifier = modifier,
+                textSize = textSize,
                 fontWeight = weight,
-                textAlign = TextAlign.Center,
-                color = hexToColor(text.textColor),
-                modifier = mdf.padding(0.dp, 0.dp, 0.dp, 10.dp)
-                    .padding(((text.style.padding ?: 1).toFloat() * scaleFactor).dp)
+                textColor = hexToColor(text.textColor),
+                padding = ((text.style.padding ?: 1).toFloat() * scaleFactor)
             )
         }
+        text.dashboardItemId.contains("amount-to-pay-value") -> {
+            val animatedText = animateFloatAsState(targetValue = scaleFactor)
+            val appFontFamily = LocalAppFontFamily.current
 
-    } else {
-        val animatedText = animateFloatAsState(targetValue = scaleFactor)
-        Text(
-            text = text.defaultText,
-            fontSize = textSize.sp * animatedText.value,
-            fontFamily = Rubik,
-            fontWeight = weight,
-            lineHeight = 1.2.em,
-            textAlign = TextAlign.Center,
-            color = hexToColor(text.textColor),
-            modifier = modifier.padding(((text.style.padding ?: 1).toFloat() * scaleFactor).dp)
-        )
+            val condensedStyle = TextStyle(
+                fontFamily = appFontFamily,
+                fontWeight = weight,
+                fontSynthesis = FontSynthesis.Weight
+            )
+            val amountToPay = try {
+                val cents = text.defaultText.toLong()
+                val whole = cents / 100
+                val frac = (cents % 100).toString().padStart(2, '0')
+                "$whole.$frac"
+            } catch (e: Exception) {
+                text.defaultText
+            }
+
+            Text(
+                text = amountToPay.toString(),
+                fontSize = textSize.sp * animatedText.value,
+                lineHeight = 1.2.em,
+                textAlign = TextAlign.Center,
+                color = hexToColor(text.textColor),
+                fontFamily = appFontFamily,
+                modifier = modifier.padding(((text.style.padding ?: 1).toFloat() * scaleFactor).dp),
+                style = condensedStyle
+            )
+        }
+        else -> {
+            val animatedText = animateFloatAsState(targetValue = scaleFactor)
+            val appFontFamily = LocalAppFontFamily.current
+
+            val condensedStyle = TextStyle(
+                fontFamily = appFontFamily,
+                fontWeight = weight,
+                fontSynthesis = FontSynthesis.Weight
+            )
+            Text(
+                text = text.defaultText,
+                fontSize = textSize.sp * animatedText.value,
+                lineHeight = 1.2.em,
+                textAlign = TextAlign.Center,
+                color = hexToColor(text.textColor),
+                fontFamily = appFontFamily,
+                modifier = modifier.padding(((text.style.padding ?: 1).toFloat() * scaleFactor).dp),
+                style = condensedStyle
+            )
+        }
     }
 }

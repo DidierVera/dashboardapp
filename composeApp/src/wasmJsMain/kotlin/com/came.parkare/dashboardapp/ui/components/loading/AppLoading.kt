@@ -28,18 +28,18 @@ fun AppLoading() {
     val viewModel: AppLoadingViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
     if(state) {
+        Box(
+            modifier = Modifier.fillMaxSize().background(LightBlackColor.copy(alpha = 0.8f))
+                .clickable(enabled = false){}
+        )
         Box(modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center){
-            Box(
-                modifier = Modifier.fillMaxSize().background(LightBlackColor.copy(alpha = 0.8f))
-                    .clickable(enabled = false) {}
-            )
+            contentAlignment = Alignment.Center
+        ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 CircularProgressIndicator(color = CameBlueColor)
                 Spacer(Modifier.height(8.dp))
                 Text("Loading...", color = WhiteColor)
             }
-
         }
     }
 }

@@ -26,11 +26,3 @@ public expect fun MultipleFilePicker(
     title: String? = null,
     onFileSelected: FilesSelected
 )
-
-@Composable
-public expect fun DirectoryPicker(
-    show: Boolean,
-    initialDirectory: String? = null,
-    title: String? = null,
-    onFileSelected: (String?) -> Unit,
-)

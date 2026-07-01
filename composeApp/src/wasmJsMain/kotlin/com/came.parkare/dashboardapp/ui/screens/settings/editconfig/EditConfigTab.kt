@@ -35,13 +35,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.came.parkare.dashboardapp.domain.models.ImagesFileModel
+import com.came.parkare.dashboardapp.domain.models.ResourceFileModel
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toModel
 import com.came.parkare.dashboardapp.ui.components.AppButton
 import com.came.parkare.dashboardapp.ui.components.Base64Image
+import com.came.parkare.dashboardapp.ui.screens.settings.components.tabtitle.TabTitle
 import com.came.parkare.dashboardapp.ui.components.background.LoadBackground
 import com.came.parkare.dashboardapp.ui.screens.settings.components.BuildElement
-import com.came.parkare.dashboardapp.ui.screens.settings.components.TabTitle
 import com.came.parkare.dashboardapp.ui.theme.style.floatingButton
 import com.came.parkare.dashboardapp.ui.theme.style.shadowContainer
 import dashboardapp.composeapp.generated.resources.Res
@@ -123,6 +123,25 @@ private fun ElementsList(modifier: Modifier = Modifier) {
         }
     }
 }
+
+@Composable
+private fun LoadBackground(background: ResourceFileModel?) {
+    if(background != null){
+        Base64Image(background.fileContent.orEmpty(),
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.FillWidth)
+    }else {
+        Image(
+            painter = painterResource(Res.drawable.dashboard_backgroud),
+            contentDescription = null,
+            contentScale = ContentScale.FillWidth,
+            modifier = Modifier
+                .padding(4.dp).fillMaxSize()
+                .background(Color.LightGray)
+        )
+    }
+}
+
 
 @Composable
 private fun EditorField() {

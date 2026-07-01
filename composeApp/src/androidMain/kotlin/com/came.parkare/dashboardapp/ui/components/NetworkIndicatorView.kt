@@ -19,32 +19,36 @@ import androidx.compose.ui.unit.dp
 import com.came.parkare.dashboardapp.R
 import com.came.parkare.dashboardapp.ui.screens.activity.MainActivity
 import com.came.parkare.dashboardapp.ui.screens.main.MainViewModel
+import com.came.parkare.dashboardapp.ui.theme.BlackColor
 import com.came.parkare.dashboardapp.ui.theme.GreenColor
 import com.came.parkare.dashboardapp.ui.theme.WarningColor
 import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
-fun NetworkIndicatorView(modifier: Modifier, viewModel: MainViewModel = koinViewModel()){
+fun NetworkIndicatorView(modifier: Modifier,
+                         viewModel: MainViewModel = koinViewModel(),
+                         sizeScale: Int = 10){
+    val scaleFactor = (sizeScale / 10f).coerceIn(0.5f, 3f)
     val state by viewModel.itemsState.collectAsState()
     val isConnected: Boolean = state.statusConnection
+    val activity = LocalContext.current as MainActivity
     when(isConnected){
         true -> {
             Box(modifier = modifier
                 .clip(shape = RoundedCornerShape(12.dp))
                 .size(4.dp)
                 .background(GreenColor).clickable {
-                    (LocalContext as MainActivity).finish()
+                    activity.finish()
                 })
         }
         false -> {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.ico_wifi_off),
                 contentDescription = null,
-                tint = WarningColor,
+                tint = BlackColor,
                 modifier = modifier
-                    .size(30.dp)
-                //.background(WarningColor)
+                    .size((30 * scaleFactor).dp)
             )
         }
     }

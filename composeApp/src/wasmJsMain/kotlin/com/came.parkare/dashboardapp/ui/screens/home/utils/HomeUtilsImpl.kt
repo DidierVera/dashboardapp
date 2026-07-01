@@ -1,6 +1,5 @@
 package com.came.parkare.dashboardapp.ui.screens.home.utils
 
-import com.came.parkare.dashboardapp.domain.models.ImagesFileModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

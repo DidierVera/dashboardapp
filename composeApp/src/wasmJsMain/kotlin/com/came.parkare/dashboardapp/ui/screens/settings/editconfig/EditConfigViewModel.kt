@@ -10,6 +10,7 @@ import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.came.parkare.dashboardapp.domain.models.ScreenModel
 import com.came.parkare.dashboardapp.domain.models.components.ElementModel
 import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
+import com.came.parkare.dashboardapp.domain.usecases.GetImages
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
 import com.came.parkare.dashboardapp.domain.usecases.SaveScreenConfig
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toModel
@@ -36,6 +37,7 @@ class EditConfigViewModel(
     private val saveScreenConfig: SaveScreenConfig,
     private val getConnectionConfig: GetConnectionConfig,
     private val preferences: SharedPreferencesProvider,
+    private val getImages: GetImages,
     private val appLogger: AppLogger
 ): ViewModel() {
 
@@ -53,6 +55,19 @@ class EditConfigViewModel(
 
     private suspend fun loadConfigImages() {
         wasmUtilsHandler.showLoading(true)
+        when(val images = getImages.invoke()){
+            is ServiceResult.Error -> {
+                validator.validate(images.error)
+                wasmUtilsHandler.showLoading(false)
+            }
+            is ServiceResult.Success -> {
+                _state.update { it.copy(
+                    imagesSource = images.data?.map { dto -> dto.toModel() }.orEmpty()
+                ) }
+                wasmUtilsHandler.showLoading(false)
+            }
+        }
+        wasmUtilsHandler.showLoading(true)
         when(val config = getConnectionConfig.invoke()){
             is ServiceResult.Error -> {
                 validator.validate(config.error)
@@ -61,8 +76,7 @@ class EditConfigViewModel(
             is ServiceResult.Success -> {
                 _state.update { it.copy(
                     textSizeScale = config.data?.textSizeScale ?: 10,
-                    imagesSource = config.data?.files?.map { dto -> dto.toModel() }.orEmpty()
-                ) }
+                )}
                 wasmUtilsHandler.showLoading(false)
             }
         }

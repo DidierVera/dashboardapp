@@ -13,30 +13,27 @@ class FTPServer{
     private var ftpServer: FtpServer? = null
 
     fun startServer(port: Int, username: String, mPassword: String, homeDirectory: String): Boolean {
+        stopServer()
         return try {
             val serverFactory = FtpServerFactory()
             val listenerFactory = ListenerFactory()
-            listenerFactory.port = port // Set the port for the FTP server
+            listenerFactory.port = port
 
-            // Add the listener to the server
             serverFactory.addListener("default", listenerFactory.createListener())
 
-            // Configure user management
             val userManagerFactory = PropertiesUserManagerFactory()
             val userManager = userManagerFactory.createUserManager() as UserManager
 
-            // Create a user with write permissions
             val user = BaseUser().apply {
                 name = username
                 password = mPassword
-                this.homeDirectory = homeDirectory // Set the directory for file storage
+                this.homeDirectory = homeDirectory
                 authorities = listOf<Authority>(WritePermission())
             }
 
             userManager.save(user)
             serverFactory.userManager = userManager
 
-            // Start the server
             ftpServer = serverFactory.createServer()
             ftpServer?.start()
             true
@@ -47,6 +44,10 @@ class FTPServer{
     }
 
     fun stopServer() {
-        ftpServer?.stop()
+        try {
+            ftpServer?.stop()
+        } catch (_: Exception) {
+        }
+        ftpServer = null
     }
 }

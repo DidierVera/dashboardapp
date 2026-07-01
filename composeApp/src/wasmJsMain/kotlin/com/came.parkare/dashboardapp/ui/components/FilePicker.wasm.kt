@@ -56,17 +56,6 @@ actual fun MultipleFilePicker(
     }
 }
 
-@Composable
-actual fun DirectoryPicker(
-    show: Boolean,
-    initialDirectory: String?,
-    title: String?,
-    onFileSelected: (String?) -> Unit,
-) {
-    // in a browser we can not pick directories
-    throw NotImplementedError("DirectoryPicker is not supported on the web")
-}
-
 private suspend fun Document.selectFilesFromDisk(
     accept: String,
     isMultiple: Boolean
@@ -91,20 +80,6 @@ private suspend fun Document.selectFilesFromDisk(
     body!!.append(tempInput)
     tempInput.click()
     tempInput.remove()
-}
-
-suspend fun readFileAsText(file: File): String = suspendCoroutine {
-    val reader = FileReader()
-    reader.onload = { loadEvt ->
-        try {
-            val eventFileReader = loadEvt.target?.let { it as FileReader }
-            val content = eventFileReader!!.result?.unsafeCast<JsString>()!!
-            it.resume(content.toString())
-        } catch (e: Throwable) {
-            it.resumeWithException(e)
-        }
-    }
-    reader.readAsText(file, "UTF-8")
 }
 
 suspend fun readFileAsByteArray(file: File): ByteArray = suspendCoroutine {

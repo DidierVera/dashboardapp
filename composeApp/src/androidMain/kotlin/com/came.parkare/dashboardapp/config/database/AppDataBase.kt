@@ -24,7 +24,8 @@ import com.came.parkare.dashboardapp.infrastructure.source.local.entities.config
         ImagesFilesEntity::class,
         ConfigTemplateEntity::class
     ],
-    version = 5
+    exportSchema = false,
+    version = 6
 )
 @TypeConverters(
     ElementListConverter::class,

@@ -5,14 +5,11 @@ package com.came.parkare.dashboardapp.ui.screens.settings
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -22,13 +19,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.came.parkare.dashboardapp.ui.screens.settings.components.LeftOptionsPanel
-import com.came.parkare.dashboardapp.ui.screens.settings.components.SettingTopBar
+import com.came.parkare.dashboardapp.ui.screens.settings.components.lateralpanel.LeftOptionsPanel
+import com.came.parkare.dashboardapp.ui.screens.settings.components.topbar.SettingTopBar
 import com.came.parkare.dashboardapp.ui.screens.settings.connection.ConnectionTab
 import com.came.parkare.dashboardapp.ui.screens.settings.dashboardlist.DashboardListTab
 import com.came.parkare.dashboardapp.ui.screens.settings.editconfig.EditConfigTab
 import com.came.parkare.dashboardapp.ui.screens.settings.exportfile.ExportTab
 import com.came.parkare.dashboardapp.ui.screens.settings.importfile.ImportTab
+import com.came.parkare.dashboardapp.ui.screens.settings.resources.ResourcesScreen
 import com.came.parkare.dashboardapp.ui.screens.settings.shareconfig.ShareConfigTab
 import com.came.parkare.dashboardapp.ui.screens.settings.testing.TestingTab
 import dashboardapp.composeapp.generated.resources.Res
@@ -36,8 +34,8 @@ import dashboardapp.composeapp.generated.resources.connection_option
 import dashboardapp.composeapp.generated.resources.dashboard_list_option
 import dashboardapp.composeapp.generated.resources.edit_current_config_option
 import dashboardapp.composeapp.generated.resources.export_option
-import dashboardapp.composeapp.generated.resources.import_export_option
 import dashboardapp.composeapp.generated.resources.import_option
+import dashboardapp.composeapp.generated.resources.resources_file_option
 import dashboardapp.composeapp.generated.resources.share_config_option
 import dashboardapp.composeapp.generated.resources.testing_option
 import org.koin.compose.viewmodel.koinViewModel
@@ -74,6 +72,7 @@ fun SettingsScreen(onBackClick: () -> Unit){
                     Res.string.share_config_option -> ShareConfigTab()
                     Res.string.testing_option -> TestingTab()
                     Res.string.edit_current_config_option -> EditConfigTab(Modifier.sizeIn(minWidth = 1440.dp))
+                    Res.string.resources_file_option -> ResourcesScreen()
                     else -> {}
                 }
             }
@@ -87,8 +86,10 @@ fun LeftPanel() {
     val viewModel: SettingViewModel  = koinViewModel()
     val optionsState by viewModel.optionsState.collectAsState()
     val settingsState by viewModel.settingsState.collectAsState()
+    val version by viewModel.appVersion.collectAsState()
     Column {
-        LeftOptionsPanel(settingsState.ipSelected, optionsState, onIpAddressClicked = {
+        LeftOptionsPanel(ipAddress =  settingsState.ipSelected, appVersion =  version,
+            options =  optionsState, onIpAddressClicked = {
         }){ option ->
             viewModel.selectItem(option)
         }

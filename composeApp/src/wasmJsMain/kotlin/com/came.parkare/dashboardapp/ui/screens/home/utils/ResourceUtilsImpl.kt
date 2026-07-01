@@ -1,7 +1,7 @@
 package com.came.parkare.dashboardapp.ui.screens.home.utils
 
 import com.came.parkare.dashboardapp.domain.models.ConfigTemplateModel
-import com.came.parkare.dashboardapp.domain.models.ImagesFileModel
+import com.came.parkare.dashboardapp.domain.models.ResourceFileModel
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toDto
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,10 +14,10 @@ class ResourceUtilsImpl: ResourceUtils {
     private val _textSizeScale: MutableStateFlow<Int> = MutableStateFlow(10)
     private val _editableTemplate: MutableStateFlow<ConfigTemplateModel> = MutableStateFlow(
         ConfigTemplateModel(templateName = "", screens = emptyList()))
-    private val _imagesResource: MutableStateFlow<List<ImagesFileModel>> = MutableStateFlow(emptyList())
+    private val _imagesResource: MutableStateFlow<List<ResourceFileModel>> = MutableStateFlow(emptyList())
     private val _editingElement: MutableStateFlow<String> = MutableStateFlow("")
 
-    override val imagesSource: StateFlow<List<ImagesFileModel>>
+    override val imagesSource: StateFlow<List<ResourceFileModel>>
         get() = _imagesResource.asStateFlow()
 
     override val textSizeScale: StateFlow<Int>
@@ -29,7 +29,7 @@ class ResourceUtilsImpl: ResourceUtils {
     override val editingElement: StateFlow<String>
         get() = _editingElement.asStateFlow()
 
-    override fun setImagesSource(images: List<ImagesFileModel>) {
+    override fun setImagesSource(images: List<ResourceFileModel>) {
         _imagesResource.update { images }
     }
 

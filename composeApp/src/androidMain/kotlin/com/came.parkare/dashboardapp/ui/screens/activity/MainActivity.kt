@@ -1,9 +1,11 @@
 package com.came.parkare.dashboardapp.ui.screens.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,6 +15,7 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.net.toUri
 import com.came.parkare.dashboardapp.infrastructure.source.remote.services.WebAppServer
 import com.came.parkare.dashboardapp.ui.screens.main.MainScreen
 import com.came.parkare.dashboardapp.ui.theme.DashboardAppTheme
@@ -73,14 +76,12 @@ class MainActivity : ComponentActivity() {
     private fun setContent() {
         setContent {
             DashboardAppTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = colorScheme.background
                 ) {
-
-                    KoinContext() {
-                        MainScreen()
+                    KoinContext {
+                        AppRoot()
                     }
                 }
             }

@@ -23,6 +23,8 @@ data class ScreenEntity(
     val marginBottom: Int = 0,
     val marginLeft: Int = 0,
     val marginRight: Int = 0,
+    val dateOfCreation: Long? = null,
+    val lastTimeUpdated: Long? = null,
     @TypeConverters(ElementListConverter::class)
     val elements: List<ElementEntity>
 )
@@ -35,6 +37,8 @@ fun ScreenModel.toEntity(): ScreenEntity {
         marginBottom = marginBottom,
         marginLeft = marginLeft,
         marginRight = marginRight,
+        dateOfCreation = dateOfCreation ?: System.currentTimeMillis(),
+        lastTimeUpdated = System.currentTimeMillis(),
         elements = mapElementsModelToEntity(elements)
     )
 }
@@ -47,6 +51,8 @@ fun ScreenEntity.toModel(): ScreenModel {
         marginBottom = marginBottom,
         marginLeft = marginLeft,
         marginRight = marginRight,
+        dateOfCreation = dateOfCreation,
+        lastTimeUpdated = lastTimeUpdated,
         elements = mapElementsEntityToModel(elements)
     )
 }

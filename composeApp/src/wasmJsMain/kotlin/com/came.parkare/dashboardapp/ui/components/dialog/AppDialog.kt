@@ -67,11 +67,13 @@ fun AppDialog(modifier: Modifier = Modifier){
 @Composable
 fun ShowDialog(modifier: Modifier = Modifier, model: AppDialogState) {
     val viewModel: AppDialogViewModel = koinViewModel()
-    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Box(
-            modifier = modifier.fillMaxSize().background(LightBlackColor.copy(alpha = 0.8f))
-                .clickable(enabled = false){}
-        )
+    Box(
+        modifier = modifier.fillMaxSize().background(LightBlackColor.copy(alpha = 0.8f))
+            .clickable(enabled = false){}
+    )
+    Box(modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
         Column(modifier = Modifier.floatingButton().width(280.dp).heightIn(min = 80.dp).padding(4.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)) {
 

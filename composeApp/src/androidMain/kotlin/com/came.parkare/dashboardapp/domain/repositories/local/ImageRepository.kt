@@ -1,7 +1,7 @@
 package com.came.parkare.dashboardapp.domain.repositories.local
 
-import com.came.parkare.dashboardapp.domain.models.ImagesFileModel
+import com.came.parkare.dashboardapp.domain.models.ResourceFileModel
 
 interface ImageRepository {
-    suspend fun getImageDataByName(filename: String): ImagesFileModel?
+    suspend fun getImageDataByName(filename: String): ResourceFileModel?
 }
