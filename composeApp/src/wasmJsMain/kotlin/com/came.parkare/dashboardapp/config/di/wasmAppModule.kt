@@ -29,6 +29,8 @@ import com.came.parkare.dashboardapp.domain.usecases.SaveNewTemplate
 import com.came.parkare.dashboardapp.domain.usecases.SaveScreenConfig
 import com.came.parkare.dashboardapp.domain.usecases.SendDitTesting
 import com.came.parkare.dashboardapp.infrastructure.repositories.device.DeviceRepositoryImpl
+import com.came.parkare.dashboardapp.infrastructure.source.remote.services.MockSignalRService
+import com.came.parkare.dashboardapp.infrastructure.source.remote.services.SignalRService
 import com.came.parkare.dashboardapp.infrastructure.repositories.logs.LogRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.repositories.screen.ScreenRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.repositories.template.ConfigTemplateRepositoryImpl
@@ -139,6 +141,12 @@ val wasmAppModule = module {
 
     single { Navigator() }
     single { HttpClient() }
+
+    //services
+    factory { SignalRService(get(), get(), get()) }
+
+    // Toggle: comment SignalRService above and uncomment below to use mock
+    // factory { MockSignalRService(get(), get(), get()) }
 }
 
 

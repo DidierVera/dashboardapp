@@ -27,7 +27,7 @@ import kotlinx.serialization.json.Json
 import okhttp3.internal.wait
 
 
-class SignalRService(
+actual class SignalRService actual constructor(
     private val preferences: SharedPreferencesProvider,
     private val serverConnection: IServerConnection,
     private val appLogger: AppLogger
@@ -38,7 +38,7 @@ class SignalRService(
     private val cancellationMessage = "Connection stopped by user"
     private var hubConnection: HubConnection? = null
 
-    fun startConnection(onSignalRResult: (ServiceResult<TerminalResponseDto>) -> Unit) {
+    actual fun startConnection(onSignalRResult: (ServiceResult<TerminalResponseDto>) -> Unit) {
         println("SIGNALR == Inicio de aplicación conexión SIGNAL R")
 
         // Cancel any existing connection first
@@ -93,7 +93,7 @@ class SignalRService(
         }
     }
 
-    fun cleanup() {
+    actual fun cleanup() {
         try {
             if(signalRJob != null){
                 signalRJob?.cancel(cancellationMessage)

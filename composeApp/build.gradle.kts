@@ -20,6 +20,8 @@ kotlin {
         }
     }
 
+    mingwX64()
+
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         moduleName = "composeApp"
@@ -47,6 +49,12 @@ kotlin {
         wasmJsMain.dependencies {
             implementation(libs.kotlin.stdlib.wasm.js)
             //Serialization
+            implementation(libs.serialization.json)
+            implementation(libs.koin.core)
+            implementation(npm("@microsoft/signalr", "8.0.7"))
+        }
+
+        mingwX64Main.dependencies {
             implementation(libs.serialization.json)
             implementation(libs.koin.core)
         }
