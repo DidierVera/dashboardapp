@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
@@ -31,10 +32,19 @@ import dashboardapp.composeapp.generated.resources.back_button_alt
 import dashboardapp.composeapp.generated.resources.blank_screen_tooltip
 import dashboardapp.composeapp.generated.resources.general_configuration_title
 import dashboardapp.composeapp.generated.resources.go_back_tooltip
+import dashboardapp.composeapp.generated.resources.ic_add_blank
+import dashboardapp.composeapp.generated.resources.ic_back_arrow
+import dashboardapp.composeapp.generated.resources.ic_blank
+import dashboardapp.composeapp.generated.resources.ic_import_export
+import dashboardapp.composeapp.generated.resources.ic_item_arrow
+import dashboardapp.composeapp.generated.resources.ic_save
+import dashboardapp.composeapp.generated.resources.ic_shapes
+import dashboardapp.composeapp.generated.resources.ic_upload
 import dashboardapp.composeapp.generated.resources.import_config_tooltip
 import dashboardapp.composeapp.generated.resources.request_password_message
 import dashboardapp.composeapp.generated.resources.save_config_tooltip
 import dashboardapp.composeapp.generated.resources.settings_button
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -55,23 +65,23 @@ fun MainTopBar(onSettingsClick: () -> Unit, onBackClick: () -> Unit) {
                     onBackClick.invoke()
                 },
                 tooltipTextId = Res.string.go_back_tooltip){
-                Icon(Icons.Default.Close,
-                    contentDescription = null, tint = WhiteColor)
+                Icon(painter = painterResource(Res.drawable.ic_back_arrow),
+                    contentDescription = null, tint = WhiteColor, modifier = Modifier.size(24.dp))
             }
             TooltipButton(onClick = {viewModel.displayBlankElement()},
                 tooltipTextId = Res.string.blank_screen_tooltip){
-                Icon(Icons.Default.Add,
-                    contentDescription = null, tint = WhiteColor)
+                Icon(painter = painterResource(Res.drawable.ic_add_blank),
+                    contentDescription = null, tint = WhiteColor, modifier = Modifier.size(24.dp))
             }
             TooltipButton(onClick = {viewModel.displayBlankElement()},
                 tooltipTextId = Res.string.import_config_tooltip){
-                Icon(Icons.Default.KeyboardArrowUp,
-                    contentDescription = null, tint = WhiteColor)
+                Icon(painter = painterResource(Res.drawable.ic_upload),
+                    contentDescription = null, tint = WhiteColor, modifier = Modifier.size(24.dp))
             }
             TooltipButton(onClick = {viewModel.displayBlankElement()},
                 tooltipTextId = Res.string.save_config_tooltip){
-                Icon(Icons.Default.Done,
-                    contentDescription = null, tint = WhiteColor)
+                Icon(painter = painterResource(Res.drawable.ic_save),
+                    contentDescription = null, tint = WhiteColor, modifier = Modifier.size(24.dp))
             }
 
         }
