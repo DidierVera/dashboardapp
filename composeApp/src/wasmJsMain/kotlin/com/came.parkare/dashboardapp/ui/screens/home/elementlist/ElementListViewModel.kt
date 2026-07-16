@@ -53,13 +53,15 @@ class ElementListViewModel(
     }
 
     private fun checkDisplayDefaultTab() {
-        homeUtils.isShowingElements.onEach { display ->
+        homeUtils.isShowingDefaultElements.onEach { display ->
+            println("ElementListViewModel, isShowingDefaultElements: $display")
             _state.update { it.copy(showDefaultTab = display) }
         }.launchIn(viewModelScope)
     }
 
     private fun checkDisplayBlankTab() {
-        homeUtils.blankElements.onEach { display ->
+        homeUtils.isShowingBlankElements.onEach { display ->
+            println("ElementListViewModel, isShowingBlankElements: $display")
             _state.update { it.copy(showBlankTab = display) }
         }.launchIn(viewModelScope)
     }

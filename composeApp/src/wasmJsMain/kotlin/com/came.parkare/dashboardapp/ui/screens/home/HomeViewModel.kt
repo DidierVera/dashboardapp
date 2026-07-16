@@ -6,7 +6,6 @@ import com.came.parkare.dashboardapp.config.constants.Constants.SELECTED_IP_ADDR
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.ErrorValidator
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
-import com.came.parkare.dashboardapp.config.utils.WasmSharedPreferencesProvider
 import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.GetImages
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toModel
@@ -14,8 +13,6 @@ import com.came.parkare.dashboardapp.ui.components.dialog.AppDialogState
 import com.came.parkare.dashboardapp.ui.screens.home.utils.HomeUtils
 import com.came.parkare.dashboardapp.ui.screens.home.utils.ResourceUtils
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
-import kotlinx.browser.window
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,7 +20,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class HomeViewModel(
     private val preferences: SharedPreferencesProvider,
@@ -49,7 +45,7 @@ class HomeViewModel(
     }
 
     init {
-        val ownIpAddress = "10.178.146.232"//window.location.hostname
+        val ownIpAddress = "192.168.101.78"//window.location.hostname
         preferences.put(SELECTED_IP_ADDRESS, ownIpAddress)
         eventTabListener()
         loadImages()
@@ -62,17 +58,20 @@ class HomeViewModel(
     }
 
     private fun eventTabListener() {
-        homeUtils.isShowingElements.onEach { display ->
+        homeUtils.isShowingDefaultElements.onEach { display ->
             _state.update { it.copy(displayDefaultElements = display) }
         }.launchIn(viewModelScope)
         homeUtils.isShowingProperties.onEach { display ->
             _state.update { it.copy(displayProperties = display) }
         }.launchIn(viewModelScope)
-        homeUtils.blankElements.onEach { display ->
+        homeUtils.isShowingBlankElements.onEach { display ->
             _state.update { it.copy(displayBlankElements = display) }
         }.launchIn(viewModelScope)
-        homeUtils.defaultScreens.onEach { display ->
+        homeUtils.isShowingDefaultScreens.onEach { display ->
             _state.update { it.copy(displayDefaultScreens = display) }
+        }.launchIn(viewModelScope)
+        homeUtils.blankScreen.onEach { display ->
+            _state.update { it.copy(displayBlankScreen = display) }
         }.launchIn(viewModelScope)
     }
 
@@ -82,13 +81,17 @@ class HomeViewModel(
 
     fun displayElements(){
         homeUtils.showElements(!_state.value.displayDefaultElements)
+        println("HomeViewModel, displayElements: ${_state.value.displayDefaultElements}")
     }
 
     fun displayDefaultScreens(){
         homeUtils.showDefaultScreens(!_state.value.displayDefaultScreens)
+        println("HomeViewModel, displayDefaultScreens: ${_state.value.displayDefaultScreens}")
     }
 
     fun displayBlankElement(){
+        println("HomeViewModel, displayBlankElement: ${_state.value.displayBlankElements}")
+
         homeUtils.showBlankElements(!_state.value.displayBlankElements)
     }
 
@@ -97,6 +100,8 @@ class HomeViewModel(
     }
 
     fun addBlankScreen() {
+        homeUtils.showBlankScreen(!_state.value.displayBlankScreen)
+        println("HomeViewModel, addBlankScreen: ${_state.value.displayBlankScreen}")
 
     }
 

@@ -32,7 +32,7 @@ fun PropertiesEditor(
     if(state.showTab){
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = modifier.widthIn(max = 260.dp).verticalScroll(ScrollState(0))
+            modifier = modifier.verticalScroll(ScrollState(0))
                 .fillMaxSize().floatingButton().padding(8.dp).graphicsLayer {
                     this.scaleX = 1.0f
                     this.scaleY = 1.0f

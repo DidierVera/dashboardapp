@@ -79,6 +79,7 @@
     <string name="edit_existing_config_label">Edit an existing config</string>
     <string name="create_new_config_label">Create a new config</string>
     <string name="go_to_setting_panel_label">Go to dashboard setting panel</string>
+    <string name="add_screen_label">Add Screen</string>
 
     <!-- Tooltips -->
     <string name="blank_screen_tooltip">Add blank screen</string>
@@ -111,6 +112,7 @@
     <string name="local_file_path_label">Local folder path</string>
     <string name="interval_time_label">Interval time</string>
 
+    <!--  Share Config  -->
 
 
     <!--  Share Config  -->
@@ -143,6 +145,7 @@
     <string name="delete_device_dialog_message">Are you sure you want to delete the item: %1$s?</string>
     <string name="no_items_to_show_message">There aren't items to show.</string>
     <string name="select_screen_message">Select the screen to edit...</string>
+    <string name="element_empty_message">Add an element to the screen</string>
     <string name="file_downloaded_message">File downloaded successfully.</string>
     <string name="update_config_message">This changes will be applied on the current device. Do you wanna confirm the changes?.</string>
     <string name="share_configuration_message">Are you sure you want to share this configuration with the selected devices? \n Please enter the password to confirm it</string>

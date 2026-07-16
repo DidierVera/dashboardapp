@@ -35,7 +35,7 @@ class ScreenListViewModel(
     }
 
     init {
-        homeUtils.defaultScreens.onEach { display ->
+        homeUtils.isShowingDefaultScreens.onEach { display ->
             _state.update { it.copy(showTab = display) }
         }.launchIn(viewModelScope)
     }

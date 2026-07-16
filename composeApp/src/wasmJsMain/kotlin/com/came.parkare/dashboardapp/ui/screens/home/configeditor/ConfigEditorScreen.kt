@@ -45,6 +45,7 @@ import com.came.parkare.dashboardapp.ui.screens.settings.editconfig.EditConfigVi
 import com.came.parkare.dashboardapp.ui.screens.settings.shareconfig.ShareConfigViewModel
 import com.came.parkare.dashboardapp.ui.theme.style.floatingButton
 import dashboardapp.composeapp.generated.resources.Res
+import dashboardapp.composeapp.generated.resources.element_empty_message
 import dashboardapp.composeapp.generated.resources.ic_item_arrow
 import dashboardapp.composeapp.generated.resources.screen_preview_label
 import dashboardapp.composeapp.generated.resources.select_screen_message
@@ -107,7 +108,7 @@ private fun ScreenList() {
 private fun ElementsList(modifier: Modifier = Modifier) {
     val viewModel: ConfigEditorViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
-    if (state.elementsByScreen.isNotEmpty()){
+    if (!state.screenViewer.isNullOrEmpty()){
         Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(text = stringResource(Res.string.screen_preview_label),
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold))
@@ -116,19 +117,23 @@ private fun ElementsList(modifier: Modifier = Modifier) {
                     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize().padding(4.dp)){
                         val background = state.imagesSource.firstOrNull { it.fileName?.contains("background") == true }
                         LoadBackground(background)
-                        Column(horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.padding(12.dp, 0.dp)) {
-                            for(i in state.elementsByScreen.indices){
-                                val mItem = state.elementsByScreen[i]
+                        if (state.elementsByScreen.isNotEmpty()){
+                            Column(horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.padding(12.dp, 0.dp)) {
+                                for(i in state.elementsByScreen.indices){
+                                    val mItem = state.elementsByScreen[i]
 
-                                Box(modifier = Modifier.clickable {
-                                    viewModel.selectItemOnScreen(mItem, i)
-                                }) {
-                                    BuildElement(mItem, state.textSizeScale, state.imagesSource){ element ->
-                                        viewModel.selectItemOnScreen(element, i)
+                                    Box(modifier = Modifier.clickable {
+                                        viewModel.selectItemOnScreen(mItem, i)
+                                    }) {
+                                        BuildElement(mItem, state.textSizeScale, state.imagesSource){ element ->
+                                            viewModel.selectItemOnScreen(element, i)
+                                        }
                                     }
                                 }
                             }
+                        }else {
+                            Text(stringResource(Res.string.element_empty_message))
                         }
                     }
                 }

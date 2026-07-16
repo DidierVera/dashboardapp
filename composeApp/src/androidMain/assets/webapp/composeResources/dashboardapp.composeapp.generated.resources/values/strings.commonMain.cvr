@@ -1,6 +1,7 @@
 version:0
 string|accept_button|QUNDRVBU
 string|actions_label|QWN0aW9ucw==
+string|add_screen_label|QWRkIFNjcmVlbg==
 string|api_label|QVBJ
 string|app_name|RGFzaGJvYXJkIGFwcA==
 string|apply_button|QVBQTFk=
@@ -50,6 +51,7 @@ string|download_file_button|RE9XTkxPQUQgRklMRQ==
 string|edit_current_config_option|RWRpdCBjdXJyZW50IGNvbmZpZw==
 string|edit_existing_config_label|RWRpdCBhbiBleGlzdGluZyBjb25maWc=
 string|element_code_label|RWxlbWVudCBjb2RlOg==
+string|element_empty_message|QWRkIGFuIGVsZW1lbnQgdG8gdGhlIHNjcmVlbg==
 string|entry_file_button|RU5UUlkgV0lUSCBUSUNLRVQ=
 string|exit_file_button|RVhJVCA=
 string|export_option|RXhwb3J0

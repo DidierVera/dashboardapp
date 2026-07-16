@@ -8,23 +8,27 @@ import kotlinx.coroutines.flow.update
 class HomeUtilsImpl(
 ): HomeUtils {
     private val _isShowingProperties: MutableStateFlow<Boolean> = MutableStateFlow(true)
-    private val _isShowingElements: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    private val _shoBlankElements: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    private val _showDefaultScreens: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val _isShowingDefaultElements: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val _isShowingBlankElements: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val _isShowingDefaultScreens: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val _isShowingBlankScreen: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val _displayControls: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
 
     override val isShowingProperties: StateFlow<Boolean>
         get() = _isShowingProperties.asStateFlow()
 
-    override val isShowingElements: StateFlow<Boolean>
-        get() = _isShowingElements.asStateFlow()
+    override val isShowingDefaultElements: StateFlow<Boolean>
+        get() = _isShowingDefaultElements.asStateFlow()
 
-    override val blankElements: StateFlow<Boolean>
-        get() = _shoBlankElements.asStateFlow()
+    override val isShowingBlankElements: StateFlow<Boolean>
+        get() = _isShowingBlankElements.asStateFlow()
 
-    override val defaultScreens: StateFlow<Boolean>
-        get() = _showDefaultScreens.asStateFlow()
+    override val blankScreen: StateFlow<Boolean>
+        get() = _isShowingBlankScreen.asStateFlow()
+
+    override val isShowingDefaultScreens: StateFlow<Boolean>
+        get() = _isShowingDefaultScreens.asStateFlow()
 
     override val displayControls: StateFlow<Boolean>
         get() = _displayControls.asStateFlow()
@@ -32,7 +36,7 @@ class HomeUtilsImpl(
 
     override fun showElements(value: Boolean) {
         hideTabs()
-        _isShowingElements.update { value }
+        _isShowingDefaultElements.update { value }
     }
 
     override fun showProperties(value: Boolean) {
@@ -42,12 +46,16 @@ class HomeUtilsImpl(
 
     override fun showBlankElements(value: Boolean) {
         hideTabs()
-        _shoBlankElements.update { value }
+        _isShowingBlankElements.update { value }
+    }
+    override fun showBlankScreen(value: Boolean) {
+        hideTabs()
+        _isShowingBlankScreen.update { value }
     }
 
     override fun showDefaultScreens(value: Boolean) {
         hideTabs()
-        _showDefaultScreens.update { value }
+        _isShowingDefaultScreens.update { value }
     }
 
     override fun hideAllTabs() {
@@ -55,10 +63,11 @@ class HomeUtilsImpl(
     }
 
     private fun hideTabs(){
-        _shoBlankElements.update { false }
-        _showDefaultScreens.update { false }
-        _isShowingElements.update { false }
+        _isShowingBlankElements.update { false }
+        _isShowingDefaultScreens.update { false }
+        _isShowingDefaultElements.update { false }
         _isShowingProperties.update { false }
         _displayControls.update { false }
+        _isShowingBlankScreen.update { false }
     }
 }

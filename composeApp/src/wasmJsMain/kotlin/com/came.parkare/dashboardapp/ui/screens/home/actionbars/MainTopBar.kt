@@ -68,17 +68,17 @@ fun MainTopBar(onSettingsClick: () -> Unit, onBackClick: () -> Unit) {
                 Icon(painter = painterResource(Res.drawable.ic_back_arrow),
                     contentDescription = null, tint = WhiteColor, modifier = Modifier.size(24.dp))
             }
-            TooltipButton(onClick = {viewModel.displayBlankElement()},
+            TooltipButton(onClick = {viewModel.addBlankScreen()},
                 tooltipTextId = Res.string.blank_screen_tooltip){
                 Icon(painter = painterResource(Res.drawable.ic_add_blank),
                     contentDescription = null, tint = WhiteColor, modifier = Modifier.size(24.dp))
             }
-            TooltipButton(onClick = {viewModel.displayBlankElement()},
+            TooltipButton(onClick = {viewModel.importConfig()},
                 tooltipTextId = Res.string.import_config_tooltip){
                 Icon(painter = painterResource(Res.drawable.ic_upload),
                     contentDescription = null, tint = WhiteColor, modifier = Modifier.size(24.dp))
             }
-            TooltipButton(onClick = {viewModel.displayBlankElement()},
+            TooltipButton(onClick = {viewModel.saveConfig()},
                 tooltipTextId = Res.string.save_config_tooltip){
                 Icon(painter = painterResource(Res.drawable.ic_save),
                     contentDescription = null, tint = WhiteColor, modifier = Modifier.size(24.dp))

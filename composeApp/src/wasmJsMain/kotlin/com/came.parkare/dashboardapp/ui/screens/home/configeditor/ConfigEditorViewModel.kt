@@ -44,7 +44,7 @@ class ConfigEditorViewModel(
     fun initConfig(){
         viewModelScope.launch {
             clearForm()
-            getCurrentScreenConfig()
+            //getCurrentScreenConfig()
             initEditor()
         }
     }
