@@ -20,16 +20,9 @@ class StatusBarViewModel(
         get() = _state.asStateFlow()
 
     fun initStatusBar(){
-        setTemplateName()
         setElementType()
     }
 
-    private fun setTemplateName() {
-        _state.update { it.copy(templateName = "Blank template") }
-        resourceUtils.editableTemplate.onEach { template ->
-            _state.update { it.copy(templateName = template.templateName) }
-        }.launchIn(viewModelScope)
-    }
 
     private fun setElementType() {
         resourceUtils.editingElement.onEach { jsonElement ->

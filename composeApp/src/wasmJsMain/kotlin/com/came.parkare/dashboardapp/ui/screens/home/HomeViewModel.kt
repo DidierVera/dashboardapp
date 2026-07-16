@@ -6,13 +6,18 @@ import com.came.parkare.dashboardapp.config.constants.Constants.SELECTED_IP_ADDR
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.ErrorValidator
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
+import com.came.parkare.dashboardapp.domain.models.ConfigTemplateModel
 import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.GetImages
+import com.came.parkare.dashboardapp.domain.usecases.SaveNewTemplate
+import com.came.parkare.dashboardapp.domain.usecases.UpdateTemplate
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toModel
 import com.came.parkare.dashboardapp.ui.components.dialog.AppDialogState
 import com.came.parkare.dashboardapp.ui.screens.home.utils.HomeUtils
 import com.came.parkare.dashboardapp.ui.screens.home.utils.ResourceUtils
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
+import dashboardapp.composeapp.generated.resources.Res
+import dashboardapp.composeapp.generated.resources.config_saved_message
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,10 +30,11 @@ class HomeViewModel(
     private val preferences: SharedPreferencesProvider,
     private val wasmUtils: WasmUtilsHandler,
     private val getConnectionConfig: GetConnectionConfig,
-    private val wasmUtilsHandler: WasmUtilsHandler,
     private val validator: ErrorValidator,
     private val homeUtils: HomeUtils,
     private val getImages: GetImages,
+    private val saveNewTemplate: SaveNewTemplate,
+    private val updateTemplate: UpdateTemplate,
     private val resourceUtils: ResourceUtils
 ): ViewModel() {
 
@@ -49,6 +55,7 @@ class HomeViewModel(
         preferences.put(SELECTED_IP_ADDRESS, ownIpAddress)
         eventTabListener()
         loadImages()
+        setTemplateName()
     }
 
     private fun loadImages() {
@@ -109,8 +116,39 @@ class HomeViewModel(
 
     }
 
-    fun saveConfig() {
+    fun setTemplateName() {
+        _state.update { it.copy(templateName = "Blank template") }
+        resourceUtils.editableTemplate.onEach { template ->
+            _state.update { it.copy(templateName = template.templateName) }
+        }.launchIn(viewModelScope)
+    }
 
+    fun onTemplateNameChange(newValue: String){
+        if (newValue.isBlank()) return
+        _state.update { it.copy(templateName = newValue) }
+        resourceUtils.setEditableTemplate(resourceUtils.editableTemplate.value.copy(templateName = newValue))
+    }
+
+    fun saveConfig() {
+        viewModelScope.launch {
+            wasmUtils.showLoading(true)
+            val newTemplate = resourceUtils.editableTemplate.value.copy(templateName = _state.value.templateName)
+            val result = if (newTemplate.id == 0L) {
+                saveNewTemplate.invoke(newTemplate)
+            }else{
+                updateTemplate.invoke(newTemplate)
+            }
+            when (result) {
+                is ServiceResult.Error<*> -> {
+                    wasmUtils.showLoading(false)
+                    validator.validate(result.error)
+                }
+                is ServiceResult.Success<*> -> {
+                    wasmUtils.showLoading(false)
+                    wasmUtils.showToastMessage(Res.string.config_saved_message)
+                }
+            }
+        }
     }
 
     fun onCloseEditor(){
@@ -119,26 +157,26 @@ class HomeViewModel(
 
 
     private suspend fun loadConfigImages() {
-        wasmUtilsHandler.showLoading(true)
+        wasmUtils.showLoading(true)
         when(val images = getImages.invoke()){
             is ServiceResult.Error -> {
                 validator.validate(images.error)
-                wasmUtilsHandler.showLoading(false)
+                wasmUtils.showLoading(false)
             }
             is ServiceResult.Success -> {
                 resourceUtils.setImagesSource( images.data?.map { dto -> dto.toModel() }.orEmpty())
-                wasmUtilsHandler.showLoading(false)
+                wasmUtils.showLoading(false)
             }
         }
-        wasmUtilsHandler.showLoading(true)
+        wasmUtils.showLoading(true)
         when(val config = getConnectionConfig.invoke()){
             is ServiceResult.Error -> {
                 validator.validate(config.error)
-                wasmUtilsHandler.showLoading(false)
+                wasmUtils.showLoading(false)
             }
             is ServiceResult.Success -> {
                 resourceUtils.setTextSizeScale(config.data?.textSizeScale ?: 10)
-                wasmUtilsHandler.showLoading(false)
+                wasmUtils.showLoading(false)
             }
         }
     }

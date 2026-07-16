@@ -28,6 +28,7 @@ import com.came.parkare.dashboardapp.domain.usecases.SaveNewDevice
 import com.came.parkare.dashboardapp.domain.usecases.SaveNewTemplate
 import com.came.parkare.dashboardapp.domain.usecases.SaveScreenConfig
 import com.came.parkare.dashboardapp.domain.usecases.SendDitTesting
+import com.came.parkare.dashboardapp.domain.usecases.UpdateTemplate
 import com.came.parkare.dashboardapp.infrastructure.repositories.device.DeviceRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.source.remote.services.MockSignalRService
 import com.came.parkare.dashboardapp.infrastructure.source.remote.services.SignalRService
@@ -136,6 +137,7 @@ val wasmAppModule = module {
     single { GetFont(get(), get()) }
     single { GetTemplates(get(), get()) }
     single { SaveNewTemplate(get(), get()) }
+    single { UpdateTemplate(get(), get()) }
     single { DeleteTemplate(get(), get()) }
     single { GetDefaultTemplatesConfig(get(), get(), get()) }
     single { SendDitTesting(get(), get(), get()) }

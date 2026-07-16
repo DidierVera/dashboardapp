@@ -6,6 +6,7 @@ data class HomeState(
     val displayBlankElements: Boolean = false,
     val displayBlankScreen: Boolean = false,
     val displayCurrentConfig: Boolean = false,
-    val displayDefaultScreens: Boolean = false
+    val displayDefaultScreens: Boolean = false,
+    val templateName: String = "Blank template"
 
 )
