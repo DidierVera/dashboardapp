@@ -2,6 +2,7 @@ package com.came.parkare.dashboardapp.ui.screens.home.configeditor
 
 import com.came.parkare.dashboardapp.domain.models.ConfigTemplateModel
 import com.came.parkare.dashboardapp.domain.models.ResourceFileModel
+import com.came.parkare.dashboardapp.domain.models.ScreenModel
 import com.came.parkare.dashboardapp.domain.models.components.ElementModel
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
 
@@ -12,6 +13,8 @@ data class ConfigEditorUiState (
     val imagesSource:List<ResourceFileModel> = emptyList(),
     val screenViewer: String? = null,
     val editingTemplate: ConfigTemplateModel =
-        ConfigTemplateModel(templateName = "blank template", screens = emptyList())
+        ConfigTemplateModel(templateName = "blank template", screens = emptyList()),
+    val editingScreen: ScreenModel? = null,
+    val editingScreenName:String? = null
 )
 

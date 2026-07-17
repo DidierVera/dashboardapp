@@ -23,12 +23,19 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -38,17 +45,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.came.parkare.dashboardapp.ui.components.background.LoadBackground
 import com.came.parkare.dashboardapp.ui.screens.settings.components.BuildElement
 import com.came.parkare.dashboardapp.ui.screens.settings.editconfig.EditConfigViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.shareconfig.ShareConfigViewModel
+import com.came.parkare.dashboardapp.ui.theme.LightGrayColor
+import com.came.parkare.dashboardapp.ui.theme.WhiteColor
 import com.came.parkare.dashboardapp.ui.theme.style.floatingButton
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.element_empty_message
 import dashboardapp.composeapp.generated.resources.ic_item_arrow
+import dashboardapp.composeapp.generated.resources.ico_edit_file
+import dashboardapp.composeapp.generated.resources.screen_name_label
 import dashboardapp.composeapp.generated.resources.screen_preview_label
 import dashboardapp.composeapp.generated.resources.select_screen_message
+import dashboardapp.composeapp.generated.resources.template_name_label
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
@@ -88,16 +101,40 @@ private fun ScreenList() {
                 .padding(8.dp)
                 ,
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Icon(
-                    painter = painterResource(Res.drawable.ic_item_arrow),
-                    contentDescription = null,
-                    modifier = Modifier.padding(8.dp).size(20.dp)
-                )
-                Text(text = screen.screenId, fontWeight =
-                    if(state.screenViewer == screen.screenId) FontWeight.Bold
-                    else FontWeight.Normal
-                )
+                horizontalArrangement = Arrangement.SpaceBetween) {
+
+                if (state.editingScreen == screen) {
+                    OutlinedTextField(
+                        value = state.editingScreenName.orEmpty().uppercase(),
+                        onValueChange = { viewModel.onScreenNameChange(it) },
+                        label = { Text(stringResource(Res.string.screen_name_label)) },
+                        singleLine = true,
+                        modifier = Modifier.padding(0.dp)
+                    )
+                    Row {
+                        IconButton(onClick = { viewModel.saveNewScreenName(screen) }){
+                            Icon(Icons.Default.Done, contentDescription = null)
+                        }
+                        IconButton(onClick = { viewModel.cancelChanges() }){
+                            Icon(Icons.Default.Close, contentDescription = null)
+                        }
+                    }
+                }else{
+                    Icon(
+                        painter = painterResource(Res.drawable.ic_item_arrow),
+                        contentDescription = null,
+                        modifier = Modifier.padding(8.dp).size(20.dp)
+                    )
+                    Text(text = screen.screenId, fontWeight =
+                        if(state.screenViewer == screen.screenId) FontWeight.Bold
+                        else FontWeight.Normal
+                    )
+                    if (state.editingScreen == null) {
+                        IconButton(onClick = { viewModel.setEditingScreen(screen) }) {
+                            Icon(Icons.Default.Edit, contentDescription = null)
+                        }
+                    }
+                }
             }
         }
     }
