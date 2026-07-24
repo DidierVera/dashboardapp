@@ -51,7 +51,7 @@ class HomeViewModel(
     }
 
     init {
-        val ownIpAddress = "192.168.101.78"//window.location.hostname
+        val ownIpAddress = "192.168.101.77"//window.location.hostname
         preferences.put(SELECTED_IP_ADDRESS, ownIpAddress)
         eventTabListener()
         loadImages()

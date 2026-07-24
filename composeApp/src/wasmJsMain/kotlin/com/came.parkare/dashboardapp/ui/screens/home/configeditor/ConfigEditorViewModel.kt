@@ -160,6 +160,12 @@ class ConfigEditorViewModel(
         _state.update { it.copy(editingScreen = screen, editingScreenName = screen?.screenId) }
     }
 
+    fun deleteScreen(screen: ScreenModel){
+        if (screen == _state.value.editingScreen) _state.update { it.copy(editingScreen = null, editingScreenName = null) }
+        _state.update { it.copy(editingTemplate = it.editingTemplate.copy( screens = it.editingTemplate.screens.filter { i -> i.screenId != screen.screenId }))}
+        resourceUtils.setEditableTemplate(_state.value.editingTemplate)
+    }
+
     fun saveNewScreenName(screen: ScreenModel?) {
         val baseScreen = _state.value.editingScreen
         val newName = _state.value.editingScreenName
@@ -182,6 +188,7 @@ class ConfigEditorViewModel(
                 screenViewer = if (current.screenViewer == screen.screenId) updatedScreen.screenId else current.screenViewer
             )
         }
+        resourceUtils.setEditableTemplate(_state.value.editingTemplate)
     }
 
     fun cancelChanges(){

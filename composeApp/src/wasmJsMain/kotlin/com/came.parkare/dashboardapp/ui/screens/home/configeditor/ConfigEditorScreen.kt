@@ -28,6 +28,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.FloatingActionButton
@@ -112,6 +113,9 @@ private fun ScreenList() {
                         modifier = Modifier.padding(0.dp)
                     )
                     Row {
+                        IconButton(onClick = { viewModel.deleteScreen(screen) }){
+                            Icon(Icons.Default.Delete, contentDescription = null)
+                        }
                         IconButton(onClick = { viewModel.saveNewScreenName(screen) }){
                             Icon(Icons.Default.Done, contentDescription = null)
                         }
