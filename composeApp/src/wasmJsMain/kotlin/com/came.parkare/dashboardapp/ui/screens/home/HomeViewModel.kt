@@ -18,6 +18,7 @@ import com.came.parkare.dashboardapp.ui.screens.home.utils.ResourceUtils
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.config_saved_message
+import kotlinx.browser.window
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -51,7 +52,7 @@ class HomeViewModel(
     }
 
     init {
-        val ownIpAddress = "192.168.101.77"//window.location.hostname
+        val ownIpAddress = window.location.hostname
         preferences.put(SELECTED_IP_ADDRESS, ownIpAddress)
         eventTabListener()
         loadImages()

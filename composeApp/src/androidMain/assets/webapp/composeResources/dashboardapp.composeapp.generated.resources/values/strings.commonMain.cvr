@@ -93,6 +93,7 @@ string|saved_templates_label|U2F2ZWQgdGVtcGxhdGVz
 string|screen_config_saved_message|VGhlIG5ldyBzY3JlZW5zIGNvbmZpZ3VyYXRpb24gaGFzIGJlZW4gc2F2ZWQgc3VjY2Vzc2Z1bGx5Lg==
 string|screen_count_label|U2NyZWVuIGNvdW50
 string|screen_list_label|U2NyZWVuIGxpc3Q=
+string|screen_name_label|U2NyZWVuIG5hbWU=
 string|screen_preview_label|U2NyZWVuIHByZXZpZXc=
 string|screens_label|U2NyZWVucw==
 string|select_screen_message|U2VsZWN0IHRoZSBzY3JlZW4gdG8gZWRpdC4uLg==
