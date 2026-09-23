@@ -10,7 +10,7 @@ wasmJsBrowserRun -t --quiet
 
 //GENERATE WEB CONFIGURATOR DEPLOY PACKAGE
 
-//for generate web configurator deploy run next command on terminal:
+//for generate web configurator deploy run next command on terminal (is necessary JAVA_HOME v17):
 
 ./gradlew wasmJsBrowserDistribution
 
