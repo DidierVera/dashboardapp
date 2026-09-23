@@ -74,7 +74,7 @@ class ConnectionViewModel(
 
     private fun loadConnectionWays() {
         _state.update { it.copy(connectionWayOptions = listOf(
-            0 to "Pruebas",
+            0 to "Testing",
             1 to "SignalR",
             2 to "Socket")
         )
