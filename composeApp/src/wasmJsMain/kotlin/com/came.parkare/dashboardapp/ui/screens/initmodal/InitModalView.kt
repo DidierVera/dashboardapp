@@ -63,14 +63,14 @@ fun InitModalView(modifier: Modifier = Modifier,
                 horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(text = stringResource(Res.string.modal_initial_label), fontWeight =
                     FontWeight.SemiBold, modifier = Modifier)
-                if (!state.showTemplates){
-                    InitDirectSetting(onSettingsClick)
-                    InitBlankConfig(onEditConfig)
-                }
-                InitExistingConfig()
+                InitDirectSetting(onSettingsClick)
+//                if (!state.showTemplates){
+//                    InitBlankConfig(onEditConfig)
+//                }
+//                InitExistingConfig()
             }
 
-            ShowTemplates(onEditConfig)
+//            ShowTemplates(onEditConfig)
         }
     }
 }
