@@ -38,22 +38,33 @@ class WebAppServer(
         }
     }
 
+    // NanoHTTPD only gzips text/* and */json by default; the wasm and js bundles are the heavy files
+    override fun useGzipWhenAccepted(r: Response): Boolean {
+        val mimeType = r.mimeType?.lowercase() ?: return false
+        return mimeType.startsWith("text/") || mimeType in GZIP_MIME_TYPES
+    }
+
     private fun serveFile(file: File): Response {
         return try {
             val mimeType = getMimeType(file)
-            val fileData = file.readBytes() // Use readBytes() for binary-safe reading
 
             newFixedLengthResponse(
                 Status.OK,
                 mimeType,
                 file.inputStream(),
-                fileData.size.toLong()
+                file.length()
             ).apply {
-                addHeader("Accept-Ranges", "bytes")
+                addHeader("Cache-Control", cacheControlFor(file))
             }
         } catch (e: IOException) {
             internalErrorResponse("Error reading file: ${e.message}")
         }
+    }
+
+    // The wasm bundles have a content hash in their name, so they never change; the rest keep
+    // the same name between builds (composeApp.js, index.html, composeResources) and must be revalidated
+    private fun cacheControlFor(file: File): String {
+        return if (HASHED_FILE_NAME.matches(file.name)) "public, max-age=31536000, immutable" else "no-cache"
     }
 
     private fun serveDirectory(directory: File): Response {
@@ -155,5 +166,16 @@ class WebAppServer(
             println("WebAppServer:: Error listing assets in $path: ${e.message}")
             throw e
         }
+    }
+
+    companion object {
+        private val GZIP_MIME_TYPES = setOf(
+            "application/javascript",
+            "application/json",
+            "application/wasm",
+            "application/octet-stream",
+            "image/svg+xml"
+        )
+        private val HASHED_FILE_NAME = Regex("^[0-9a-f]{20}\\.wasm$")
     }
 }
