@@ -143,14 +143,14 @@ class MockService(
         0L    -> "DLG_BOOT"
         5L    -> "IDLE"
         6L    -> "DLG_OUT_SERVICE"
-        7L    -> "DLG_PARKING_COMPLETED"
+        7L    -> "DLG_PARKING_FULL"
         8L    -> "USER"
-        9L    -> "DLG_READING_PLATE"
-        12L   -> "DLG_PLEASE_PROCEED"
+        9L    -> "READING_PLATE"
+        12L   -> "PLEASE_PROCEED"
         18L   -> "DLG_CARD_ERROR"
         36L   -> "DLG_PAYMENT_REQUIRED"
         89L   -> "DLG_InicioCobroActual"
-        96L   -> "DLG_LOCKED"
+        96L   -> "DLG_BLOCKED"
         1005L -> "IDLE_DISCONNECTED"
         else  -> "DLG_UNKNOWN_$code"
     }
@@ -167,7 +167,7 @@ class MockService(
         return TerminalResponseDto(
                 dialog = DialogResponseDto(
                     dialogNumber = 96,
-                    dialogName = "DLG_LOCKED"
+                    dialogName = "DLG_BLOCKED"
                 ),
         dtoVersion = 0,
         terminalNr = 2,
@@ -247,7 +247,7 @@ class MockService(
         return TerminalResponseDto(
             dialog = DialogResponseDto(
                 dialogNumber = 12,
-                dialogName = "DLG_PLEASE_PROCEED"
+                dialogName = "PLEASE_PROCEED"
             ),
             dtoVersion = 0,
             terminalNr = 2,
@@ -263,7 +263,7 @@ class MockService(
         return TerminalResponseDto(
             dialog = DialogResponseDto(
                 dialogNumber = 9,
-                dialogName = "DLG_READING_PLATE"
+                dialogName = "READING_PLATE"
             ),
             dtoVersion = 0,
             terminalNr = 2,
@@ -279,7 +279,7 @@ class MockService(
         return TerminalResponseDto(
             dialog = DialogResponseDto(
                 dialogNumber = 7,
-                dialogName = "DLG_PARKING_COMPLETED"
+                dialogName = "DLG_PARKING_FULL"
             ),
             dtoVersion = 0,
             terminalNr = 2,
