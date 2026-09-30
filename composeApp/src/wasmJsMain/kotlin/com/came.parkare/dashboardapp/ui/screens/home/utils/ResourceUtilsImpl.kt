@@ -16,6 +16,7 @@ class ResourceUtilsImpl: ResourceUtils {
         ConfigTemplateModel(templateName = "", screens = emptyList()))
     private val _imagesResource: MutableStateFlow<List<ResourceFileModel>> = MutableStateFlow(emptyList())
     private val _editingElement: MutableStateFlow<String> = MutableStateFlow("")
+    private val _editingLocation: MutableStateFlow<EditingLocation?> = MutableStateFlow(null)
 
     override val imagesSource: StateFlow<List<ResourceFileModel>>
         get() = _imagesResource.asStateFlow()
@@ -29,6 +30,9 @@ class ResourceUtilsImpl: ResourceUtils {
     override val editingElement: StateFlow<String>
         get() = _editingElement.asStateFlow()
 
+    override val editingLocation: StateFlow<EditingLocation?>
+        get() = _editingLocation.asStateFlow()
+
     override fun setImagesSource(images: List<ResourceFileModel>) {
         _imagesResource.update { images }
     }
@@ -37,15 +41,17 @@ class ResourceUtilsImpl: ResourceUtils {
         _textSizeScale.update { value }
     }
 
-    override fun setEditableTemplate(model: ConfigTemplateModel) {
+    override fun setEditableTemplate(model: ConfigTemplateModel, resetEditingElement: Boolean) {
         _editableTemplate.update { model }
+        if (!resetEditingElement) return
         val firstScreen = model.screens.firstOrNull()?.toDto()
         val firstElement = firstScreen?.data?.firstOrNull()
-        if (firstElement != null)
-            setEditingElement(Json.encodeToString(firstElement))
+        if (firstScreen != null && firstElement != null)
+            setEditingElement(Json.encodeToString(firstElement), EditingLocation(firstScreen.screenId, 0))
     }
 
-    override fun setEditingElement(model: String) {
+    override fun setEditingElement(model: String, location: EditingLocation?) {
+        _editingLocation.update { location }
         _editingElement.update { model }
     }
 }

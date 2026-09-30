@@ -15,6 +15,7 @@ data class ConfigEditorUiState (
     val editingTemplate: ConfigTemplateModel =
         ConfigTemplateModel(templateName = "blank template", screens = emptyList()),
     val editingScreen: ScreenModel? = null,
-    val editingScreenName:String? = null
+    val editingScreenName:String? = null,
+    val selectedPosition: Int? = null
 )
 

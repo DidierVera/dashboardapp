@@ -4,6 +4,7 @@ package com.came.parkare.dashboardapp.ui.screens.settings.editconfig
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,7 +42,9 @@ import com.came.parkare.dashboardapp.ui.components.AppButton
 import com.came.parkare.dashboardapp.ui.components.Base64Image
 import com.came.parkare.dashboardapp.ui.screens.settings.components.tabtitle.TabTitle
 import com.came.parkare.dashboardapp.ui.components.background.LoadBackground
+import com.came.parkare.dashboardapp.ui.components.properties.ElementEditorPanel
 import com.came.parkare.dashboardapp.ui.screens.settings.components.BuildElement
+import com.came.parkare.dashboardapp.ui.theme.CameBlueColor
 import com.came.parkare.dashboardapp.ui.theme.style.floatingButton
 import com.came.parkare.dashboardapp.ui.theme.style.shadowContainer
 import dashboardapp.composeapp.generated.resources.Res
@@ -51,6 +54,7 @@ import dashboardapp.composeapp.generated.resources.element_code_label
 import dashboardapp.composeapp.generated.resources.ic_item_arrow
 import dashboardapp.composeapp.generated.resources.screen_list_label
 import dashboardapp.composeapp.generated.resources.screen_preview_label
+import dashboardapp.composeapp.generated.resources.select_element_message
 import dashboardapp.composeapp.generated.resources.select_screen_message
 import dashboardapp.composeapp.generated.resources.update_button
 import dashboardapp.composeapp.generated.resources.update_config_message
@@ -105,9 +109,14 @@ private fun ElementsList(modifier: Modifier = Modifier) {
                             for(i in state.elementsByScreen.indices){
                                 val mItem = state.elementsByScreen[i]
 
-                                Box(modifier = Modifier.clickable {
-                                    viewModel.selectItemOnScreen(mItem, i)
-                                }) {
+                                Box(modifier = Modifier
+                                    .border(
+                                        width = 2.dp,
+                                        color = if (i == state.elementPosition) CameBlueColor else Color.Transparent,
+                                        shape = RoundedCornerShape(8.dp)
+                                    )
+                                    .clickable { viewModel.selectItemOnScreen(mItem, i) }
+                                ) {
                                     BuildElement(mItem, state.textSizeScale, state.imagesSource)
                                 }
                             }
@@ -147,27 +156,17 @@ private fun LoadBackground(background: ResourceFileModel?) {
 private fun EditorField() {
     val viewModel: EditConfigViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
-    LazyColumn {
-        item {
-            Box(modifier = Modifier.fillMaxWidth()
-                .padding(4.dp) // Add padding around each row
-                .shadow(
-                    elevation = 4.dp,
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .background(
-                    color = MaterialTheme.colorScheme.surface,
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .padding(4.dp)){
-                TextField(modifier = Modifier.fillMaxWidth(),
-                    value = state.elementJsonCode, onValueChange = {
-                        viewModel.setValues(it)
-                    }
-                )
-            }
-        }
+    if (state.elementJsonCode.isEmpty()) {
+        Text(stringResource(Res.string.select_element_message), modifier = Modifier.padding(8.dp))
+        return
     }
+    ElementEditorPanel(
+        jsonCode = state.elementJsonCode,
+        selectionKey = state.screenViewer to state.elementPosition,
+        onJsonChange = { viewModel.setValues(it) },
+        onElementChange = { viewModel.onElementChange(it) },
+        modifier = Modifier.fillMaxWidth()
+    )
 }
 
 @Composable

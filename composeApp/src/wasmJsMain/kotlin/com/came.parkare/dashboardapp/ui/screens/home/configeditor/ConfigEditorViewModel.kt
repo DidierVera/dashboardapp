@@ -14,6 +14,7 @@ import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.t
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ElementDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.toDto
+import com.came.parkare.dashboardapp.ui.screens.home.utils.EditingLocation
 import com.came.parkare.dashboardapp.ui.screens.home.utils.HomeUtils
 import com.came.parkare.dashboardapp.ui.screens.home.utils.ResourceUtils
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
@@ -59,9 +60,9 @@ class ConfigEditorViewModel(
         }.launchIn(viewModelScope)
 
         resourceUtils.editableTemplate.onEach { template ->
-            _state.update { it.copy(editingTemplate = template) }
-            val firstScreen = template.screens.first()
-            _state.update { it.copy(elementsByScreen = firstScreen.elements) }
+            val viewer = _state.value.screenViewer
+            val screen = template.screens.firstOrNull { it.screenId == viewer } ?: template.screens.firstOrNull()
+            _state.update { it.copy(editingTemplate = template, elementsByScreen = screen?.elements.orEmpty()) }
         }.launchIn(viewModelScope)
 
     }
@@ -121,7 +122,9 @@ class ConfigEditorViewModel(
 
     private fun setElementAndPosition(elementDto: ElementDto, position: Int){
         viewModelScope.launch {
-            resourceUtils.setEditingElement(Json.encodeToString(elementDto))
+            val location = _state.value.screenViewer?.let { EditingLocation(it, position) }
+            _state.update { it.copy(selectedPosition = position) }
+            resourceUtils.setEditingElement(Json.encodeToString(elementDto), location)
             homeUtils.showProperties(true)
 //            _state.update {
 //                it.copy(
@@ -149,6 +152,7 @@ class ConfigEditorViewModel(
 
 
     fun selectScreen(screen: ScreenModel){
+        _state.update { it.copy(selectedPosition = null) }
         if (_state.value.screenViewer == screen.screenId){
             _state.update { it.copy(screenViewer = null, elementsByScreen = emptyList()) }
         }else{

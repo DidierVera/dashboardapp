@@ -3,6 +3,8 @@ package com.came.parkare.dashboardapp.ui.screens.home.properties.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ElementDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.getElementsDtoToModel
+import com.came.parkare.dashboardapp.ui.components.properties.toPrettyJson
 import com.came.parkare.dashboardapp.ui.screens.home.properties.PropertiesState
 import com.came.parkare.dashboardapp.ui.screens.home.utils.HomeUtils
 import com.came.parkare.dashboardapp.ui.screens.home.utils.ResourceUtils
@@ -12,7 +14,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
-import kotlinx.serialization.json.Json
 
 class PropertiesViewModel(
     private val resourceUtils: ResourceUtils,
@@ -23,26 +24,32 @@ class PropertiesViewModel(
     val state: StateFlow<PropertiesState>
         get() = _state.asStateFlow()
 
-    fun initTab() {
+    init {
         homeUtils.isShowingProperties.onEach { show ->
             _state.update { it.copy(showTab = show) }
         }.launchIn(viewModelScope)
         resourceUtils.editingElement.onEach { jsonElement ->
-            if (jsonElement.isNotEmpty()){
-                val newElement = try {
-                    Json.decodeFromString<ElementDto>(jsonElement)
-                }catch (e: Exception){
-                    e.printStackTrace()
-                    null
-                }
-                if (newElement != null){
-                    _state.update { it.copy(element = newElement) }
-                }
-            }
+            _state.update { it.copy(elementJsonCode = jsonElement, location = resourceUtils.editingLocation.value) }
         }.launchIn(viewModelScope)
     }
 
-    fun setNewValues(){
+    fun setJsonCode(jsonCode: String) {
+        _state.update { it.copy(elementJsonCode = jsonCode) }
+    }
 
+    /** Writes the edited element back to its screen of the editable template. */
+    fun setNewValues(element: ElementDto) {
+        val location = _state.value.location
+        resourceUtils.setEditingElement(element.toPrettyJson(), location)
+        if (location == null) return
+
+        val newModel = getElementsDtoToModel(listOf(element)).firstOrNull() ?: return
+        val template = resourceUtils.editableTemplate.value
+        val newScreens = template.screens.map { screen ->
+            if (screen.screenId == location.screenId && location.position in screen.elements.indices) {
+                screen.copy(elements = screen.elements.toMutableList().apply { this[location.position] = newModel })
+            } else screen
+        }
+        resourceUtils.setEditableTemplate(template.copy(screens = newScreens), resetEditingElement = false)
     }
 }

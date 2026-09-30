@@ -2,22 +2,22 @@
 
 package com.came.parkare.dashboardapp.ui.screens.home.properties
 
-import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
-import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ElementDto
+import com.came.parkare.dashboardapp.ui.components.properties.ElementEditorPanel
 import com.came.parkare.dashboardapp.ui.screens.home.properties.viewmodels.PropertiesViewModel
 import com.came.parkare.dashboardapp.ui.theme.style.floatingButton
+import dashboardapp.composeapp.generated.resources.Res
+import dashboardapp.composeapp.generated.resources.select_element_message
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.annotation.KoinExperimentalAPI
 
@@ -26,43 +26,20 @@ fun PropertiesEditor(
     modifier: Modifier = Modifier
 ){
     val viewModel: PropertiesViewModel = koinViewModel()
-    viewModel.initTab()
     val state by viewModel.state.collectAsState()
 
     if(state.showTab){
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = modifier.verticalScroll(ScrollState(0))
-                .fillMaxSize().floatingButton().padding(8.dp).graphicsLayer {
-                    this.scaleX = 1.0f
-                    this.scaleY = 1.0f
-                }) {
-
-            when(val item = state.element){
-                is ElementDto.BoxDto -> BoxProperties(item.data){
-
-                }
-                is ElementDto.ColumnDto -> ColumnProperties(item.data){
-
-                }
-                is ElementDto.ImageDto -> ImageProperties(item.data){
-
-                }
-                is ElementDto.RowDto -> RowProperties(item.data){
-
-                }
-                is ElementDto.SpacerDto -> SpacerProperties(item.data){
-
-                }
-                is ElementDto.TextDto -> {
-                    TextProperties(item.data) {
-
-                    }
-                }
-                is ElementDto.VideoDto -> VideoProperties(item.data){
-
-                }
-                null -> {}
+        Box(modifier = modifier.fillMaxSize().floatingButton().padding(8.dp)) {
+            if (state.elementJsonCode.isEmpty()) {
+                Text(stringResource(Res.string.select_element_message), modifier = Modifier.align(Alignment.Center))
+            } else {
+                ElementEditorPanel(
+                    jsonCode = state.elementJsonCode,
+                    selectionKey = state.location,
+                    onJsonChange = { viewModel.setJsonCode(it) },
+                    onElementChange = { viewModel.setNewValues(it) },
+                    modifier = Modifier.fillMaxSize()
+                )
             }
         }
     }

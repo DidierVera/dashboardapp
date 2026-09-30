@@ -6,7 +6,9 @@ package com.came.parkare.dashboardapp.ui.screens.home.configeditor
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,10 +43,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -52,6 +56,7 @@ import com.came.parkare.dashboardapp.ui.components.background.LoadBackground
 import com.came.parkare.dashboardapp.ui.screens.settings.components.BuildElement
 import com.came.parkare.dashboardapp.ui.screens.settings.editconfig.EditConfigViewModel
 import com.came.parkare.dashboardapp.ui.screens.settings.shareconfig.ShareConfigViewModel
+import com.came.parkare.dashboardapp.ui.theme.CameBlueColor
 import com.came.parkare.dashboardapp.ui.theme.LightGrayColor
 import com.came.parkare.dashboardapp.ui.theme.WhiteColor
 import com.came.parkare.dashboardapp.ui.theme.style.floatingButton
@@ -71,7 +76,7 @@ import org.koin.core.annotation.KoinExperimentalAPI
 @Composable
 fun ConfigEditorScreen(modifier: Modifier = Modifier,
        viewModel: ConfigEditorViewModel = koinViewModel()){
-    viewModel.initConfig()
+    LaunchedEffect(Unit) { viewModel.initConfig() }
 
     Row(modifier = modifier.fillMaxWidth(0.8f),
         horizontalArrangement = Arrangement.spacedBy(8.dp)){
@@ -164,12 +169,16 @@ private fun ElementsList(modifier: Modifier = Modifier) {
                                 for(i in state.elementsByScreen.indices){
                                     val mItem = state.elementsByScreen[i]
 
-                                    Box(modifier = Modifier.clickable {
-                                        viewModel.selectItemOnScreen(mItem, i)
-                                    }) {
-                                        BuildElement(mItem, state.textSizeScale, state.imagesSource){ element ->
-                                            viewModel.selectItemOnScreen(element, i)
-                                        }
+                                    // Nested elements are selected from the structure tree of the properties panel
+                                    Box(modifier = Modifier
+                                        .border(
+                                            width = 2.dp,
+                                            color = if (i == state.selectedPosition) CameBlueColor else Color.Transparent,
+                                            shape = RoundedCornerShape(8.dp)
+                                        )
+                                        .clickable { viewModel.selectItemOnScreen(mItem, i) }
+                                    ) {
+                                        BuildElement(mItem, state.textSizeScale, state.imagesSource)
                                     }
                                 }
                             }

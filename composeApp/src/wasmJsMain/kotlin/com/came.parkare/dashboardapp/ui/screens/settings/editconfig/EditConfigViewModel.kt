@@ -18,6 +18,7 @@ import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.e
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.toDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toModel
 import com.came.parkare.dashboardapp.ui.components.dialog.AppDialogState
+import com.came.parkare.dashboardapp.ui.components.properties.toPrettyJson
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.screen_config_saved_message
@@ -107,8 +108,10 @@ class EditConfigViewModel(
     }
 
     fun selectScreen(screen: ScreenModel){
+        // The element being edited belongs to the previous screen, so the selection is always cleared
+        _state.update { it.copy(elementJsonCode = "", selectedElement = null, elementPosition = null) }
         if (_state.value.screenViewer == screen.screenId){
-            _state.update { it.copy(screenViewer = null, elementsByScreen = emptyList(), elementJsonCode = "") }
+            _state.update { it.copy(screenViewer = null, elementsByScreen = emptyList()) }
         }else{
             _state.update { it.copy(screenViewer = screen.screenId, elementsByScreen = screen.elements)}
         }
@@ -133,6 +136,12 @@ class EditConfigViewModel(
         viewModelScope.launch {
             _state.update { it.copy(elementJsonCode = fileContent) }
         }
+    }
+
+    /** Change made from the properties editor: keeps the JSON in sync and refreshes the preview. */
+    fun onElementChange(element: ElementDto) {
+        _state.update { it.copy(elementJsonCode = element.toPrettyJson()) }
+        applyChanges()
     }
 
     fun selectItemOnScreen(element: ElementModel, position: Int) {
