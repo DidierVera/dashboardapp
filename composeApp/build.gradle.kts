@@ -43,9 +43,6 @@ kotlin {
     }
 
     sourceSets {
-        configurations.all {
-            resolutionStrategy.force("org.jetbrains.kotlin:kotlin-stdlib:2.0.21")
-        }
         wasmJsMain.dependencies {
             implementation(libs.kotlin.stdlib.wasm.js)
             //Serialization
