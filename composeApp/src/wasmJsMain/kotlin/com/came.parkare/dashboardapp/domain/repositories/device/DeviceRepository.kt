@@ -1,5 +1,6 @@
 package com.came.parkare.dashboardapp.domain.repositories.device
 
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.DisplaySizeDto
 import com.came.parkare.dashboardapp.config.dataclasses.ResponseStatusDto
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
@@ -16,6 +17,7 @@ interface DeviceRepository {
     suspend fun deleteDevice(ipAddress: String, deviceModel: DeviceDto): ServiceResult<ResponseStatusDto>
     suspend fun getDeviceStatus(ipAddress: String): ServiceResult<Boolean>
     suspend fun getAppVersion(ipAddress: String): ServiceResult<String>
+    suspend fun getDisplaySize(ipAddress: String): ServiceResult<DisplaySizeDto>
     suspend fun getImages(ipAddress: String): ServiceResult<List<ResourceFileDto>?>
     suspend fun saveImages(ipAddress: String, data: List<ResourceFileDto>): ServiceResult<ResponseStatusDto>
     suspend fun uploadFont(ipAddress: String, data: ResourceFileDto): ServiceResult<FontUploadResponseDto>

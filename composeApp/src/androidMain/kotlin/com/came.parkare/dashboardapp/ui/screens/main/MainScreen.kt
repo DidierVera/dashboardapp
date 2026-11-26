@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.came.parkare.dashboardapp.R
 import com.came.parkare.dashboardapp.domain.models.components.ElementModel
+import com.came.parkare.dashboardapp.ui.utils.horizontalAlignment
+import com.came.parkare.dashboardapp.ui.utils.verticalArrangement
 import com.came.parkare.dashboardapp.ui.components.Base64Image
 import com.came.parkare.dashboardapp.ui.components.BuildComposable
 import com.came.parkare.dashboardapp.ui.components.NetworkIndicatorView
@@ -114,13 +116,16 @@ private fun LoadDashboardItems(
     viewModel: MainViewModel = koinViewModel()
 ){
     val state by viewModel.itemsState.collectAsState()
-    val showVideoFrame by viewModel.showVideoFrame.collectAsState()
     val elements: List<ElementModel> = state.newItems
     if (elements.isEmpty()) return
     val boxMargin = state.contentPadding
+    // The content is placed inside the margins of the screen at its content-alignment
+    // (center by default; before it was top, or bottom when the video frame was shown)
     Column(modifier = modifier
         .padding(boxMargin)
-        .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = if (showVideoFrame) Arrangement.Bottom else Arrangement.Top){
+        .fillMaxWidth(),
+        horizontalAlignment = state.contentAlignment.horizontalAlignment(),
+        verticalArrangement = state.contentAlignment.verticalArrangement()){
         elements.forEach { mItem ->
             val textSizeScale = state.textSizeScale
             BuildComposable(elementModel = mItem, textSizeScale = textSizeScale)

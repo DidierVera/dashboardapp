@@ -2,6 +2,7 @@ package com.came.parkare.dashboardapp.ui.screens.main
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.unit.dp
+import com.came.parkare.dashboardapp.domain.models.ScreenAlignment
 import com.came.parkare.dashboardapp.domain.models.ScreenModel
 import com.came.parkare.dashboardapp.domain.models.components.ElementModel
 import com.came.parkare.dashboardapp.domain.models.terminal.DitResponseModel
@@ -15,6 +16,7 @@ data class MainState (
     val statusConnection: Boolean = false,
     val textSizeScale: Int = 10,
     val contentPadding: PaddingValues = PaddingValues(8.dp,8.dp,8.dp,8.dp),
+    val contentAlignment: ScreenAlignment = ScreenAlignment.DEFAULT,
     val screenList: List<ScreenModel> = emptyList()
 )
 

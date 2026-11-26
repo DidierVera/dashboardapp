@@ -7,6 +7,7 @@ import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_DEVICE_L
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_FONT
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_IMAGES
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_VERSION
+import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_DISPLAY
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_CONNECTION_CONFIG
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_DEVICE
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_IMAGES
@@ -22,6 +23,7 @@ import com.came.parkare.dashboardapp.config.utils.WasmSharedPreferencesProvider
 import com.came.parkare.dashboardapp.domain.repositories.device.DeviceRepository
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.DeviceDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.DisplaySizeDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ResourceFileDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.fonts.FontDeleteResponseDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.fonts.FontUploadResponseDto
@@ -109,6 +111,16 @@ class DeviceRepositoryImpl(
     override suspend fun getAppVersion(ipAddress: String): ServiceResult<String> {
         return try {
             val result = httpClient.get<String>("$SSL_PROTOCOL$ipAddress:$apiPort$GET_VERSION")
+            ServiceResult.Success(result)
+        }catch (e: Exception){
+            appLogger.trackError(e)
+            ServiceResult.Error(ErrorTypeClass.GeneralException(e.message))
+        }
+    }
+
+    override suspend fun getDisplaySize(ipAddress: String): ServiceResult<DisplaySizeDto> {
+        return try {
+            val result = httpClient.get<DisplaySizeDto>("$SSL_PROTOCOL$ipAddress:$apiPort$GET_DISPLAY")
             ServiceResult.Success(result)
         }catch (e: Exception){
             appLogger.trackError(e)

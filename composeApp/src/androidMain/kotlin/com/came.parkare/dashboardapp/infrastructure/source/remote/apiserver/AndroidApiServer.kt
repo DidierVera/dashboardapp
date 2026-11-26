@@ -10,6 +10,7 @@ import com.came.parkare.dashboardapp.domain.repositories.local.ConfigTemplateRep
 import com.came.parkare.dashboardapp.domain.repositories.remote.ApiServerRepository
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ConnectionConfigDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.DeviceDto
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.DisplaySizeDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.ResourceFileDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.logs.TrackErrorDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.logs.TrackLogDto
@@ -28,6 +29,7 @@ import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiR
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetFont
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetImages
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetVersion
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isGetDisplay
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveConfigTemplate
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveConfiguratorError
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiRequestPredicates.isSaveConfiguratorLog
@@ -56,6 +58,10 @@ class AndroidApiServer(
 ): NanoHTTPD(port) {
     private val TAG = "AndroidApiServer"
 
+    // Accepts keys this version does not know, so a configuration sent by a newer web
+    // configurator (Share config, Import) is not rejected
+    private val requestJson = Json { ignoreUnknownKeys = true }
+
     override fun serve(session: IHTTPSession): Response {
         Log.d(TAG, "Request: ${session.method} ${session.uri}")
 
@@ -83,6 +89,7 @@ class AndroidApiServer(
             session.isSaveConfiguratorLog() -> handleTrackLog(session)
             session.isSaveConfiguratorError() -> handleTrackError(session)
             session.isGetVersion() -> handleGetAppVersion()
+            session.isGetDisplay() -> handleGetDisplay()
             session.isGetImages() -> handleGetImages()
             session.isSaveImages() -> handleSaveImages(session)
             session.isUploadFont() -> handleUploadFont(session)
@@ -96,7 +103,7 @@ class AndroidApiServer(
     private fun handleTrackError(session: IHTTPSession): Response {
         return processPostRequest<TrackErrorDto>(
             session = session,
-            parseBody = { body -> Json.decodeFromString(body) },
+            parseBody = { body -> requestJson.decodeFromString(body) },
             operation = { dto -> apiServerRepository.saveConfiguratorException(dto) == 0 }
         )
     }
@@ -104,7 +111,7 @@ class AndroidApiServer(
     private fun handleTrackLog(session: IHTTPSession): Response {
         return processPostRequest<TrackLogDto>(
             session = session,
-            parseBody = { body -> Json.decodeFromString(body) },
+            parseBody = { body -> requestJson.decodeFromString(body) },
             operation = { dto -> apiServerRepository.saveConfiguratorLog(dto) == 0 }
         )
     }
@@ -112,7 +119,7 @@ class AndroidApiServer(
     private fun handleDeleteConfigTemplate(session: IHTTPSession): Response {
         return processPostRequest<ConfigTemplateDto>(
             session = session,
-            parseBody = { body -> Json.decodeFromString(body) },
+            parseBody = { body -> requestJson.decodeFromString(body) },
             operation = { dto -> configTemplateRepository.deleteTemplate(dto.toModel()) }
         )
     }
@@ -120,7 +127,7 @@ class AndroidApiServer(
     private fun handleUpdateConfigTemplate(session: IHTTPSession): Response {
         return processPostRequest<ConfigTemplateDto>(
             session = session,
-            parseBody = { body -> Json.decodeFromString(body) },
+            parseBody = { body -> requestJson.decodeFromString(body) },
             operation = { dto -> configTemplateRepository.updateTemplate(dto.toModel()) }
         )
     }
@@ -128,7 +135,7 @@ class AndroidApiServer(
     private fun handleSaveConfigTemplate(session: IHTTPSession): Response {
         return processPostRequest<ConfigTemplateDto>(
             session = session,
-            parseBody = { body -> Json.decodeFromString(body) },
+            parseBody = { body -> requestJson.decodeFromString(body) },
             operation = { dto -> configTemplateRepository.saveTemplate(dto.toModel()) }
         )
     }
@@ -136,7 +143,7 @@ class AndroidApiServer(
     private fun handleSetConfigType(session: IHTTPSession): Response {
         return processPostRequest<Long>(
             session = session,
-            parseBody = { body -> Json.decodeFromString(body) },
+            parseBody = { body -> requestJson.decodeFromString(body) },
             operation = { value -> apiServerRepository.saveScreenConfigType(value) }
         )
     }
@@ -176,6 +183,13 @@ class AndroidApiServer(
         )
     }
 
+    private fun handleGetDisplay(): Response {
+        return processAsyncRequest<Unit, DisplaySizeDto>(
+            operation = { deviceUtils.getDisplaySize() ?: DisplaySizeDto.DEFAULT },
+            successTransform = { result -> Json.encodeToString(result) }
+        )
+    }
+
     private fun handleGetImages(): Response {
         return processAsyncRequest<Unit, List<ResourceFileDto>?>(
             operation = { apiServerRepository.getImages() },
@@ -192,7 +206,7 @@ class AndroidApiServer(
     private fun handleSaveTerminalConnection(session: IHTTPSession): Response {
         return processPostRequest<ConnectionConfigDto>(
             session = session,
-            parseBody = { body -> Json.decodeFromString(body) },
+            parseBody = { body -> requestJson.decodeFromString(body) },
             operation = { dto -> apiServerRepository.saveTerminalConnection(dto) == 0 }
         )
     }
@@ -200,14 +214,14 @@ class AndroidApiServer(
     private fun handleSaveImages(session: IHTTPSession): Response {
         return processPostRequest<List<ResourceFileDto>?>(
             session = session,
-            parseBody = { body -> Json.decodeFromString(body) },
+            parseBody = { body -> requestJson.decodeFromString(body) },
             operation = { dto -> apiServerRepository.saveImages(dto) == 0 }
         )
     }
     private fun handleUploadFont(session: IHTTPSession): Response {
         return processPostRequest<ResourceFileDto>(
             session = session,
-            parseBody = { body -> Json.decodeFromString(body) },
+            parseBody = { body -> requestJson.decodeFromString(body) },
             operation = { dto ->
                 // Decodifica Base64 → ByteArray
                 val fontBytes = android.util.Base64.decode(dto.fileContent, android.util.Base64.DEFAULT)
@@ -243,7 +257,7 @@ class AndroidApiServer(
     private fun handleSaveDevice(session: IHTTPSession): Response {
         return processPostRequest<DeviceDto>(
             session = session,
-            parseBody = { body -> Json.decodeFromString<DeviceDto>(body) },
+            parseBody = { body -> requestJson.decodeFromString<DeviceDto>(body) },
             operation = { dto -> apiServerRepository.saveDashboardIp(dto) == 0 }
         )
     }
@@ -251,7 +265,7 @@ class AndroidApiServer(
     private fun handleDeleteDevice(session: IHTTPSession): Response {
         return processPostRequest<DeviceDto>(
             session = session,
-            parseBody = { body -> Json.decodeFromString<DeviceDto>(body) },
+            parseBody = { body -> requestJson.decodeFromString<DeviceDto>(body) },
             operation = { dto -> apiServerRepository.deleteDashboardDevice(dto.id) == 0 }
         )
     }
@@ -259,7 +273,7 @@ class AndroidApiServer(
     private fun handleSaveScreen(session: IHTTPSession): Response {
         return processPostRequest<List<ScreenDto>>(
             session = session,
-            parseBody = { body -> Json.decodeFromString<List<ScreenDto>>(body) },
+            parseBody = { body -> requestJson.decodeFromString<List<ScreenDto>>(body) },
             operation = { config -> apiServerRepository.saveScreensConfig(config) == 0 }
         )
     }
@@ -267,7 +281,7 @@ class AndroidApiServer(
     private fun handleSendDitTesting(session: IHTTPSession): Response {
         return processPostRequest<SendDitTestingDto>(
             session = session,
-            parseBody = { body -> Json.decodeFromString<SendDitTestingDto>(body) },
+            parseBody = { body -> requestJson.decodeFromString<SendDitTestingDto>(body) },
             operation = { dto ->
                 Log.d(TAG, "handleSendDitTesting: dispatchCode=${dto.dispatchCode}, screenId=${dto.screenId}, dits=${dto.dits.size}")
                 mockService.dispatchMockEvent(dto)

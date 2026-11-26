@@ -1,5 +1,6 @@
 package com.came.parkare.dashboardapp.infrastructure.source.local.entities
 
+import com.came.parkare.dashboardapp.domain.models.ScreenAlignment
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
@@ -23,6 +24,8 @@ data class ScreenEntity(
     val marginBottom: Int = 0,
     val marginLeft: Int = 0,
     val marginRight: Int = 0,
+    // Key of ScreenAlignment; null is the default (center)
+    val contentAlignment: String? = null,
     val dateOfCreation: Long? = null,
     val lastTimeUpdated: Long? = null,
     @TypeConverters(ElementListConverter::class)
@@ -37,6 +40,7 @@ fun ScreenModel.toEntity(): ScreenEntity {
         marginBottom = marginBottom,
         marginLeft = marginLeft,
         marginRight = marginRight,
+        contentAlignment = ScreenAlignment.toKeyOrNull(contentAlignment),
         dateOfCreation = dateOfCreation ?: System.currentTimeMillis(),
         lastTimeUpdated = System.currentTimeMillis(),
         elements = mapElementsModelToEntity(elements)
@@ -51,6 +55,7 @@ fun ScreenEntity.toModel(): ScreenModel {
         marginBottom = marginBottom,
         marginLeft = marginLeft,
         marginRight = marginRight,
+        contentAlignment = ScreenAlignment.fromKey(contentAlignment),
         dateOfCreation = dateOfCreation,
         lastTimeUpdated = lastTimeUpdated,
         elements = mapElementsEntityToModel(elements)

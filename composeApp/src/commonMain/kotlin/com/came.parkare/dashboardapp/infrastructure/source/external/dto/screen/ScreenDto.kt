@@ -1,5 +1,6 @@
 package com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen
 
+import com.came.parkare.dashboardapp.domain.models.ScreenAlignment
 import com.came.parkare.dashboardapp.domain.models.ScreenModel
 import com.came.parkare.dashboardapp.domain.models.components.ElementModel
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ElementDto
@@ -17,6 +18,8 @@ data class ScreenDto(
     @SerialName("margin-bottom") val marginBottom: Int = 20,
     @SerialName("margin-left") val marginLeft: Int = 20,
     @SerialName("margin-right") val marginRight: Int = 20,
+    // Missing means the default (center); see ScreenAlignment.toKeyOrNull
+    @SerialName("content-alignment") val contentAlignment: String? = null,
     @SerialName("date-of-creation") val dateOfCreation: Long? = null,
     @SerialName("last-time-updated") val lastTimeUpdated: Long? = null,
     val data: List<@Serializable(with = ElementSerializer::class)ElementDto>
@@ -30,6 +33,7 @@ fun ScreenDto.toModel(): ScreenModel {
         marginBottom = marginBottom,
         marginLeft = marginLeft,
         marginRight = marginRight,
+        contentAlignment = ScreenAlignment.fromKey(contentAlignment),
         dateOfCreation = dateOfCreation,
         lastTimeUpdated = lastTimeUpdated,
         elements = getElementsDtoToModel(data)
@@ -44,6 +48,7 @@ fun ScreenModel.toDto(): ScreenDto {
         marginBottom = marginBottom,
         marginLeft = marginLeft,
         marginRight = marginRight,
+        contentAlignment = ScreenAlignment.toKeyOrNull(contentAlignment),
         dateOfCreation = dateOfCreation,
         lastTimeUpdated = lastTimeUpdated,
         data = getElementsModelToDto(elements)

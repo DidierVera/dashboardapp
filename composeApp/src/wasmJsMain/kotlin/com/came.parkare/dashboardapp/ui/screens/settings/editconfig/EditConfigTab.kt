@@ -37,6 +37,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.came.parkare.dashboardapp.domain.models.ResourceFileModel
+import com.came.parkare.dashboardapp.domain.models.ScreenAlignment
+import com.came.parkare.dashboardapp.ui.components.screen.ScreenMargins
+import com.came.parkare.dashboardapp.ui.components.screen.ScreenPreview
+import com.came.parkare.dashboardapp.ui.components.screen.ScreenPropertiesPanel
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toModel
 import com.came.parkare.dashboardapp.ui.components.AppButton
 import com.came.parkare.dashboardapp.ui.components.Base64Image
@@ -85,6 +89,8 @@ fun EditConfigTab(modifier: Modifier = Modifier){
             VerticalDivider()
             Column(modifier = Modifier.weight(0.35f)) {
                 EditorTitle()
+                ScreenProperties()
+                ElementCodeTitle()
                 EditorField()
             }
         }
@@ -95,33 +101,35 @@ fun EditConfigTab(modifier: Modifier = Modifier){
 private fun ElementsList(modifier: Modifier = Modifier) {
     val viewModel: EditConfigViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
-    if (state.elementsByScreen.isNotEmpty()){
+    val screen = state.selectedScreen
+    if (state.elementsByScreen.isNotEmpty() && screen != null){
         Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(text = stringResource(Res.string.screen_preview_label),
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold))
-            LazyColumn {
-                item {
-                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize().padding(4.dp)){
-                        val background = state.imagesSource.firstOrNull { it.fileName?.contains("background") == true }
-                        LoadBackground(background)
-                        Column(horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.padding(12.dp, 0.dp)) {
-                            for(i in state.elementsByScreen.indices){
-                                val mItem = state.elementsByScreen[i]
-
-                                Box(modifier = Modifier
-                                    .border(
-                                        width = 2.dp,
-                                        color = if (i == state.elementPosition) CameBlueColor else Color.Transparent,
-                                        shape = RoundedCornerShape(8.dp)
-                                    )
-                                    .clickable { viewModel.selectItemOnScreen(mItem, i) }
-                                ) {
-                                    BuildElement(mItem, state.textSizeScale, state.imagesSource)
-                                }
-                            }
-                        }
-                    }
+            // Same proportions, margins and position of the content as the monitor
+            ScreenPreview(
+                elements = state.elementsByScreen,
+                marginTop = screen.marginTop,
+                marginBottom = screen.marginBottom,
+                marginLeft = screen.marginLeft,
+                marginRight = screen.marginRight,
+                contentAlignment = ScreenAlignment.fromKey(screen.contentAlignment),
+                displaySize = state.displaySize,
+                textSizeScale = state.textSizeScale,
+                background = {
+                    val background = state.imagesSource.firstOrNull { it.fileName?.contains("background") == true }
+                    LoadBackground(background)
+                }
+            ) { i, mItem ->
+                Box(modifier = Modifier
+                    .border(
+                        width = 2.dp,
+                        color = if (i == state.elementPosition) CameBlueColor else Color.Transparent,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .clickable { viewModel.selectItemOnScreen(mItem, i) }
+                ) {
+                    BuildElement(mItem, state.textSizeScale, state.imagesSource)
                 }
             }
         }
@@ -170,6 +178,21 @@ private fun EditorField() {
 }
 
 @Composable
+private fun ScreenProperties() {
+    val viewModel: EditConfigViewModel = koinViewModel()
+    val state by viewModel.state.collectAsState()
+    val screen = state.selectedScreen ?: return
+    ScreenPropertiesPanel(
+        selectionKey = state.screenViewer,
+        margins = ScreenMargins(screen.marginTop, screen.marginBottom, screen.marginLeft, screen.marginRight),
+        alignment = ScreenAlignment.fromKey(screen.contentAlignment),
+        onMarginsChange = { viewModel.onScreenMarginsChange(it) },
+        onAlignmentChange = { viewModel.onScreenAlignmentChange(it) },
+        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+    )
+}
+
+@Composable
 private fun EditorTitle(){
     val viewModel: EditConfigViewModel = koinViewModel()
     val state by viewModel.state.collectAsState()
@@ -180,8 +203,15 @@ private fun EditorTitle(){
             text = stringResource(Res.string.update_button), onClick = {
                 viewModel.updateConfig(updateMessage)
             },
-            isEnabled = (!state.screenViewer.isNullOrBlank() && state.elementJsonCode.isNotEmpty())
+            // The screen properties are saved with UPDATE too, without selecting an element
+            isEnabled = !state.screenViewer.isNullOrBlank()
         )
+    }
+}
+
+@Composable
+private fun ElementCodeTitle() {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
         HorizontalDivider()
         Text(
             text = stringResource(Res.string.element_code_label),

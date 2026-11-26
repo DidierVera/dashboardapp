@@ -25,6 +25,8 @@ string|configuration_shared_with_errors|Q29uZmlndXJhdGlvbiBzaGFyZWQgd2l0aCBlcnJv
 string|connection_option|Q29ubmVjdGlvbg==
 string|connection_title|Q29ubmVjdGlvbiBzZXR0aW5ncw==
 string|connection_way_label|Q29ubmVjdGlvbiB3YXk=
+string|content_alignment_hint|UG9zaXRpb24gb2YgdGhlIGVsZW1lbnRzIGluc2lkZSB0aGUgbWFyZ2lucyBvZiB0aGUgc2NyZWVu
+string|content_alignment_label|Q29udGVudCBwb3NpdGlvbg==
 string|content_label|Q29udGVudDo=
 string|content_section_label|Q29udGVudA==
 string|create_new_button|Q1JFQVRFIE5FVw==
@@ -82,7 +84,11 @@ string|item_id_label|SXRlbSBJRA==
 string|json_tab_label|SlNPTg==
 string|lang_label|TGFuZw==
 string|local_file_path_label|TG9jYWwgZm9sZGVyIHBhdGg=
+string|margin_bottom_label|TWFyZ2luIGJvdHRvbQ==
 string|margin_label|TWFyZ2lu
+string|margin_left_label|TWFyZ2luIGxlZnQ=
+string|margin_right_label|TWFyZ2luIHJpZ2h0
+string|margin_top_label|TWFyZ2luIHRvcA==
 string|modal_initial_label|Q2hvb3NlIHdoYXQgZG8geW91IHdhbm5hIGRv
 string|move_down_tooltip|TW92ZSBkb3du
 string|move_up_tooltip|TW92ZSB1cA==
@@ -107,6 +113,7 @@ string|screen_count_label|U2NyZWVuIGNvdW50
 string|screen_list_label|U2NyZWVuIGxpc3Q=
 string|screen_name_label|U2NyZWVuIG5hbWU=
 string|screen_preview_label|U2NyZWVuIHByZXZpZXc=
+string|screen_properties_label|U2NyZWVuIHByb3BlcnRpZXM=
 string|screens_label|U2NyZWVucw==
 string|select_element_message|U2VsZWN0IGFuIGVsZW1lbnQgb24gdGhlIHNjcmVlbiBwcmV2aWV3IHRvIGVkaXQgaXQuLi4=
 string|select_screen_message|U2VsZWN0IHRoZSBzY3JlZW4gdG8gZWRpdC4uLg==

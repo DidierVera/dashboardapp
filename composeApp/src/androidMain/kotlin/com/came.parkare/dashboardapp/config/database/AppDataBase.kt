@@ -25,7 +25,7 @@ import com.came.parkare.dashboardapp.infrastructure.source.local.entities.config
         ConfigTemplateEntity::class
     ],
     exportSchema = false,
-    version = 6
+    version = 7
 )
 @TypeConverters(
     ElementListConverter::class,

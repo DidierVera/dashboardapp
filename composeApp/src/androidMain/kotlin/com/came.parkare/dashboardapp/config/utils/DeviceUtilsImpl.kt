@@ -5,8 +5,12 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
+import android.util.DisplayMetrics
+import android.view.WindowManager
 import androidx.core.content.pm.PackageInfoCompat
 import com.came.parkare.dashboardapp.config.dataclasses.AppVersion
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.DisplaySizeDto
+import kotlin.math.roundToInt
 
 class DeviceUtilsImpl(
     private val context: Context
@@ -24,6 +28,23 @@ class DeviceUtilsImpl(
             AppVersion(
                 versionName = packageInfo.versionName,
                 versionNumber = PackageInfoCompat.getLongVersionCode(packageInfo),
+            )
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    override fun getDisplaySize(): DisplaySizeDto? {
+        return try {
+            // Real size of the display (the app runs full screen, without system bars)
+            val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            val metrics = DisplayMetrics()
+            @Suppress("DEPRECATION")
+            windowManager.defaultDisplay.getRealMetrics(metrics)
+            DisplaySizeDto(
+                widthDp = (metrics.widthPixels / metrics.density).roundToInt(),
+                heightDp = (metrics.heightPixels / metrics.density).roundToInt(),
+                density = metrics.density
             )
         } catch (e: Exception) {
             null

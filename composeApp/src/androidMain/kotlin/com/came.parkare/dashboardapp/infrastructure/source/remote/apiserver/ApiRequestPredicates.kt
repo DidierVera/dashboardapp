@@ -12,6 +12,7 @@ import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_IMAGES
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_SCREENS_CONFIG
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_SCREEN_CONFIG_TYPE
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_VERSION
+import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.GET_DISPLAY
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_CONFIG_TEMPLATE
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_CONNECTION_CONFIG
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_DEVICE
@@ -92,6 +93,10 @@ object ApiRequestPredicates {
     fun NanoHTTPD.IHTTPSession.isUpdateConfigTemplate(): Boolean {
         return uri == UPDATE_CONFIG_TEMPLATE && method == NanoHTTPD.Method.POST
     }
+    fun NanoHTTPD.IHTTPSession.isGetDisplay(): Boolean {
+        return uri == GET_DISPLAY && method == NanoHTTPD.Method.GET
+    }
+
     fun NanoHTTPD.IHTTPSession.isGetVersion(): Boolean {
         return uri == GET_VERSION && method == NanoHTTPD.Method.GET
     }

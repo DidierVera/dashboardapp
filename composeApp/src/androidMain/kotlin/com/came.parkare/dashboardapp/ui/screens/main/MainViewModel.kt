@@ -24,6 +24,7 @@ import com.came.parkare.dashboardapp.config.dataclasses.TypeConnectionEnum
 import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.IServerConnection
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
+import com.came.parkare.dashboardapp.domain.models.ScreenModel
 import com.came.parkare.dashboardapp.domain.models.components.ElementModel
 import com.came.parkare.dashboardapp.domain.models.terminal.TerminalResponseModel
 import com.came.parkare.dashboardapp.domain.repositories.local.DashboardElementRepository
@@ -36,6 +37,7 @@ import com.came.parkare.dashboardapp.ui.utils.FilesUtils
 import com.came.parkare.dashboardapp.ui.utils.FontViewModel
 import com.came.parkare.dashboardapp.ui.utils.SystemBrightnessManager
 import com.came.parkare.dashboardapp.ui.utils.UiUtils
+import com.came.parkare.dashboardapp.ui.utils.screenContentPadding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -106,6 +108,9 @@ class MainViewModel (
         get() = _delayBrightnessTimeout.asStateFlow()
 
     private var loopJob: Job? = null
+
+    // Last screen shown (dispatcher and DITs), drawn again when the configuration changes
+    private var lastTerminalData: TerminalResponseModel? = null
     init {
         try {
             appLogger.trackLog("INIT", "Inicio de aplicación")
@@ -270,7 +275,21 @@ class MainViewModel (
             }
             registerTerminalListener()
             _isInitialized.update { true }
+            redrawCurrentScreen()
         }
+    }
+
+    /**
+     * After a change saved from the web configurator (screens, margins, position, connection),
+     * the screen on display is drawn again with the same terminal data, so the change is seen at
+     * once. Before it was only seen with the next terminal event (or, by accident, when the
+     * SignalR status changed).
+     */
+    private fun redrawCurrentScreen() {
+        val data = lastTerminalData ?: return
+        val lang = _itemsState.value.translations.firstOrNull() ?: "en"
+        appLogger.trackLog("REDRAW_SCREEN", "dispatcherCode=${data.dispatcherCode}")
+        loadScreenInformation(data, lang)
     }
 
     private fun loadLanguages(screenElements: List<ElementModel>) {
@@ -363,6 +382,7 @@ class MainViewModel (
         data: TerminalResponseModel,
         lang: String = "lang1"
     ) {
+        lastTerminalData = data
         viewModelScope.launch {
             val screen = getScreenByDispatcher.invoke(data.dispatcherCode)
             //appLogger.trackLog("LOAD_SCREEN", "dispatcherCode=${data.dispatcherCode}, screen found: ${screen != null}, screenList size: ${_itemsState.value.screenList.size}")
@@ -371,7 +391,7 @@ class MainViewModel (
                 val shouldStartBrightness = screen.dispatcherCode == 5L && activeBrightnessMode.value
                 _startBrightnessMode.update { shouldStartBrightness }
 
-                checkContentMargin(screen.marginLeft, screen.marginTop, screen.marginRight, screen.marginBottom)
+                checkContentLayout(screen)
                 _itemsState.update { it.copy(ditsUI = data.ditsTUI) }
                 val buildElements = ditsUtils.buildDashboardItem(screen.elements, data.ditsTUI, lang)
                 _itemsState.update { it.copy(newItems = buildElements) }
@@ -426,12 +446,12 @@ class MainViewModel (
         }
     }
 
-    private fun checkContentMargin(marginLeft: Int, marginTop: Int, marginRight: Int, marginBottom: Int) {
-        val scaleFactor = (_itemsState.value.textSizeScale / 10f).coerceIn(0.5f, 3f)
-        _itemsState.update { it.copy(contentPadding = PaddingValues(
-            (marginLeft.toFloat() * scaleFactor).dp, (marginTop.toFloat() * scaleFactor).dp,
-            (marginRight.toFloat() * scaleFactor).dp, (marginBottom.toFloat() * scaleFactor).dp))
-        }
+    private fun checkContentLayout(screen: ScreenModel) {
+        _itemsState.update { it.copy(
+            contentPadding = screenContentPadding(
+                screen.marginLeft, screen.marginTop, screen.marginRight, screen.marginBottom, it.textSizeScale),
+            contentAlignment = screen.contentAlignment
+        ) }
     }
 
     private fun checkTextSizeScale() {

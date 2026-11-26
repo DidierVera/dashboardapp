@@ -7,18 +7,22 @@ import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.ErrorValidator
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
+import com.came.parkare.dashboardapp.domain.models.ScreenAlignment
 import com.came.parkare.dashboardapp.domain.models.ScreenModel
 import com.came.parkare.dashboardapp.domain.models.components.ElementModel
 import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
+import com.came.parkare.dashboardapp.domain.usecases.GetDisplaySize
 import com.came.parkare.dashboardapp.domain.usecases.GetImages
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
 import com.came.parkare.dashboardapp.domain.usecases.SaveScreenConfig
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.toModel
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.ScreenDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ElementDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.toDto
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toModel
 import com.came.parkare.dashboardapp.ui.components.dialog.AppDialogState
 import com.came.parkare.dashboardapp.ui.components.properties.toPrettyJson
+import com.came.parkare.dashboardapp.ui.components.screen.ScreenMargins
 import com.came.parkare.dashboardapp.ui.utils.WasmUtilsHandler
 import dashboardapp.composeapp.generated.resources.Res
 import dashboardapp.composeapp.generated.resources.screen_config_saved_message
@@ -39,6 +43,7 @@ class EditConfigViewModel(
     private val getConnectionConfig: GetConnectionConfig,
     private val preferences: SharedPreferencesProvider,
     private val getImages: GetImages,
+    private val getDisplaySize: GetDisplaySize,
     private val appLogger: AppLogger
 ): ViewModel() {
 
@@ -80,6 +85,28 @@ class EditConfigViewModel(
                 )}
                 wasmUtilsHandler.showLoading(false)
             }
+        }
+        // Size of the monitor so the preview keeps its proportions
+        _state.update { it.copy(displaySize = getDisplaySize.invoke()) }
+    }
+
+    /** Margins of the selected screen, applied to the preview at once and saved with UPDATE. */
+    fun onScreenMarginsChange(margins: ScreenMargins) {
+        updateSelectedScreen { it.copy(
+            marginTop = margins.top, marginBottom = margins.bottom,
+            marginLeft = margins.left, marginRight = margins.right
+        ) }
+    }
+
+    /** Position of the content of the selected screen, saved with UPDATE. */
+    fun onScreenAlignmentChange(alignment: ScreenAlignment) {
+        updateSelectedScreen { it.copy(contentAlignment = ScreenAlignment.toKeyOrNull(alignment)) }
+    }
+
+    private fun updateSelectedScreen(change: (ScreenDto) -> ScreenDto) {
+        _state.update { state ->
+            val screenId = state.screenViewer ?: return@update state
+            state.copy(screens = state.screens.map { if (it.screenId == screenId) change(it) else it })
         }
     }
 

@@ -14,6 +14,7 @@ import com.came.parkare.dashboardapp.domain.usecases.DeleteDevice
 import com.came.parkare.dashboardapp.domain.usecases.DeleteTemplate
 import com.came.parkare.dashboardapp.domain.usecases.GetAppVersion
 import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
+import com.came.parkare.dashboardapp.domain.usecases.GetDisplaySize
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceList
 import com.came.parkare.dashboardapp.domain.usecases.GetDeviceStatus
 import com.came.parkare.dashboardapp.domain.usecases.GetScreensConfig
@@ -131,6 +132,7 @@ val wasmAppModule = module {
     single { DeleteDevice(get(), get()) }
     single { GetDeviceStatus(get(), get()) }
     single { GetAppVersion(get(), get()) }
+    single { GetDisplaySize(get(), get(), get()) }
     single { GetImages(get(), get()) }
     single { SaveImages(get(), get()) }
     single { SaveFonts(get(), get()) }
