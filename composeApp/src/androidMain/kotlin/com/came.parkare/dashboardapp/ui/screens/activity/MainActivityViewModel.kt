@@ -1,78 +1,94 @@
 package com.came.parkare.dashboardapp.ui.screens.activity
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.came.parkare.dashboardapp.config.constants.Constants.API_PORT
 import com.came.parkare.dashboardapp.config.constants.Constants.FTP_APP_PASSWORD
-import com.came.parkare.dashboardapp.config.constants.Constants.FTP_APP_PORT
 import com.came.parkare.dashboardapp.config.constants.Constants.FTP_APP_USER
 import com.came.parkare.dashboardapp.config.constants.Constants.FTP_DEVICE_PASSWORD
-import com.came.parkare.dashboardapp.config.constants.Constants.FTP_DEVICE_PORT
 import com.came.parkare.dashboardapp.config.constants.Constants.FTP_DEVICE_USER
+import com.came.parkare.dashboardapp.config.constants.DefaultPorts
+import com.came.parkare.dashboardapp.config.utils.AppLogger
+import com.came.parkare.dashboardapp.config.utils.ResolvedServerPorts
 import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
+import com.came.parkare.dashboardapp.domain.usecases.LoadServerPorts
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.AndroidApiServer
-import com.came.parkare.dashboardapp.ui.utils.ConfigUI
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.AndroidApiServerFactory
 import com.came.parkare.dashboardapp.ui.utils.FTPServer
+import com.came.parkare.dashboardapp.ui.utils.startWithFallback
 import fi.iki.elonen.NanoHTTPD
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 
 class MainActivityViewModel (
     private val preferences: SharedPreferencesProvider,
     private val ftpServerConfig: FTPServer,
     private val ftpServerRoot: FTPServer,
-    private val androidApiServer: AndroidApiServer
+    private val androidApiServerFactory: AndroidApiServerFactory,
+    private val loadServerPorts: LoadServerPorts,
+    private val appLogger: AppLogger
 ): ViewModel() {
 
-    fun startDeviceFtpServer(rootDir: String){
-        ftpServerConfig.stopServer()
-        val port = preferences.get(FTP_DEVICE_PORT, 2121)
-        val username = preferences.get(FTP_DEVICE_USER, "Parkare")
-        val password = preferences.get(FTP_DEVICE_PASSWORD, "Parking2010")
-        ftpServerConfig.startServer(port, username, password, rootDir)
-    }
+    private var androidApiServer: AndroidApiServer? = null
 
-    fun startAppFtpServer(rootDir: String){
-        ftpServerRoot.stopServer()
-        val port = preferences.get(FTP_APP_PORT, 2122)
-        val username = preferences.get(FTP_APP_USER, "admin")
-        val password = preferences.get(FTP_APP_PASSWORD, "Parking2010")
-        ftpServerRoot.startServer(port, username, password, rootDir)
-    }
+    suspend fun loadServerPorts(): ResolvedServerPorts = loadServerPorts.invoke()
 
-    fun initAndroidServer(showMessage: (String) -> Unit){
-        try {
-            // Add small delay to ensure port is released
-            viewModelScope.launch(Dispatchers.IO) {
-                Thread.sleep(500)
+    /** Returns the port where the server is listening, or null if it did not start. */
+    suspend fun startDeviceFtpServer(rootDir: String, port: Int, showMessage: (String) -> Unit): Int? =
+        withContext(Dispatchers.IO) {
+            ftpServerConfig.stopServer()
+            val username = preferences.get(FTP_DEVICE_USER, "Parkare")
+            val password = preferences.get(FTP_DEVICE_PASSWORD, "Parking2010")
+            startWithFallback("FTP device", port, DefaultPorts.FTP_DEVICE, { report(it, showMessage) }) { p ->
+                ftpServerConfig.startServer(p, username, password, rootDir)
+            }
+        }
 
-                val port = preferences.get(API_PORT, 2023)
+    /** Returns the port where the server is listening, or null if it did not start. */
+    suspend fun startAppFtpServer(rootDir: String, port: Int, showMessage: (String) -> Unit): Int? =
+        withContext(Dispatchers.IO) {
+            ftpServerRoot.stopServer()
+            val username = preferences.get(FTP_APP_USER, "admin")
+            val password = preferences.get(FTP_APP_PASSWORD, "Parking2010")
+            startWithFallback("FTP app", port, DefaultPorts.FTP_APP, { report(it, showMessage) }) { p ->
+                ftpServerRoot.startServer(p, username, password, rootDir)
+            }
+        }
 
-                // Create new instance instead of reusing old one
-                androidApiServer.stop()
-                androidApiServer.start(NanoHTTPD.SOCKET_READ_TIMEOUT, false)
+    /** Returns the port where the server is listening, or null if it did not start. */
+    suspend fun startAndroidApiServer(port: Int, showMessage: (String) -> Unit): Int? =
+        withContext(Dispatchers.IO) {
+            // The previous instance (onStart runs again when the activity comes back) holds the port
+            androidApiServer?.stop()
+            androidApiServer = null
+            // Small delay to ensure the port is released
+            delay(500)
 
-                val ipAddress = ConfigUI.getEthernetIpAddress()
-                val ipByWifi = ConfigUI.getWifiIpAddress()
-                withContext(Dispatchers.Main){
-                    ipAddress?.let {
-                        showMessage("API iniciado en: http://$it:$port")
-                    }
-                    ipByWifi?.let {
-                        showMessage("API iniciado en: http://$it:$port")
-                    }
+            startWithFallback("API", port, DefaultPorts.API, { report(it, showMessage) }) { p ->
+                val server = androidApiServerFactory.create(p)
+                try {
+                    server.start(NanoHTTPD.SOCKET_READ_TIMEOUT, false)
+                    androidApiServer = server
+                    true
+                } catch (e: Exception) {
+                    appLogger.trackError(e)
+                    false
                 }
             }
-
-        } catch (e: Exception) {
-            showMessage("API: ${e.message ?: "Unknown error"}")
         }
+
+    fun logServerMessage(message: String) {
+        appLogger.trackLog("SERVER_PORTS", message)
+    }
+
+    private suspend fun report(message: String, showMessage: (String) -> Unit) {
+        appLogger.trackLog("SERVER_PORTS", message)
+        withContext(Dispatchers.Main) { showMessage(message) }
     }
 
     fun stopServers(){
         ftpServerConfig.stopServer()
         ftpServerRoot.stopServer()
-        androidApiServer.stop()
+        androidApiServer?.stop()
+        androidApiServer = null
     }
 }

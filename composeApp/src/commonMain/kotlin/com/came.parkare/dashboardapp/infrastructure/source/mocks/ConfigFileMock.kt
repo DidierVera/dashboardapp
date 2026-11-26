@@ -50,6 +50,7 @@ object ConfigFileMock {
                 "api": "signalr",
                 "time-delay": 5,
                 "api-port": 2023,
+                "web-port": 8080,
                 "video-frame": false,
                 "text-size-scale": 10,
                 "auto-brightness-mode": false, 

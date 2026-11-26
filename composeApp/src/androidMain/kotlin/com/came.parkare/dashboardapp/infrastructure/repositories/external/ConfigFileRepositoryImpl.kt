@@ -11,6 +11,8 @@ import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_PORT
 import com.came.parkare.dashboardapp.config.constants.Constants.TEXT_SIZE_SCALE
 import com.came.parkare.dashboardapp.config.constants.Constants.TIME_DELAY
 import com.came.parkare.dashboardapp.config.constants.Constants.VIDEO_FRAME
+import com.came.parkare.dashboardapp.config.constants.Constants.WEB_PORT
+import com.came.parkare.dashboardapp.config.constants.DefaultPorts
 import com.came.parkare.dashboardapp.config.dataclasses.ErrorTypeClass
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.dataclasses.TypeConnectionEnum
@@ -34,6 +36,7 @@ import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.t
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.toModel
 import com.came.parkare.dashboardapp.infrastructure.source.mocks.ConfigFileMock
 import kotlinx.coroutines.Dispatchers
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.coroutines.withContext
 
 class ConfigFileRepositoryImpl(
@@ -62,12 +65,43 @@ class ConfigFileRepositoryImpl(
         }
     }
 
+    override suspend fun readServerPorts(): ServiceResult<Boolean> {
+        // Only the ports of the local servers: the rest of the file (and the terminal connection)
+        // is applied later by getConnectionConfig, once the screens are loaded
+        when (val dataFromFile = configFileDao.readJsonFromFile<ConnectionConfigDto>(
+            filename = "connection_config.json",
+            defaultValues = ConfigFileMock.getConnectionConfiguration()
+        )){
+            is ServiceResult.Error -> return ServiceResult.Error(dataFromFile.error)
+            is ServiceResult.Success -> {
+                val data = dataFromFile.data ?: return ServiceResult.Error(ErrorTypeClass.WrongConfigFile)
+                saveServerPorts(data)
+                if (data.webPort == null) {
+                    // Files written before version 2.2.0 have no web-port: add it with the
+                    // default so the technician sees every port in the file
+                    configFileDao.addKeyIfMissing(
+                        filename = "connection_config.json",
+                        key = "web-port",
+                        value = JsonPrimitive(DefaultPorts.WEB),
+                        afterKey = "api-port"
+                    )
+                }
+                return ServiceResult.Success(true)
+            }
+        }
+    }
+
+    private fun saveServerPorts(data: ConnectionConfigDto) {
+        preferences.put(API_PORT, data.apiPort)
+        preferences.put(WEB_PORT, data.webPort ?: DefaultPorts.WEB)
+    }
+
     private suspend fun saveConnectionConfig(data: ConnectionConfigDto) {
         //storage local config preferences
         preferences.put(TERMINAL_IP, data.terminalIp)
         preferences.put(TERMINAL_PORT, data.port)
         preferences.put(TERMINAL_API, data.terminalApi)
-        preferences.put(API_PORT, data.apiPort)
+        saveServerPorts(data)
         preferences.put(TIME_DELAY, data.timeDelay)
         preferences.put(VIDEO_FRAME, data.videoFrame)
         preferences.put(TEXT_SIZE_SCALE, data.textSizeScale)

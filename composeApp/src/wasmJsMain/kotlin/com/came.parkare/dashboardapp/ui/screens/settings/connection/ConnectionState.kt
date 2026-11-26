@@ -14,5 +14,8 @@ data class ConnectionState(
     val showBrightnessMode: Boolean = false,
     val showCarCounter: Boolean = false,
     val brightnessDelay: Int = 2,
-    val carCounterReset: Int = 1
+    val carCounterReset: Int = 1,
+    // Not editable from the web: kept as loaded so saving does not overwrite the file values
+    val apiPort: Int? = null,
+    val webPort: Int? = null
 )

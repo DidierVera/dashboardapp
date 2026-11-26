@@ -29,6 +29,7 @@ import com.came.parkare.dashboardapp.domain.usecases.GetImageFromDbByName
 import com.came.parkare.dashboardapp.domain.usecases.GetScreenByDispatcher
 import com.came.parkare.dashboardapp.domain.usecases.GetScreenConfigurations
 import com.came.parkare.dashboardapp.domain.usecases.InitConfiguration
+import com.came.parkare.dashboardapp.domain.usecases.LoadServerPorts
 import com.came.parkare.dashboardapp.domain.usecases.StartSocketConnection
 import com.came.parkare.dashboardapp.getPlatform
 import com.came.parkare.dashboardapp.infrastructure.repositories.external.ConfigFileRepositoryImpl
@@ -40,7 +41,7 @@ import com.came.parkare.dashboardapp.infrastructure.repositories.local.ImageRepo
 import com.came.parkare.dashboardapp.infrastructure.repositories.remote.TerminalConnectionImpl
 import com.came.parkare.dashboardapp.infrastructure.source.external.ConfigFileDao
 import com.came.parkare.dashboardapp.infrastructure.source.external.FontFileDao
-import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.AndroidApiServer
+import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.AndroidApiServerFactory
 import com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver.ApiServerRepositoryImpl
 import com.came.parkare.dashboardapp.infrastructure.source.remote.services.MockService
 import com.came.parkare.dashboardapp.infrastructure.source.remote.services.SignalRService
@@ -74,7 +75,7 @@ val utilsModule = module {
     singleOf(::DeviceUtilsImpl) { bind<DeviceUtils>() }
     factory { getPlatform() }
     factory { FTPServer() }
-    factory { AndroidApiServer(get(),get(),get(),get(),get(),get()) }
+    factory { AndroidApiServerFactory(get(),get(),get(),get(),get(),get()) }
     single<FirebaseAnalytics> {
         FirebaseAnalytics.getInstance(get())
     }
@@ -93,6 +94,7 @@ val useCasesModule = module {
     factory { InitConfiguration(get(), get(), get(), get(), get()) }
     factory { StartSocketConnection(get(), get()) }
     factory { FtpServerConfiguration(get(), get()) }
+    factory { LoadServerPorts(get(), get(), get(), get()) }
     factory { GetScreenByDispatcher(get(), get()) }
     factory { GetScreenConfigurations(get(), get()) }
     factory { GetDefaultImages(get(), get()) }

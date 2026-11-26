@@ -27,6 +27,7 @@ import com.came.parkare.dashboardapp.config.utils.SharedPreferencesProvider
 import com.came.parkare.dashboardapp.domain.models.components.ElementModel
 import com.came.parkare.dashboardapp.domain.models.terminal.TerminalResponseModel
 import com.came.parkare.dashboardapp.domain.repositories.local.DashboardElementRepository
+import com.came.parkare.dashboardapp.domain.usecases.ConnectionConfig
 import com.came.parkare.dashboardapp.domain.usecases.GetScreenByDispatcher
 import com.came.parkare.dashboardapp.domain.usecases.InitConfiguration
 import com.came.parkare.dashboardapp.domain.usecases.StartSocketConnection
@@ -56,6 +57,7 @@ import kotlin.coroutines.cancellation.CancellationException
 
 class MainViewModel (
     private val initConfiguration: InitConfiguration,
+    private val connectionConfig: ConnectionConfig,
     private val startParkingConnection: StartSocketConnection,
     private val getScreenByDispatcher: GetScreenByDispatcher,
     private val ditsUtils: UiUtils,
@@ -68,6 +70,7 @@ class MainViewModel (
     private val fontViewModel: FontViewModel
 ): ViewModel() {
     private var isInitializing = false
+    private var terminalListenerRegistered = false
 
     private val _isInitialized = MutableStateFlow(false)
 
@@ -123,7 +126,6 @@ class MainViewModel (
 
         registerScreensListener()
         registerConnectionSignal()
-        registerTerminalListener()
     }
 
     private fun initAllConfig() {
@@ -188,7 +190,11 @@ class MainViewModel (
         }
     }
 
+    // Registered once the connection file has been read (getAllDataFromServices), so the
+    // terminal connection does not start first with the default way (SignalR)
     private fun registerTerminalListener() {
+        if (terminalListenerRegistered) return
+        terminalListenerRegistered = true
         serverConnection.typeConnection.onEach { connection ->
             setTerminalConnection(connection)
         }.launchIn(viewModelScope)
@@ -248,13 +254,21 @@ class MainViewModel (
                 when (val initConfigResult = initConfiguration.invoke()){
                     is ServiceResult.Error -> {
                         validateError(initConfigResult.error)
+                        registerTerminalListener()
                         return@launch
                     }
                     is ServiceResult.Success -> { /* continue */ }
                 }
             } else {
+                // The connection way is only kept in memory, so the connection file is read on
+                // every start; before, a restart with screens in the database always used SignalR
+                val connectionResult = connectionConfig.invoke()
+                if (connectionResult is ServiceResult.Error) {
+                    appLogger.trackLog("CONNECTION_CONFIG", "connection_config.json could not be read: ${connectionResult.error}")
+                }
                 serverConnection.setScreensList(existingScreens)
             }
+            registerTerminalListener()
             _isInitialized.update { true }
         }
     }

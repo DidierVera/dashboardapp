@@ -1,5 +1,6 @@
 package com.came.parkare.dashboardapp.infrastructure.source.external.dto.device
 
+import com.came.parkare.dashboardapp.config.constants.DefaultPorts
 import com.came.parkare.dashboardapp.domain.models.ConnectionConfigModel
 import com.came.parkare.dashboardapp.domain.models.toDto
 import kotlinx.serialization.SerialName
@@ -11,6 +12,8 @@ data class ConnectionConfigDto(
     @SerialName("terminal-ip") val terminalIp: String,
     @SerialName("port") val port: Int,
     @SerialName("api-port") val apiPort: Int,
+    // Optional so the files written before this key existed keep parsing; null means the default port
+    @SerialName("web-port") val webPort: Int? = null,
     @SerialName("api") val terminalApi: String?,
     @SerialName("time-delay") val timeDelay: Int,
     @SerialName("video-frame") val videoFrame: Boolean,
@@ -24,8 +27,8 @@ data class ConnectionConfigDto(
 fun ConnectionConfigDto.toModel(): ConnectionConfigModel {
     return ConnectionConfigModel(
         connectionWay=connectionWay,
-        terminalIp=terminalIp, port=port, apiPort=apiPort, terminalApi=terminalApi,
-        timeDelay=timeDelay, videoFrame=videoFrame, textSizeScale=textSizeScale,
+        terminalIp=terminalIp, port=port, apiPort=apiPort, webPort = webPort ?: DefaultPorts.WEB,
+        terminalApi=terminalApi, timeDelay=timeDelay, videoFrame=videoFrame, textSizeScale=textSizeScale,
         autoBrightness = autoBrightness == true, activeLowBrightnessTime = activeLowBrightnessTime ?: 2,
         showCarCounter = showCarCounter == true, carCounterReset = carCounterReset ?: 1
     )
@@ -34,8 +37,8 @@ fun ConnectionConfigDto.toModel(): ConnectionConfigModel {
 fun ConnectionConfigModel.toDto(): ConnectionConfigDto {
     return ConnectionConfigDto(
         connectionWay=connectionWay,
-        terminalIp=terminalIp, port=port, apiPort=apiPort, terminalApi=terminalApi,
-        timeDelay=timeDelay, videoFrame=videoFrame, textSizeScale=textSizeScale,
+        terminalIp=terminalIp, port=port, apiPort=apiPort, webPort = webPort,
+        terminalApi=terminalApi, timeDelay=timeDelay, videoFrame=videoFrame, textSizeScale=textSizeScale,
         autoBrightness = autoBrightness, activeLowBrightnessTime = activeLowBrightnessTime,
         showCarCounter = showCarCounter, carCounterReset = carCounterReset
     )

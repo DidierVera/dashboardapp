@@ -13,6 +13,7 @@ import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_IMAGES
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SSL_PROTOCOL
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.UPLOAD_FONT
 import com.came.parkare.dashboardapp.config.constants.Constants.API_PORT
+import com.came.parkare.dashboardapp.config.constants.DefaultPorts
 import com.came.parkare.dashboardapp.config.dataclasses.ErrorTypeClass
 import com.came.parkare.dashboardapp.config.dataclasses.ResponseStatusDto
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
@@ -35,7 +36,9 @@ class DeviceRepositoryImpl(
     private val appLogger: AppLogger,
     private val preferences: WasmSharedPreferencesProvider
 ): DeviceRepository {
-    private val apiPort = preferences.get(API_PORT, 2023)
+    // Read on each request: the port comes from /runtime-config.json and may change after start
+    private val apiPort: Int
+        get() = preferences.get(API_PORT, DefaultPorts.API)
     override suspend fun getCurrentConfiguration(ipAddress: String): ServiceResult<ConnectionConfigDto> {
         return try {
             val currentConfig = httpClient.get<ConnectionConfigDto>("$SSL_PROTOCOL$ipAddress:$apiPort$GET_CONNECTION_CONFIG")

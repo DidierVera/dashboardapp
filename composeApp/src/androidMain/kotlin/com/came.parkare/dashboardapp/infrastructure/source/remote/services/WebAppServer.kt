@@ -1,7 +1,10 @@
 package com.came.parkare.dashboardapp.infrastructure.source.remote.services
 
 import android.content.Context
+import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.RUNTIME_CONFIG
+import com.came.parkare.dashboardapp.infrastructure.source.external.dto.device.RuntimeConfigDto
 import fi.iki.elonen.NanoHTTPD
+import kotlinx.serialization.json.Json
 import java.io.File
 import java.io.IOException
 import fi.iki.elonen.NanoHTTPD.Response.Status
@@ -9,7 +12,8 @@ import java.io.FileNotFoundException
 
 class WebAppServer(
     private val context: Context,
-    port: Int
+    port: Int,
+    private val apiPort: Int
 ) : NanoHTTPD(port) {
 
     private val webAppDir = File(context.cacheDir, "webapp")
@@ -20,6 +24,8 @@ class WebAppServer(
     }
 
     override fun serve(session: IHTTPSession): Response {
+        if (session.uri == RUNTIME_CONFIG) return runtimeConfigResponse()
+
         var uri = session.uri.trimStart('/')
 
         // Handle root path by redirecting to default file
@@ -42,6 +48,14 @@ class WebAppServer(
     override fun useGzipWhenAccepted(r: Response): Boolean {
         val mimeType = r.mimeType?.lowercase() ?: return false
         return mimeType.startsWith("text/") || mimeType in GZIP_MIME_TYPES
+    }
+
+    // Ports in use (after validation and fallback), so the web app calls the API on the right port
+    private fun runtimeConfigResponse(): Response {
+        val body = Json.encodeToString(RuntimeConfigDto(apiPort = apiPort, webPort = listeningPort))
+        return newFixedLengthResponse(Status.OK, "application/json", body).apply {
+            addHeader("Cache-Control", "no-store")
+        }
     }
 
     private fun serveFile(file: File): Response {

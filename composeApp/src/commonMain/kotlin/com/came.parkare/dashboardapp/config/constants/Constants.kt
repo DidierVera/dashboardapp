@@ -9,6 +9,7 @@ object Constants {
     const val TERMINAL_PORT = "TerminalPort"
     const val TERMINAL_API = "TerminalApi"
     const val API_PORT = "apiPort"
+    const val WEB_PORT = "webPort"
     const val TIME_DELAY = "timeDelay"
     const val VIDEO_FRAME = "videoFrame"
     const val TEXT_SIZE_SCALE = "textSizeScale"

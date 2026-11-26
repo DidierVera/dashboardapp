@@ -120,8 +120,8 @@ android {
         applicationId = "com.came.parkare.dashboardapp"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 88
-        versionName = "2.1.9"
+        versionCode = 89
+        versionName = "2.2.0"
     }
     packaging {
         resources {

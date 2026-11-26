@@ -32,7 +32,8 @@ class FTPServer{
             }
 
             userManager.save(user)
-            serverFactory.userManager = userManager
+            // The user name is not case sensitive (the password is)
+            serverFactory.userManager = CaseInsensitiveUserManager(userManager)
 
             ftpServer = serverFactory.createServer()
             ftpServer?.start()

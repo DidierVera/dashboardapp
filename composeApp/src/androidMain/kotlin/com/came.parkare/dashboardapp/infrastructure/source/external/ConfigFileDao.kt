@@ -8,6 +8,9 @@ import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.infrastructure.source.external.dto.screen.elements.ElementDto
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import java.io.File
@@ -66,6 +69,42 @@ class ConfigFileDao (
             }
         } else {
             return ServiceResult.Error(ErrorTypeClass.ConfigFileNotExist)
+        }
+    }
+
+    /**
+     * Adds [key] to the JSON object of [filename] when it is missing, right after [afterKey]
+     * (or at the end). The other keys keep their values and order, including the ones the app
+     * does not know. Returns true if the file was changed.
+     */
+    fun addKeyIfMissing(filename: String, key: String, value: JsonElement, afterKey: String? = null): Boolean {
+        val folder = getFolderPath() ?: return false
+        val file = File(folder, filename)
+        if (!file.exists()) return false
+
+        return try {
+            val content = file.readText(Charsets.UTF_8).trimStart('﻿')
+            val current = json.parseToJsonElement(content).jsonObject
+            if (key in current) return false
+
+            val updated = LinkedHashMap<String, JsonElement>()
+            var inserted = false
+            for ((k, v) in current) {
+                updated[k] = v
+                if (k == afterKey) {
+                    updated[key] = value
+                    inserted = true
+                }
+            }
+            if (!inserted) updated[key] = value
+
+            file.writeText(json.encodeToString(JsonObject.serializer(), JsonObject(updated)))
+            file.setExecutable(true, false)
+            appLogger.trackLog("CONFIG_FILE", "Added the missing key $key to $filename")
+            true
+        } catch (ex: Exception) {
+            appLogger.trackError(ex)
+            false
         }
     }
 

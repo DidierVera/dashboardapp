@@ -7,6 +7,7 @@ data class ConnectionConfigModel(
     val terminalIp: String,
     val port: Int,
     val apiPort: Int,
+    val webPort: Int,
     val terminalApi: String?,
     val timeDelay: Int,
     val videoFrame: Boolean,

@@ -1,7 +1,6 @@
 package com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver
 
 import android.util.Log
-import com.came.parkare.dashboardapp.config.constants.Constants.API_PORT
 import com.came.parkare.dashboardapp.config.dataclasses.ResponseStatusDto
 import com.came.parkare.dashboardapp.config.utils.AppLogger
 import com.came.parkare.dashboardapp.config.utils.DeviceUtils
@@ -53,7 +52,7 @@ class AndroidApiServer(
     private val appLogger: AppLogger,
     private val deviceUtils: DeviceUtils,
     private val mockService: MockService,
-    port: Int = preferences.get(API_PORT, 2023)
+    port: Int
 ): NanoHTTPD(port) {
     private val TAG = "AndroidApiServer"
 

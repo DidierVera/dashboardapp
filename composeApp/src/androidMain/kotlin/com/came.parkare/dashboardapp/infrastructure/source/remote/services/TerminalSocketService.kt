@@ -1,7 +1,7 @@
 package com.came.parkare.dashboardapp.infrastructure.source.remote.services
 
 import android.util.Log
-import com.came.parkare.dashboardapp.config.constants.Constants.SOCKET_URL
+import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_IP
 import com.came.parkare.dashboardapp.config.constants.Constants.TERMINAL_PORT
 import com.came.parkare.dashboardapp.config.dataclasses.ErrorTypeClass
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
@@ -33,7 +33,8 @@ class TerminalSocketService(
     fun startConnection(onSocketResult: (ServiceResult<TerminalResponseDto>) -> Unit) {
         //cleanup() // Clean up any existing connection
 
-        val serverIp = preferences.get(SOCKET_URL, "192.168.209.105")
+        // Same terminal IP as SignalR: SOCKET_URL was never written, so the socket always used the default IP
+        val serverIp = preferences.get(TERMINAL_IP, "192.168.209.105")
         val serverPort = preferences.get(TERMINAL_PORT, 9010)
 
         socketScope.launch {

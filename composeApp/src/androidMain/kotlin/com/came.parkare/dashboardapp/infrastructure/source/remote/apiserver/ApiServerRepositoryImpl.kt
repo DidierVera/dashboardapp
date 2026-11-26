@@ -1,6 +1,8 @@
 package com.came.parkare.dashboardapp.infrastructure.source.remote.apiserver
 
 import com.came.parkare.dashboardapp.config.constants.Constants.API_PORT
+import com.came.parkare.dashboardapp.config.constants.Constants.WEB_PORT
+import com.came.parkare.dashboardapp.config.constants.DefaultPorts
 import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS
 import com.came.parkare.dashboardapp.config.constants.Constants.AUTO_BRIGHTNESS_DELAY_TIME
 import com.came.parkare.dashboardapp.config.constants.Constants.CONFIG_TYPE
@@ -90,7 +92,9 @@ class ApiServerRepositoryImpl(
         val terminalIp = preferences.get(TERMINAL_IP, "0.0.0.0")
         val port = preferences.get(TERMINAL_PORT, 9011)
         val terminalApi = preferences.get(TERMINAL_API, "")
-        val apiPort = preferences.get(API_PORT, 2023)
+        // Values of the file (not the ports in use after a fallback), so saving from the web keeps them
+        val apiPort = preferences.get(API_PORT, DefaultPorts.API)
+        val webPort = preferences.get(WEB_PORT, DefaultPorts.WEB)
         val timeDelay = preferences.get(TIME_DELAY, 4)
         val videoFrame = preferences.get(VIDEO_FRAME, false)
         val textSizeScale = preferences.get(TEXT_SIZE_SCALE, 10)
@@ -111,6 +115,7 @@ class ApiServerRepositoryImpl(
             port = port,
             terminalApi = terminalApi,
             apiPort = apiPort,
+            webPort = webPort,
             timeDelay = timeDelay,
             videoFrame = videoFrame,
             textSizeScale = textSizeScale,

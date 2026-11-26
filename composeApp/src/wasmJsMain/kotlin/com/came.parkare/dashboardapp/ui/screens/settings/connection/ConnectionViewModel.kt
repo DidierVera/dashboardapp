@@ -2,6 +2,7 @@ package com.came.parkare.dashboardapp.ui.screens.settings.connection
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.came.parkare.dashboardapp.config.constants.DefaultPorts
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
 import com.came.parkare.dashboardapp.config.utils.ErrorValidator
 import com.came.parkare.dashboardapp.domain.usecases.GetConnectionConfig
@@ -62,7 +63,9 @@ class ConnectionViewModel(
                                 brightnessDelay = activeLowBrightnessTime ?: 2,
                                 showBrightnessMode = autoBrightness == true,
                                 carCounterReset = carCounterReset ?: 1,
-                                showCarCounter = showCarCounter == true
+                                showCarCounter = showCarCounter == true,
+                                apiPort = apiPort,
+                                webPort = webPort
                             )
                         }
                     }
@@ -145,7 +148,8 @@ class ConnectionViewModel(
     private fun getConnectionConfigModel() = with(_state.value){
         ConnectionConfigDto(connectionWay = connectionWay.first, textSizeScale = textSizeScale,
             terminalIp = terminalIp, videoFrame = showVideoFrame, port = port,
-            terminalApi = api, timeDelay = delayTime, apiPort = 2023,
+            terminalApi = api, timeDelay = delayTime,
+            apiPort = apiPort ?: DefaultPorts.API, webPort = webPort,
             activeLowBrightnessTime = brightnessDelay, autoBrightness = showBrightnessMode,
             carCounterReset = carCounterReset, showCarCounter = showCarCounter
         )

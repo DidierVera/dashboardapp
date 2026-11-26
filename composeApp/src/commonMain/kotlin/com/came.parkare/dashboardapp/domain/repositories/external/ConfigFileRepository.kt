@@ -7,6 +7,8 @@ import com.came.parkare.dashboardapp.domain.models.ScreenModel
 
 interface ConfigFileRepository {
     suspend fun getConnectionConfig(): ServiceResult<Boolean>
+    // Reads only the ports of the local servers from the connection config file
+    suspend fun readServerPorts(): ServiceResult<Boolean>
     suspend fun getFileConfiguration(): ServiceResult<Boolean>
     suspend fun writeConnectionConfig(newData: ConnectionConfigModel): ServiceResult<Boolean>
     suspend fun writeScreensConfig(newData: List<ScreenModel>): ServiceResult<Boolean>

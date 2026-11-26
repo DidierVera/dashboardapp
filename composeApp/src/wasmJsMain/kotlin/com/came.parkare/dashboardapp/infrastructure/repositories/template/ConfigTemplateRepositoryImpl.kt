@@ -7,6 +7,7 @@ import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SAVE_CONFIG_
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.SSL_PROTOCOL
 import com.came.parkare.dashboardapp.config.constants.ApiRequestUri.UPDATE_CONFIG_TEMPLATE
 import com.came.parkare.dashboardapp.config.constants.Constants.API_PORT
+import com.came.parkare.dashboardapp.config.constants.DefaultPorts
 import com.came.parkare.dashboardapp.config.dataclasses.ErrorTypeClass
 import com.came.parkare.dashboardapp.config.dataclasses.ResponseStatusDto
 import com.came.parkare.dashboardapp.config.dataclasses.ServiceResult
@@ -25,7 +26,9 @@ class ConfigTemplateRepositoryImpl(
     private val preferences: WasmSharedPreferencesProvider
 ): ConfigTemplateRepository {
 
-    private val apiPort = preferences.get(API_PORT, 2023)
+    // Read on each request: the port comes from /runtime-config.json and may change after start
+    private val apiPort: Int
+        get() = preferences.get(API_PORT, DefaultPorts.API)
 
     override suspend fun getTemplates(ipAddress: String): ServiceResult<List<ConfigTemplateModel>> {
         return try {

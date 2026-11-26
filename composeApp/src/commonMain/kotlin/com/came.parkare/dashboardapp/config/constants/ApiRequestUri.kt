@@ -26,4 +26,7 @@ object ApiRequestUri {
     const val DELETE_FONT = "/api/fonts/delete"
     const val GET_FONT = "/api/fonts/get"
     const val SEND_DIT_TESTING = "/api/testing/dit/send"
+
+    // Served by the web configurator server (not by the API) so the web app finds the API port
+    const val RUNTIME_CONFIG = "/runtime-config.json"
 }
